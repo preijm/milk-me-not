@@ -1,11 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Milk, ChartPie, Table, Info } from "lucide-react";
+import { AuthButton } from "@/components/AuthButton";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-milk-50 py-16 px-4">
       <div className="container max-w-5xl mx-auto">
+        <div className="flex justify-end mb-4">
+          <AuthButton />
+        </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">Dairy Taste Trove</h1>
         <p className="text-lg text-milk-500 text-center mb-12">
           Your personal journey through the world of dairy, one taste test at a time.
