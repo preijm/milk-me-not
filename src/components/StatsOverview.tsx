@@ -4,6 +4,7 @@ import { Milk } from "lucide-react";
 interface MilkTestResult {
   rating: number;
   type: string;
+  created_at: string;
 }
 
 export const StatsOverview = ({ results }: { results: MilkTestResult[] }) => {

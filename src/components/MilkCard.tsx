@@ -3,12 +3,12 @@ import { Star, Milk } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MilkTestResult {
-  id: number;
+  id: string;
   brand: string;
   type: string;
   rating: number;
-  notes: string;
-  date: string;
+  notes: string | null;
+  created_at: string;
 }
 
 export const MilkCard = ({ result }: { result: MilkTestResult }) => {
@@ -19,7 +19,9 @@ export const MilkCard = ({ result }: { result: MilkTestResult }) => {
           <Milk className="w-6 h-6 text-milk-400" />
           <h3 className="text-lg font-semibold text-gray-900">{result.brand}</h3>
         </div>
-        <span className="text-sm text-milk-500">{result.date}</span>
+        <span className="text-sm text-milk-500">
+          {new Date(result.created_at).toLocaleDateString()}
+        </span>
       </div>
       
       <div className="mb-3">

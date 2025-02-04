@@ -14,12 +14,13 @@ import {
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 
 interface MilkTestResult {
-  id: number;
+  id: string;
   brand: string;
   type: string;
   rating: number;
-  notes: string;
-  date: string;
+  notes: string | null;
+  created_at: string;
+  user_id: string | null;
 }
 
 const COLORS = ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6"];
