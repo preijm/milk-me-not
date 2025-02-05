@@ -72,19 +72,21 @@ const MyResults = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {results.map((result) => (
-            <div key={result.id} className="relative">
+            <div key={result.id} className="group relative">
               <MilkCard result={result} showUsername={true} />
-              <div className="absolute top-4 right-4 flex gap-2">
+              <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
-                  variant="ghost"
+                  variant="secondary"
                   size="icon"
+                  className="bg-white hover:bg-gray-100"
                   onClick={() => navigate(`/edit/${result.id}`)}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="secondary"
                   size="icon"
+                  className="bg-white hover:bg-gray-100"
                   onClick={() => handleDelete(result.id)}
                 >
                   <Trash2 className="h-4 w-4" />

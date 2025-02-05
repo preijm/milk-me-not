@@ -19,7 +19,7 @@ interface MilkCardProps {
 
 export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow relative">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Milk className="w-6 h-6 text-milk-400" />
@@ -41,12 +41,12 @@ export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
         )}
       </div>
 
-      <div className="flex items-center mb-3 gap-1">
+      <div className="flex items-center mb-3 flex-wrap gap-1">
         {[...Array(10)].map((_, i) => (
           <span
             key={i}
             className={cn(
-              "text-xl",
+              "text-base",
               i < result.rating ? "" : "opacity-20"
             )}
           >
