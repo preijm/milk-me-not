@@ -12,31 +12,43 @@ export type Database = {
       milk_tests: {
         Row: {
           brand: string
+          country: string | null
           created_at: string
           id: string
+          ingredients: string[] | null
+          is_barista: boolean | null
           notes: string | null
+          product_name: string | null
           rating: number
-          type: string
+          type: string | null
           user_id: string | null
           username: string | null
         }
         Insert: {
           brand: string
+          country?: string | null
           created_at?: string
           id?: string
+          ingredients?: string[] | null
+          is_barista?: boolean | null
           notes?: string | null
+          product_name?: string | null
           rating: number
-          type: string
+          type?: string | null
           user_id?: string | null
           username?: string | null
         }
         Update: {
           brand?: string
+          country?: string | null
           created_at?: string
           id?: string
+          ingredients?: string[] | null
+          is_barista?: boolean | null
           notes?: string | null
+          product_name?: string | null
           rating?: number
-          type?: string
+          type?: string | null
           user_id?: string | null
           username?: string | null
         }

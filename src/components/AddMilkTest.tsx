@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -20,14 +21,44 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Country codes for flag emojis
+const countries = [
+  { code: "US", name: "United States" },
+  { code: "NL", name: "Netherlands" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "IT", name: "Italy" },
+  { code: "FR", name: "France" },
+  { code: "DE", name: "Germany" },
+  { code: "ES", name: "Spain" },
+  { code: "AU", name: "Australia" },
+  { code: "NZ", name: "New Zealand" },
+  { code: "CA", name: "Canada" },
+].sort((a, b) => a.name.localeCompare(b.name));
+
 export const AddMilkTest = () => {
   const [rating, setRating] = useState(0);
   const [brand, setBrand] = useState("");
-  const [type, setType] = useState("");
+  const [productName, setProductName] = useState("");
+  const [ingredients, setIngredients] = useState<string[]>([]);
+  const [newIngredient, setNewIngredient] = useState("");
   const [notes, setNotes] = useState("");
+  const [isBarista, setIsBarista] = useState(false);
+  const [country, setCountry] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [brandOpen, setBrandOpen] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
   const [brands, setBrands] = useState<string[]>([]);
+  const [allIngredients, setAllIngredients] = useState<string[]>([
+    "Milk",
+    "Water",
+    "Oats",
+    "Almonds",
+    "Soy",
+    "Coconut",
+    "Cashews",
+    "Rice",
+    "Pea Protein",
+  ]);
   const [isLoadingBrands, setIsLoadingBrands] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -45,7 +76,6 @@ export const AddMilkTest = () => {
         if (error) throw error;
 
         if (data) {
-          // Get unique brands
           const uniqueBrands = Array.from(new Set(data.map(item => item.brand))).filter(Boolean);
           console.log("Fetched brands:", uniqueBrands);
           setBrands(uniqueBrands);
@@ -68,7 +98,7 @@ export const AddMilkTest = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!brand || !type || !rating) {
+    if (!brand || !rating) {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
@@ -101,7 +131,10 @@ export const AddMilkTest = () => {
         .from('milk_tests')
         .insert({
           brand,
-          type,
+          product_name: productName,
+          ingredients,
+          country,
+          is_barista: isBarista,
           rating,
           notes,
           user_id: userData.user.id,
@@ -115,11 +148,6 @@ export const AddMilkTest = () => {
         description: "Your milk taste test has been recorded.",
       });
 
-      setBrand("");
-      setType("");
-      setRating(0);
-      setNotes("");
-      
       navigate("/dashboard");
     } catch (error) {
       console.error('Error adding milk test:', error);
@@ -133,17 +161,43 @@ export const AddMilkTest = () => {
     }
   };
 
+  const handleAddIngredient = () => {
+    if (newIngredient && !allIngredients.includes(newIngredient)) {
+      setAllIngredients(prev => [...prev, newIngredient]);
+    }
+    if (newIngredient && !ingredients.includes(newIngredient)) {
+      setIngredients(prev => [...prev, newIngredient]);
+    }
+    setNewIngredient("");
+  };
+
+  const toggleIngredient = (ingredient: string) => {
+    setIngredients(prev =>
+      prev.includes(ingredient)
+        ? prev.filter(i => i !== ingredient)
+        : [...prev, ingredient]
+    );
+  };
+
+  const getCountryFlag = (code: string) => {
+    const codePoints = code
+      .toUpperCase()
+      .split('')
+      .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white rounded-lg shadow-md p-6">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white rounded-lg shadow-md p-6 animate-fade-up">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Add New Taste Test</h2>
       
       <div className="flex flex-col space-y-2">
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={brandOpen} onOpenChange={setBrandOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               role="combobox"
-              aria-expanded={open}
+              aria-expanded={brandOpen}
               className="justify-between"
             >
               {brand || "Select brand..."}
@@ -156,7 +210,7 @@ export const AddMilkTest = () => {
                 placeholder="Search brands..."
                 onValueChange={setBrand}
               />
-              <CommandEmpty>No brand found. You can type a new one.</CommandEmpty>
+              <CommandEmpty>No brand found. Type to add a new one.</CommandEmpty>
               <CommandGroup>
                 {!isLoadingBrands && brands.map((existingBrand) => (
                   <CommandItem
@@ -164,7 +218,7 @@ export const AddMilkTest = () => {
                     value={existingBrand}
                     onSelect={(currentValue) => {
                       setBrand(currentValue);
-                      setOpen(false);
+                      setBrandOpen(false);
                     }}
                   >
                     <Check
@@ -184,11 +238,103 @@ export const AddMilkTest = () => {
 
       <div>
         <Input
-          placeholder="Type (e.g., Whole, 2%, Oat)"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
+          placeholder="Product name"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
           className="w-full"
         />
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Ingredients</label>
+        <div className="flex flex-wrap gap-2">
+          {allIngredients.map((ingredient) => (
+            <div
+              key={ingredient}
+              className={cn(
+                "px-3 py-1 rounded-full cursor-pointer text-sm transition-colors",
+                ingredients.includes(ingredient)
+                  ? "bg-cream-300 text-gray-800"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              )}
+              onClick={() => toggleIngredient(ingredient)}
+            >
+              {ingredient}
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <Input
+            placeholder="Add new ingredient"
+            value={newIngredient}
+            onChange={(e) => setNewIngredient(e.target.value)}
+            className="flex-1"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleAddIngredient}
+            disabled={!newIngredient}
+          >
+            Add
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-2">
+        <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={countryOpen}
+              className="justify-between"
+            >
+              {country ? `${getCountryFlag(country)} ${countries.find(c => c.code === country)?.name}` : "Select country (optional)"}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0">
+            <Command>
+              <CommandInput placeholder="Search countries..." />
+              <CommandEmpty>No country found.</CommandEmpty>
+              <CommandGroup>
+                {countries.map((c) => (
+                  <CommandItem
+                    key={c.code}
+                    value={c.code}
+                    onSelect={() => {
+                      setCountry(c.code);
+                      setCountryOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        country === c.code ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {getCountryFlag(c.code)} {c.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="barista"
+          checked={isBarista}
+          onCheckedChange={(checked) => setIsBarista(checked as boolean)}
+        />
+        <label
+          htmlFor="barista"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          Barista Version
+        </label>
       </div>
 
       <div className="flex items-center gap-1">
