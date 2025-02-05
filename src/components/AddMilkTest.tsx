@@ -208,7 +208,11 @@ export const AddMilkTest = () => {
             <Command>
               <CommandInput 
                 placeholder="Search brands..."
-                onValueChange={setBrand}
+                onValueChange={(value) => {
+                  if (value) {
+                    setBrand(value);
+                  }
+                }}
               />
               <CommandEmpty>No brand found. Type to add a new one.</CommandEmpty>
               <CommandGroup>
