@@ -18,6 +18,7 @@ export type Database = {
           rating: number
           type: string
           user_id: string | null
+          username: string | null
         }
         Insert: {
           brand: string
@@ -27,6 +28,7 @@ export type Database = {
           rating: number
           type: string
           user_id?: string | null
+          username?: string | null
         }
         Update: {
           brand?: string
@@ -36,6 +38,7 @@ export type Database = {
           rating?: number
           type?: string
           user_id?: string | null
+          username?: string | null
         }
         Relationships: []
       }

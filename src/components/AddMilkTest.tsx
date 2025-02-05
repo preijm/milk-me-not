@@ -41,6 +41,13 @@ export const AddMilkTest = () => {
         return;
       }
 
+      // Get user's profile to get username
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', userData.user.id)
+        .single();
+
       const { error } = await supabase
         .from('milk_tests')
         .insert({
@@ -48,7 +55,8 @@ export const AddMilkTest = () => {
           type,
           rating,
           notes,
-          user_id: userData.user.id
+          user_id: userData.user.id,
+          username: profileData?.username
         });
 
       if (error) throw error;

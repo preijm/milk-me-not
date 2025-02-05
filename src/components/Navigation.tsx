@@ -1,16 +1,29 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, ChartPie, Table, PlusCircle, Info } from "lucide-react";
+import { Home, ChartPie, Table, PlusCircle, Info, User } from "lucide-react";
 import { AuthButton } from "./AuthButton";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Navigation = () => {
   const location = useLocation();
+  
+  const { data: session } = useQuery({
+    queryKey: ['session'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      return session;
+    },
+  });
 
   const links = [
     { to: "/", icon: Home, label: "Home" },
     { to: "/dashboard", icon: ChartPie, label: "Dashboard" },
     { to: "/results", icon: Table, label: "Results" },
-    { to: "/add", icon: PlusCircle, label: "Add Test" },
+    ...(session ? [
+      { to: "/add", icon: PlusCircle, label: "Add Test" },
+      { to: "/my-results", icon: User, label: "My Results" }
+    ] : []),
     { to: "/about", icon: Info, label: "About" },
   ];
 

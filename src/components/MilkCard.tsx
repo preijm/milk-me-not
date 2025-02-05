@@ -9,9 +9,15 @@ interface MilkTestResult {
   rating: number;
   notes: string | null;
   created_at: string;
+  username?: string | null;
 }
 
-export const MilkCard = ({ result }: { result: MilkTestResult }) => {
+interface MilkCardProps {
+  result: MilkTestResult;
+  showUsername?: boolean;
+}
+
+export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow">
       <div className="flex items-center justify-between mb-4">
@@ -28,6 +34,11 @@ export const MilkCard = ({ result }: { result: MilkTestResult }) => {
         <span className="inline-block bg-cream-200 text-milk-500 rounded-full px-3 py-1 text-sm">
           {result.type}
         </span>
+        {showUsername && result.username && (
+          <span className="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm ml-2">
+            {result.username}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center mb-3 gap-1">
