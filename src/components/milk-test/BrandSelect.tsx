@@ -48,9 +48,7 @@ export const BrandSelect = ({
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
           <Command>
-            <CommandInput 
-              placeholder="Search brands..."
-            />
+            <CommandInput placeholder="Search brands..." />
             <CommandEmpty>
               Type to add a new brand.
               <Button
@@ -65,7 +63,7 @@ export const BrandSelect = ({
                   }
                 }}
               >
-                Add "{brand}"
+                Add new brand
               </Button>
             </CommandEmpty>
             <CommandGroup>
@@ -73,8 +71,8 @@ export const BrandSelect = ({
                 <CommandItem
                   key={existingBrand}
                   value={existingBrand}
-                  onSelect={(currentValue) => {
-                    setBrand(currentValue);
+                  onSelect={() => {
+                    setBrand(existingBrand);
                     setBrandOpen(false);
                   }}
                 >
