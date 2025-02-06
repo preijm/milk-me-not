@@ -21,7 +21,6 @@ export const AddMilkTest = () => {
   const [isBarista, setIsBarista] = useState(false);
   const [country, setCountry] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [brandOpen, setBrandOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
   const [allIngredients, setAllIngredients] = useState<string[]>([
     "Milk",
@@ -111,8 +110,6 @@ export const AddMilkTest = () => {
       <BrandSelect
         brand={brand}
         setBrand={setBrand}
-        brandOpen={brandOpen}
-        setBrandOpen={setBrandOpen}
       />
 
       <div>

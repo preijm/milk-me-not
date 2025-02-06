@@ -1,36 +1,20 @@
-import React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import React, { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface BrandSelectProps {
   brand: string;
   setBrand: (brand: string) => void;
-  brandOpen: boolean;
-  setBrandOpen: (open: boolean) => void;
 }
 
-export const BrandSelect = ({
-  brand,
-  setBrand,
-  brandOpen,
-  setBrandOpen,
-}: BrandSelectProps) => {
-  const { data: brands = [], isLoading } = useQuery({
+export const BrandSelect = ({ brand, setBrand }: BrandSelectProps) => {
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState(brand);
+  const { toast } = useToast();
+
+  const { data: brands = [] } = useQuery({
     queryKey: ['brands'],
     queryFn: async () => {
       console.log('Fetching brands from database...');
@@ -49,48 +33,85 @@ export const BrandSelect = ({
     },
   });
 
+  useEffect(() => {
+    if (inputValue.trim() === '') {
+      setSuggestions([]);
+      return;
+    }
+
+    const filteredBrands = brands
+      .map(b => b.name)
+      .filter(name => 
+        name.toLowerCase().includes(inputValue.toLowerCase())
+      );
+    setSuggestions(filteredBrands);
+  }, [inputValue, brands]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleSelectBrand = async (selectedBrand: string) => {
+    setInputValue(selectedBrand);
+    setBrand(selectedBrand);
+    setSuggestions([]);
+  };
+
+  const handleBlur = async () => {
+    if (inputValue.trim() === '') return;
+
+    // Check if brand exists
+    const existingBrand = brands.find(
+      b => b.name.toLowerCase() === inputValue.toLowerCase()
+    );
+
+    if (!existingBrand) {
+      // Insert new brand
+      const { error } = await supabase
+        .from('brands')
+        .insert({ name: inputValue.trim() });
+
+      if (error) {
+        console.error('Error inserting new brand:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add new brand. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "New brand added successfully!",
+      });
+    }
+
+    setBrand(inputValue.trim());
+  };
+
   return (
-    <div className="flex flex-col space-y-2">
-      <Popover open={brandOpen} onOpenChange={setBrandOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={brandOpen}
-            className="justify-between"
-            disabled={isLoading}
-          >
-            {isLoading ? "Loading brands..." : brand || "Select brand..."}
-            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
-          <Command>
-            <CommandInput placeholder="Search brands..." />
-            <CommandEmpty>No brand found.</CommandEmpty>
-            <CommandGroup>
-              {brands.map((b) => (
-                <CommandItem
-                  key={b.name}
-                  value={b.name}
-                  onSelect={(value) => {
-                    setBrand(value);
-                    setBrandOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      brand === b.name ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {b.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
+    <div className="relative">
+      <Input
+        placeholder="Enter brand name..."
+        value={inputValue}
+        onChange={handleInputChange}
+        onBlur={handleBlur}
+        className="w-full"
+      />
+      {suggestions.length > 0 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
+          {suggestions.map((suggestion) => (
+            <div
+              key={suggestion}
+              className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+              onClick={() => handleSelectBrand(suggestion)}
+            >
+              {suggestion}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
