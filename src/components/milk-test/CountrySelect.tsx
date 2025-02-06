@@ -30,7 +30,7 @@ export const CountrySelect = ({
   countryOpen,
   setCountryOpen,
 }: CountrySelectProps) => {
-  const { data: countries, isLoading } = useQuery({
+  const { data: countries = [], isLoading } = useQuery({
     queryKey: ['countries'],
     queryFn: async () => {
       console.log('Fetching countries from database...');
@@ -45,7 +45,7 @@ export const CountrySelect = ({
       }
       
       console.log('Fetched countries:', data);
-      return data;
+      return data || [];
     },
   });
 
@@ -57,6 +57,8 @@ export const CountrySelect = ({
     return String.fromCodePoint(...codePoints);
   };
 
+  const selectedCountry = countries.find(c => c.code === country);
+
   return (
     <div className="flex flex-col space-y-2">
       <Popover open={countryOpen} onOpenChange={setCountryOpen}>
@@ -66,10 +68,12 @@ export const CountrySelect = ({
             role="combobox"
             aria-expanded={countryOpen}
             className="justify-between"
+            disabled={isLoading}
           >
-            {country ? 
-              `${getCountryFlag(country)} ${countries?.find(c => c.code === country)?.name}` 
-              : "Select country (optional)"}
+            {isLoading ? "Loading countries..." : 
+              selectedCountry ? 
+                `${getCountryFlag(selectedCountry.code)} ${selectedCountry.name}` 
+                : "Select country (optional)"}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -78,7 +82,7 @@ export const CountrySelect = ({
             <CommandInput placeholder="Search countries..." />
             <CommandEmpty>No country found.</CommandEmpty>
             <CommandGroup>
-              {!isLoading && countries?.map((c) => (
+              {countries.map((c) => (
                 <CommandItem
                   key={c.code}
                   value={c.code}

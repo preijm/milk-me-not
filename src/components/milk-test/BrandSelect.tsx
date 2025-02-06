@@ -30,7 +30,7 @@ export const BrandSelect = ({
   brandOpen,
   setBrandOpen,
 }: BrandSelectProps) => {
-  const { data: brands, isLoading } = useQuery({
+  const { data: brands = [], isLoading } = useQuery({
     queryKey: ['brands'],
     queryFn: async () => {
       console.log('Fetching brands from database...');
@@ -45,7 +45,7 @@ export const BrandSelect = ({
       }
       
       console.log('Fetched brands:', data);
-      return data;
+      return data || [];
     },
   });
 
@@ -58,8 +58,9 @@ export const BrandSelect = ({
             role="combobox"
             aria-expanded={brandOpen}
             className="justify-between"
+            disabled={isLoading}
           >
-            {brand || "Select brand..."}
+            {isLoading ? "Loading brands..." : brand || "Select brand..."}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -68,7 +69,7 @@ export const BrandSelect = ({
             <CommandInput placeholder="Search brands..." />
             <CommandEmpty>No brand found.</CommandEmpty>
             <CommandGroup>
-              {!isLoading && brands?.map((b) => (
+              {brands.map((b) => (
                 <CommandItem
                   key={b.name}
                   value={b.name}
