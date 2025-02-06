@@ -51,7 +51,7 @@ export const BrandSelect = ({ brand, setBrand }: BrandSelectProps) => {
     setInputValue(e.target.value);
   };
 
-  const handleSelectBrand = async (selectedBrand: string) => {
+  const handleSelectBrand = (selectedBrand: string) => {
     setInputValue(selectedBrand);
     setBrand(selectedBrand);
     setSuggestions([]);
@@ -60,13 +60,13 @@ export const BrandSelect = ({ brand, setBrand }: BrandSelectProps) => {
   const handleBlur = async () => {
     if (inputValue.trim() === '') return;
 
-    // Check if brand exists
+    // Check if the exact brand name exists (case insensitive)
     const existingBrand = brands.find(
-      b => b.name.toLowerCase() === inputValue.toLowerCase()
+      b => b.name.toLowerCase() === inputValue.trim().toLowerCase()
     );
 
     if (!existingBrand) {
-      // Insert new brand
+      // Only insert if it's a new brand
       const { error } = await supabase
         .from('brands')
         .insert({ name: inputValue.trim() });
@@ -87,7 +87,7 @@ export const BrandSelect = ({ brand, setBrand }: BrandSelectProps) => {
       });
     }
 
-    setBrand(inputValue.trim());
+    setBrand(existingBrand ? existingBrand.name : inputValue.trim());
   };
 
   return (
