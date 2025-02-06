@@ -50,13 +50,24 @@ export const BrandSelect = ({
           <Command>
             <CommandInput 
               placeholder="Search brands..."
-              onValueChange={(value) => {
-                if (value) {
-                  setBrand(value);
-                }
-              }}
             />
-            <CommandEmpty>No brand found. Type to add a new one.</CommandEmpty>
+            <CommandEmpty>
+              Type to add a new brand.
+              <Button
+                type="button"
+                variant="ghost"
+                className="mt-2 w-full"
+                onClick={() => {
+                  const input = document.querySelector('[cmdk-input]') as HTMLInputElement;
+                  if (input?.value) {
+                    setBrand(input.value);
+                    setBrandOpen(false);
+                  }
+                }}
+              >
+                Add "{brand}"
+              </Button>
+            </CommandEmpty>
             <CommandGroup>
               {!isLoadingBrands && brands.map((existingBrand) => (
                 <CommandItem
