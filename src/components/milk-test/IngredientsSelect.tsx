@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface IngredientsSelectProps {
   ingredients: string[];
@@ -22,7 +23,7 @@ export const IngredientsSelect = ({
   newIngredient,
   setNewIngredient,
 }: IngredientsSelectProps) => {
-  const [showInput, setShowInput] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleAddIngredient = () => {
     if (newIngredient && !allIngredients.includes(newIngredient)) {
@@ -34,7 +35,7 @@ export const IngredientsSelect = ({
       setIngredients(updatedIngredients);
     }
     setNewIngredient("");
-    setShowInput(false);
+    setOpen(false);
   };
 
   const toggleIngredient = (ingredient: string) => {
@@ -46,19 +47,8 @@ export const IngredientsSelect = ({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">Ingredients</label>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="p-1 h-auto"
-          onClick={() => setShowInput(true)}
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="flex flex-wrap gap-2">
+      <label className="text-sm font-medium">Ingredients</label>
+      <div className="flex flex-wrap gap-2 items-center">
         {allIngredients.map((ingredient) => (
           <div
             key={ingredient}
@@ -73,34 +63,46 @@ export const IngredientsSelect = ({
             {ingredient}
           </div>
         ))}
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="p-1 h-auto rounded-full"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-2">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add new ingredient"
+                value={newIngredient}
+                onChange={(e) => setNewIngredient(e.target.value)}
+                className="flex-1"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleAddIngredient();
+                  } else if (e.key === 'Escape') {
+                    setOpen(false);
+                    setNewIngredient("");
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleAddIngredient}
+                disabled={!newIngredient}
+              >
+                Add
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
-      {showInput && (
-        <div className="flex gap-2">
-          <Input
-            placeholder="Add new ingredient"
-            value={newIngredient}
-            onChange={(e) => setNewIngredient(e.target.value)}
-            className="flex-1"
-            autoFocus
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleAddIngredient();
-              } else if (e.key === 'Escape') {
-                setShowInput(false);
-                setNewIngredient("");
-              }
-            }}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleAddIngredient}
-            disabled={!newIngredient}
-          >
-            Add
-          </Button>
-        </div>
-      )}
     </div>
   );
 };
