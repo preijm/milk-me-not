@@ -1,10 +1,12 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface IngredientsSelectProps {
   ingredients: string[];
@@ -24,18 +26,66 @@ export const IngredientsSelect = ({
   setNewIngredient,
 }: IngredientsSelectProps) => {
   const [open, setOpen] = useState(false);
+  const { toast } = useToast();
 
-  const handleAddIngredient = () => {
-    if (newIngredient && !allIngredients.includes(newIngredient)) {
+  useEffect(() => {
+    fetchIngredients();
+  }, []);
+
+  const fetchIngredients = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('ingredients')
+        .select('name')
+        .order('name');
+      
+      if (error) throw error;
+      
+      const ingredientNames = data.map(ing => ing.name);
+      setAllIngredients(ingredientNames);
+    } catch (error) {
+      console.error('Error fetching ingredients:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load ingredients",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAddIngredient = async () => {
+    if (!newIngredient) return;
+
+    try {
+      const { error } = await supabase
+        .from('ingredients')
+        .insert({ name: newIngredient });
+
+      if (error) throw error;
+
       const updatedAllIngredients = [...allIngredients, newIngredient];
       setAllIngredients(updatedAllIngredients);
+      
+      if (!ingredients.includes(newIngredient)) {
+        const updatedIngredients = [...ingredients, newIngredient];
+        setIngredients(updatedIngredients);
+      }
+
+      setNewIngredient("");
+      setOpen(false);
+      
+      toast({
+        title: "Success",
+        description: "Ingredient added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding ingredient:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add ingredient",
+        variant: "destructive",
+      });
     }
-    if (newIngredient && !ingredients.includes(newIngredient)) {
-      const updatedIngredients = [...ingredients, newIngredient];
-      setIngredients(updatedIngredients);
-    }
-    setNewIngredient("");
-    setOpen(false);
   };
 
   const toggleIngredient = (ingredient: string) => {
@@ -69,9 +119,9 @@ export const IngredientsSelect = ({
               type="button"
               variant="ghost"
               size="sm"
-              className="p-1 h-auto rounded-full"
+              className="p-1 h-auto rounded-full hover:bg-cream-200"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 text-cream-700" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-64 p-2">
@@ -96,6 +146,7 @@ export const IngredientsSelect = ({
                 variant="outline"
                 onClick={handleAddIngredient}
                 disabled={!newIngredient}
+                className="bg-cream-300 hover:bg-cream-200 text-gray-800"
               >
                 Add
               </Button>
