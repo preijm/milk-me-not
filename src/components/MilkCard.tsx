@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Milk } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -41,18 +42,10 @@ export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
         )}
       </div>
 
-      <div className="flex items-center mb-3 flex-wrap gap-1">
-        {[...Array(10)].map((_, i) => (
-          <span
-            key={i}
-            className={cn(
-              "text-base",
-              i < result.rating ? "" : "opacity-20"
-            )}
-          >
-            🥛
-          </span>
-        ))}
+      <div className="flex items-center mb-3">
+        <div className="bg-cream-300 rounded-full h-12 w-12 flex items-center justify-center">
+          <span className="font-semibold text-milk-500">{result.rating.toFixed(1)}</span>
+        </div>
       </div>
 
       <p className="text-milk-500">{result.notes}</p>

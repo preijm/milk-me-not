@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import {
   Table,
@@ -8,22 +9,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Star } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const Results = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+
   const { data: results = [], isLoading, error } = useQuery({
     queryKey: ['milk-tests'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('milk_tests')
-        .select('*')
+        .select('*, profiles(username)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
       return data;
     }
+  });
+
+  const filteredResults = results.filter((result) => {
+    const searchString = searchTerm.toLowerCase();
+    return (
+      result.brand.toLowerCase().includes(searchString) ||
+      result.type.toLowerCase().includes(searchString) ||
+      (result.profiles?.username || "").toLowerCase().includes(searchString)
+    );
   });
 
   if (isLoading) {
@@ -55,36 +67,38 @@ const Results = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">All Results</h1>
         
         <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="mb-4">
+            <Input
+              placeholder="Search by brand, type, or tester..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-sm"
+            />
+          </div>
+          
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Date</TableHead>
                 <TableHead>Brand</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead>Rating</TableHead>
+                <TableHead>Score</TableHead>
+                <TableHead>Tester</TableHead>
                 <TableHead>Notes</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {results.map((result) => (
+              {filteredResults.map((result) => (
                 <TableRow key={result.id}>
                   <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
                   <TableCell className="font-medium">{result.brand}</TableCell>
                   <TableCell>{result.type}</TableCell>
                   <TableCell>
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < result.rating
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
+                    <div className="bg-cream-300 rounded-full h-8 w-8 flex items-center justify-center">
+                      <span className="font-semibold text-milk-500">{result.rating.toFixed(1)}</span>
                     </div>
                   </TableCell>
+                  <TableCell>{result.profiles?.username || "Anonymous"}</TableCell>
                   <TableCell className="max-w-xs truncate">{result.notes}</TableCell>
                 </TableRow>
               ))}

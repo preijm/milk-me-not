@@ -19,7 +19,7 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
         }`}
       >
-        <IceCream className="w-6 h-6 mb-1" />
+        <IceCream className="w-8 h-8 mb-1" />
         <span className="text-sm">Cold</span>
       </button>
       <button
@@ -31,7 +31,7 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
         }`}
       >
-        <Flame className="w-6 h-6 mb-1" />
+        <Flame className="w-8 h-8 mb-1" />
         <span className="text-sm">Hot</span>
       </button>
       <button
@@ -43,10 +43,9 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
         }`}
       >
-        <Coffee className="w-6 h-6 mb-1" />
-        <span className="text-sm">In Coffee</span>
+        <Coffee className="w-8 h-8 mb-1" />
+        <span className="text-sm">Coffee</span>
       </button>
     </div>
   );
 };
-
