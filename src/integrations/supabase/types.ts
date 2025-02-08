@@ -74,9 +74,12 @@ export type Database = {
           id: string
           ingredients: string[] | null
           is_barista: boolean | null
+          is_special_edition: boolean | null
+          is_unsweetened: boolean | null
           notes: string | null
           product_name: string | null
           rating: number
+          shop: string | null
           type: string | null
           user_id: string | null
           username: string | null
@@ -88,9 +91,12 @@ export type Database = {
           id?: string
           ingredients?: string[] | null
           is_barista?: boolean | null
+          is_special_edition?: boolean | null
+          is_unsweetened?: boolean | null
           notes?: string | null
           product_name?: string | null
           rating: number
+          shop?: string | null
           type?: string | null
           user_id?: string | null
           username?: string | null
@@ -102,9 +108,12 @@ export type Database = {
           id?: string
           ingredients?: string[] | null
           is_barista?: boolean | null
+          is_special_edition?: boolean | null
+          is_unsweetened?: boolean | null
           notes?: string | null
           product_name?: string | null
           rating?: number
+          shop?: string | null
           type?: string | null
           user_id?: string | null
           username?: string | null
@@ -132,6 +141,27 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      shops: {
+        Row: {
+          country: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }

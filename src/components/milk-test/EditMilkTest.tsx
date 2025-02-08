@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +8,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BrandSelect } from "./BrandSelect";
 import { CountrySelect } from "./CountrySelect";
+import { ShopSelect } from "./ShopSelect";
 import { IngredientsSelect } from "./IngredientsSelect";
 import { RatingSelect } from "./RatingSelect";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +26,10 @@ interface EditMilkTestProps {
     product_name?: string;
     ingredients?: string[];
     country?: string;
+    shop?: string;
     is_barista?: boolean;
+    is_unsweetened?: boolean;
+    is_special_edition?: boolean;
     rating: number;
     notes?: string;
   };
@@ -40,7 +46,10 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
   const [newIngredient, setNewIngredient] = useState("");
   const [notes, setNotes] = useState(test.notes || "");
   const [isBarista, setIsBarista] = useState(test.is_barista || false);
+  const [isUnsweetened, setIsUnsweetened] = useState(test.is_unsweetened || false);
+  const [isSpecialEdition, setIsSpecialEdition] = useState(test.is_special_edition || false);
   const [country, setCountry] = useState<string | null>(test.country || null);
+  const [shop, setShop] = useState(test.shop || "");
   const [allIngredients, setAllIngredients] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -68,7 +77,10 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
           product_name: productName,
           ingredients,
           country,
+          shop,
           is_barista: isBarista,
+          is_unsweetened: isUnsweetened,
+          is_special_edition: isSpecialEdition,
           rating,
           notes,
         })
@@ -97,18 +109,18 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Milk Test</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <BrandSelect
-            brand={brand}
-            setBrand={setBrand}
-          />
-
-          <div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900">Product Information</h2>
+            <BrandSelect
+              brand={brand}
+              setBrand={setBrand}
+            />
             <Input
               placeholder="Product name"
               value={productName}
@@ -117,43 +129,101 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
             />
           </div>
 
-          <IngredientsSelect
-            ingredients={ingredients}
-            setIngredients={setIngredients}
-            allIngredients={allIngredients}
-            setAllIngredients={setAllIngredients}
-            newIngredient={newIngredient}
-            setNewIngredient={setNewIngredient}
-          />
+          <Separator />
 
-          <CountrySelect
-            country={country}
-            setCountry={setCountry}
-          />
-
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="barista"
-              checked={isBarista}
-              onCheckedChange={(checked) => setIsBarista(checked as boolean)}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900">Buying Location</h2>
+            <CountrySelect
+              country={country}
+              setCountry={setCountry}
             />
-            <label
-              htmlFor="barista"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Barista Version
-            </label>
+            <ShopSelect
+              shop={shop}
+              setShop={setShop}
+              country={country}
+            />
           </div>
 
-          <RatingSelect rating={rating} setRating={setRating} />
+          <Separator />
 
-          <div>
-            <Textarea
-              placeholder="Tasting notes..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full"
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900">Product Type</h2>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="barista-edit"
+                  checked={isBarista}
+                  onCheckedChange={(checked) => setIsBarista(checked as boolean)}
+                />
+                <label
+                  htmlFor="barista-edit"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Barista Version
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="unsweetened-edit"
+                  checked={isUnsweetened}
+                  onCheckedChange={(checked) => setIsUnsweetened(checked as boolean)}
+                />
+                <label
+                  htmlFor="unsweetened-edit"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Unsweetened
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="special-edit"
+                  checked={isSpecialEdition}
+                  onCheckedChange={(checked) => setIsSpecialEdition(checked as boolean)}
+                />
+                <label
+                  htmlFor="special-edit"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Special Edition
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900">Ingredients</h2>
+            <IngredientsSelect
+              ingredients={ingredients}
+              setIngredients={setIngredients}
+              allIngredients={allIngredients}
+              setAllIngredients={setAllIngredients}
+              newIngredient={newIngredient}
+              setNewIngredient={setNewIngredient}
             />
+          </div>
+
+          <Separator />
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900">Judgment</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Rating</label>
+                <RatingSelect rating={rating} setRating={setRating} />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Notes</label>
+                <Textarea
+                  placeholder="Tasting notes..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end space-x-2">

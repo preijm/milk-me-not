@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +9,10 @@ import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BrandSelect } from "./milk-test/BrandSelect";
 import { CountrySelect } from "./milk-test/CountrySelect";
+import { ShopSelect } from "./milk-test/ShopSelect";
 import { IngredientsSelect } from "./milk-test/IngredientsSelect";
 import { RatingSelect } from "./milk-test/RatingSelect";
+import { Separator } from "@/components/ui/separator";
 
 export const AddMilkTest = () => {
   const [rating, setRating] = useState(0);
@@ -19,19 +22,12 @@ export const AddMilkTest = () => {
   const [newIngredient, setNewIngredient] = useState("");
   const [notes, setNotes] = useState("");
   const [isBarista, setIsBarista] = useState(false);
+  const [isUnsweetened, setIsUnsweetened] = useState(false);
+  const [isSpecialEdition, setIsSpecialEdition] = useState(false);
   const [country, setCountry] = useState<string | null>(null);
+  const [shop, setShop] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [allIngredients, setAllIngredients] = useState<string[]>([
-    "Milk",
-    "Water",
-    "Oats",
-    "Almonds",
-    "Soy",
-    "Coconut",
-    "Cashews",
-    "Rice",
-    "Pea Protein",
-  ]);
+  const [allIngredients, setAllIngredients] = useState<string[]>([]);
 
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -75,7 +71,10 @@ export const AddMilkTest = () => {
           product_name: productName,
           ingredients,
           country,
+          shop,
           is_barista: isBarista,
+          is_unsweetened: isUnsweetened,
+          is_special_edition: isSpecialEdition,
           rating,
           notes,
           user_id: userData.user.id,
@@ -103,15 +102,13 @@ export const AddMilkTest = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white rounded-lg shadow-md p-6 animate-fade-up">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Add New Taste Test</h2>
-      
-      <BrandSelect
-        brand={brand}
-        setBrand={setBrand}
-      />
-
-      <div>
+    <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-lg shadow-md p-6 animate-fade-up">
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Product Information</h2>
+        <BrandSelect
+          brand={brand}
+          setBrand={setBrand}
+        />
         <Input
           placeholder="Product name"
           value={productName}
@@ -120,43 +117,101 @@ export const AddMilkTest = () => {
         />
       </div>
 
-      <IngredientsSelect
-        ingredients={ingredients}
-        setIngredients={setIngredients}
-        allIngredients={allIngredients}
-        setAllIngredients={setAllIngredients}
-        newIngredient={newIngredient}
-        setNewIngredient={setNewIngredient}
-      />
+      <Separator />
 
-      <CountrySelect
-        country={country}
-        setCountry={setCountry}
-      />
-
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="barista"
-          checked={isBarista}
-          onCheckedChange={(checked) => setIsBarista(checked as boolean)}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
+        <CountrySelect
+          country={country}
+          setCountry={setCountry}
         />
-        <label
-          htmlFor="barista"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          Barista Version
-        </label>
+        <ShopSelect
+          shop={shop}
+          setShop={setShop}
+          country={country}
+        />
       </div>
 
-      <RatingSelect rating={rating} setRating={setRating} />
+      <Separator />
 
-      <div>
-        <Textarea
-          placeholder="Tasting notes..."
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          className="w-full"
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Product Type</h2>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="barista"
+              checked={isBarista}
+              onCheckedChange={(checked) => setIsBarista(checked as boolean)}
+            />
+            <label
+              htmlFor="barista"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Barista Version
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="unsweetened"
+              checked={isUnsweetened}
+              onCheckedChange={(checked) => setIsUnsweetened(checked as boolean)}
+            />
+            <label
+              htmlFor="unsweetened"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Unsweetened
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="special"
+              checked={isSpecialEdition}
+              onCheckedChange={(checked) => setIsSpecialEdition(checked as boolean)}
+            />
+            <label
+              htmlFor="special"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Special Edition
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Ingredients</h2>
+        <IngredientsSelect
+          ingredients={ingredients}
+          setIngredients={setIngredients}
+          allIngredients={allIngredients}
+          setAllIngredients={setAllIngredients}
+          newIngredient={newIngredient}
+          setNewIngredient={setNewIngredient}
         />
+      </div>
+
+      <Separator />
+
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Judgment</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">Rating</label>
+            <RatingSelect rating={rating} setRating={setRating} />
+          </div>
+          <div>
+            <label className="text-sm font-medium mb-2 block">Notes</label>
+            <Textarea
+              placeholder="Tasting notes..."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full"
+            />
+          </div>
+        </div>
       </div>
 
       <Button 
