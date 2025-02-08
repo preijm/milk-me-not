@@ -192,7 +192,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={handleAddNewBrand} className="w-full">
+              <Button onClick={handleAddNewShop} className="w-full">
                 Add Shop
               </Button>
             </div>
