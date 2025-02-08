@@ -146,24 +146,32 @@ export type Database = {
       }
       shops: {
         Row: {
-          country: string
+          country_code: string | null
           created_at: string
           id: string
           name: string
         }
         Insert: {
-          country: string
+          country_code?: string | null
           created_at?: string
           id?: string
           name: string
         }
         Update: {
-          country?: string
+          country_code?: string | null
           created_at?: string
           id?: string
           name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "shops_country_code_fkey"
+            columns: ["country_code"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["code"]
+          },
+        ]
       }
     }
     Views: {

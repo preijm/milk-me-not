@@ -7,6 +7,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Plus } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ShopSelectProps {
   shop: string | null;
@@ -14,20 +21,35 @@ interface ShopSelectProps {
 }
 
 export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
-  const [suggestions, setSuggestions] = useState<{ name: string; country: string }[]>([]);
+  const [suggestions, setSuggestions] = useState<{ name: string; country_code: string }[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isAddingShop, setIsAddingShop] = useState(false);
   const [newShopName, setNewShopName] = useState("");
-  const [newShopCountry, setNewShopCountry] = useState("");
+  const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const { toast } = useToast();
 
+  // Fetch all countries
+  const { data: countries = [] } = useQuery({
+    queryKey: ['countries'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('countries')
+        .select('code, name')
+        .order('name');
+      
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Fetch all shops with country codes
   const { data: shops = [], refetch: refetchShops } = useQuery({
     queryKey: ['shops'],
     queryFn: async () => {
       console.log('Fetching all shops');
       const { data, error } = await supabase
         .from('shops')
-        .select('name, country')
+        .select('name, country_code')
         .order('name');
       
       if (error) {
@@ -57,14 +79,14 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
     setInputValue(e.target.value);
   };
 
-  const handleSelectShop = (selectedShop: { name: string; country: string }) => {
+  const handleSelectShop = (selectedShop: { name: string; country_code: string }) => {
     setInputValue(selectedShop.name);
     setShop(selectedShop.name);
     setSuggestions([]);
   };
 
   const handleAddNewShop = async () => {
-    if (!newShopName.trim() || !newShopCountry.trim()) {
+    if (!newShopName.trim() || !selectedCountryCode) {
       toast({
         title: "Missing information",
         description: "Please provide both shop name and country",
@@ -78,7 +100,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
         .from('shops')
         .insert({
           name: newShopName.trim(),
-          country: newShopCountry.trim(),
+          country_code: selectedCountryCode,
         });
 
       if (error) throw error;
@@ -90,7 +112,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
 
       // Reset form and refresh shops list
       setNewShopName("");
-      setNewShopCountry("");
+      setSelectedCountryCode("");
       setIsAddingShop(false);
       refetchShops();
       
@@ -133,7 +155,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
                   onClick={() => handleSelectShop(suggestion)}
                   onMouseDown={(e) => e.preventDefault()}
                 >
-                  {suggestion.name} ({suggestion.country})
+                  {suggestion.name} ({suggestion.country_code})
                 </div>
               ))}
             </div>
@@ -158,11 +180,21 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
                 />
               </div>
               <div className="space-y-2">
-                <Input
-                  placeholder="Country (e.g., United Kingdom)"
-                  value={newShopCountry}
-                  onChange={(e) => setNewShopCountry(e.target.value)}
-                />
+                <Select
+                  value={selectedCountryCode}
+                  onValueChange={setSelectedCountryCode}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country.code} value={country.code}>
+                        {country.name} ({country.code})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <Button onClick={handleAddNewShop} className="w-full">
                 Add Shop
@@ -174,3 +206,4 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
     </div>
   );
 };
+
