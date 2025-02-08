@@ -21,12 +21,7 @@ const Results = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('milk_tests')
-        .select(`
-          *,
-          profiles:user_id (
-            username
-          )
-        `)
+        .select('*, profiles(username)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -38,8 +33,8 @@ const Results = () => {
     const searchString = searchTerm.toLowerCase();
     return (
       result.brand.toLowerCase().includes(searchString) ||
-      result.type.toLowerCase().includes(searchString) ||
-      (result.profiles?.username || "").toLowerCase().includes(searchString)
+      (result.type || "").toLowerCase().includes(searchString) ||
+      ((result.profiles?.username || "")).toLowerCase().includes(searchString)
     );
   });
 
@@ -100,7 +95,7 @@ const Results = () => {
                   <TableCell>{result.type}</TableCell>
                   <TableCell>
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
-                      <span className="font-semibold text-milk-500">{result.rating.toFixed(1)}</span>
+                      <span className="font-semibold text-milk-500">{Number(result.rating).toFixed(1)}</span>
                     </div>
                   </TableCell>
                   <TableCell>{result.profiles?.username || "Anonymous"}</TableCell>
@@ -116,3 +111,4 @@ const Results = () => {
 };
 
 export default Results;
+

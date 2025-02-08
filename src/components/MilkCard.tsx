@@ -44,7 +44,7 @@ export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
 
       <div className="flex items-center mb-3">
         <div className="bg-cream-300 rounded-full h-12 w-12 flex items-center justify-center">
-          <span className="font-semibold text-milk-500">{result.rating.toFixed(1)}</span>
+          <span className="font-semibold text-milk-500">{Number(result.rating).toFixed(1)}</span>
         </div>
       </div>
 
