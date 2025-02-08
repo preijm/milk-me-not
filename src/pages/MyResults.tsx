@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { MilkCard } from "@/components/MilkCard";
 import { useQuery } from "@tanstack/react-query";
@@ -7,10 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { EditMilkTest } from "@/components/milk-test/EditMilkTest";
 
 const MyResults = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [editingTest, setEditingTest] = useState<any>(null);
 
   const { data: results = [], isLoading, error, refetch } = useQuery({
     queryKey: ['my-milk-tests'],
@@ -79,7 +82,7 @@ const MyResults = () => {
                   variant="secondary"
                   size="icon"
                   className="bg-white hover:bg-gray-100"
-                  onClick={() => navigate(`/edit/${result.id}`)}
+                  onClick={() => setEditingTest(result)}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
@@ -95,6 +98,15 @@ const MyResults = () => {
             </div>
           ))}
         </div>
+
+        {editingTest && (
+          <EditMilkTest
+            test={editingTest}
+            open={!!editingTest}
+            onOpenChange={(open) => !open && setEditingTest(null)}
+            onSuccess={refetch}
+          />
+        )}
       </div>
     </div>
   );
