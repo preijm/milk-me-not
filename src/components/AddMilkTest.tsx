@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +11,6 @@ import { CountrySelect } from "./milk-test/CountrySelect";
 import { ShopSelect } from "./milk-test/ShopSelect";
 import { IngredientsSelect } from "./milk-test/IngredientsSelect";
 import { RatingSelect } from "./milk-test/RatingSelect";
-import { Separator } from "@/components/ui/separator";
 
 export const AddMilkTest = () => {
   const [rating, setRating] = useState(0);
@@ -117,8 +115,6 @@ export const AddMilkTest = () => {
         />
       </div>
 
-      <Separator />
-
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
         <CountrySelect
@@ -132,11 +128,9 @@ export const AddMilkTest = () => {
         />
       </div>
 
-      <Separator />
-
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Product Type</h2>
-        <div className="space-y-4">
+        <div className="flex flex-wrap gap-6">
           <div className="flex items-center space-x-2">
             <Checkbox
               id="barista"
@@ -179,8 +173,6 @@ export const AddMilkTest = () => {
         </div>
       </div>
 
-      <Separator />
-
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Ingredients</h2>
         <IngredientsSelect
@@ -193,25 +185,15 @@ export const AddMilkTest = () => {
         />
       </div>
 
-      <Separator />
-
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Judgment</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">Rating</label>
-            <RatingSelect rating={rating} setRating={setRating} />
-          </div>
-          <div>
-            <label className="text-sm font-medium mb-2 block">Notes</label>
-            <Textarea
-              placeholder="Tasting notes..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full"
-            />
-          </div>
-        </div>
+        <RatingSelect rating={rating} setRating={setRating} />
+        <Textarea
+          placeholder="Tasting notes..."
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className="w-full"
+        />
       </div>
 
       <Button 
