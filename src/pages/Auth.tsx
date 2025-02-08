@@ -37,7 +37,7 @@ const Auth = () => {
         });
         navigate("/dashboard");
       } else {
-        // Check if username is available
+        // Check if username is available before signup
         const { data: existingUser } = await supabase
           .from('profiles')
           .select('username')
@@ -50,6 +50,7 @@ const Auth = () => {
             description: "Please choose a different username.",
             variant: "destructive",
           });
+          setLoading(false);
           return;
         }
 
