@@ -83,6 +83,7 @@ export type Database = {
           shop: string | null
           type: string | null
           user_id: string | null
+          username: string | null
         }
         Insert: {
           brand: string
@@ -100,6 +101,7 @@ export type Database = {
           shop?: string | null
           type?: string | null
           user_id?: string | null
+          username?: string | null
         }
         Update: {
           brand?: string
@@ -117,6 +119,7 @@ export type Database = {
           shop?: string | null
           type?: string | null
           user_id?: string | null
+          username?: string | null
         }
         Relationships: [
           {

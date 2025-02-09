@@ -52,13 +52,13 @@ export const useMilkTestForm = () => {
         .from('shops')
         .select('country_code')
         .eq('name', shop)
-        .single();
+        .maybeSingle();
 
       const { data: profileData } = await supabase
         .from('profiles')
         .select('username')
         .eq('id', userData.user.id)
-        .single();
+        .maybeSingle();
 
       const { error } = await supabase
         .from('milk_tests')
@@ -75,7 +75,7 @@ export const useMilkTestForm = () => {
           notes,
           drink_preference: drinkPreference,
           user_id: userData.user.id,
-          username: profileData?.username
+          username: profileData?.username || null
         });
 
       if (error) throw error;
@@ -131,4 +131,3 @@ export const useMilkTestForm = () => {
     handleSubmit,
   };
 };
-
