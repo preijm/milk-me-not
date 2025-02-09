@@ -25,7 +25,7 @@ export const StatsOverview = ({ results }: { results: MilkTestResult[] }) => {
       <div className="grid grid-cols-3 gap-6">
         <div className="flex flex-col">
           <p className="text-gray-600 mb-2">Average Rating</p>
-          <p className="text-3xl font-bold text-gray-900">{avgRating}/5.0</p>
+          <p className="text-3xl font-bold text-gray-900">{avgRating}/10</p>
         </div>
         <div className="flex flex-col">
           <p className="text-gray-600 mb-2">Total Tests</p>
@@ -39,3 +39,4 @@ export const StatsOverview = ({ results }: { results: MilkTestResult[] }) => {
     </div>
   );
 };
+

@@ -186,7 +186,7 @@ const MyResults = () => {
                   <TableCell>{result.type}</TableCell>
                   <TableCell>
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
-                      <span className="font-semibold text-milk-500">{(Number(result.rating) * 2).toFixed(1)}</span>
+                      <span className="font-semibold text-milk-500">{Number(result.rating).toFixed(1)}</span>
                     </div>
                   </TableCell>
                   <TableCell className="max-w-xs truncate">{result.notes}</TableCell>

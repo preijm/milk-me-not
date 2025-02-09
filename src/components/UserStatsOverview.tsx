@@ -10,7 +10,7 @@ interface MilkTestResult {
 
 export const UserStatsOverview = ({ results }: { results: MilkTestResult[] }) => {
   const avgRating = results.length
-    ? ((results.reduce((acc, curr) => acc + curr.rating, 0) / results.length) * 2).toFixed(1)
+    ? (results.reduce((acc, curr) => acc + curr.rating, 0) / results.length).toFixed(1)
     : "0.0";
 
   const uniqueBrands = [...new Set(results.map((r) => r.brand))];
@@ -34,3 +34,4 @@ export const UserStatsOverview = ({ results }: { results: MilkTestResult[] }) =>
     </div>
   );
 };
+
