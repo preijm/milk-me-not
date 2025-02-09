@@ -10,7 +10,7 @@ interface MilkTestResult {
 
 export const UserStatsOverview = ({ results }: { results: MilkTestResult[] }) => {
   const avgRating = results.length
-    ? (results.reduce((acc, curr) => acc + curr.rating, 0) / results.length).toFixed(1)
+    ? ((results.reduce((acc, curr) => acc + curr.rating, 0) / results.length) * 2).toFixed(1)
     : "0.0";
 
   const uniqueBrands = [...new Set(results.map((r) => r.brand))];
@@ -20,7 +20,7 @@ export const UserStatsOverview = ({ results }: { results: MilkTestResult[] }) =>
       <div className="grid grid-cols-3 gap-6">
         <div className="flex flex-col">
           <p className="text-sm text-milk-500 mb-1">Average Rating</p>
-          <p className="text-2xl font-semibold text-gray-900">{avgRating}/5</p>
+          <p className="text-2xl font-semibold text-gray-900">{avgRating}/10</p>
         </div>
         <div className="flex flex-col">
           <p className="text-sm text-milk-500 mb-1">Total Tests</p>
