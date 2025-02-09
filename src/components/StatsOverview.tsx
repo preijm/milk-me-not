@@ -10,7 +10,7 @@ interface MilkTestResult {
 
 export const StatsOverview = ({ results }: { results: MilkTestResult[] }) => {
   const avgRating = results.length
-    ? ((results.reduce((acc, curr) => acc + curr.rating, 0) / results.length) * 2).toFixed(1)
+    ? (results.reduce((acc, curr) => acc + curr.rating, 0) / results.length).toFixed(1)
     : "0.0";
 
   const types = [...new Set(results.map((r) => r.type))];
@@ -18,22 +18,22 @@ export const StatsOverview = ({ results }: { results: MilkTestResult[] }) => {
   return (
     <div className="bg-cream-100 rounded-lg p-6 mb-8">
       <div className="flex items-center gap-3 mb-6">
-        <Milk className="w-6 h-6 text-milk-400" />
-        <h2 className="text-xl font-medium text-gray-900">Overview</h2>
+        <Milk className="w-8 h-8 text-gray-500" />
+        <h2 className="text-2xl font-semibold text-gray-900">Milk Taste Test Results</h2>
       </div>
 
       <div className="grid grid-cols-3 gap-6">
         <div className="flex flex-col">
-          <p className="text-sm text-milk-500 mb-1">Average Rating</p>
-          <p className="text-2xl font-semibold text-gray-900">{avgRating}/10</p>
+          <p className="text-gray-600 mb-2">Average Rating</p>
+          <p className="text-3xl font-bold text-gray-900">{avgRating}/5.0</p>
         </div>
         <div className="flex flex-col">
-          <p className="text-sm text-milk-500 mb-1">Total Tests</p>
-          <p className="text-2xl font-semibold text-gray-900">{results.length}</p>
+          <p className="text-gray-600 mb-2">Total Tests</p>
+          <p className="text-3xl font-bold text-gray-900">{results.length}</p>
         </div>
         <div className="flex flex-col">
-          <p className="text-sm text-milk-500 mb-1">Milk Types</p>
-          <p className="text-2xl font-semibold text-gray-900">{types.length}</p>
+          <p className="text-gray-600 mb-2">Milk Types</p>
+          <p className="text-3xl font-bold text-gray-900">{types.length}</p>
         </div>
       </div>
     </div>
