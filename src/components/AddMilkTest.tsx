@@ -27,7 +27,7 @@ export const AddMilkTest = () => {
       />
 
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Rating</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Judgement</h2>
         <RatingSelect 
           rating={formState.rating} 
           setRating={formSetters.setRating} 
@@ -37,6 +37,14 @@ export const AddMilkTest = () => {
           value={formState.notes}
           onChange={(e) => formSetters.setNotes(e.target.value)}
           className="w-full"
+        />
+      </div>
+
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
+        <ShopSelect
+          shop={formState.shop}
+          setShop={formSetters.setShop}
         />
       </div>
 
@@ -59,14 +67,6 @@ export const AddMilkTest = () => {
         <DrinkPreference
           preference={formState.drinkPreference}
           setPreference={formSetters.setDrinkPreference}
-        />
-      </div>
-
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
-        <ShopSelect
-          shop={formState.shop}
-          setShop={formSetters.setShop}
         />
       </div>
 
