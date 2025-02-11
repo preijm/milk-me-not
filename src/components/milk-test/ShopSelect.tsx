@@ -152,15 +152,16 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
           <PopoverContent 
             className="w-[90vw] sm:w-64 p-4" 
             align="center"
-            side={isMobile ? "bottom" : "right"}
+            side="bottom"
             sideOffset={8}
             style={isMobile ? {
               position: 'fixed',
-              top: '50%',
               left: '50%',
-              transform: 'translate(-50%, -50%)',
-              maxHeight: '90vh',
-              overflowY: 'auto'
+              transform: 'translateX(-50%)',
+              width: '90vw',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              zIndex: 50
             } : undefined}
           >
             <AddShopForm
