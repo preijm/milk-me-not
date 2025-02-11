@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ShopSelectProps {
   shop: string | null;
@@ -27,6 +27,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
   const [newShopName, setNewShopName] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const { data: countries = [] } = useQuery({
     queryKey: ['countries'],
@@ -170,7 +171,19 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
               <Plus className="h-4 w-4" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 p-2" align="center" side="top" sideOffset={4}>
+          <PopoverContent 
+            className="w-[90vw] sm:w-64 p-4" 
+            align={isMobile ? "center" : "start"}
+            side="bottom"
+            sideOffset={4}
+            avoidCollisions={false}
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
             <div className="space-y-4">
               <Input
                 placeholder="Shop name"
