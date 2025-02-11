@@ -30,6 +30,26 @@ export const IngredientsSelect = ({
 
   useEffect(() => {
     fetchIngredients();
+
+    // Set up realtime subscription
+    const channel = supabase
+      .channel('ingredients_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'ingredients'
+        },
+        () => {
+          fetchIngredients();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchIngredients = async () => {
@@ -37,6 +57,7 @@ export const IngredientsSelect = ({
       const { data, error } = await supabase
         .from('ingredients')
         .select('name')
+        .order('ordering', { ascending: true })
         .order('name');
       
       if (error) throw error;
@@ -156,4 +177,3 @@ export const IngredientsSelect = ({
     </div>
   );
 };
-
