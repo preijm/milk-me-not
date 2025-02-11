@@ -170,7 +170,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
               <Plus className="h-4 w-4" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-64 p-2">
+          <PopoverContent className="w-64 p-2" align="center" side="top" sideOffset={4}>
             <div className="space-y-4">
               <Input
                 placeholder="Shop name"
