@@ -1,6 +1,5 @@
-
 import React from "react";
-import { IceCream, Flame, Coffee, CupSoda } from "lucide-react";
+import { IceCream, Flame, Coffee } from "lucide-react";
 
 interface DrinkPreferenceProps {
   preference: string;
@@ -55,7 +54,7 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
         }`}
       >
-        <CupSoda className="w-8 h-8 mb-1" />
+        <Coffee className="w-8 h-8 mb-1 rotate-[15deg]" />
         <span className="text-sm">Tea</span>
       </button>
     </div>
