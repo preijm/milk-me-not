@@ -1,12 +1,13 @@
+
 import React, { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { IngredientTags } from "./ingredients/IngredientTags";
+import { AddIngredientForm } from "./ingredients/AddIngredientForm";
 
 interface IngredientsSelectProps {
   ingredients: string[];
@@ -32,7 +33,6 @@ export const IngredientsSelect = ({
   useEffect(() => {
     fetchIngredients();
 
-    // Set up realtime subscription
     const channel = supabase
       .channel('ingredients_changes')
       .on(
@@ -120,20 +120,11 @@ export const IngredientsSelect = ({
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2 items-center">
-        {allIngredients.map((ingredient) => (
-          <div
-            key={ingredient}
-            className={cn(
-              "px-3 py-1 rounded-full cursor-pointer text-sm transition-colors",
-              ingredients.includes(ingredient)
-                ? "bg-cream-300 text-gray-800"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            )}
-            onClick={() => toggleIngredient(ingredient)}
-          >
-            {ingredient}
-          </div>
-        ))}
+        <IngredientTags
+          ingredients={ingredients}
+          allIngredients={allIngredients}
+          onToggle={toggleIngredient}
+        />
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -156,32 +147,15 @@ export const IngredientsSelect = ({
               transform: 'translateX(-50%)',
             } : undefined}
           >
-            <div className="flex gap-2">
-              <Input
-                placeholder="Add new ingredient"
-                value={newIngredient}
-                onChange={(e) => setNewIngredient(e.target.value)}
-                className="flex-1"
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleAddIngredient();
-                  } else if (e.key === 'Escape') {
-                    setOpen(false);
-                    setNewIngredient("");
-                  }
-                }}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleAddIngredient}
-                disabled={!newIngredient}
-                className="bg-cream-300 hover:bg-cream-200 text-gray-800"
-              >
-                Add
-              </Button>
-            </div>
+            <AddIngredientForm
+              value={newIngredient}
+              onChange={setNewIngredient}
+              onAdd={handleAddIngredient}
+              onClose={() => {
+                setOpen(false);
+                setNewIngredient("");
+              }}
+            />
           </PopoverContent>
         </Popover>
       </div>
