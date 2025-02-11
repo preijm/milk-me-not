@@ -1,6 +1,6 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { Coffee, TeaCup } from "lucide-react";
+import { Coffee, CupSoda } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -84,7 +84,7 @@ export const ProductOptions = ({
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <Coffee className="w-5 h-5 text-amber-800" />
-        <TeaCup className="w-5 h-5 text-gray-900" />
+        <CupSoda className="w-5 h-5 text-gray-900" />
       </div>
       <div className="flex flex-wrap gap-6">
         {productTypes.map((type) => (
