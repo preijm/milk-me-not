@@ -151,7 +151,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
           </PopoverTrigger>
           <PopoverContent 
             className="p-0 w-[90vw] sm:w-64" 
-            align="start"
+            align="end"
             side="bottom"
             sideOffset={8}
             style={isMobile ? {
