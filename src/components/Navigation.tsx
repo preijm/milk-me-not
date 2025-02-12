@@ -32,6 +32,8 @@ export const Navigation = () => {
     { to: "/about", icon: Info, label: "About" },
   ];
 
+  const currentPage = links.find(link => link.to === location.pathname)?.label || "";
+
   const linkClasses = (isActive: boolean) => `
     flex items-center gap-2 px-4 py-2 rounded-md transition-colors 
     ${isActive ? "bg-cream-200 text-milk-500" : "hover:bg-cream-100 text-milk-400"}
@@ -42,13 +44,16 @@ export const Navigation = () => {
       {isMobile ? (
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <div className="flex items-center justify-between mb-2">
-            <CollapsibleTrigger className="p-2">
-              {isOpen ? (
-                <X className="h-6 w-6 text-milk-500" />
-              ) : (
-                <Menu className="h-6 w-6 text-milk-500" />
-              )}
-            </CollapsibleTrigger>
+            <div className="flex items-center gap-3">
+              <CollapsibleTrigger className="p-2">
+                {isOpen ? (
+                  <X className="h-6 w-6 text-milk-500" />
+                ) : (
+                  <Menu className="h-6 w-6 text-milk-500" />
+                )}
+              </CollapsibleTrigger>
+              <span className="text-milk-500 font-medium">{currentPage}</span>
+            </div>
             <AuthButton />
           </div>
           <CollapsibleContent>
