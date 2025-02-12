@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -150,7 +151,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
           </PopoverTrigger>
           <PopoverContent 
             className="p-0 w-[90vw] sm:w-64" 
-            align="end"
+            align={isMobile ? "center" : "end"}
             side="bottom"
             sideOffset={8}
           >
