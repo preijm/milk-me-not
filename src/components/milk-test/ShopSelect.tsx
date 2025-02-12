@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -150,37 +149,33 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
             </Button>
           </PopoverTrigger>
           <PopoverContent 
-            className="w-[90vw] sm:w-64 p-4" 
-            align="center"
+            className="p-0 w-[90vw] sm:w-64" 
+            align="start"
             side="bottom"
             sideOffset={8}
+            style={isMobile ? {
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              maxWidth: '90vw',
+              width: '100%',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              backgroundColor: 'white',
+              borderRadius: '0.5rem',
+              zIndex: 999,
+              boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+            } : undefined}
           >
-            <div 
-              style={isMobile ? {
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '90vw',
-                maxWidth: '400px',
-                maxHeight: '80vh',
-                overflowY: 'auto',
-                backgroundColor: 'white',
-                borderRadius: '0.5rem',
-                padding: '1rem',
-                zIndex: 999,
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
-              } : undefined}
-            >
-              <AddShopForm
-                newShopName={newShopName}
-                setNewShopName={setNewShopName}
-                selectedCountryCode={selectedCountryCode}
-                setSelectedCountryCode={setSelectedCountryCode}
-                onAdd={handleAddNewShop}
-                countries={countries}
-              />
-            </div>
+            <AddShopForm
+              newShopName={newShopName}
+              setNewShopName={setNewShopName}
+              selectedCountryCode={selectedCountryCode}
+              setSelectedCountryCode={setSelectedCountryCode}
+              onAdd={handleAddNewShop}
+              countries={countries}
+            />
           </PopoverContent>
         </Popover>
       </div>
