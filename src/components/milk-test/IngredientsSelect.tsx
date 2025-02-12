@@ -137,36 +137,25 @@ export const IngredientsSelect = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent 
-            className="p-0 w-[90vw] sm:w-64" 
-            align="start"
+            className="w-[90vw] sm:w-64 p-4" 
+            align="center"
             side="bottom"
             sideOffset={8}
             style={isMobile ? {
               position: 'fixed',
-              top: '50%',
               left: '50%',
-              transform: 'translate(-50%, -50%)',
-              maxWidth: '90vw',
-              width: '100%',
-              maxHeight: '80vh',
-              overflowY: 'auto',
-              backgroundColor: 'white',
-              borderRadius: '0.5rem',
-              zIndex: 9999,
-              boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.25)'
+              transform: 'translateX(-50%)',
             } : undefined}
           >
-            <div className="p-4">
-              <AddIngredientForm
-                value={newIngredient}
-                onChange={setNewIngredient}
-                onAdd={handleAddIngredient}
-                onClose={() => {
-                  setOpen(false);
-                  setNewIngredient("");
-                }}
-              />
-            </div>
+            <AddIngredientForm
+              value={newIngredient}
+              onChange={setNewIngredient}
+              onAdd={handleAddIngredient}
+              onClose={() => {
+                setOpen(false);
+                setNewIngredient("");
+              }}
+            />
           </PopoverContent>
         </Popover>
       </div>
