@@ -1,3 +1,4 @@
+
 import React from "react";
 import { StatsOverview } from "@/components/StatsOverview";
 import { MilkCharts } from "@/components/MilkCharts";
@@ -42,12 +43,19 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-milk-100 py-8 px-4">
-      <div className="container max-w-5xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-milk-50 to-cream-100 py-8 px-4 overflow-y-auto">
+      <div className="container max-w-6xl mx-auto space-y-8">
         <Navigation />
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
-        <StatsOverview results={results} />
-        <MilkCharts results={results} />
+        <div className="space-y-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-8 animate-fade-in">
+            Milk Insights Dashboard
+          </h1>
+          
+          <div className="grid gap-8 animate-fade-in">
+            <StatsOverview results={results} />
+            <MilkCharts results={results} />
+          </div>
+        </div>
       </div>
     </div>
   );
