@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   BarChart,
@@ -31,6 +30,15 @@ interface MilkTestResult {
 }
 
 const COLORS = ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6"];
+
+const chartConfig = {
+  rating: {
+    color: "#8b5cf6",
+  },
+  count: {
+    color: "#ec4899",
+  },
+};
 
 export const MilkCharts = ({ results }: { results: MilkTestResult[] }) => {
   const [selectedChart, setSelectedChart] = useState<'ratings' | 'types' | 'trends' | 'distribution'>('ratings');
@@ -88,6 +96,99 @@ export const MilkCharts = ({ results }: { results: MilkTestResult[] }) => {
     { id: 'distribution' as const, label: 'Rating Distribution' },
   ];
 
+  const renderChart = () => {
+    switch (selectedChart) {
+      case 'ratings':
+        return (
+          <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              dataKey="type" 
+              angle={-45}
+              textAnchor="end"
+              height={60}
+            />
+            <YAxis domain={[0, 5]} />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="avgRating" name="Average Rating" fill="#8b5cf6" />
+            <Bar dataKey="count" name="Number of Tests" fill="#ec4899" />
+          </BarChart>
+        );
+      case 'types':
+        return (
+          <PieChart>
+            <Pie
+              data={pieChartData}
+              dataKey="value"
+              nameKey="rating"
+              cx="50%"
+              cy="50%"
+              outerRadius={150}
+              label
+            >
+              {pieChartData.map((_, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        );
+      case 'trends':
+        return (
+          <LineChart data={movingAverageData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              dataKey="date"
+              angle={-45}
+              textAnchor="end"
+              height={60}
+            />
+            <YAxis domain={[0, 5]} />
+            <Tooltip />
+            <Legend />
+            <Line 
+              type="monotone" 
+              dataKey="rating" 
+              stroke="#8b5cf6" 
+              dot={true}
+              name="Rating"
+            />
+            <Line 
+              type="monotone" 
+              dataKey="movingAverage" 
+              stroke="#ec4899" 
+              dot={false}
+              name="Moving Average"
+            />
+          </LineChart>
+        );
+      case 'distribution':
+        return (
+          <AreaChart data={pieChartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              dataKey="rating"
+              angle={-45}
+              textAnchor="end"
+              height={60}
+            />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Area 
+              type="monotone" 
+              dataKey="value" 
+              stroke="#8b5cf6"
+              fill="#8b5cf6"
+              name="Number of Ratings"
+            />
+          </AreaChart>
+        );
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg p-6 shadow-lg">
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Milk Rating Analytics</h2>
@@ -109,94 +210,8 @@ export const MilkCharts = ({ results }: { results: MilkTestResult[] }) => {
       </div>
 
       <div className="h-[400px]">
-        <ChartContainer config={{}}>
-          {selectedChart === 'ratings' && (
-            <BarChart data={barChartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="type" 
-                angle={-45}
-                textAnchor="end"
-                height={60}
-              />
-              <YAxis domain={[0, 5]} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="avgRating" name="Average Rating" fill="#8b5cf6" />
-              <Bar dataKey="count" name="Number of Tests" fill="#ec4899" />
-            </BarChart>
-          )}
-
-          {selectedChart === 'types' && (
-            <PieChart>
-              <Pie
-                data={pieChartData}
-                dataKey="value"
-                nameKey="rating"
-                cx="50%"
-                cy="50%"
-                outerRadius={150}
-                label
-              >
-                {pieChartData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          )}
-
-          {selectedChart === 'trends' && (
-            <LineChart data={movingAverageData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="date"
-                angle={-45}
-                textAnchor="end"
-                height={60}
-              />
-              <YAxis domain={[0, 5]} />
-              <Tooltip />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="rating" 
-                stroke="#8b5cf6" 
-                dot={true}
-                name="Rating"
-              />
-              <Line 
-                type="monotone" 
-                dataKey="movingAverage" 
-                stroke="#ec4899" 
-                dot={false}
-                name="Moving Average"
-              />
-            </LineChart>
-          )}
-
-          {selectedChart === 'distribution' && (
-            <AreaChart data={pieChartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="rating"
-                angle={-45}
-                textAnchor="end"
-                height={60}
-              />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Area 
-                type="monotone" 
-                dataKey="value" 
-                stroke="#8b5cf6"
-                fill="#8b5cf6"
-                name="Number of Ratings"
-              />
-            </AreaChart>
-          )}
+        <ChartContainer config={chartConfig}>
+          {renderChart()}
         </ChartContainer>
       </div>
     </div>
