@@ -154,24 +154,33 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
             align="center"
             side="bottom"
             sideOffset={8}
-            style={isMobile ? {
-              position: 'fixed',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '90vw',
-              maxHeight: '80vh',
-              overflowY: 'auto',
-              zIndex: 50
-            } : undefined}
           >
-            <AddShopForm
-              newShopName={newShopName}
-              setNewShopName={setNewShopName}
-              selectedCountryCode={selectedCountryCode}
-              setSelectedCountryCode={setSelectedCountryCode}
-              onAdd={handleAddNewShop}
-              countries={countries}
-            />
+            <div 
+              style={isMobile ? {
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '90vw',
+                maxWidth: '400px',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+                backgroundColor: 'white',
+                borderRadius: '0.5rem',
+                padding: '1rem',
+                zIndex: 999,
+                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+              } : undefined}
+            >
+              <AddShopForm
+                newShopName={newShopName}
+                setNewShopName={setNewShopName}
+                selectedCountryCode={selectedCountryCode}
+                setSelectedCountryCode={setSelectedCountryCode}
+                onAdd={handleAddNewShop}
+                countries={countries}
+              />
+            </div>
           </PopoverContent>
         </Popover>
       </div>
