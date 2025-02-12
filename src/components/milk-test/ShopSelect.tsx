@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -154,20 +153,6 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
             align="end"
             side="bottom"
             sideOffset={8}
-            style={isMobile ? {
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              maxWidth: '90vw',
-              width: '100%',
-              maxHeight: '80vh',
-              overflowY: 'auto',
-              backgroundColor: 'white',
-              borderRadius: '0.5rem',
-              zIndex: 9999,
-              boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.25)'
-            } : undefined}
           >
             <div className="p-4">
               <AddShopForm
