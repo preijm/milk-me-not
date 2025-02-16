@@ -1,14 +1,15 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Checkbox } from "@/components/ui/checkbox";
 import { BrandSelect } from "./BrandSelect";
 import { ShopSelect } from "./ShopSelect";
 import { IngredientsSelect } from "./IngredientsSelect";
 import { RatingSelect } from "./RatingSelect";
+import { ProductOptions } from "./ProductOptions";
 import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
