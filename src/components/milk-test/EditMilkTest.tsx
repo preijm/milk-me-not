@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +32,8 @@ interface EditMilkTestProps {
     is_no_sugar?: boolean;
     rating: number;
     notes?: string;
+    product_type_keys?: string[];
+    shop_name?: string;
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -46,11 +47,8 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
   const [ingredients, setIngredients] = useState<string[]>(test.ingredients || []);
   const [newIngredient, setNewIngredient] = useState("");
   const [notes, setNotes] = useState(test.notes || "");
-  const [isBarista, setIsBarista] = useState(test.is_barista || false);
-  const [isUnsweetened, setIsUnsweetened] = useState(test.is_unsweetened || false);
-  const [isSpecialEdition, setIsSpecialEdition] = useState(test.is_special_edition || false);
-  const [isNoSugar, setIsNoSugar] = useState(test.is_no_sugar || false);
-  const [shop, setShop] = useState(test.shop || "");
+  const [selectedProductTypes, setSelectedProductTypes] = useState<string[]>(test.product_type_keys || []);
+  const [shop, setShop] = useState(test.shop_name || "");
   const [allIngredients, setAllIngredients] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -71,23 +69,52 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
     setIsSubmitting(true);
 
     try {
-      const { error } = await supabase
+      const { data: shopData } = await supabase
+        .from('shops')
+        .select('id')
+        .eq('name', shop)
+        .maybeSingle();
+
+      const { error: milkTestError } = await supabase
         .from('milk_tests')
         .update({
           brand_id: brandId,
           product_name: productName,
           ingredients,
-          shop,
-          is_barista: isBarista,
-          is_unsweetened: isUnsweetened,
-          is_special_edition: isSpecialEdition,
-          is_no_sugar: isNoSugar,
+          shop_id: shopData?.id || null,
           rating,
           notes,
         })
         .eq('id', test.id);
 
-      if (error) throw error;
+      if (milkTestError) throw milkTestError;
+
+      const { error: deleteError } = await supabase
+        .from('milk_test_product_types')
+        .delete()
+        .eq('milk_test_id', test.id);
+
+      if (deleteError) throw deleteError;
+
+      if (selectedProductTypes.length > 0) {
+        const { data: productTypes } = await supabase
+          .from('product_types')
+          .select('id, key')
+          .in('key', selectedProductTypes);
+
+        if (productTypes) {
+          const productTypeLinks = productTypes.map(pt => ({
+            milk_test_id: test.id,
+            product_type_id: pt.id
+          }));
+
+          const { error: linkError } = await supabase
+            .from('milk_test_product_types')
+            .insert(productTypeLinks);
+
+          if (linkError) throw linkError;
+        }
+      }
 
       toast({
         title: "Success",
@@ -121,7 +148,6 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
             <BrandSelect
               brandId={brandId}
               setBrandId={setBrandId}
-              defaultBrand={test.brand}
             />
             <Input
               placeholder="Product name"
@@ -145,60 +171,10 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
 
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-gray-900">Product Type</h2>
-            <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="barista-edit"
-                  checked={isBarista}
-                  onCheckedChange={(checked) => setIsBarista(checked as boolean)}
-                />
-                <label
-                  htmlFor="barista-edit"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Barista Version
-                </label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="unsweetened-edit"
-                  checked={isUnsweetened}
-                  onCheckedChange={(checked) => setIsUnsweetened(checked as boolean)}
-                />
-                <label
-                  htmlFor="unsweetened-edit"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Unsweetened
-                </label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="special-edit"
-                  checked={isSpecialEdition}
-                  onCheckedChange={(checked) => setIsSpecialEdition(checked as boolean)}
-                />
-                <label
-                  htmlFor="special-edit"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  Special Edition
-                </label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="no-sugar-edit"
-                  checked={isNoSugar}
-                  onCheckedChange={(checked) => setIsNoSugar(checked as boolean)}
-                />
-                <label
-                  htmlFor="no-sugar-edit"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  No Sugar
-                </label>
-              </div>
-            </div>
+            <ProductOptions
+              selectedTypes={selectedProductTypes}
+              setSelectedTypes={setSelectedProductTypes}
+            />
           </div>
 
           <Separator />

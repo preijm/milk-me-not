@@ -69,6 +69,46 @@ export type Database = {
         }
         Relationships: []
       }
+      milk_test_product_types: {
+        Row: {
+          created_at: string
+          milk_test_id: string
+          product_type_id: string
+        }
+        Insert: {
+          created_at?: string
+          milk_test_id: string
+          product_type_id: string
+        }
+        Update: {
+          created_at?: string
+          milk_test_id?: string
+          product_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milk_test_product_types_milk_test_id_fkey"
+            columns: ["milk_test_id"]
+            isOneToOne: false
+            referencedRelation: "milk_tests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "milk_test_product_types_milk_test_id_fkey"
+            columns: ["milk_test_id"]
+            isOneToOne: false
+            referencedRelation: "milk_tests_with_brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "milk_test_product_types_product_type_id_fkey"
+            columns: ["product_type_id"]
+            isOneToOne: false
+            referencedRelation: "product_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       milk_tests: {
         Row: {
           brand_id: string
@@ -77,14 +117,10 @@ export type Database = {
           drink_preference: string | null
           id: string
           ingredients: string[] | null
-          is_barista: boolean | null
-          is_no_sugar: boolean | null
-          is_special_edition: boolean | null
-          is_unsweetened: boolean | null
           notes: string | null
           product_name: string | null
           rating: number
-          shop: string | null
+          shop_id: string | null
           type: string | null
           user_id: string | null
           username: string | null
@@ -96,14 +132,10 @@ export type Database = {
           drink_preference?: string | null
           id?: string
           ingredients?: string[] | null
-          is_barista?: boolean | null
-          is_no_sugar?: boolean | null
-          is_special_edition?: boolean | null
-          is_unsweetened?: boolean | null
           notes?: string | null
           product_name?: string | null
           rating: number
-          shop?: string | null
+          shop_id?: string | null
           type?: string | null
           user_id?: string | null
           username?: string | null
@@ -115,14 +147,10 @@ export type Database = {
           drink_preference?: string | null
           id?: string
           ingredients?: string[] | null
-          is_barista?: boolean | null
-          is_no_sugar?: boolean | null
-          is_special_edition?: boolean | null
-          is_unsweetened?: boolean | null
           notes?: string | null
           product_name?: string | null
           rating?: number
-          shop?: string | null
+          shop_id?: string | null
           type?: string | null
           user_id?: string | null
           username?: string | null
@@ -140,6 +168,13 @@ export type Database = {
             columns: ["brand_id"]
             isOneToOne: false
             referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "milk_tests_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
             referencedColumns: ["id"]
           },
         ]
@@ -232,14 +267,14 @@ export type Database = {
           drink_preference: string | null
           id: string | null
           ingredients: string[] | null
-          is_barista: boolean | null
-          is_no_sugar: boolean | null
-          is_special_edition: boolean | null
-          is_unsweetened: boolean | null
           notes: string | null
           product_name: string | null
+          product_type_keys: string[] | null
+          product_type_names: string[] | null
           rating: number | null
-          shop: string | null
+          shop_country_code: string | null
+          shop_id: string | null
+          shop_name: string | null
           type: string | null
           user_id: string | null
           username: string | null
@@ -258,6 +293,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "brands"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "milk_tests_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shops_country_code_fkey"
+            columns: ["shop_country_code"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["code"]
           },
         ]
       }

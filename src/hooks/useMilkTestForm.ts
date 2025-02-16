@@ -11,10 +11,7 @@ export const useMilkTestForm = () => {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [newIngredient, setNewIngredient] = useState("");
   const [notes, setNotes] = useState("");
-  const [isBarista, setIsBarista] = useState(false);
-  const [isUnsweetened, setIsUnsweetened] = useState(false);
-  const [isSpecialEdition, setIsSpecialEdition] = useState(false);
-  const [isNoSugar, setIsNoSugar] = useState(false);
+  const [selectedProductTypes, setSelectedProductTypes] = useState<string[]>([]);
   const [shop, setShop] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allIngredients, setAllIngredients] = useState<string[]>([]);
@@ -51,7 +48,7 @@ export const useMilkTestForm = () => {
 
       const { data: shopData } = await supabase
         .from('shops')
-        .select('country_code')
+        .select('id')
         .eq('name', shop)
         .maybeSingle();
 
@@ -61,26 +58,45 @@ export const useMilkTestForm = () => {
         .eq('id', userData.user.id)
         .maybeSingle();
 
-      const { error } = await supabase
+      // Insert the milk test
+      const { data: milkTest, error: milkTestError } = await supabase
         .from('milk_tests')
         .insert({
           brand_id: brandId,
           product_name: productName,
           ingredients,
-          country: shopData?.country_code || null,
-          shop,
-          is_barista: isBarista,
-          is_unsweetened: isUnsweetened,
-          is_special_edition: isSpecialEdition,
-          is_no_sugar: isNoSugar,
+          shop_id: shopData?.id || null,
           rating,
           notes,
           drink_preference: drinkPreference,
           user_id: userData.user.id,
           username: profileData?.username || null
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (milkTestError) throw milkTestError;
+
+      // Insert product type relationships
+      if (selectedProductTypes.length > 0) {
+        const { data: productTypes } = await supabase
+          .from('product_types')
+          .select('id, key')
+          .in('key', selectedProductTypes);
+
+        if (productTypes) {
+          const productTypeLinks = productTypes.map(pt => ({
+            milk_test_id: milkTest.id,
+            product_type_id: pt.id
+          }));
+
+          const { error: linkError } = await supabase
+            .from('milk_test_product_types')
+            .insert(productTypeLinks);
+
+          if (linkError) throw linkError;
+        }
+      }
 
       toast({
         title: "Test added!",
@@ -108,10 +124,7 @@ export const useMilkTestForm = () => {
       ingredients,
       newIngredient,
       notes,
-      isBarista,
-      isUnsweetened,
-      isSpecialEdition,
-      isNoSugar,
+      selectedProductTypes,
       shop,
       isSubmitting,
       allIngredients,
@@ -124,10 +137,7 @@ export const useMilkTestForm = () => {
       setIngredients,
       setNewIngredient,
       setNotes,
-      setIsBarista,
-      setIsUnsweetened,
-      setIsSpecialEdition,
-      setIsNoSugar,
+      setSelectedProductTypes,
       setShop,
       setAllIngredients,
       setDrinkPreference,

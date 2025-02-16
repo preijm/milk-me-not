@@ -51,14 +51,8 @@ export const AddMilkTest = () => {
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Product Type</h2>
         <ProductOptions
-          isBarista={formState.isBarista}
-          setIsBarista={formSetters.setIsBarista}
-          isUnsweetened={formState.isUnsweetened}
-          setIsUnsweetened={formSetters.setIsUnsweetened}
-          isSpecialEdition={formState.isSpecialEdition}
-          setIsSpecialEdition={formSetters.setIsSpecialEdition}
-          isNoSugar={formState.isNoSugar}
-          setIsNoSugar={formSetters.setIsNoSugar}
+          selectedTypes={formState.selectedProductTypes}
+          setSelectedTypes={formSetters.setSelectedProductTypes}
         />
       </div>
 
