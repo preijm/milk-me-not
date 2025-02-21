@@ -2,23 +2,33 @@ import React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Input } from "@/components/ui/input";
 import { CircleDollarSign } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+
 interface PriceInputProps {
   price: string;
   setPrice: (price: string) => void;
 }
+
 interface Currency {
   symbol: string;
   code: string;
   name: string;
 }
+
 export const PriceInput = ({
   price,
   setPrice
 }: PriceInputProps) => {
   const [currency, setCurrency] = React.useState("€");
+
   const {
     data: currencies = []
   } = useQuery({
@@ -35,12 +45,13 @@ export const PriceInput = ({
       return data as Currency[];
     }
   });
+
   const handlePriceChange = (value: number[]) => {
     setPrice(value[0].toFixed(2));
   };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Only allow numbers and one decimal point with up to 2 decimal places
     if (value === "" || /^\d*\.?\d{0,2}$/.test(value)) {
       const numericValue = parseFloat(value);
       if (isNaN(numericValue) || numericValue <= 5) {
@@ -48,7 +59,9 @@ export const PriceInput = ({
       }
     }
   };
+
   const selectedCurrency = currencies.find(curr => curr.symbol === currency);
+
   return <div className="space-y-2 w-full">
       <div className="flex items-center gap-2">
         <SliderPrimitive.Root value={[parseFloat(price) || 0]} onValueChange={handlePriceChange} min={0} max={5} step={0.01} className="relative flex w-full touch-none select-none items-center">
@@ -77,7 +90,12 @@ export const PriceInput = ({
                 </SelectItem>)}
             </SelectContent>
           </Select>
-          <Input type="text" value={price} onChange={handleInputChange} className="w-20text-right" />
+          <Input 
+            type="text" 
+            value={price} 
+            onChange={handleInputChange} 
+            className="w-16 text-right" 
+          />
         </div>
       </div>
     </div>;
