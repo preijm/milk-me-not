@@ -2,7 +2,7 @@
 import React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Input } from "@/components/ui/input";
-import { DollarSign } from "lucide-react";
+import { Coins } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -56,18 +56,18 @@ export const PriceInput = ({ price, setPrice }: PriceInputProps) => {
             <SliderPrimitive.Range className="absolute h-full bg-cream-300" />
           </SliderPrimitive.Track>
           <SliderPrimitive.Thumb className="block cursor-pointer select-none touch-none">
-            <DollarSign className="h-5 w-5" />
+            <Coins className="h-5 w-5" />
           </SliderPrimitive.Thumb>
         </SliderPrimitive.Root>
         <div className="flex items-center gap-1 min-w-[120px]">
           <Select value={currency} onValueChange={setCurrency}>
-            <SelectTrigger className="w-[60px]">
+            <SelectTrigger className="w-[40px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {currencies.map((curr) => (
                 <SelectItem key={curr.name} value={curr.symbol}>
-                  {curr.symbol} {curr.name}
+                  {curr.symbol}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -76,7 +76,7 @@ export const PriceInput = ({ price, setPrice }: PriceInputProps) => {
             type="text"
             value={price}
             onChange={handleInputChange}
-            className="w-16 text-right"
+            className="w-12 text-right"
           />
         </div>
       </div>
