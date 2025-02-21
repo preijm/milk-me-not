@@ -6,8 +6,7 @@ import {
   CircleDollarSign, 
   Euro,
   PoundSterling,
-  JapaneseYen,
-  Currency
+  JapaneseYen
 } from "lucide-react";
 import {
   Select,
@@ -42,10 +41,11 @@ export const PriceInput = ({
   } = useQuery({
     queryKey: ["currencies"],
     queryFn: async () => {
-      const {
-        data,
-        error
-      } = await supabase.from('currencies').select('symbol, code, name, ordering').order('ordering');
+      const { data, error } = await supabase
+        .from('currencies')
+        .select('*')
+        .order('ordering');
+      
       if (error) {
         console.error('Error fetching currencies:', error);
         throw error;

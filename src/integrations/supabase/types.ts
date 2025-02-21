@@ -54,6 +54,7 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          ordering: number
           symbol: string
         }
         Insert: {
@@ -61,6 +62,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          ordering?: number
           symbol: string
         }
         Update: {
@@ -68,6 +70,7 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          ordering?: number
           symbol?: string
         }
         Relationships: []
