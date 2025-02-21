@@ -1,53 +1,43 @@
-
 import React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 import { Input } from "@/components/ui/input";
 import { CircleDollarSign } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
 interface PriceInputProps {
   price: string;
   setPrice: (price: string) => void;
 }
-
 interface Currency {
   symbol: string;
   code: string;
   name: string;
 }
-
-export const PriceInput = ({ price, setPrice }: PriceInputProps) => {
+export const PriceInput = ({
+  price,
+  setPrice
+}: PriceInputProps) => {
   const [currency, setCurrency] = React.useState("€");
-
-  const { data: currencies = [] } = useQuery({
+  const {
+    data: currencies = []
+  } = useQuery({
     queryKey: ["currencies"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('currencies')
-        .select('symbol, code, name')
-        .order('code');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('currencies').select('symbol, code, name').order('code');
       if (error) {
         console.error('Error fetching currencies:', error);
         throw error;
       }
-      
       return data as Currency[];
-    },
+    }
   });
-
   const handlePriceChange = (value: number[]) => {
     setPrice(value[0].toFixed(2));
   };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Only allow numbers and one decimal point with up to 2 decimal places
@@ -58,20 +48,10 @@ export const PriceInput = ({ price, setPrice }: PriceInputProps) => {
       }
     }
   };
-
   const selectedCurrency = currencies.find(curr => curr.symbol === currency);
-
-  return (
-    <div className="space-y-2 w-full">
+  return <div className="space-y-2 w-full">
       <div className="flex items-center gap-2">
-        <SliderPrimitive.Root
-          value={[parseFloat(price) || 0]}
-          onValueChange={handlePriceChange}
-          min={0}
-          max={5}
-          step={0.01}
-          className="relative flex w-full touch-none select-none items-center"
-        >
+        <SliderPrimitive.Root value={[parseFloat(price) || 0]} onValueChange={handlePriceChange} min={0} max={5} step={0.01} className="relative flex w-full touch-none select-none items-center">
           <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-secondary">
             <SliderPrimitive.Range className="absolute h-full bg-cream-300" />
           </SliderPrimitive.Track>
@@ -87,26 +67,18 @@ export const PriceInput = ({ price, setPrice }: PriceInputProps) => {
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {currencies.map((curr) => (
-                <SelectItem key={curr.code} value={curr.symbol}>
+              {currencies.map(curr => <SelectItem key={curr.code} value={curr.symbol}>
                   <span className="inline-flex items-center gap-2">
                     {curr.symbol}
                     <span className="text-muted-foreground text-sm">
                       {curr.code}
                     </span>
                   </span>
-                </SelectItem>
-              ))}
+                </SelectItem>)}
             </SelectContent>
           </Select>
-          <Input
-            type="text"
-            value={price}
-            onChange={handleInputChange}
-            className="w-20 text-right"
-          />
+          <Input type="text" value={price} onChange={handleInputChange} className="w-15 text-right" />
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
