@@ -16,6 +16,7 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
   const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string }>>([]);
   const [inputValue, setInputValue] = useState(defaultBrand || "");
   const [showAddNew, setShowAddNew] = useState(false);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { toast } = useToast();
 
   const { data: brands = [] } = useQuery({
@@ -54,6 +55,7 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
       brand => brand.name.toLowerCase() === inputValue.trim().toLowerCase()
     );
     setShowAddNew(!exactMatch && inputValue.trim() !== '');
+    setIsDropdownVisible(true);
   }, [inputValue, brands]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,8 +65,7 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
   const handleSelectBrand = (selectedBrand: { id: string; name: string }) => {
     setInputValue(selectedBrand.name);
     setBrandId(selectedBrand.id);
-    setSuggestions([]); 
-    setShowAddNew(false);
+    setIsDropdownVisible(false);
   };
 
   const handleAddNewBrand = async () => {
@@ -92,8 +93,7 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
     });
     
     setBrandId(data.id);
-    setSuggestions([]);
-    setShowAddNew(false);
+    setIsDropdownVisible(false);
   };
 
   return (
@@ -102,22 +102,21 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
         placeholder="Enter brand name..."
         value={inputValue}
         onChange={handleInputChange}
+        onFocus={() => setIsDropdownVisible(true)}
         onBlur={() => {
-          setSuggestions([]);
-          setShowAddNew(false);
+          setTimeout(() => {
+            setIsDropdownVisible(false);
+          }, 200);
         }}
         className="w-full"
       />
-      {(suggestions.length > 0 || showAddNew) && (
+      {isDropdownVisible && (suggestions.length > 0 || showAddNew) && (
         <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
           {suggestions.map((suggestion) => (
             <div
               key={suggestion.id}
               className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                handleSelectBrand(suggestion);
-              }}
+              onMouseDown={() => handleSelectBrand(suggestion)}
             >
               {suggestion.name}
             </div>
@@ -125,10 +124,7 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
           {showAddNew && (
             <div
               className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center text-gray-700"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                handleAddNewBrand();
-              }}
+              onMouseDown={handleAddNewBrand}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add "{inputValue.trim()}"
