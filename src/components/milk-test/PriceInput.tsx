@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Input } from "@/components/ui/input";
+import * as SliderPrimitive from "@radix-ui/react-slider";
 
 interface PriceInputProps {
   price: string;
@@ -8,23 +8,32 @@ interface PriceInputProps {
 }
 
 export const PriceInput = ({ price, setPrice }: PriceInputProps) => {
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow numbers and one decimal point
-    if (value === "" || /^\d*\.?\d{0,2}$/.test(value)) {
-      setPrice(value);
-    }
+  const handlePriceChange = (value: number[]) => {
+    setPrice(value[0].toFixed(2));
   };
 
   return (
-    <div>
-      <Input
-        type="text"
-        placeholder="Enter price..."
-        value={price}
-        onChange={handlePriceChange}
-        className="w-full"
-      />
+    <div className="space-y-2 w-full">
+      <div className="flex items-center gap-2">
+        <SliderPrimitive.Root
+          value={[parseFloat(price) || 0]}
+          onValueChange={handlePriceChange}
+          min={0}
+          max={10}
+          step={0.1}
+          className="relative flex w-full touch-none select-none items-center"
+        >
+          <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-secondary">
+            <SliderPrimitive.Range className="absolute h-full bg-cream-300" />
+          </SliderPrimitive.Track>
+          <SliderPrimitive.Thumb className="block cursor-pointer select-none touch-none">
+            <span className="text-lg">€</span>
+          </SliderPrimitive.Thumb>
+        </SliderPrimitive.Root>
+        <span className="min-w-[4ch] text-right flex items-center justify-center bg-cream-300 rounded-full h-8 w-8 font-semibold">
+          {parseFloat(price || "0").toFixed(2)}
+        </span>
+      </div>
     </div>
   );
 };
