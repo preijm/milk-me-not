@@ -77,7 +77,7 @@ export const PriceInput = ({
                 </SelectItem>)}
             </SelectContent>
           </Select>
-          <Input type="text" value={price} onChange={handleInputChange} className="w-15 text-right" />
+          <Input type="text" value={price} onChange={handleInputChange} className="w-20text-right" />
         </div>
       </div>
     </div>;
