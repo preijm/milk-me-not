@@ -34,7 +34,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
           videoRef.current.play();
         }
         
-        requestAnimationFrame(scanBarcode);
+        scanBarcode();
       } catch (error) {
         console.error("Error accessing camera:", error);
         toast({
@@ -49,24 +49,20 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
     const scanBarcode = async () => {
       if (!isScanning || !videoRef.current || !canvasRef.current) return;
       
-      try {
-        // In a real implementation, you would use a barcode scanning library like ZXing or Quagga
-        // For this example, we're simulating a successful scan
-        
-        // Wait a bit to simulate scanning
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Simulate a barcode scan result
-        const mockBarcode = "123456789012"; // Example UPC/EAN code
-        
-        // Pass the barcode data back
-        onScan(mockBarcode);
-        
-        // Stop scanning after successful scan
-        setIsScanning(false);
-      } catch (error) {
-        console.error("Error scanning barcode:", error);
-      }
+      // In a real implementation, you would use a barcode scanning library like ZXing or Quagga
+      // For this example, we're simulating a successful scan
+      
+      // Wait a bit to simulate scanning
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Simulate a barcode scan result
+      const mockBarcode = "3017620422003"; // Example barcode (Nutella)
+      
+      // Pass the barcode data back
+      onScan(mockBarcode);
+      
+      // Stop scanning after successful scan
+      setIsScanning(false);
     };
 
     startCamera();
@@ -77,7 +73,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         stream.getTracks().forEach(track => track.stop());
       }
     };
-  }, [open, onScan, toast]);
+  }, [open, onScan, toast, isScanning]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

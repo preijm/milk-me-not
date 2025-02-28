@@ -6,6 +6,8 @@ import { BarcodeScanner } from "./BarcodeScanner";
 import { BarcodeResultDialog } from "./BarcodeResultDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Camera } from "lucide-react";
 
 interface ProductInformationProps {
   brandId: string;
@@ -24,6 +26,8 @@ export const ProductInformation = ({
   const [isResultDialogOpen, setIsResultDialogOpen] = useState(false);
   const [scannedBrandName, setScannedBrandName] = useState("");
   const [scannedProductName, setScannedProductName] = useState("");
+  const [productUrl, setProductUrl] = useState<string | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleScanBarcode = () => {
@@ -32,33 +36,53 @@ export const ProductInformation = ({
 
   const handleBarcodeScan = async (barcodeData: string) => {
     setIsScannerOpen(false);
-    
-    // In a real implementation, you would make an API call to a product database
-    // using the barcode data. For this example, we'll simulate a response.
+    setIsLoading(true);
+    setIsResultDialogOpen(true);
     
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Fetch product data from Open Food Facts API
+      const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcodeData}.json`);
+      const data = await response.json();
       
-      // For demo purposes, using the barcode to generate mock data
-      const mockBrandName = `Brand ${barcodeData.substring(0, 3)}`;
-      const mockProductName = `Product ${barcodeData.substring(3, 7)}`;
+      console.log("Open Food Facts API response:", data);
       
-      setScannedBrandName(mockBrandName);
-      setScannedProductName(mockProductName);
-      setIsResultDialogOpen(true);
-      
-      toast({
-        title: "Barcode Scanned",
-        description: `Barcode: ${barcodeData}`,
-      });
+      if (data.status === 1 && data.product) {
+        const brandName = data.product.brands || "Unknown brand";
+        const productName = data.product.product_name || "Unknown product";
+        const url = `https://world.openfoodfacts.org/product/${barcodeData}`;
+        
+        setScannedBrandName(brandName);
+        setScannedProductName(productName);
+        setProductUrl(url);
+        
+        toast({
+          title: "Product Found",
+          description: `Found: ${brandName} - ${productName}`,
+        });
+      } else {
+        setScannedBrandName("");
+        setScannedProductName("");
+        setProductUrl(undefined);
+        
+        toast({
+          title: "Product Not Found",
+          description: "No product information found for this barcode.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
-      console.error("Error processing barcode:", error);
+      console.error("Error fetching product data:", error);
       toast({
-        title: "Scan Error",
-        description: "Failed to process barcode data.",
+        title: "API Error",
+        description: "Failed to get product information.",
         variant: "destructive",
       });
+      
+      setScannedBrandName("");
+      setScannedProductName("");
+      setProductUrl(undefined);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -134,17 +158,28 @@ export const ProductInformation = ({
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-900">Product Information</h2>
-      <BrandSelect 
-        brandId={brandId} 
-        setBrandId={setBrandId}
-        onScanClick={handleScanBarcode}
-      />
-      <ProductSelect
-        brandId={brandId}
-        productId={productId}
-        setProductId={setProductId}
-        onScanClick={handleScanBarcode}
-      />
+      <div className="flex items-start gap-2">
+        <div className="flex-1 space-y-4">
+          <BrandSelect 
+            brandId={brandId} 
+            setBrandId={setBrandId}
+          />
+          <ProductSelect
+            brandId={brandId}
+            productId={productId}
+            setProductId={setProductId}
+          />
+        </div>
+        <Button 
+          variant="outline" 
+          size="lg" 
+          className="flex-shrink-0 h-full min-h-20"
+          onClick={handleScanBarcode}
+          type="button"
+        >
+          <Camera className="h-8 w-8" />
+        </Button>
+      </div>
       
       <BarcodeScanner 
         open={isScannerOpen}
@@ -157,7 +192,9 @@ export const ProductInformation = ({
         onClose={() => setIsResultDialogOpen(false)}
         brandName={scannedBrandName}
         productName={scannedProductName}
+        productUrl={productUrl}
         onConfirm={handleConfirmProduct}
+        isLoading={isLoading}
       />
     </div>
   );
