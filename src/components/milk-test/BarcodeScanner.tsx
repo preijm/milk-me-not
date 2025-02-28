@@ -282,6 +282,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
                 ref={scannerRef} 
                 className="absolute inset-0 overflow-hidden bg-black"
               >
+                {/* Only show camera icon when scanning is active and permission isn't false */}
                 {isScanning && hasPermission !== false && (
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 text-white">
                     <Camera className="h-8 w-8 animate-pulse" />
