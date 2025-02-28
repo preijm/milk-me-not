@@ -39,7 +39,10 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
           videoRef.current.play();
         }
         
-        scanBarcode();
+        // Start barcode scanning after camera is initialized
+        setTimeout(() => {
+          scanBarcode();
+        }, 1000);
       } catch (error) {
         console.error("Error accessing camera:", error);
         setHasPermission(false);
@@ -89,7 +92,17 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       setIsScanning(false);
     };
 
-    startCamera();
+    if (open) {
+      // Reset states when opening
+      setHasPermission(null);
+      startCamera();
+    } else {
+      // Clean up when closing
+      setIsScanning(false);
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    }
 
     return () => {
       setIsScanning(false);
@@ -97,7 +110,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         stream.getTracks().forEach(track => track.stop());
       }
     };
-  }, [open, onScan, toast, isScanning]);
+  }, [open, onScan, toast]);
 
   // Function to manually retry camera access
   const retryAccess = () => {
