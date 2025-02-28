@@ -19,93 +19,140 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
   const { toast } = useToast();
 
   useEffect(() => {
-    // Initialize and start Quagga when dialog opens
-    const initQuagga = () => {
-      if (!open || !scannerRef.current) return;
+    // Clean up Quagga when component unmounts or dialog closes
+    const cleanupQuagga = () => {
+      console.log("Cleaning up QuaggaJS...");
+      if (isScanning) {
+        try {
+          Quagga.stop();
+        } catch (err) {
+          console.error("Error stopping Quagga:", err);
+        }
+        setIsScanning(false);
+      }
+    };
+
+    // Only initialize when the dialog is open
+    if (!open) {
+      console.log("Dialog closed, cleaning up");
+      cleanupQuagga();
+      return;
+    }
+
+    console.log("Dialog opened, initializing scanner");
+    setHasPermission(null); // Reset permission state
+
+    // Initialize Quagga with a slight delay to ensure DOM is ready
+    const initTimer = setTimeout(() => {
+      if (!scannerRef.current) {
+        console.error("Scanner reference not available");
+        return;
+      }
 
       console.log("Initializing QuaggaJS scanner...");
       
       setIsScanning(true);
       
-      Quagga.init({
-        inputStream: {
-          name: "Live",
-          type: "LiveStream",
-          target: scannerRef.current,
-          constraints: {
-            facingMode: "environment",
-            width: { min: 640 },
-            height: { min: 480 },
-            aspectRatio: { min: 1, max: 2 }
-          },
-        },
-        locator: {
-          patchSize: "medium",
-          halfSample: true
-        },
-        numOfWorkers: navigator.hardwareConcurrency || 4,
-        decoder: {
-          readers: [
-            "ean_reader",
-            "ean_8_reader",
-            "upc_reader",
-            "code_128_reader",
-            "code_39_reader"
-          ]
-        },
-        locate: true
-      }, function(err) {
-        if (err) {
-          console.error("QuaggaJS initialization error:", err);
-          setHasPermission(false);
-          setIsScanning(false);
+      // First check if we can access the camera
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(stream => {
+          // Stop the temp stream immediately
+          stream.getTracks().forEach(track => track.stop());
           
+          // Now initialize Quagga
+          Quagga.init({
+            inputStream: {
+              name: "Live",
+              type: "LiveStream",
+              target: scannerRef.current,
+              constraints: {
+                facingMode: "environment",
+                // Don't use excessive resolution as it can cause performance issues
+                width: { min: 320, ideal: 640, max: 1280 },
+                height: { min: 240, ideal: 480, max: 720 },
+                aspectRatio: { min: 1, max: 2 }
+              },
+            },
+            locator: {
+              patchSize: "medium",
+              halfSample: true
+            },
+            numOfWorkers: 2, // Lower for better performance on mobile
+            frequency: 10, // How often to scan for barcodes
+            decoder: {
+              readers: [
+                "ean_reader",
+                "ean_8_reader",
+                "upc_reader",
+                "code_128_reader",
+                "code_39_reader"
+              ]
+            },
+            locate: true
+          }, function(err) {
+            if (err) {
+              console.error("QuaggaJS initialization error:", err);
+              setHasPermission(false);
+              setIsScanning(false);
+              
+              toast({
+                title: "Camera Error",
+                description: "Could not access camera: " + err.message,
+                variant: "destructive",
+              });
+              return;
+            }
+            
+            console.log("QuaggaJS initialized successfully");
+            setHasPermission(true);
+            
+            // Start detection once initialized
+            Quagga.start();
+            
+            // Add appropriate styles to video element
+            if (scannerRef.current) {
+              const videoEl = scannerRef.current.querySelector("video");
+              if (videoEl) {
+                videoEl.classList.add("w-full", "h-full", "object-cover");
+                videoEl.style.position = "absolute";
+                videoEl.style.top = "0";
+                videoEl.style.left = "0";
+              }
+            }
+          });
+
+          // Set up barcode detection handlers
+          Quagga.onDetected((result) => {
+            if (result && result.codeResult && result.codeResult.code) {
+              console.log("Barcode detected:", result.codeResult.code);
+              handleBarcodeResult(result.codeResult.code);
+            }
+          });
+
+          // Set up processed handler for debugging
+          Quagga.onProcessed((result) => {
+            if (!result) return;
+            
+            const drawingCanvas = document.querySelector('canvas.drawingBuffer') as HTMLCanvasElement;
+            if (drawingCanvas) {
+              drawingCanvas.style.position = 'absolute';
+              drawingCanvas.style.top = '0';
+              drawingCanvas.style.left = '0';
+              drawingCanvas.style.width = '100%';
+              drawingCanvas.style.height = '100%';
+            }
+          });
+        })
+        .catch(err => {
+          console.error("Camera access denied:", err);
+          setHasPermission(false);
           toast({
-            title: "Camera Error",
-            description: "Could not access camera: " + err.message,
+            title: "Camera Access Denied",
+            description: "Please allow camera access to scan barcodes",
             variant: "destructive",
           });
-          return;
-        }
-        
-        console.log("QuaggaJS initialized successfully");
-        setHasPermission(true);
-        
-        // Start detection once initialized
-        Quagga.start();
-        
-        // Add a class to properly style the video element
-        if (scannerRef.current) {
-          const videoEl = scannerRef.current.querySelector("video");
-          if (videoEl) {
-            videoEl.classList.add("absolute", "top-0", "left-0", "w-full", "h-full", "object-cover");
-          }
-        }
-      });
-
-      // Set up barcode detection handlers
-      Quagga.onDetected((result) => {
-        if (result && result.codeResult && result.codeResult.code) {
-          console.log("Barcode detected:", result.codeResult.code);
-          handleBarcodeResult(result.codeResult.code);
-        }
-      });
-
-      // Register debug handlers if needed
-      Quagga.onProcessed((result) => {
-        if (!result) return;
-        
-        const drawingCanvas = document.querySelector('canvas.drawingBuffer') as HTMLCanvasElement;
-        if (drawingCanvas) {
-          // Make this canvas fill its container
-          drawingCanvas.style.position = 'absolute';
-          drawingCanvas.style.top = '0';
-          drawingCanvas.style.left = '0';
-          drawingCanvas.style.width = '100%';
-          drawingCanvas.style.height = '100%';
-        }
-      });
-    };
+        });
+    }, 300); // Small delay to ensure DOM is ready
 
     const handleBarcodeResult = (barcodeData: string) => {
       // Play a beep sound or create a flash effect
@@ -136,32 +183,12 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       }, 300);
     };
 
-    // Clean up Quagga when component unmounts or dialog closes
-    const cleanupQuagga = () => {
-      console.log("Cleaning up QuaggaJS...");
-      
-      if (isScanning) {
-        Quagga.stop();
-        setIsScanning(false);
-      }
-    };
-
-    // Initialize or cleanup based on dialog state
-    if (open) {
-      console.log("Dialog opened, initializing scanner");
-      setHasPermission(null); // Reset permission state
-      initQuagga();
-    } else {
-      console.log("Dialog closed, cleaning up");
-      cleanupQuagga();
-    }
-
     // Cleanup on unmount
     return () => {
-      console.log("Component unmounting, cleaning up");
+      clearTimeout(initTimer);
       cleanupQuagga();
     };
-  }, [open, onScan, toast]);
+  }, [open, onScan, toast, isScanning]);
 
   // Function to manually retry camera access
   const retryAccess = () => {
@@ -169,39 +196,61 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
     setHasPermission(null);
     
     // Ensure Quagga is stopped before retrying
-    Quagga.stop();
+    try {
+      Quagga.stop();
+    } catch (err) {
+      console.error("Error stopping Quagga before retry:", err);
+    }
     
     // Allow a small delay before re-initializing
     setTimeout(() => {
-      if (scannerRef.current && open) {
-        Quagga.init({
-          inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: scannerRef.current,
-            constraints: {
-              facingMode: "environment"
-            },
-          },
-          decoder: {
-            readers: ["ean_reader", "ean_8_reader", "upc_reader"]
-          }
-        }, function(err) {
-          if (err) {
-            console.error("Retry failed:", err);
-            setHasPermission(false);
-            toast({
-              title: "Camera Error",
-              description: "Still unable to access camera after retry.",
-              variant: "destructive",
-            });
-            return;
-          }
+      if (!scannerRef.current || !open) return;
+      
+      // First try to get camera access
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(stream => {
+          // Stop the test stream immediately
+          stream.getTracks().forEach(track => track.stop());
           
-          setHasPermission(true);
-          Quagga.start();
+          // Now initialize Quagga
+          Quagga.init({
+            inputStream: {
+              name: "Live",
+              type: "LiveStream",
+              target: scannerRef.current,
+              constraints: {
+                facingMode: "environment"
+              },
+            },
+            decoder: {
+              readers: ["ean_reader", "ean_8_reader", "upc_reader"]
+            }
+          }, function(err) {
+            if (err) {
+              console.error("Retry failed:", err);
+              setHasPermission(false);
+              toast({
+                title: "Camera Error",
+                description: "Still unable to access camera after retry.",
+                variant: "destructive",
+              });
+              return;
+            }
+            
+            setHasPermission(true);
+            setIsScanning(true);
+            Quagga.start();
+          });
+        })
+        .catch(err => {
+          console.error("Retry camera access failed:", err);
+          setHasPermission(false);
+          toast({
+            title: "Camera Access Denied",
+            description: "Please check your browser camera permissions",
+            variant: "destructive",
+          });
         });
-      }
     }, 500);
   };
 
@@ -231,7 +280,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
             ) : (
               <div 
                 ref={scannerRef} 
-                className="absolute inset-0 overflow-hidden"
+                className="absolute inset-0 overflow-hidden bg-black"
               >
                 {isScanning && hasPermission !== false && (
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 text-white">
