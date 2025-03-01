@@ -1,278 +1,149 @@
-import React, { useRef, useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import { Camera, X } from "lucide-react";
-import Quagga from "quagga";
+import { Camera, Upload, X } from "lucide-react";
 
-interface BarcodeScannerProps {
-  open: boolean;
-  onClose: () => void;
-  onScan: (barcodeData: string) => void;
+interface PictureCaptureProps {
+  picture: File | null;
+  picturePreview: string | null;
+  setPicture: (file: File | null) => void;
+  setPicturePreview: (url: string | null) => void;
 }
 
-export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) => {
-  const scannerRef = useRef<HTMLDivElement>(null);
-  const [isScanning, setIsScanning] = useState(false);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const { toast } = useToast();
+export const PictureCapture: React.FC<PictureCaptureProps> = ({
+  picture,
+  picturePreview,
+  setPicture,
+  setPicturePreview,
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
-  useEffect(() => {
-    const cleanupQuagga = () => {
-      console.log("Cleaning up QuaggaJS...");
-      if (isScanning) {
-        try {
-          Quagga.stop();
-        } catch (err) {
-          console.error("Error stopping Quagga:", err);
-        }
-        setIsScanning(false);
-      }
-    };
-
-    if (!open) {
-      console.log("Dialog closed, cleaning up");
-      cleanupQuagga();
-      return;
-    }
-
-    console.log("Dialog opened, initializing scanner");
-    setHasPermission(null);
-
-    const initTimer = setTimeout(() => {
-      if (!scannerRef.current) {
-        console.error("Scanner reference not available");
-        return;
-      }
-
-      console.log("Initializing QuaggaJS scanner...");
-      
-      setIsScanning(true);
-      
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-        .then(stream => {
-          stream.getTracks().forEach(track => track.stop());
-          
-          Quagga.init({
-            inputStream: {
-              name: "Live",
-              type: "LiveStream",
-              target: scannerRef.current,
-              constraints: {
-                facingMode: "environment",
-                width: { min: 320, ideal: 640, max: 1280 },
-                height: { min: 240, ideal: 480, max: 720 },
-                aspectRatio: { min: 1, max: 2 }
-              },
-            },
-            locator: {
-              patchSize: "medium",
-              halfSample: true
-            },
-            numOfWorkers: 2,
-            frequency: 10,
-            decoder: {
-              readers: [
-                "ean_reader",
-                "ean_8_reader",
-                "upc_reader",
-                "code_128_reader",
-                "code_39_reader"
-              ]
-            },
-            locate: true
-          }, function(err) {
-            if (err) {
-              console.error("QuaggaJS initialization error:", err);
-              setHasPermission(false);
-              setIsScanning(false);
-              
-              toast({
-                title: "Camera Error",
-                description: "Could not access camera: " + err.message,
-                variant: "destructive",
-              });
-              return;
-            }
-            
-            console.log("QuaggaJS initialized successfully");
-            setHasPermission(true);
-            
-            Quagga.start();
-            
-            if (scannerRef.current) {
-              const videoEl = scannerRef.current.querySelector("video");
-              if (videoEl) {
-                videoEl.classList.add("w-full", "h-full", "object-cover");
-                videoEl.style.position = "absolute";
-                videoEl.style.top = "0";
-                videoEl.style.left = "0";
-              }
-            }
-          });
-
-          Quagga.onDetected((result) => {
-            if (result && result.codeResult && result.codeResult.code) {
-              console.log("Barcode detected:", result.codeResult.code);
-              handleBarcodeResult(result.codeResult.code);
-            }
-          });
-
-          Quagga.onProcessed((result) => {
-            if (!result) return;
-            
-            const drawingCanvas = document.querySelector('canvas.drawingBuffer') as HTMLCanvasElement;
-            if (drawingCanvas) {
-              drawingCanvas.style.position = 'absolute';
-              drawingCanvas.style.top = '0';
-              drawingCanvas.style.left = '0';
-              drawingCanvas.style.width = '100%';
-              drawingCanvas.style.height = '100%';
-            }
-          });
-        })
-        .catch(err => {
-          console.error("Camera access denied:", err);
-          setHasPermission(false);
-          toast({
-            title: "Camera Access Denied",
-            description: "Please allow camera access to scan barcodes",
-            variant: "destructive",
-          });
-        });
-    }, 300);
-
-    const handleBarcodeResult = (barcodeData: string) => {
-      createFlashEffect();
-      
-      Quagga.stop();
-      setIsScanning(false);
-      
-      console.log("Sending barcode data to parent:", barcodeData);
-      onScan(barcodeData);
-    };
-
-    const createFlashEffect = () => {
-      if (!scannerRef.current) return;
-      
-      const flashDiv = document.createElement('div');
-      flashDiv.className = 'absolute inset-0 bg-white opacity-80 z-10';
-      scannerRef.current.appendChild(flashDiv);
-      
-      setTimeout(() => {
-        if (flashDiv.parentNode) {
-          flashDiv.parentNode.removeChild(flashDiv);
-        }
-      }, 300);
-    };
-
-    return () => {
-      clearTimeout(initTimer);
-      cleanupQuagga();
-    };
-  }, [open, onScan, toast, isScanning]);
-
-  const retryAccess = () => {
-    console.log("Retrying camera access...");
-    setHasPermission(null);
-    
+  const startCamera = async () => {
     try {
-      Quagga.stop();
-    } catch (err) {
-      console.error("Error stopping Quagga before retry:", err);
-    }
-    
-    setTimeout(() => {
-      if (!scannerRef.current || !open) return;
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      streamRef.current = stream;
       
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-        .then(stream => {
-          stream.getTracks().forEach(track => track.stop());
-          
-          Quagga.init({
-            inputStream: {
-              name: "Live",
-              type: "LiveStream",
-              target: scannerRef.current,
-              constraints: {
-                facingMode: "environment"
-              },
-            },
-            decoder: {
-              readers: ["ean_reader", "ean_8_reader", "upc_reader"]
-            }
-          }, function(err) {
-            if (err) {
-              console.error("Retry failed:", err);
-              setHasPermission(false);
-              toast({
-                title: "Camera Error",
-                description: "Still unable to access camera after retry.",
-                variant: "destructive",
-              });
-              return;
-            }
-            
-            setHasPermission(true);
-            setIsScanning(true);
-            Quagga.start();
-          });
-        })
-        .catch(err => {
-          console.error("Retry camera access failed:", err);
-          setHasPermission(false);
-          toast({
-            title: "Camera Access Denied",
-            description: "Please check your browser camera permissions",
-            variant: "destructive",
-          });
-        });
-    }, 500);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      
+      setShowCamera(true);
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      alert("Failed to access camera. Please ensure camera permissions are granted.");
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setShowCamera(false);
+  };
+
+  const takePicture = () => {
+    if (!videoRef.current) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], "milk-picture.jpg", { type: "image/jpeg" });
+        setPicture(file);
+        setPicturePreview(URL.createObjectURL(blob));
+        stopCamera();
+      }
+    }, "image/jpeg", 0.9);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPicture(file);
+      setPicturePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const removePicture = () => {
+    setPicture(null);
+    if (picturePreview) {
+      URL.revokeObjectURL(picturePreview);
+      setPicturePreview(null);
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md" closeButton={false}>
-        <DialogHeader>
-          <DialogTitle>Scan Product Barcode</DialogTitle>
+    <div className="flex flex-col items-center">
+      {picturePreview ? (
+        <div className="relative">
+          <img 
+            src={picturePreview} 
+            alt="Milk product" 
+            className="w-32 h-[80px] object-cover rounded-md" /* Matching min-h-[80px] from Textarea */
+          />
           <Button 
-            variant="ghost" 
+            variant="destructive" 
             size="icon" 
-            onClick={onClose}
-            className="absolute right-4 top-4"
+            className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+            onClick={removePicture}
           >
             <X className="h-4 w-4" />
           </Button>
-        </DialogHeader>
-        <div className="flex flex-col items-center space-y-4">
-          <div className="relative w-full aspect-square bg-black rounded-md overflow-hidden">
-            {hasPermission !== false ? (
-              <div 
-                ref={scannerRef} 
-                className="absolute inset-0 overflow-hidden bg-black"
-              >
-                {isScanning && hasPermission !== false && (
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 text-white">
-                    <Camera className="h-8 w-8 animate-pulse" />
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-4 text-white">
-                <p className="text-center">Camera access denied or unavailable</p>
-                <Button onClick={retryAccess} variant="secondary" size="sm">
-                  Retry
-                </Button>
-              </div>
-            )}
-          </div>
-          <p className="text-sm text-center text-muted-foreground">
-            {hasPermission === false 
-              ? "Please allow camera access in your browser settings" 
-              : "Position the barcode within the camera view to scan automatically"}
-          </p>
         </div>
-      </DialogContent>
-    </Dialog>
+      ) : (
+        <div className="flex flex-col gap-2 items-center">
+          {showCamera ? (
+            <div className="relative">
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline 
+                className="w-48 h-48 border rounded-md"
+              />
+              <div className="absolute inset-x-0 bottom-2 flex justify-center gap-2">
+                <Button onClick={takePicture} size="sm">Capture</Button>
+                <Button onClick={stopCamera} variant="outline" size="sm">Cancel</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon"
+                onClick={startCamera}
+              >
+                <Camera className="h-5 w-5" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="h-5 w-5" />
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
