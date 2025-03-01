@@ -93,12 +93,14 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
     <div className="flex flex-col items-center">
       {picturePreview ? (
         <div className="relative">
-          <img 
-            src={picturePreview} 
-            alt="Milk product" 
-            className="w-32 min-h-[80px] h-full object-cover rounded-md cursor-pointer"
-            onClick={() => setIsImageDialogOpen(true)}
-          />
+          <div className="w-32 h-32 rounded-md overflow-hidden">
+            <img 
+              src={picturePreview} 
+              alt="Milk product" 
+              className="w-full h-full object-cover cursor-pointer"
+              onClick={() => setIsImageDialogOpen(true)}
+            />
+          </div>
           <Button 
             variant="destructive" 
             size="icon" 
