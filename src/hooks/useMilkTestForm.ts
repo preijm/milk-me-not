@@ -69,6 +69,7 @@ export const useMilkTestForm = () => {
     setIsSubmitting(true);
 
     try {
+      // Check if user is authenticated
       const { data: userData, error: userError } = await supabase.auth.getUser();
       
       if (userError || !userData.user) {
@@ -81,12 +82,16 @@ export const useMilkTestForm = () => {
         return;
       }
 
+      console.log("Authenticated user:", userData.user.id);
+
+      // Get shop data if provided
       const { data: shopData } = await supabase
         .from('shops')
         .select('id')
         .eq('name', shop)
         .maybeSingle();
 
+      // Get user profile data
       const { data: profileData } = await supabase
         .from('profiles')
         .select('display_name')
@@ -115,6 +120,8 @@ export const useMilkTestForm = () => {
         }
       }
 
+      console.log("Inserting milk test with user_id:", userData.user.id);
+      
       // Insert the milk test
       const { data: milkTest, error: milkTestError } = await supabase
         .from('milk_tests')
@@ -139,24 +146,35 @@ export const useMilkTestForm = () => {
         throw milkTestError;
       }
 
+      console.log("Milk test inserted successfully:", milkTest);
+
       // Insert product type relationships
       if (selectedProductTypes.length > 0) {
+        console.log("Inserting product types:", selectedProductTypes);
+        
         const { data: productTypes } = await supabase
           .from('product_types')
           .select('id, key')
           .in('key', selectedProductTypes);
 
-        if (productTypes) {
+        console.log("Retrieved product types:", productTypes);
+
+        if (productTypes && productTypes.length > 0) {
           const productTypeLinks = productTypes.map(pt => ({
             milk_test_id: milkTest.id,
             product_type_id: pt.id
           }));
 
+          console.log("Inserting product type links:", productTypeLinks);
+
           const { error: linkError } = await supabase
             .from('milk_test_product_types')
             .insert(productTypeLinks);
 
-          if (linkError) throw linkError;
+          if (linkError) {
+            console.error('Error inserting product type links:', linkError);
+            throw linkError;
+          }
         }
       }
 
