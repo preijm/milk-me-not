@@ -146,6 +146,7 @@ export type Database = {
           id: string
           ingredients: string[] | null
           notes: string | null
+          picture_path: string | null
           price: number | null
           product_id: string | null
           rating: number
@@ -162,6 +163,7 @@ export type Database = {
           id?: string
           ingredients?: string[] | null
           notes?: string | null
+          picture_path?: string | null
           price?: number | null
           product_id?: string | null
           rating: number
@@ -178,6 +180,7 @@ export type Database = {
           id?: string
           ingredients?: string[] | null
           notes?: string | null
+          picture_path?: string | null
           price?: number | null
           product_id?: string | null
           rating?: number

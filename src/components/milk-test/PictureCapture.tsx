@@ -1,9 +1,7 @@
 
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Camera, X, Upload, RefreshCw } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { Camera, Upload, X } from "lucide-react";
 
 interface PictureCaptureProps {
   picture: File | null;
@@ -16,236 +14,137 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
   picture,
   picturePreview,
   setPicture,
-  setPicturePreview
+  setPicturePreview,
 }) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isCameraActive, setIsCameraActive] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
-  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: 'environment',
-          width: { ideal: 1280 },
-          height: { ideal: 720 } 
-        } 
-      });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      streamRef.current = stream;
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        setCameraStream(stream);
-        setIsCameraActive(true);
       }
+      
+      setShowCamera(true);
     } catch (err) {
       console.error("Error accessing camera:", err);
-      toast({
-        title: "Camera Error",
-        description: "Could not access your camera. Please check permissions or try uploading a photo instead.",
-        variant: "destructive",
-      });
+      alert("Failed to access camera. Please ensure camera permissions are granted.");
     }
   };
 
   const stopCamera = () => {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach(track => track.stop());
-      setCameraStream(null);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
     }
-    setIsCameraActive(false);
+    setShowCamera(false);
   };
 
   const takePicture = () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      
-      // Set canvas dimensions to match video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      // Draw the video frame to the canvas
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Convert to file
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const file = new File([blob], `milk-picture-${Date.now()}.jpg`, { type: 'image/jpeg' });
-            setPicture(file);
-            setPicturePreview(URL.createObjectURL(blob));
-            stopCamera();
-            setIsDialogOpen(false);
-            
-            toast({
-              title: "Picture Captured",
-              description: "Your milk picture has been added to the form.",
-            });
-          }
-        }, 'image/jpeg', 0.95);
+    if (!videoRef.current) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], "milk-picture.jpg", { type: "image/jpeg" });
+        setPicture(file);
+        setPicturePreview(URL.createObjectURL(blob));
+        stopCamera();
       }
-    }
+    }, "image/jpeg", 0.9);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      
-      // Check if it's an image
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: "Invalid File",
-          description: "Please select an image file.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
       setPicture(file);
       setPicturePreview(URL.createObjectURL(file));
-      setIsDialogOpen(false);
-      
-      toast({
-        title: "Picture Added",
-        description: "Your milk picture has been added to the form.",
-      });
     }
-  };
-
-  const openFileDialog = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleDialogClose = () => {
-    stopCamera();
-    setIsDialogOpen(false);
-  };
-
-  const handleOpenDialog = () => {
-    setIsDialogOpen(true);
-    startCamera();
   };
 
   const removePicture = () => {
     setPicture(null);
-    setPicturePreview(null);
-    
-    toast({
-      title: "Picture Removed",
-      description: "The milk picture has been removed from the form.",
-    });
+    if (picturePreview) {
+      URL.revokeObjectURL(picturePreview);
+      setPicturePreview(null);
+    }
   };
 
   return (
-    <>
-      <div className="relative">
-        {picturePreview ? (
-          <div className="relative h-32 w-32 rounded-md overflow-hidden">
-            <img 
-              src={picturePreview} 
-              alt="Milk product" 
-              className="h-full w-full object-cover"
-            />
-            <Button
-              type="button"
-              variant="destructive"
-              size="icon"
-              className="absolute top-1 right-1 h-6 w-6 opacity-90"
-              onClick={removePicture}
-            >
-              <X className="h-3 w-3" />
-            </Button>
-          </div>
-        ) : (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleOpenDialog}
-            className="h-32 w-32 flex flex-col items-center justify-center gap-1 border-dashed"
-          >
-            <Camera className="h-8 w-8" />
-            <span className="text-xs">Take photo</span>
-          </Button>
-        )}
-      </div>
-
-      <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Take a Picture</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            {isCameraActive ? (
-              <div className="relative">
-                <video 
-                  ref={videoRef} 
-                  autoPlay 
-                  playsInline 
-                  className="w-full rounded-md overflow-hidden aspect-video"
-                />
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
-                  <Button 
-                    type="button" 
-                    onClick={takePicture}
-                    variant="default"
-                  >
-                    <Camera className="h-5 w-5 mr-1" />
-                    Capture
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline"
-                    onClick={openFileDialog}
-                  >
-                    <Upload className="h-5 w-5 mr-1" />
-                    Upload
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center gap-4 p-6">
-                <p className="text-center text-muted-foreground">Camera is not active</p>
-                <div className="flex gap-2">
-                  <Button 
-                    type="button" 
-                    onClick={startCamera}
-                  >
-                    <RefreshCw className="h-5 w-5 mr-1" />
-                    Start Camera
-                  </Button>
-                  <Button 
-                    type="button" 
-                    variant="outline"
-                    onClick={openFileDialog}
-                  >
-                    <Upload className="h-5 w-5 mr-1" />
-                    Upload Photo
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Hidden elements */}
-          <canvas ref={canvasRef} className="hidden" />
-          <input 
-            type="file" 
-            accept="image/*" 
-            ref={fileInputRef} 
-            onChange={handleFileUpload} 
-            className="hidden" 
+    <div className="flex flex-col items-center">
+      {picturePreview ? (
+        <div className="relative">
+          <img 
+            src={picturePreview} 
+            alt="Milk product" 
+            className="w-32 h-32 object-cover rounded-md"
           />
-        </DialogContent>
-      </Dialog>
-    </>
+          <Button 
+            variant="destructive" 
+            size="icon" 
+            className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+            onClick={removePicture}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2 items-center">
+          {showCamera ? (
+            <div className="relative">
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline 
+                className="w-48 h-48 border rounded-md"
+              />
+              <div className="absolute inset-x-0 bottom-2 flex justify-center gap-2">
+                <Button onClick={takePicture} size="sm">Capture</Button>
+                <Button onClick={stopCamera} variant="outline" size="sm">Cancel</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-row gap-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon"
+                onClick={startCamera}
+              >
+                <Camera className="h-5 w-5" />
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="h-5 w-5" />
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
