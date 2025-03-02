@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
+import { ProductResultItem } from "./product-search/ProductResultItem";
+import { SelectedProduct } from "./product-search/SelectedProduct";
 
 interface ProductSearchProps {
   onSelectProduct: (productId: string, brandId: string) => void;
@@ -56,31 +58,18 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
       
       console.log('Searching for products:', searchTerm);
       
-      // Create a query to search in product name, brand name, flavor names and ingredients
+      // Create a comprehensive search query
       let query = supabase
         .from('product_search_view')
         .select('*');
       
-      // Handle ingredient search differently
-      if (searchTerm.toLowerCase().includes('no sugar') || 
-          searchTerm.toLowerCase().includes('sugar free') ||
-          searchTerm.toLowerCase().includes('unsweetened')) {
-        
-        // Search for products that mention these terms in ingredients
-        query = query.or(`
-          product_name.ilike.%${searchTerm}%,
-          brand_name.ilike.%${searchTerm}%,
-          flavor_names.cs.{${searchTerm}},
-          ingredients.cs.{%${searchTerm}%}
-        `);
-      } else {
-        // Regular search for product name, brand name, flavor names
-        query = query.or(`
-          product_name.ilike.%${searchTerm}%,
-          brand_name.ilike.%${searchTerm}%,
-          flavor_names.cs.{${searchTerm}}
-        `);
-      }
+      // Build a comprehensive search condition
+      query = query.or(`
+        product_name.ilike.%${searchTerm}%,
+        brand_name.ilike.%${searchTerm}%,
+        flavor_names.cs.{${searchTerm}},
+        ingredients.cs.{%${searchTerm}%}
+      `);
       
       const { data, error } = await query.limit(10);
       
@@ -127,48 +116,6 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
     onSelectProduct("", "");
   };
 
-  // Function to format product types, prioritizing "Barista" and converting snake_case to Title Case
-  const formatProductTypes = (productTypes: string[] | null): string => {
-    if (!productTypes || productTypes.length === 0) return '';
-    
-    // Sort product types to prioritize "barista"
-    const sortedTypes = [...productTypes].sort((a, b) => {
-      if (a.toLowerCase() === 'barista') return -1;
-      if (b.toLowerCase() === 'barista') return 1;
-      return 0;
-    });
-    
-    // Format each product type: convert snake_case to Title Case
-    return sortedTypes.map(type => {
-      // Replace underscores with spaces and capitalize each word
-      return type.split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
-    }).join(' • ');
-  };
-
-  // Generate ingredient highlights for search results
-  const highlightIngredients = (ingredients: string[] | null, searchTerm: string) => {
-    if (!ingredients || ingredients.length === 0) return null;
-    
-    // Search for matching ingredients
-    const matchingIngredients = ingredients.filter(ingredient => 
-      ingredient.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    
-    if (matchingIngredients.length === 0) return null;
-    
-    return (
-      <div className="mt-1">
-        {matchingIngredients.map(ingredient => (
-          <Badge key={ingredient} variant="outline" className="bg-emerald-50 text-xs mr-1">
-            {ingredient}
-          </Badge>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <div className="space-y-4">
       <div className="relative">
@@ -176,7 +123,7 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
             <Input
-              placeholder="Search for a product, brand, flavor, or ingredients like 'no sugar'..."
+              placeholder="Search for product..."
               value={searchTerm}
               onChange={handleInputChange}
               onFocus={() => !selectedProductId && setIsDropdownVisible(searchResults.length > 0)}
@@ -229,35 +176,7 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
         
         {/* Selected product details */}
         {selectedProduct && (
-          <div className="mt-2 p-3 bg-gray-50 border rounded-md">
-            <div className="font-medium">{selectedProduct.brand_name} - {selectedProduct.product_name}</div>
-            <div className="flex flex-wrap gap-1 mt-1">
-              {selectedProduct.product_types && selectedProduct.product_types.includes('barista') && (
-                <Badge variant="outline" className="bg-cream-100">Barista</Badge>
-              )}
-              {selectedProduct.product_types && 
-                selectedProduct.product_types
-                  .filter(type => type.toLowerCase() !== 'barista')
-                  .map(type => (
-                    <Badge key={type} variant="outline" className="bg-gray-100">
-                      {type.split('_')
-                        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                        .join(' ')}
-                    </Badge>
-                  ))
-              }
-              {selectedProduct.flavor_names && selectedProduct.flavor_names.map(flavor => (
-                <Badge key={flavor} variant="outline" className="bg-milk-100">
-                  {flavor}
-                </Badge>
-              ))}
-              {selectedProduct.ingredients && selectedProduct.ingredients.map(ingredient => (
-                <Badge key={ingredient} variant="outline" className="bg-emerald-50">
-                  {ingredient}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <SelectedProduct product={selectedProduct} />
         )}
         
         {isDropdownVisible && !selectedProductId && (
@@ -266,35 +185,12 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
               <div className="px-4 py-3 text-sm text-gray-500">Searching...</div>
             ) : searchResults.length > 0 ? (
               searchResults.map((result) => (
-                <div
-                  key={result.id}
-                  className="px-4 py-2 cursor-pointer hover:bg-gray-100 border-b last:border-b-0"
-                  onClick={() => handleSelectProduct(result.id, result.brand_id)}
-                >
-                  <div className="font-medium">{result.brand_name} - {result.name}</div>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {result.product_types && result.product_types.includes('barista') && (
-                      <Badge variant="outline" className="bg-cream-100 text-xs">Barista</Badge>
-                    )}
-                    {result.product_types && 
-                      result.product_types
-                        .filter(type => type.toLowerCase() !== 'barista')
-                        .map(type => (
-                          <Badge key={type} variant="outline" className="bg-gray-100 text-xs">
-                            {type.split('_')
-                              .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                              .join(' ')}
-                          </Badge>
-                        ))
-                    }
-                    {result.flavor_names && result.flavor_names.map(flavor => (
-                      <Badge key={flavor} variant="outline" className="bg-milk-100 text-xs">
-                        {flavor}
-                      </Badge>
-                    ))}
-                  </div>
-                  {searchTerm.toLowerCase().includes('sugar') && highlightIngredients(result.ingredients, searchTerm)}
-                </div>
+                <ProductResultItem 
+                  key={result.id} 
+                  result={result} 
+                  searchTerm={searchTerm} 
+                  onSelect={() => handleSelectProduct(result.id, result.brand_id)} 
+                />
               ))
             ) : searchTerm.length >= 2 ? (
               <div className="px-4 py-3 text-sm text-gray-500">No products found</div>
