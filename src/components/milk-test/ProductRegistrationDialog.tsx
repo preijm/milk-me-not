@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { HelpCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Switch } from "@/components/ui/switch";
 
 interface ProductRegistrationDialogProps {
   open: boolean;
@@ -293,10 +294,10 @@ export const ProductRegistrationDialog = ({
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Barista Version</h3>
             <div className="flex items-center space-x-2">
-              <Checkbox 
+              <Switch 
                 id="barista-version"
                 checked={isBarista}
-                onCheckedChange={(checked) => setIsBarista(checked === true)}
+                onCheckedChange={setIsBarista}
               />
               <Label htmlFor="barista-version">This is a Barista product</Label>
             </div>
@@ -364,4 +365,3 @@ export const ProductRegistrationDialog = ({
     </Dialog>
   );
 };
-

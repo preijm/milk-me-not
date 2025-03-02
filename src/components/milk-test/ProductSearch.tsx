@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Search, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProductSearchProps {
   onSelectProduct: (productId: string, brandId: string) => void;
@@ -15,6 +16,7 @@ interface ProductSearchProps {
 export const ProductSearch = ({ onSelectProduct, onAddNew }: ProductSearchProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const isMobile = useIsMobile();
 
   const { data: searchResults = [], isLoading } = useQuery({
     queryKey: ['product_search', searchTerm],
@@ -95,7 +97,7 @@ export const ProductSearch = ({ onSelectProduct, onAddNew }: ProductSearchProps)
   return (
     <div className="space-y-4">
       <div className="relative">
-        <div className="flex gap-2">
+        <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-2`}>
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
             <Input
