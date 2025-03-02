@@ -19,6 +19,23 @@ interface ProductResultItemProps {
 }
 
 export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResultItemProps) => {
+  // Helper function to check if a product type matches the search term
+  const hasMatchingProductType = () => {
+    if (!result.product_types || result.product_types.length === 0) return false;
+    
+    const formattedSearchTerm = searchTerm.toLowerCase().replace(/\s+/g, '_');
+    return result.product_types.some(type => 
+      type.toLowerCase() === formattedSearchTerm.toLowerCase()
+    );
+  };
+  
+  // Format product type for display
+  const formatProductType = (type: string) => {
+    return type.split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+  
   // Generate ingredient highlights for search results
   const highlightIngredients = () => {
     if (!result.ingredients || result.ingredients.length === 0) return null;
@@ -51,27 +68,30 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
       {/* Only render if product types exist */}
       {result.product_types && result.product_types.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-1">
-          {result.product_types.includes('barista') && (
-            <Badge variant="outline" className="bg-cream-100 text-xs">Barista</Badge>
-          )}
-          {result.product_types
-            .filter(type => type.toLowerCase() !== 'barista')
-            .map(type => (
-              <Badge key={type} variant="outline" className="bg-gray-100 text-xs">
-                {type.split('_')
-                  .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                  .join(' ')}
+          {result.product_types.map(type => {
+            // Highlight matching product types with a different background
+            const isMatching = searchTerm && type.toLowerCase().replace(/[_-]/g, ' ') === searchTerm.toLowerCase().trim();
+            return (
+              <Badge 
+                key={type} 
+                variant="outline" 
+                className={`text-xs ${isMatching ? 'bg-cream-100 font-medium' : 
+                  type.toLowerCase() === 'barista' ? 'bg-cream-100' : 'bg-gray-100'}`}
+              >
+                {formatProductType(type)}
               </Badge>
-            ))
-          }
+            );
+          })}
           
           {/* Only render flavors if they exist */}
           {result.flavor_names && result.flavor_names.length > 0 && 
-            result.flavor_names.map(flavor => (
-              <Badge key={flavor} variant="outline" className="bg-milk-100 text-xs">
-                {flavor}
-              </Badge>
-            ))
+            result.flavor_names
+              .filter(flavor => flavor !== null)
+              .map(flavor => (
+                <Badge key={flavor} variant="outline" className="bg-milk-100 text-xs">
+                  {flavor}
+                </Badge>
+              ))
           }
         </div>
       )}

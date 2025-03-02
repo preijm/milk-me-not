@@ -9,11 +9,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { ProductResultItem } from "./product-search/ProductResultItem";
 import { SelectedProduct } from "./product-search/SelectedProduct";
+
 interface ProductSearchProps {
   onSelectProduct: (productId: string, brandId: string) => void;
   onAddNew: () => void;
   selectedProductId?: string;
 }
+
 export const ProductSearch = ({
   onSelectProduct,
   onAddNew,
@@ -49,6 +51,7 @@ export const ProductSearch = ({
       setSearchTerm(`${selectedProduct.brand_name} - ${selectedProduct.product_name}`);
     }
   }, [selectedProduct]);
+
   const {
     data: searchResults = [],
     isLoading
@@ -58,27 +61,62 @@ export const ProductSearch = ({
       if (!searchTerm || searchTerm.length < 2) return [];
       console.log('Searching for products:', searchTerm);
 
+      // Format search term for product type search
+      const formattedSearchTerm = searchTerm.toLowerCase().replace(/\s+/g, '_');
+
       // First query - search for product name, brand name, and flavors
       const {
         data: initialResults,
         error
-      } = await supabase.from('product_search_view').select('*').or(`product_name.ilike.%${searchTerm}%,brand_name.ilike.%${searchTerm}%,flavor_names.cs.{"${searchTerm}"}`).limit(20);
+      } = await supabase.from('product_search_view')
+        .select('*')
+        .or(`product_name.ilike.%${searchTerm}%,brand_name.ilike.%${searchTerm}%,flavor_names.cs.{"${searchTerm}"}`)
+        .limit(20);
+      
       if (error) {
         console.error('Error searching products:', error);
         throw error;
       }
 
-      // Second query - search for ingredients
+      // Second query - search for product types (e.g., "no_sugar")
+      const {
+        data: productTypeResults,
+        error: productTypeError
+      } = await supabase.from('product_search_view')
+        .select('*')
+        .contains('product_types', [formattedSearchTerm])
+        .limit(20);
+      
+      if (productTypeError) {
+        console.error('Error searching product types:', productTypeError);
+      }
+
+      // Third query - search for ingredients
       const {
         data: ingredientResults,
         error: ingredientsError
-      } = await supabase.from('product_search_view').select('*').contains('ingredients', [searchTerm]).limit(20);
+      } = await supabase.from('product_search_view')
+        .select('*')
+        .contains('ingredients', [searchTerm])
+        .limit(20);
+      
       if (ingredientsError) {
         console.error('Error searching ingredients:', ingredientsError);
       }
 
       // Combine results, removing duplicates by id
       let combinedResults = [...(initialResults || [])];
+      
+      // Add product type results if they exist
+      if (productTypeResults) {
+        productTypeResults.forEach(item => {
+          if (!combinedResults.some(existing => existing.id === item.id)) {
+            combinedResults.push(item);
+          }
+        });
+      }
+      
+      // Add ingredient results if they exist
       if (ingredientResults) {
         ingredientResults.forEach(item => {
           if (!combinedResults.some(existing => existing.id === item.id)) {
@@ -86,6 +124,7 @@ export const ProductSearch = ({
           }
         });
       }
+      
       console.log('Search results:', combinedResults);
 
       // Transform the results to match the format expected by the component
@@ -101,9 +140,11 @@ export const ProductSearch = ({
     },
     enabled: searchTerm.length >= 2 && !selectedProductId
   });
+
   useEffect(() => {
     setIsDropdownVisible(searchResults.length > 0);
   }, [searchResults]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     // Clear selected product if user is typing new search
@@ -111,14 +152,17 @@ export const ProductSearch = ({
       onSelectProduct("", "");
     }
   };
+
   const handleSelectProduct = (productId: string, brandId: string) => {
     onSelectProduct(productId, brandId);
     setIsDropdownVisible(false);
   };
+
   const handleClearSearch = () => {
     setSearchTerm("");
     onSelectProduct("", "");
   };
+
   return <div className="space-y-4">
       <div className="relative">
         <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-2`}>
