@@ -58,16 +58,38 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
       
       console.log('Searching for products:', searchTerm);
       
-      // Fix: Use proper PostgREST filter syntax
+      // Fix: Improve search to include flavors and ingredients
       const { data, error } = await supabase
         .from('product_search_view')
         .select('*')
-        .or(`product_name.ilike.%${searchTerm}%,brand_name.ilike.%${searchTerm}%`)
-        .limit(10);
+        .or(`product_name.ilike.%${searchTerm}%,brand_name.ilike.%${searchTerm}%,flavor_names.cs.{"${searchTerm}"}`)
+        .limit(20);
       
       if (error) {
         console.error('Error searching products:', error);
         throw error;
+      }
+      
+      // Also search ingredients
+      const { data: ingredientResults, error: ingredientsError } = await supabase
+        .from('product_search_view')
+        .select('*')
+        .contains('ingredients', [searchTerm])
+        .limit(20);
+        
+      if (ingredientsError) {
+        console.error('Error searching ingredients:', ingredientsError);
+      } else if (ingredientResults) {
+        // Combine results, removing duplicates by id
+        const combinedResults = [...data || []];
+        
+        ingredientResults.forEach(item => {
+          if (!combinedResults.some(existing => existing.id === item.id)) {
+            combinedResults.push(item);
+          }
+        });
+        
+        data = combinedResults;
       }
       
       console.log('Search results:', data);

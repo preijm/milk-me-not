@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Plus } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
 
@@ -38,6 +39,7 @@ export const ProductRegistrationDialog = ({
   const [isBarista, setIsBarista] = useState(false);
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAddNewProductName, setShowAddNewProductName] = useState(false);
   
   const { toast } = useToast();
 
@@ -53,6 +55,24 @@ export const ProductRegistrationDialog = ({
       setSelectedFlavors([]);
     }
   }, [open]);
+
+  // Fetch all product names for suggestions
+  const { data: allProductNames = [] } = useQuery({
+    queryKey: ['product_names'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('product_names')
+        .select('name')
+        .order('name');
+        
+      if (error) {
+        console.error('Error fetching product names:', error);
+        return [];
+      }
+      
+      return data.map(item => item.name);
+    },
+  });
 
   // Fetch existing product names when brand changes
   useEffect(() => {
@@ -84,15 +104,31 @@ export const ProductRegistrationDialog = ({
   useEffect(() => {
     if (productName.trim() === '') {
       setShowProductNameDropdown(false);
+      setShowAddNewProductName(false);
       return;
     }
     
-    const matchingNames = productNameSuggestions.filter(name => 
-      name.toLowerCase().includes(productName.toLowerCase())
+    // Check if we need to show the "Add new" option
+    const exactMatch = allProductNames.some(
+      name => name.toLowerCase() === productName.trim().toLowerCase()
+    );
+    setShowAddNewProductName(!exactMatch && productName.trim() !== '');
+    
+    // Filter suggestions from all product names
+    const filteredSuggestions = allProductNames.filter(name => 
+      name.toLowerCase().includes(productName.toLowerCase()) &&
+      !productNameSuggestions.includes(name)
     );
     
-    setShowProductNameDropdown(matchingNames.length > 0);
-  }, [productName, productNameSuggestions]);
+    const combinedSuggestions = [
+      ...productNameSuggestions.filter(name => 
+        name.toLowerCase().includes(productName.toLowerCase())
+      ),
+      ...filteredSuggestions
+    ];
+    
+    setShowProductNameDropdown(combinedSuggestions.length > 0 || showAddNewProductName);
+  }, [productName, productNameSuggestions, allProductNames]);
 
   // Fetch flavors
   const { data: flavors = [] } = useQuery({
@@ -126,6 +162,34 @@ export const ProductRegistrationDialog = ({
 
   const handleSelectProductName = (name: string) => {
     setProductName(name);
+    setShowProductNameDropdown(false);
+  };
+
+  const handleAddNewProductName = async () => {
+    if (productName.trim() === '') return;
+
+    // Add to product_names if it doesn't exist
+    const { data, error } = await supabase
+      .from('product_names')
+      .insert({ name: productName.trim() })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding product name:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add new product name. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: "New product name added to the database.",
+    });
+    
     setShowProductNameDropdown(false);
   };
 
@@ -293,25 +357,47 @@ export const ProductRegistrationDialog = ({
                 placeholder="Enter product name"
                 value={productName}
                 onChange={handleProductNameChange}
-                onFocus={() => productNameSuggestions.length > 0 && setShowProductNameDropdown(true)}
+                onFocus={() => setShowProductNameDropdown(
+                  (productNameSuggestions.length > 0 || 
+                   allProductNames.some(name => name.toLowerCase().includes(productName.toLowerCase())))
+                )}
               />
               
               {showProductNameDropdown && (
                 <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-40 overflow-y-auto">
-                  {productNameSuggestions
-                    .filter(name => name.toLowerCase().includes(productName.toLowerCase()))
-                    .map((name) => (
-                      <div
-                        key={name}
-                        className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          handleSelectProductName(name);
-                        }}
-                      >
-                        {name}
-                      </div>
-                    ))}
+                  {[...new Set([
+                    ...productNameSuggestions.filter(name => 
+                      name.toLowerCase().includes(productName.toLowerCase())
+                    ),
+                    ...allProductNames.filter(name => 
+                      name.toLowerCase().includes(productName.toLowerCase()) && 
+                      !productNameSuggestions.includes(name)
+                    )
+                  ])].map((name) => (
+                    <div
+                      key={name}
+                      className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleSelectProductName(name);
+                      }}
+                    >
+                      {name}
+                    </div>
+                  ))}
+                  
+                  {showAddNewProductName && (
+                    <div
+                      className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center text-gray-700"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleAddNewProductName();
+                      }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add "{productName.trim()}"
+                    </div>
+                  )}
                 </div>
               )}
             </div>
