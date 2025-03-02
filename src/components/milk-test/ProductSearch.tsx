@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
@@ -64,13 +65,13 @@ export const ProductSearch = ({
       // Format search term for product type search
       const formattedSearchTerm = searchTerm.toLowerCase().replace(/\s+/g, '_');
 
-      // First query - search for product name, brand name, and flavors
+      // First query - search for partial matches in product name, brand name, and flavors
       const {
         data: initialResults,
         error
       } = await supabase.from('product_search_view')
         .select('*')
-        .or(`product_name.ilike.%${searchTerm}%,brand_name.ilike.%${searchTerm}%,flavor_names.cs.{"${searchTerm}"}`)
+        .or(`product_name.ilike.%${searchTerm}%,brand_name.ilike.%${searchTerm}%`)
         .limit(20);
       
       if (error) {
@@ -78,20 +79,46 @@ export const ProductSearch = ({
         throw error;
       }
 
-      // Second query - search for product types (e.g., "no_sugar")
+      // Second query - search for flavor names containing the search term
+      const {
+        data: flavorResults,
+        error: flavorError
+      } = await supabase.from('product_search_view')
+        .select('*')
+        .filter('flavor_names', 'cs', `{${searchTerm}}`)
+        .limit(20);
+      
+      if (flavorError) {
+        console.error('Error searching flavors:', flavorError);
+      }
+
+      // Third query - search for product types (e.g., "no_sugar")
       const {
         data: productTypeResults,
         error: productTypeError
       } = await supabase.from('product_search_view')
         .select('*')
-        .contains('product_types', [formattedSearchTerm])
+        .filter('product_types', 'cs', `{${formattedSearchTerm}}`)
         .limit(20);
       
       if (productTypeError) {
         console.error('Error searching product types:', productTypeError);
       }
 
-      // Third query - search for ingredients
+      // Fourth query - search for partial matches in flavor names
+      const {
+        data: partialFlavorResults,
+        error: partialFlavorError
+      } = await supabase.from('product_search_view')
+        .select('*')
+        .filter('flavor_names', 'cs', `{%${searchTerm}%}`)
+        .limit(20);
+      
+      if (partialFlavorError) {
+        console.error('Error searching partial flavor matches:', partialFlavorError);
+      }
+
+      // Fifth query - search for ingredients
       const {
         data: ingredientResults,
         error: ingredientsError
@@ -104,26 +131,35 @@ export const ProductSearch = ({
         console.error('Error searching ingredients:', ingredientsError);
       }
 
+      // Sixth query - search for partial matches in ingredients
+      const {
+        data: partialIngredientResults,
+        error: partialIngredientsError
+      } = await supabase.from('product_search_view')
+        .select('*')
+        .textSearch('ingredients', searchTerm, {
+          config: 'english',
+          type: 'plain'
+        })
+        .limit(20);
+      
+      if (partialIngredientsError) {
+        console.error('Error searching partial ingredient matches:', partialIngredientsError);
+      }
+
       // Combine results, removing duplicates by id
       let combinedResults = [...(initialResults || [])];
       
-      // Add product type results if they exist
-      if (productTypeResults) {
-        productTypeResults.forEach(item => {
-          if (!combinedResults.some(existing => existing.id === item.id)) {
-            combinedResults.push(item);
-          }
-        });
-      }
-      
-      // Add ingredient results if they exist
-      if (ingredientResults) {
-        ingredientResults.forEach(item => {
-          if (!combinedResults.some(existing => existing.id === item.id)) {
-            combinedResults.push(item);
-          }
-        });
-      }
+      // Add all additional results if they exist, avoiding duplicates
+      [flavorResults, productTypeResults, partialFlavorResults, ingredientResults, partialIngredientResults].forEach(resultSet => {
+        if (resultSet) {
+          resultSet.forEach(item => {
+            if (!combinedResults.some(existing => existing.id === item.id)) {
+              combinedResults.push(item);
+            }
+          });
+        }
+      });
       
       console.log('Search results:', combinedResults);
 

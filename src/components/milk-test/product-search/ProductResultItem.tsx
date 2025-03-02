@@ -19,13 +19,13 @@ interface ProductResultItemProps {
 }
 
 export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResultItemProps) => {
-  // Helper function to check if a product type matches the search term
+  // Helper function to check if the search term is a partial match in the product types
   const hasMatchingProductType = () => {
-    if (!result.product_types || result.product_types.length === 0) return false;
+    if (!result.product_types || result.product_types.length === 0 || !searchTerm) return false;
     
     const formattedSearchTerm = searchTerm.toLowerCase().replace(/\s+/g, '_');
     return result.product_types.some(type => 
-      type.toLowerCase() === formattedSearchTerm.toLowerCase()
+      type.toLowerCase().includes(formattedSearchTerm.toLowerCase())
     );
   };
   
@@ -36,11 +36,17 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
       .join(' ');
   };
   
+  // Helper to check if a flavor matches the search term
+  const isMatchingFlavor = (flavor: string) => {
+    if (!flavor || !searchTerm) return false;
+    return flavor.toLowerCase().includes(searchTerm.toLowerCase());
+  };
+  
   // Generate ingredient highlights for search results
   const highlightIngredients = () => {
-    if (!result.ingredients || result.ingredients.length === 0) return null;
+    if (!result.ingredients || result.ingredients.length === 0 || !searchTerm) return null;
     
-    // Search for matching ingredients
+    // Search for matching ingredients (partial match)
     const matchingIngredients = result.ingredients.filter(ingredient => 
       ingredient.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -70,7 +76,11 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
         <div className="flex flex-wrap gap-1 mt-1">
           {result.product_types.map(type => {
             // Highlight matching product types with a different background
-            const isMatching = searchTerm && type.toLowerCase().replace(/[_-]/g, ' ') === searchTerm.toLowerCase().trim();
+            // Now using partial matching
+            const isMatching = searchTerm && 
+              (type.toLowerCase().replace(/[_-]/g, ' ').includes(searchTerm.toLowerCase().trim()) ||
+               searchTerm.toLowerCase().trim().includes(type.toLowerCase().replace(/[_-]/g, ' ')));
+               
             return (
               <Badge 
                 key={type} 
@@ -88,7 +98,11 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
             result.flavor_names
               .filter(flavor => flavor !== null)
               .map(flavor => (
-                <Badge key={flavor} variant="outline" className="bg-milk-100 text-xs">
+                <Badge 
+                  key={flavor} 
+                  variant="outline" 
+                  className={`text-xs ${isMatchingFlavor(flavor) ? 'bg-yellow-100 font-medium' : 'bg-milk-100'}`}
+                >
                   {flavor}
                 </Badge>
               ))
