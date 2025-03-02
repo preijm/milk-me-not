@@ -35,6 +35,7 @@ export const ProductRegistrationDialog = ({
   const [newIngredient, setNewIngredient] = useState("");
   const [allIngredients, setAllIngredients] = useState<string[]>([]);
   const [selectedProductTypes, setSelectedProductTypes] = useState<string[]>([]);
+  const [isBarista, setIsBarista] = useState(false);
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -48,6 +49,7 @@ export const ProductRegistrationDialog = ({
       setIngredients([]);
       setNewIngredient("");
       setSelectedProductTypes([]);
+      setIsBarista(false);
       setSelectedFlavors([]);
     }
   }, [open]);
@@ -169,6 +171,11 @@ export const ProductRegistrationDialog = ({
         return;
       }
       
+      // If barista is selected, add it to product types
+      const finalProductTypes = isBarista 
+        ? [...selectedProductTypes, "barista"] 
+        : selectedProductTypes;
+      
       // Create the new product
       const { data: newProduct, error: productError } = await supabase
         .from('products')
@@ -176,7 +183,7 @@ export const ProductRegistrationDialog = ({
           name: productName.trim(),
           brand_id: brandId,
           ingredients: ingredients.length > 0 ? ingredients : null,
-          product_types: selectedProductTypes.length > 0 ? selectedProductTypes : null
+          product_types: finalProductTypes.length > 0 ? finalProductTypes : null
         })
         .select()
         .single();
@@ -251,19 +258,7 @@ export const ProductRegistrationDialog = ({
           </div>
           
           <div className="space-y-4">
-            <h3 className="text-sm font-medium flex items-center gap-2">
-              Product Name *
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>Enter the specific name of the product (e.g., "Oat Milk", "Almond Drink", "Soy Beverage"). Use flavors section below for variants like vanilla or chocolate.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </h3>
+            <h3 className="text-sm font-medium">Product Name *</h3>
             <div className="relative">
               <Input
                 placeholder="Enter product name"
@@ -296,19 +291,19 @@ export const ProductRegistrationDialog = ({
           <Separator />
           
           <div className="space-y-4">
-            <h3 className="text-sm font-medium flex items-center gap-2">
-              Product Type
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>Select the type of product (e.g., dairy-free, lactose-free, regular). You can select multiple types if applicable.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </h3>
+            <h3 className="text-sm font-medium">Barista Version</h3>
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="barista-version"
+                checked={isBarista}
+                onCheckedChange={(checked) => setIsBarista(checked === true)}
+              />
+              <Label htmlFor="barista-version">This is a Barista product</Label>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium">Product Type</h3>
             <ProductOptions
               selectedTypes={selectedProductTypes}
               setSelectedTypes={setSelectedProductTypes}
@@ -318,19 +313,7 @@ export const ProductRegistrationDialog = ({
           <Separator />
           
           <div className="space-y-4">
-            <h3 className="text-sm font-medium flex items-center gap-2">
-              Ingredients
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>Add main ingredients for this product. This helps users searching for specific ingredients like oat, almond, or coconut.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </h3>
+            <h3 className="text-sm font-medium">Ingredients</h3>
             <IngredientsSelect
               ingredients={ingredients}
               setIngredients={setIngredients}
@@ -344,19 +327,7 @@ export const ProductRegistrationDialog = ({
           <Separator />
           
           <div className="space-y-4">
-            <h3 className="text-sm font-medium flex items-center gap-2">
-              Flavors
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs">
-                    <p>Select any flavors this product has, such as vanilla, chocolate, or unsweetened. Leave empty if it's plain/original.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </h3>
+            <h3 className="text-sm font-medium">Flavors</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {flavors.map((flavor) => (
                 <div key={flavor.id} className="flex items-center space-x-2">
@@ -393,3 +364,4 @@ export const ProductRegistrationDialog = ({
     </Dialog>
   );
 };
+
