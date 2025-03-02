@@ -7,6 +7,7 @@ import { Plus, Search, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductSearchProps {
   onSelectProduct: (productId: string, brandId: string) => void;
@@ -74,12 +75,10 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
         id: item.id,
         name: item.product_name,
         brand_id: item.brand_id,
-        brands: { name: item.brand_name },
+        brand_name: item.brand_name,
         product_types: item.product_types,
         ingredients: item.ingredients,
-        product_flavors: item.flavor_names?.map(name => ({ 
-          flavors: { name } 
-        })) || []
+        flavor_names: item.flavor_names || []
       })) || [];
     },
     enabled: searchTerm.length >= 2 && !selectedProductId,
@@ -107,25 +106,24 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
     onSelectProduct("", "");
   };
 
-  // Function to format additional info like flavors or product types
-  const formatAdditionalInfo = (product: any) => {
-    const parts = [];
+  // Function to format product types, prioritizing "Barista" and converting snake_case to Title Case
+  const formatProductTypes = (productTypes: string[] | null): string => {
+    if (!productTypes || productTypes.length === 0) return '';
     
-    // Add product types if available
-    if (product.product_types && product.product_types.length > 0) {
-      parts.push(product.product_types.join(', '));
-    }
+    // Sort product types to prioritize "barista"
+    const sortedTypes = [...productTypes].sort((a, b) => {
+      if (a.toLowerCase() === 'barista') return -1;
+      if (b.toLowerCase() === 'barista') return 1;
+      return 0;
+    });
     
-    // Add flavors if available
-    const flavors = product.product_flavors
-      ?.map((pf: any) => typeof pf === 'string' ? pf : pf.flavors?.name)
-      .filter(Boolean);
-      
-    if (flavors && flavors.length > 0) {
-      parts.push(flavors.join(', '));
-    }
-    
-    return parts.length > 0 ? `(${parts.join(' • ')})` : '';
+    // Format each product type: convert snake_case to Title Case
+    return sortedTypes.map(type => {
+      // Replace underscores with spaces and capitalize each word
+      return type.split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+    }).join(' • ');
   };
 
   return (
@@ -186,6 +184,34 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
           </div>
         )}
         
+        {/* Selected product details */}
+        {selectedProduct && (
+          <div className="mt-2 p-3 bg-gray-50 border rounded-md">
+            <div className="font-medium">{selectedProduct.brand_name} - {selectedProduct.product_name}</div>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {selectedProduct.product_types && selectedProduct.product_types.includes('barista') && (
+                <Badge variant="outline" className="bg-cream-100">Barista</Badge>
+              )}
+              {selectedProduct.product_types && 
+                selectedProduct.product_types
+                  .filter(type => type.toLowerCase() !== 'barista')
+                  .map(type => (
+                    <Badge key={type} variant="outline" className="bg-gray-100">
+                      {type.split('_')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                        .join(' ')}
+                    </Badge>
+                  ))
+              }
+              {selectedProduct.flavor_names && selectedProduct.flavor_names.map(flavor => (
+                <Badge key={flavor} variant="outline" className="bg-milk-100">
+                  {flavor}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+        
         {isDropdownVisible && !selectedProductId && (
           <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto">
             {isLoading ? (
@@ -197,9 +223,27 @@ export const ProductSearch = ({ onSelectProduct, onAddNew, selectedProductId }: 
                   className="px-4 py-2 cursor-pointer hover:bg-gray-100 border-b last:border-b-0"
                   onClick={() => handleSelectProduct(result.id, result.brand_id)}
                 >
-                  <div className="font-medium">{result.brands.name} - {result.name}</div>
-                  <div className="text-xs text-gray-500">
-                    {formatAdditionalInfo(result)}
+                  <div className="font-medium">{result.brand_name} - {result.name}</div>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {result.product_types && result.product_types.includes('barista') && (
+                      <Badge variant="outline" className="bg-cream-100 text-xs">Barista</Badge>
+                    )}
+                    {result.product_types && 
+                      result.product_types
+                        .filter(type => type.toLowerCase() !== 'barista')
+                        .map(type => (
+                          <Badge key={type} variant="outline" className="bg-gray-100 text-xs">
+                            {type.split('_')
+                              .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                              .join(' ')}
+                          </Badge>
+                        ))
+                    }
+                    {result.flavor_names && result.flavor_names.map(flavor => (
+                      <Badge key={flavor} variant="outline" className="bg-milk-100 text-xs">
+                        {flavor}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               ))
