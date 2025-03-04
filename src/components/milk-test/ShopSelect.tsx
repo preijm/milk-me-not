@@ -62,6 +62,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
       return;
     }
 
+    // Only filter based on shop name, not country code
     const filteredShops = shops.filter(s => 
       s.name.toLowerCase().includes(inputValue.toLowerCase())
     );
