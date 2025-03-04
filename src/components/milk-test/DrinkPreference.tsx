@@ -1,6 +1,6 @@
 
 import React from "react";
-import { IceCream, Flame, Coffee } from "lucide-react";
+import { IceCream, Flame } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DrinkPreferenceProps {
@@ -17,7 +17,27 @@ const TeaCup = ({ className }: { className?: string }) => (
     viewBox="0 0 24 24"
     className={className}
   >
-    <path fill="currentColor" d="M5 2h2v3H5zm4 0h2v3H9zm4 0h2v3h-2zm6 7h-2V7H3v11c0 1.654 1.346 3 3 3h8c1.654 0 3-1.346 3-3h2c1.103 0 2-.897 2-2v-5c0-1.103-.897-2-2-2m-4 9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V9h10zm2-2v-5h2l.002 5z"/>
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
+      <path d="M18.25 10.5h1.39c1.852 0 2.402.265 2.357 1.584c-.073 2.183-1.058 4.72-4.997 5.416"/>
+      <path d="M5.946 20.615C2.572 18.02 2.075 14.34 2.001 10.5c-.031-1.659.45-2 2.658-2h10.682c2.208 0 2.69.341 2.658 2c-.074 3.84-.57 7.52-3.945 10.115c-.96.738-1.77.885-3.135.885H9.081c-1.364 0-2.174-.147-3.135-.886"/>
+      <path d="M10 8.5v5m-1.496 2.797l.292-1.852c.086-.542.598-.945 1.203-.945c.604 0 1.117.403 1.202.945l.292 1.852c.158.997-3.127.876-2.989 0M11.309 2.5C10.762 2.839 10 4 10 5.5M7.54 4S7 4.5 7 5.5M14.001 4c-.273.17-.501 1-.501 1.5"/>
+    </g>
+  </svg>
+);
+
+// Custom Coffee SVG icon component
+const CoffeeIcon = ({ className }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="24" 
+    height="24" 
+    viewBox="0 0 24 24"
+    className={className}
+  >
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor">
+      <path d="M18.25 10.5h1.39c1.852 0 2.402.265 2.357 1.584c-.073 2.183-1.058 4.72-4.997 5.416"/>
+      <path d="M5.946 20.615C2.572 18.02 2.075 14.34 2.001 10.5c-.031-1.659.45-2 2.658-2h10.682c2.208 0 2.69.341 2.658 2c-.074 3.84-.57 7.52-3.945 10.115c-.96.738-1.77.885-3.135.885H9.081c-1.364 0-2.174-.147-3.135-.886M11.309 2.5C10.762 2.839 10 4 10 5.5M7.54 4S7 4.5 7 5.5M14.001 4c-.273.17-.501 1-.501 1.5"/>
+    </g>
   </svg>
 );
 
@@ -39,7 +59,7 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
     },
     {
       value: "coffee",
-      icon: Coffee,
+      icon: CoffeeIcon,
       label: "Coffee",
       activeClass: "bg-soft-brown text-amber-800",
     },
