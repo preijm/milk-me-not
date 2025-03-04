@@ -64,6 +64,28 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
     );
   };
 
+  // Generate flavor highlights for search results
+  const highlightFlavors = () => {
+    if (!result.flavor_names || result.flavor_names.length === 0) return null;
+    
+    return (
+      <div className="flex flex-wrap gap-1 mt-1">
+        {result.flavor_names.map(flavor => {
+          const isMatching = isMatchingFlavor(flavor);
+          return (
+            <Badge 
+              key={flavor} 
+              variant="outline" 
+              className={`text-xs ${isMatching ? 'bg-yellow-100 font-medium' : 'bg-milk-100'}`}
+            >
+              {flavor}
+            </Badge>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div
       className="px-4 py-2 cursor-pointer hover:bg-gray-100 border-b last:border-b-0"
@@ -92,20 +114,23 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
               </Badge>
             );
           })}
-          
-          {/* Only render flavors if they exist */}
-          {result.flavor_names && result.flavor_names.length > 0 && 
-            result.flavor_names
-              .filter(flavor => flavor !== null)
-              .map(flavor => (
-                <Badge 
-                  key={flavor} 
-                  variant="outline" 
-                  className={`text-xs ${isMatchingFlavor(flavor) ? 'bg-yellow-100 font-medium' : 'bg-milk-100'}`}
-                >
-                  {flavor}
-                </Badge>
-              ))
+        </div>
+      )}
+      
+      {/* Render flavors separately for better visibility */}
+      {result.flavor_names && result.flavor_names.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-1">
+          {result.flavor_names
+            .filter(flavor => flavor !== null)
+            .map(flavor => (
+              <Badge 
+                key={flavor} 
+                variant="outline" 
+                className={`text-xs ${isMatchingFlavor(flavor) ? 'bg-yellow-100 font-medium' : 'bg-milk-100'}`}
+              >
+                {flavor}
+              </Badge>
+            ))
           }
         </div>
       )}
