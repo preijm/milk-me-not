@@ -85,6 +85,7 @@ export const useProductSearch = (selectedProductId?: string) => {
       }
 
       // Third query - improved product type search with partial matching
+      // Using the RPC function for product types search
       const {
         data: productTypeResults,
         error: productTypeError

@@ -44,16 +44,12 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
     return flavor.toLowerCase().includes(lowercaseSearchTerm);
   };
   
-  // Generate ingredient highlights for search results
-  const highlightIngredients = () => {
-    if (!result.ingredients || result.ingredients.length === 0 || !searchTerm) return [];
-    
-    // Search for matching ingredients (partial match)
-    return result.ingredients.filter(ingredient => 
-      ingredient.toLowerCase().includes(lowercaseSearchTerm)
-    );
+  // Helper to check if an ingredient matches the search term
+  const isMatchingIngredient = (ingredient: string) => {
+    if (!ingredient || !searchTerm) return false;
+    return ingredient.toLowerCase().includes(lowercaseSearchTerm);
   };
-
+  
   // Combine all badges into a single array for more compact display
   const getAllBadges = () => {
     const badges = [];
@@ -75,7 +71,7 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
         badges.push({
           key: `type-${type}`,
           text: formatProductType(type),
-          className: `text-xs ${isMatching ? 'bg-cream-100 font-medium' : 
+          className: `text-xs ${isMatching ? 'bg-cream-100 font-semibold' : 
             type.toLowerCase() === 'barista' ? 'bg-cream-100' : 'bg-gray-100'}`
         });
       });
@@ -86,23 +82,26 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
       result.flavor_names
         .filter(flavor => flavor !== null)
         .forEach(flavor => {
+          const isMatching = isMatchingFlavor(flavor);
           badges.push({
             key: `flavor-${flavor}`,
             text: flavor,
-            className: `text-xs ${isMatchingFlavor(flavor) ? 'bg-yellow-100 font-medium' : 'bg-milk-100'}`
+            className: `text-xs ${isMatching ? 'bg-yellow-100 font-semibold' : 'bg-milk-100'}`
           });
         });
     }
     
-    // Add matching ingredient badges
-    const matchingIngredients = highlightIngredients();
-    matchingIngredients.forEach(ingredient => {
-      badges.push({
-        key: `ingredient-${ingredient}`,
-        text: ingredient,
-        className: "bg-emerald-50 text-xs"
+    // Add ingredient badges
+    if (result.ingredients && result.ingredients.length > 0) {
+      result.ingredients.forEach(ingredient => {
+        const isMatching = isMatchingIngredient(ingredient);
+        badges.push({
+          key: `ingredient-${ingredient}`,
+          text: ingredient,
+          className: `text-xs ${isMatching ? 'bg-emerald-100 font-semibold' : 'bg-emerald-50'}`
+        });
       });
-    });
+    }
     
     return badges;
   };
