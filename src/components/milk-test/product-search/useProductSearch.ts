@@ -84,7 +84,7 @@ export const useProductSearch = (selectedProductId?: string) => {
         console.error('Error searching flavors:', flavorError);
       }
 
-      // Third query - improved product type search with partial matching (e.g., "no sugar" will match "no_sugar")
+      // Third query - improved product type search with partial matching
       const {
         data: productTypeResults,
         error: productTypeError
