@@ -22,6 +22,7 @@ export const ProductSearch = ({
     searchResults,
     isLoading,
     isDropdownVisible,
+    setIsDropdownVisible,
     selectedProduct
   } = useProductSearch(selectedProductId);
 
@@ -31,15 +32,22 @@ export const ProductSearch = ({
     if (selectedProductId) {
       onSelectProduct("", "");
     }
+    
+    // Always show dropdown when user is typing
+    if (value.length >= 2) {
+      setIsDropdownVisible(true);
+    }
   };
 
   const handleClearSearch = () => {
     setSearchTerm("");
     onSelectProduct("", "");
+    setIsDropdownVisible(false);
   };
 
   const handleSelectProduct = (productId: string, brandId: string) => {
     onSelectProduct(productId, brandId);
+    setIsDropdownVisible(false);
   };
 
   return (
@@ -62,7 +70,7 @@ export const ProductSearch = ({
           searchTerm={searchTerm}
           isLoading={isLoading}
           onSelectProduct={handleSelectProduct}
-          isVisible={isDropdownVisible && !selectedProductId}
+          isVisible={isDropdownVisible && !selectedProductId && searchTerm.length >= 2}
         />
       </div>
     </div>

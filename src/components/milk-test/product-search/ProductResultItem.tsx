@@ -19,14 +19,16 @@ interface ProductResultItemProps {
 }
 
 export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResultItemProps) => {
+  const lowercaseSearchTerm = searchTerm.toLowerCase();
+  
   // Helper function to check if the search term is a partial match in the product types
   const hasMatchingProductType = () => {
     if (!result.product_types || result.product_types.length === 0 || !searchTerm) return false;
     
-    const formattedSearchTerm = searchTerm.toLowerCase().replace(/\s+/g, '_');
-    return result.product_types.some(type => 
-      type.toLowerCase().includes(formattedSearchTerm.toLowerCase())
-    );
+    return result.product_types.some(type => {
+      const formattedType = type.replace(/_/g, ' ');
+      return formattedType.toLowerCase().includes(lowercaseSearchTerm);
+    });
   };
   
   // Format product type for display
@@ -39,7 +41,7 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
   // Helper to check if a flavor matches the search term
   const isMatchingFlavor = (flavor: string) => {
     if (!flavor || !searchTerm) return false;
-    return flavor.toLowerCase().includes(searchTerm.toLowerCase());
+    return flavor.toLowerCase().includes(lowercaseSearchTerm);
   };
   
   // Generate ingredient highlights for search results
@@ -48,7 +50,7 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
     
     // Search for matching ingredients (partial match)
     const matchingIngredients = result.ingredients.filter(ingredient => 
-      ingredient.toLowerCase().includes(searchTerm.toLowerCase())
+      ingredient.toLowerCase().includes(lowercaseSearchTerm)
     );
     
     if (matchingIngredients.length === 0) return null;
@@ -98,10 +100,9 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
         <div className="flex flex-wrap gap-1 mt-1">
           {result.product_types.map(type => {
             // Highlight matching product types with a different background
-            // Now using partial matching
-            const isMatching = searchTerm && 
-              (type.toLowerCase().replace(/[_-]/g, ' ').includes(searchTerm.toLowerCase().trim()) ||
-               searchTerm.toLowerCase().trim().includes(type.toLowerCase().replace(/[_-]/g, ' ')));
+            const formattedType = type.replace(/_/g, ' ');
+            const isMatching = lowercaseSearchTerm && 
+              formattedType.toLowerCase().includes(lowercaseSearchTerm);
                
             return (
               <Badge 

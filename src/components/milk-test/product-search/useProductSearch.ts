@@ -53,8 +53,9 @@ export const useProductSearch = (selectedProductId?: string) => {
       if (!searchTerm || searchTerm.length < 2) return [];
       console.log('Searching for products:', searchTerm);
 
+      const lowercaseSearchTerm = searchTerm.toLowerCase();
       // Format search term for product type search
-      const formattedSearchTerm = searchTerm.toLowerCase().replace(/\s+/g, '_');
+      const formattedSearchTerm = lowercaseSearchTerm.replace(/\s+/g, '_');
 
       // First query - search for partial matches in product name, brand name
       const {
@@ -62,7 +63,7 @@ export const useProductSearch = (selectedProductId?: string) => {
         error
       } = await supabase.from('product_search_view')
         .select('*')
-        .or(`product_name.ilike.%${searchTerm}%,brand_name.ilike.%${searchTerm}%`)
+        .or(`product_name.ilike.%${lowercaseSearchTerm}%,brand_name.ilike.%${lowercaseSearchTerm}%`)
         .limit(20);
       
       if (error) {
@@ -70,39 +71,37 @@ export const useProductSearch = (selectedProductId?: string) => {
         throw error;
       }
 
-      // Second query - search for flavor names containing the search term
+      // Second query - improved flavor search with partial matching
       const {
         data: flavorResults,
         error: flavorError
       } = await supabase.from('product_search_view')
         .select('*')
-        .or(`flavor_names.cs.{${searchTerm}},flavor_names.cs.{%${searchTerm}%}`)
+        .filter('flavor_names', 'cs', `{%${lowercaseSearchTerm}%}`)
         .limit(20);
       
       if (flavorError) {
         console.error('Error searching flavors:', flavorError);
       }
 
-      // Third query - search for product types (e.g., "no_sugar")
+      // Third query - improved product type search with partial matching (e.g., "no sugar" will match "no_sugar")
       const {
         data: productTypeResults,
         error: productTypeError
-      } = await supabase.from('product_search_view')
-        .select('*')
-        .filter('product_types', 'cs', `{${formattedSearchTerm}}`)
+      } = await supabase.rpc('search_product_types', { search_term: lowercaseSearchTerm })
         .limit(20);
       
       if (productTypeError) {
         console.error('Error searching product types:', productTypeError);
       }
 
-      // Fourth query - search for ingredients
+      // Fourth query - improved ingredients search with partial matching
       const {
         data: ingredientResults,
         error: ingredientsError
       } = await supabase.from('product_search_view')
         .select('*')
-        .contains('ingredients', [searchTerm])
+        .filter('ingredients', 'cs', `{%${lowercaseSearchTerm}%}`)
         .limit(20);
       
       if (ingredientsError) {
