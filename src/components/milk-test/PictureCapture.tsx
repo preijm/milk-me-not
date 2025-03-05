@@ -1,7 +1,7 @@
 
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Camera, Upload, X } from "lucide-react";
+import { Camera, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,6 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
   setPicture,
   setPicturePreview,
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showCamera, setShowCamera] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -73,14 +72,6 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
     }, "image/jpeg", 0.9);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPicture(file);
-      setPicturePreview(URL.createObjectURL(file));
-    }
-  };
-
   const removePicture = () => {
     setPicture(null);
     if (picturePreview) {
@@ -90,10 +81,10 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="h-full flex flex-col items-center justify-center">
       {picturePreview ? (
-        <div className="relative">
-          <div className="w-32 h-32 rounded-md overflow-hidden">
+        <div className="relative h-full w-full">
+          <div className="h-full w-full rounded-md overflow-hidden">
             <img 
               src={picturePreview} 
               alt="Milk product" 
@@ -124,14 +115,14 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
           </Dialog>
         </div>
       ) : (
-        <div className="flex flex-col gap-2 items-center">
+        <div className="h-full w-full flex items-center justify-center">
           {showCamera ? (
-            <div className="relative">
+            <div className="relative w-full h-full">
               <video 
                 ref={videoRef} 
                 autoPlay 
                 playsInline 
-                className="w-48 h-48 border rounded-md"
+                className="w-full h-full object-cover rounded-md"
               />
               <div className="absolute inset-x-0 bottom-2 flex justify-center gap-2">
                 <Button onClick={takePicture} size="sm">Capture</Button>
@@ -139,31 +130,14 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="icon"
-                onClick={startCamera}
-              >
-                <Camera className="h-5 w-5" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload className="h-5 w-5" />
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </div>
+            <Button 
+              type="button" 
+              variant="outline"
+              className="w-full h-full min-h-[120px] flex items-center justify-center border-dashed"
+              onClick={startCamera}
+            >
+              <Camera className="h-8 w-8 text-gray-400" />
+            </Button>
           )}
         </div>
       )}

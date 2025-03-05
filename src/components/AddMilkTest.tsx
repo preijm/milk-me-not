@@ -32,19 +32,21 @@ export const AddMilkTest = () => {
           rating={formState.rating} 
           setRating={formSetters.setRating} 
         />
-        <div className="flex gap-4 items-start">
+        <div className="flex gap-4 items-stretch">
           <Textarea
             placeholder="Tasting notes..."
             value={formState.notes}
             onChange={(e) => formSetters.setNotes(e.target.value)}
             className="flex-1 min-h-[120px]"
           />
-          <PictureCapture
-            picture={formState.picture}
-            picturePreview={formState.picturePreview}
-            setPicture={formSetters.setPicture}
-            setPicturePreview={formSetters.setPicturePreview}
-          />
+          <div className="w-[120px]">
+            <PictureCapture
+              picture={formState.picture}
+              picturePreview={formState.picturePreview}
+              setPicture={formSetters.setPicture}
+              setPicturePreview={formSetters.setPicturePreview}
+            />
+          </div>
         </div>
       </div>
 
