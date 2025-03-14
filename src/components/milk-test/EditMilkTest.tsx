@@ -150,7 +150,7 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
 
       if (selectedProductProperties.length > 0) {
         const { data: productTypes } = await supabase
-          .from('product_types')
+          .from('properties')
           .select('id, key')
           .in('key', selectedProductProperties);
 

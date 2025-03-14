@@ -64,10 +64,7 @@ export const ProductSearch = ({
         />
         
         {selectedProduct && (
-          <SelectedProduct product={{
-            ...selectedProduct,
-            product_properties: selectedProduct.product_types // Add for compatibility
-          }} />
+          <SelectedProduct product={selectedProduct} />
         )}
         
         {/* Search results dropdown */}
@@ -77,7 +74,6 @@ export const ProductSearch = ({
             brand_name: result.brand_name,
             product_name: result.name,
             product_types: result.product_types,
-            product_properties: result.product_properties,
             flavor_names: result.flavor_names
           }))}
           searchTerm={searchTerm}

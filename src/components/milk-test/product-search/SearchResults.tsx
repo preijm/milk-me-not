@@ -7,7 +7,6 @@ interface ProductResult {
   brand_name: string;
   product_name: string;
   product_types?: string[] | null;
-  product_properties?: string[] | null;
   flavor_names: string[] | null;
 }
 
