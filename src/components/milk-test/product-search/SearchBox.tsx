@@ -3,7 +3,6 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SearchBoxProps {
@@ -53,19 +52,10 @@ export const SearchBox = ({
         </div>
         
         {!isMobile && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button type="button" onClick={onAddNew} className="whitespace-nowrap bg-black text-white">
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Product
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs">
-                <p>Register a new product when you can't find it in the search results. Make sure to select the correct brand first.</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button type="button" onClick={onAddNew} className="whitespace-nowrap bg-black text-white">
+            <Plus className="h-4 w-4 mr-2" />
+            New Product
+          </Button>
         )}
       </div>
       
