@@ -154,13 +154,13 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
       if (deleteError) throw deleteError;
 
       if (selectedProductProperties.length > 0) {
-        const { data: productProperties } = await supabase
-          .from('product_properties')
+        const { data: productTypes } = await supabase
+          .from('product_types')
           .select('id, key')
           .in('key', selectedProductProperties);
 
-        if (productProperties) {
-          const productPropertyLinks = productProperties.map(pp => ({
+        if (productTypes) {
+          const productPropertyLinks = productTypes.map(pp => ({
             milk_test_id: test.id,
             product_type_id: pp.id
           }));

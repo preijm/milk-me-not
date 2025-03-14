@@ -62,7 +62,10 @@ export const ProductSearch = ({
         />
         
         {/* Selected product details */}
-        {selectedProduct && <SelectedProduct product={selectedProduct} />}
+        {selectedProduct && <SelectedProduct product={{
+          ...selectedProduct,
+          product_properties: selectedProduct.product_types // Add for compatibility
+        }} />}
         
         {/* Search results dropdown */}
         <SearchResults 

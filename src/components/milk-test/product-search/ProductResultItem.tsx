@@ -7,7 +7,8 @@ interface ProductResult {
   brand_id: string;
   brand_name: string;
   name: string;
-  product_properties: string[] | null;
+  product_types?: string[] | null;
+  product_properties?: string[] | null;
   ingredients: string[] | null;
   flavor_names: string[] | null;
 }
@@ -23,9 +24,10 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
   
   // Helper function to check if the search term is a partial match in the product properties
   const hasMatchingProductProperty = () => {
-    if (!result.product_properties || result.product_properties.length === 0 || !searchTerm) return false;
+    const properties = result.product_properties || result.product_types;
+    if (!properties || properties.length === 0 || !searchTerm) return false;
     
-    return result.product_properties.some(type => {
+    return properties.some(type => {
       const formattedType = type.replace(/_/g, ' ');
       return formattedType.toLowerCase().includes(lowercaseSearchTerm);
     });
@@ -57,9 +59,10 @@ export const ProductResultItem = ({ result, searchTerm, onSelect }: ProductResul
     const badges = [];
     
     // Add product properties badges (prioritize "barista")
-    if (result.product_properties && result.product_properties.length > 0) {
+    const properties = result.product_properties || result.product_types;
+    if (properties && properties.length > 0) {
       // Sort product properties to prioritize "barista"
-      const sortedTypes = [...result.product_properties].sort((a, b) => {
+      const sortedTypes = [...properties].sort((a, b) => {
         if (a.toLowerCase() === 'barista') return -1;
         if (b.toLowerCase() === 'barista') return 1;
         return 0;

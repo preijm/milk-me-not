@@ -13,10 +13,10 @@ export const ProductOptions = ({
   setSelectedTypes,
 }: ProductOptionsProps) => {
   const { data: productProperties = [] } = useQuery({
-    queryKey: ['product_properties'],
+    queryKey: ['product_types'],
     queryFn: async () => {
       const { data } = await supabase
-        .from('product_properties')
+        .from('product_types')
         .select('*')
         .order('ordering', { ascending: true });
       

@@ -8,7 +8,8 @@ interface ProductSearchResult {
   name: string;
   brand_id: string;
   brand_name: string;
-  product_properties: string[] | null;
+  product_types?: string[] | null;
+  product_properties?: string[] | null;
   ingredients: string[] | null;
   flavor_names: string[] | null;
 }
@@ -107,7 +108,7 @@ export const useProductSearch = (selectedProductId?: string) => {
         error: productPropertyError
       } = await supabase.from('product_search_view')
         .select('*')
-        .filter('product_properties', 'cs', `{%${lowercaseSearchTerm}%}`)
+        .filter('product_types', 'cs', `{%${lowercaseSearchTerm}%}`)
         .limit(20);
       
       if (productPropertyError) {
@@ -149,7 +150,8 @@ export const useProductSearch = (selectedProductId?: string) => {
         name: item.product_name,
         brand_id: item.brand_id,
         brand_name: item.brand_name,
-        product_properties: item.product_properties,
+        product_types: item.product_types,
+        product_properties: item.product_types, // For backward compatibility
         ingredients: item.ingredients,
         flavor_names: item.flavor_names || []
       })) || [];

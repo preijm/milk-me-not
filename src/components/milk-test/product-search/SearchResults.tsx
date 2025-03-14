@@ -7,7 +7,8 @@ interface SearchResult {
   name: string;
   brand_id: string;
   brand_name: string;
-  product_properties: string[] | null;
+  product_types?: string[] | null;
+  product_properties?: string[] | null;
   ingredients: string[] | null;
   flavor_names: string[] | null;
 }
