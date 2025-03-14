@@ -330,21 +330,18 @@ export type Database = {
           created_at: string
           id: string
           name_id: string | null
-          product_types: string[] | null
         }
         Insert: {
           brand_id: string
           created_at?: string
           id?: string
           name_id?: string | null
-          product_types?: string[] | null
         }
         Update: {
           brand_id?: string
           created_at?: string
           id?: string
           name_id?: string | null
-          product_types?: string[] | null
         }
         Relationships: [
           {
@@ -518,6 +515,7 @@ export type Database = {
           brand_name: string | null
           flavor_names: string[] | null
           id: string | null
+          is_barista: boolean | null
           product_name: string | null
           product_name_id: string | null
           product_types: string[] | null

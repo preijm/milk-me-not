@@ -8,6 +8,7 @@ interface ProductResult {
   product_name: string;
   product_types?: string[] | null;
   flavor_names: string[] | null;
+  is_barista?: boolean;
 }
 
 interface SearchResultsProps {

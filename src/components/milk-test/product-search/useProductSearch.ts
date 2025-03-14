@@ -10,6 +10,7 @@ interface ProductSearchResult {
   brand_name: string;
   product_types?: string[] | null;
   flavor_names: string[] | null;
+  is_barista?: boolean;
 }
 
 export const useProductSearch = (selectedProductId?: string) => {
@@ -116,11 +117,25 @@ export const useProductSearch = (selectedProductId?: string) => {
         console.error('Error searching product properties:', productPropertyError);
       }
 
+      // Query for barista products if search term contains 'barista'
+      const {
+        data: baristaResults,
+        error: baristaError
+      } = await supabase.from('product_search_view')
+        .select('*')
+        .eq('is_barista', true)
+        .ilike('product_name', `%${lowercaseSearchTerm}%`)
+        .limit(20);
+        
+      if (baristaError) {
+        console.error('Error searching for barista products:', baristaError);
+      }
+
       // Combine results, removing duplicates by id
       let combinedResults = [...(initialResults || [])];
       
       // Add all additional results if they exist, avoiding duplicates
-      [flavorResults, additionalFlavorResults, productPropertyResults].forEach(resultSet => {
+      [flavorResults, additionalFlavorResults, productPropertyResults, baristaResults].forEach(resultSet => {
         if (resultSet) {
           resultSet.forEach(item => {
             if (!combinedResults.some(existing => existing.id === item.id)) {
@@ -141,7 +156,8 @@ export const useProductSearch = (selectedProductId?: string) => {
               id: result.id,
               productName: result.product_name,
               flavorNames: result.flavor_names,
-              productTypes: result.product_types
+              productTypes: result.product_types,
+              isBarista: result.is_barista
             });
           }
         });
@@ -155,7 +171,8 @@ export const useProductSearch = (selectedProductId?: string) => {
         brand_id: item.brand_id,
         brand_name: item.brand_name,
         product_types: item.product_types || [],
-        flavor_names: item.flavor_names || []
+        flavor_names: item.flavor_names || [],
+        is_barista: item.is_barista
       })) || [];
     },
     enabled: searchTerm.length >= 2 && !selectedProductId

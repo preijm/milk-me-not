@@ -7,6 +7,7 @@ interface ProductData {
   product_name: string;
   product_types?: string[] | null;
   flavor_names: string[] | null;
+  is_barista?: boolean;
 }
 
 interface SelectedProductProps {
@@ -58,7 +59,8 @@ export const SelectedProduct = ({ product }: SelectedProductProps) => {
     brandName: product.brand_name,
     productName: product.product_name,
     productTypes: product.product_types,
-    flavorNames: product.flavor_names
+    flavorNames: product.flavor_names,
+    isBarista: product.is_barista
   });
 
   return (

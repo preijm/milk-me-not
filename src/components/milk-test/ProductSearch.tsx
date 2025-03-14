@@ -50,6 +50,7 @@ export const ProductSearch = ({
   console.log("Is dropdown visible:", isDropdownVisible);
   console.log("Search term length:", searchTerm.length);
   console.log("Selected product ID:", selectedProductId);
+  console.log("Selected product is barista:", selectedProduct?.is_barista);
 
   return (
     <div className="space-y-4">
@@ -74,7 +75,8 @@ export const ProductSearch = ({
             brand_name: result.brand_name,
             product_name: result.name,
             product_types: result.product_types,
-            flavor_names: result.flavor_names
+            flavor_names: result.flavor_names,
+            is_barista: result.is_barista
           }))}
           searchTerm={searchTerm}
           isLoading={isLoading}
