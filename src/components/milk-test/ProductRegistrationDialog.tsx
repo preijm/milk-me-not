@@ -131,24 +131,48 @@ export const ProductRegistrationDialog = ({
         return;
       }
 
-      // If barista is selected, add it to product properties
-      const finalProductProperties = isBarista 
-        ? [...selectedProductTypes, "barista"] 
-        : selectedProductTypes;
-
       // Create the new product
       const { data: newProduct, error: productError } = await supabase
         .from('products')
         .insert({
           brand_id: brandId,
-          name_id: finalNameId,
-          product_types: finalProductProperties.length > 0 ? finalProductProperties : null
+          name_id: finalNameId
         })
         .select()
         .single();
         
       if (productError) {
         throw productError;
+      }
+
+      // Get the property IDs for selected types
+      if (selectedProductTypes.length > 0 || isBarista) {
+        const finalProductTypes = isBarista 
+          ? [...selectedProductTypes, "barista"] 
+          : selectedProductTypes;
+          
+        const { data: propertyData, error: propertyLookupError } = await supabase
+          .from('properties')
+          .select('id, key')
+          .in('key', finalProductTypes);
+          
+        if (propertyLookupError) {
+          console.error('Error looking up property IDs:', propertyLookupError);
+        } else if (propertyData && propertyData.length > 0) {
+          // Insert product type links
+          const propertyLinks = propertyData.map(property => ({
+            product_id: newProduct.id,
+            property_id: property.id
+          }));
+          
+          const { error: propertiesError } = await supabase
+            .from('product_properties')
+            .insert(propertyLinks);
+            
+          if (propertiesError) {
+            console.error('Error adding product properties:', propertiesError);
+          }
+        }
       }
 
       // Add flavors if selected

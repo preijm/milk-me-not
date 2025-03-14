@@ -284,6 +284,46 @@ export type Database = {
           },
         ]
       }
+      product_properties: {
+        Row: {
+          created_at: string
+          product_id: string
+          property_id: string
+        }
+        Insert: {
+          created_at?: string
+          product_id: string
+          property_id: string
+        }
+        Update: {
+          created_at?: string
+          product_id?: string
+          property_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_properties_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_search_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_properties_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_properties_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           brand_id: string
