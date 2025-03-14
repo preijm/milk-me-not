@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -13,13 +12,11 @@ import { HelpCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-
 interface ProductRegistrationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: (productId: string, brandId: string) => void;
 }
-
 export const ProductRegistrationDialog = ({
   open,
   onOpenChange,
@@ -33,7 +30,9 @@ export const ProductRegistrationDialog = ({
   const [isBarista, setIsBarista] = useState(false);
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -48,14 +47,17 @@ export const ProductRegistrationDialog = ({
   }, [open]);
 
   // Fetch product_flavors
-  const { data: flavors = [] } = useQuery({
+  const {
+    data: flavors = []
+  } = useQuery({
     queryKey: ['product_flavors'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('flavors')
-        .select('id, name, key')
-        .order('ordering', { ascending: true });
-        
+      const {
+        data,
+        error
+      } = await supabase.from('flavors').select('id, name, key').order('ordering', {
+        ascending: true
+      });
       if (error) {
         console.error('Error fetching product flavors:', error);
         throw error;
@@ -63,15 +65,9 @@ export const ProductRegistrationDialog = ({
       return data || [];
     }
   });
-
   const handleFlavorToggle = (flavorKey: string) => {
-    setSelectedFlavors(prev => 
-      prev.includes(flavorKey) 
-        ? prev.filter(key => key !== flavorKey) 
-        : [...prev, flavorKey]
-    );
+    setSelectedFlavors(prev => prev.includes(flavorKey) ? prev.filter(key => key !== flavorKey) : [...prev, flavorKey]);
   };
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!brandId) {
@@ -94,15 +90,15 @@ export const ProductRegistrationDialog = ({
     try {
       // First check if product already exists with this brand and name_id
       let finalNameId = nameId;
-      
+
       // If name doesn't exist yet, create it
       if (!finalNameId) {
-        const { data: newName, error: nameError } = await supabase
-          .from('names')
-          .insert({ name: productName.trim() })
-          .select()
-          .single();
-          
+        const {
+          data: newName,
+          error: nameError
+        } = await supabase.from('names').insert({
+          name: productName.trim()
+        }).select().single();
         if (nameError) {
           console.error('Error adding product name:', nameError);
           // Continue even if name addition fails
@@ -110,15 +106,11 @@ export const ProductRegistrationDialog = ({
           finalNameId = newName.id;
         }
       }
-      
+
       // Once we have a name_id, check if the product exists
-      const { data: existingProduct } = await supabase
-        .from('products')
-        .select('id')
-        .eq('name_id', finalNameId)
-        .eq('brand_id', brandId)
-        .maybeSingle();
-        
+      const {
+        data: existingProduct
+      } = await supabase.from('products').select('id').eq('name_id', finalNameId).eq('brand_id', brandId).maybeSingle();
       if (existingProduct) {
         // If product exists, select it instead of showing an error
         toast({
@@ -132,30 +124,24 @@ export const ProductRegistrationDialog = ({
       }
 
       // Create the new product
-      const { data: newProduct, error: productError } = await supabase
-        .from('products')
-        .insert({
-          brand_id: brandId,
-          name_id: finalNameId
-        })
-        .select()
-        .single();
-        
+      const {
+        data: newProduct,
+        error: productError
+      } = await supabase.from('products').insert({
+        brand_id: brandId,
+        name_id: finalNameId
+      }).select().single();
       if (productError) {
         throw productError;
       }
 
       // Get the property IDs for selected types
       if (selectedProductTypes.length > 0 || isBarista) {
-        const finalProductTypes = isBarista 
-          ? [...selectedProductTypes, "barista"] 
-          : selectedProductTypes;
-          
-        const { data: propertyData, error: propertyLookupError } = await supabase
-          .from('properties')
-          .select('id, key')
-          .in('key', finalProductTypes);
-          
+        const finalProductTypes = isBarista ? [...selectedProductTypes, "barista"] : selectedProductTypes;
+        const {
+          data: propertyData,
+          error: propertyLookupError
+        } = await supabase.from('properties').select('id, key').in('key', finalProductTypes);
         if (propertyLookupError) {
           console.error('Error looking up property IDs:', propertyLookupError);
         } else if (propertyData && propertyData.length > 0) {
@@ -164,11 +150,9 @@ export const ProductRegistrationDialog = ({
             product_id: newProduct.id,
             property_id: property.id
           }));
-          
-          const { error: propertiesError } = await supabase
-            .from('product_properties')
-            .insert(propertyLinks);
-            
+          const {
+            error: propertiesError
+          } = await supabase.from('product_properties').insert(propertyLinks);
           if (propertiesError) {
             console.error('Error adding product properties:', propertiesError);
           }
@@ -178,11 +162,10 @@ export const ProductRegistrationDialog = ({
       // Add flavors if selected
       if (selectedFlavors.length > 0) {
         // Get the flavor IDs from their keys
-        const { data: flavorData, error: flavorLookupError } = await supabase
-          .from('flavors')
-          .select('id, key')
-          .in('key', selectedFlavors);
-          
+        const {
+          data: flavorData,
+          error: flavorLookupError
+        } = await supabase.from('flavors').select('id, key').in('key', selectedFlavors);
         if (flavorLookupError) {
           console.error('Error looking up flavor IDs:', flavorLookupError);
           // Continue even if flavor lookup fails
@@ -191,23 +174,19 @@ export const ProductRegistrationDialog = ({
             product_id: newProduct.id,
             flavor_id: flavor.id
           }));
-          
-          const { error: flavorError } = await supabase
-            .from('product_flavors')
-            .insert(flavorLinks);
-            
+          const {
+            error: flavorError
+          } = await supabase.from('product_flavors').insert(flavorLinks);
           if (flavorError) {
             console.error('Error adding flavors:', flavorError);
             // Continue even if flavor addition fails
           }
         }
       }
-      
       toast({
         title: "Product added",
         description: "Your new product has been registered successfully"
       });
-      
       onSuccess(newProduct.id, brandId);
       onOpenChange(false);
     } catch (error) {
@@ -221,9 +200,7 @@ export const ProductRegistrationDialog = ({
       setIsSubmitting(false);
     }
   };
-  
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+  return <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -249,11 +226,7 @@ export const ProductRegistrationDialog = ({
           
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Product Name *</h3>
-            <NameSelect 
-              productName={productName} 
-              setProductName={setProductName} 
-              onNameIdChange={setNameId}
-            />
+            <NameSelect productName={productName} setProductName={setProductName} onNameIdChange={setNameId} />
           </div>
           
           <Separator />
@@ -266,7 +239,7 @@ export const ProductRegistrationDialog = ({
           </div>
           
           <div className="space-y-4">
-            <h3 className="text-sm font-medium">Product Type</h3>
+            <h3 className="text-sm font-medium">Properties</h3>
             <ProductOptions selectedTypes={selectedProductTypes} setSelectedTypes={setSelectedProductTypes} />
           </div>
           
@@ -275,21 +248,12 @@ export const ProductRegistrationDialog = ({
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Flavors</h3>
             <div className="flex flex-wrap gap-2">
-              {flavors.map(flavor => (
-                <Badge 
-                  key={flavor.id} 
-                  variant="outline" 
-                  className={`
+              {flavors.map(flavor => <Badge key={flavor.id} variant="outline" className={`
                     rounded-full px-4 py-1 text-gray-700 cursor-pointer 
-                    ${selectedFlavors.includes(flavor.key) 
-                      ? 'bg-cream-200 border-cream-300' 
-                      : 'bg-gray-100 hover:bg-gray-200 border-gray-200'}
-                  `}
-                  onClick={() => handleFlavorToggle(flavor.key)}
-                >
+                    ${selectedFlavors.includes(flavor.key) ? 'bg-cream-200 border-cream-300' : 'bg-gray-100 hover:bg-gray-200 border-gray-200'}
+                  `} onClick={() => handleFlavorToggle(flavor.key)}>
                   {flavor.name}
-                </Badge>
-              ))}
+                </Badge>)}
             </div>
           </div>
           
@@ -303,6 +267,5 @@ export const ProductRegistrationDialog = ({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
