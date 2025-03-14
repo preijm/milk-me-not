@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { BrandSelect } from "./BrandSelect";
+import { NameSelect } from "./NameSelect";
 import { ProductOptions } from "./ProductOptions";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,13 +28,10 @@ export const ProductRegistrationDialog = ({
   // Form state
   const [brandId, setBrandId] = useState("");
   const [productName, setProductName] = useState("");
-  const [productNameSuggestions, setProductNameSuggestions] = useState<string[]>([]);
-  const [showProductNameDropdown, setShowProductNameDropdown] = useState(false);
   const [selectedProductTypes, setSelectedProductTypes] = useState<string[]>([]);
   const [isBarista, setIsBarista] = useState(false);
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAddNewProductName, setShowAddNewProductName] = useState(false);
   const {
     toast
   } = useToast();
@@ -49,63 +46,6 @@ export const ProductRegistrationDialog = ({
       setSelectedFlavors([]);
     }
   }, [open]);
-
-  // Fetch all product names for suggestions
-  const {
-    data: allProductNames = []
-  } = useQuery({
-    queryKey: ['product_names'],
-    queryFn: async () => {
-      const {
-        data,
-        error
-      } = await supabase.from('product_names').select('name').order('name');
-      if (error) {
-        console.error('Error fetching product names:', error);
-        return [];
-      }
-      return data.map(item => item.name);
-    }
-  });
-
-  // Fetch existing product names when brand changes
-  useEffect(() => {
-    const fetchProductNames = async () => {
-      if (!brandId) {
-        setProductNameSuggestions([]);
-        return;
-      }
-      const {
-        data,
-        error
-      } = await supabase.from('products').select('name').eq('brand_id', brandId).order('name');
-      if (error) {
-        console.error('Error fetching product names:', error);
-        return;
-      }
-      const names = data.map(p => p.name);
-      setProductNameSuggestions(names);
-    };
-    fetchProductNames();
-  }, [brandId]);
-
-  // Filter product suggestions based on input
-  useEffect(() => {
-    if (productName.trim() === '') {
-      setShowProductNameDropdown(false);
-      setShowAddNewProductName(false);
-      return;
-    }
-
-    // Check if we need to show the "Add new" option
-    const exactMatch = allProductNames.some(name => name.toLowerCase() === productName.trim().toLowerCase());
-    setShowAddNewProductName(!exactMatch && productName.trim() !== '');
-
-    // Filter suggestions from all product names
-    const filteredSuggestions = allProductNames.filter(name => name.toLowerCase().includes(productName.toLowerCase()) && !productNameSuggestions.includes(name));
-    const combinedSuggestions = [...productNameSuggestions.filter(name => name.toLowerCase().includes(productName.toLowerCase())), ...filteredSuggestions];
-    setShowProductNameDropdown(combinedSuggestions.length > 0 || showAddNewProductName);
-  }, [productName, productNameSuggestions, allProductNames]);
 
   // Fetch product_flavors
   const {
@@ -129,41 +69,6 @@ export const ProductRegistrationDialog = ({
 
   const handleFlavorToggle = (flavorId: string) => {
     setSelectedFlavors(prev => prev.includes(flavorId) ? prev.filter(id => id !== flavorId) : [...prev, flavorId]);
-  };
-  
-  const handleProductNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProductName(e.target.value);
-  };
-  
-  const handleSelectProductName = (name: string) => {
-    setProductName(name);
-    setShowProductNameDropdown(false);
-  };
-  
-  const handleAddNewProductName = async () => {
-    if (productName.trim() === '') return;
-
-    // Add to product_names if it doesn't exist
-    const {
-      data,
-      error
-    } = await supabase.from('product_names').insert({
-      name: productName.trim()
-    }).select().single();
-    if (error) {
-      console.error('Error adding product name:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add new product name. Please try again.",
-        variant: "destructive"
-      });
-      return;
-    }
-    toast({
-      title: "Success",
-      description: "New product name added to the database."
-    });
-    setShowProductNameDropdown(false);
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -202,25 +107,26 @@ export const ProductRegistrationDialog = ({
         return;
       }
 
-      // First, add the product name to product_names table if it doesn't exist
-      let productNameId: string | undefined;
+      // First, check if the product name exists in names table
+      let nameId: string | undefined;
       const {
-        data: existingProductName
-      } = await supabase.from('product_names').select('id').eq('name', productName.trim()).maybeSingle();
-      if (existingProductName) {
-        productNameId = existingProductName.id;
+        data: existingName
+      } = await supabase.from('names').select('id').eq('name', productName.trim()).maybeSingle();
+      if (existingName) {
+        nameId = existingName.id;
       } else {
+        // Add the name to the names table
         const {
-          data: newProductName,
-          error: productNameError
-        } = await supabase.from('product_names').insert({
+          data: newName,
+          error: nameError
+        } = await supabase.from('names').insert({
           name: productName.trim()
         }).select().single();
-        if (productNameError) {
-          console.error('Error adding product name:', productNameError);
-          // Continue even if product name addition fails
+        if (nameError) {
+          console.error('Error adding product name:', nameError);
+          // Continue even if name addition fails
         } else {
-          productNameId = newProductName.id;
+          nameId = newName.id;
         }
       }
 
@@ -234,11 +140,22 @@ export const ProductRegistrationDialog = ({
       } = await supabase.from('products').insert({
         name: productName.trim(),
         brand_id: brandId,
-        product_types: finalProductProperties.length > 0 ? finalProductProperties : null,
-        product_name_id: productNameId
+        product_types: finalProductProperties.length > 0 ? finalProductProperties : null
       }).select().single();
       if (productError) {
         throw productError;
+      }
+
+      // Link the product to the name in product_names_link table if nameId exists
+      if (nameId) {
+        const { error: linkError } = await supabase.from('product_names_link').insert({
+          product_id: newProduct.id,
+          name_id: nameId
+        });
+        if (linkError) {
+          console.error('Error linking product to name:', linkError);
+          // Continue even if linking fails
+        }
       }
 
       // Add flavors if selected
@@ -299,26 +216,7 @@ export const ProductRegistrationDialog = ({
           
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Product Name *</h3>
-            <div className="relative">
-              <Input placeholder="Enter product name" value={productName} onChange={handleProductNameChange} onFocus={() => setShowProductNameDropdown(productNameSuggestions.length > 0 || allProductNames.some(name => name.toLowerCase().includes(productName.toLowerCase())))} />
-              
-              {showProductNameDropdown && <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-40 overflow-y-auto">
-                  {[...new Set([...productNameSuggestions.filter(name => name.toLowerCase().includes(productName.toLowerCase())), ...allProductNames.filter(name => name.toLowerCase().includes(productName.toLowerCase()) && !productNameSuggestions.includes(name))])].map(name => <div key={name} className="px-4 py-2 cursor-pointer hover:bg-gray-100" onMouseDown={e => {
-                e.preventDefault();
-                handleSelectProductName(name);
-              }}>
-                      {name}
-                    </div>)}
-                  
-                  {showAddNewProductName && <div className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center text-gray-700" onMouseDown={e => {
-                e.preventDefault();
-                handleAddNewProductName();
-              }}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add "{productName.trim()}"
-                    </div>}
-                </div>}
-            </div>
+            <NameSelect productName={productName} setProductName={setProductName} />
           </div>
           
           <Separator />

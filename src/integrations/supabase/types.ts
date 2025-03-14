@@ -223,6 +223,24 @@ export type Database = {
           },
         ]
       }
+      names: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       product_flavors: {
         Row: {
           created_at: string
@@ -280,6 +298,46 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      product_names_link: {
+        Row: {
+          created_at: string
+          name_id: string
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          name_id: string
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          name_id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_names_link_name_id_fkey"
+            columns: ["name_id"]
+            isOneToOne: false
+            referencedRelation: "names"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_names_link_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_search_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_names_link_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
