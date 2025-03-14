@@ -50,6 +50,12 @@ export const ProductSearch = ({
     setIsDropdownVisible(false);
   };
 
+  // For debugging purposes
+  console.log("Search results:", searchResults);
+  console.log("Is dropdown visible:", isDropdownVisible);
+  console.log("Search term length:", searchTerm.length);
+  console.log("Selected product ID:", selectedProductId);
+
   return (
     <div className="space-y-4">
       <div className="relative">
@@ -67,13 +73,13 @@ export const ProductSearch = ({
           product_properties: selectedProduct.product_types // Add for compatibility
         }} />}
         
-        {/* Search results dropdown */}
+        {/* Search results dropdown - modified to ensure visibility */}
         <SearchResults 
           results={searchResults}
           searchTerm={searchTerm}
           isLoading={isLoading}
           onSelectProduct={handleSelectProduct}
-          isVisible={isDropdownVisible && !selectedProductId && searchTerm.length >= 2}
+          isVisible={searchTerm.length >= 2 && !selectedProductId}
         />
       </div>
     </div>

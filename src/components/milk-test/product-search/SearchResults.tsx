@@ -28,6 +28,9 @@ export const SearchResults = ({
   onSelectProduct,
   isVisible
 }: SearchResultsProps) => {
+  // For debugging
+  console.log("SearchResults component:", { isVisible, resultsLength: results.length, searchTerm });
+  
   if (!isVisible) return null;
 
   return (
@@ -44,9 +47,7 @@ export const SearchResults = ({
           />
         ))
       ) : (
-        searchTerm.length >= 2 ? (
-          <div className="px-4 py-3 text-sm text-gray-500">No products found</div>
-        ) : null
+        <div className="px-4 py-3 text-sm text-gray-500">No products found</div>
       )}
     </div>
   );

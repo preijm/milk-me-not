@@ -47,7 +47,8 @@ export const useProductSearch = (selectedProductId?: string) => {
 
   const {
     data: searchResults = [],
-    isLoading
+    isLoading,
+    isError
   } = useQuery({
     queryKey: ['product_search', searchTerm],
     queryFn: async () => {
@@ -142,7 +143,7 @@ export const useProductSearch = (selectedProductId?: string) => {
         }
       });
       
-      console.log('Search results:', combinedResults);
+      console.log('Search results count:', combinedResults.length);
 
       // Transform the results to match the format expected by the component
       return combinedResults.map(item => ({
@@ -159,9 +160,22 @@ export const useProductSearch = (selectedProductId?: string) => {
     enabled: searchTerm.length >= 2 && !selectedProductId
   });
 
+  // We'll update the dropdown visibility state directly based on search results
   useEffect(() => {
-    setIsDropdownVisible(searchResults.length > 0);
-  }, [searchResults]);
+    if (searchTerm.length >= 2 && !selectedProductId) {
+      setIsDropdownVisible(true);
+    } else {
+      setIsDropdownVisible(false);
+    }
+    
+    // Log for debugging
+    console.log("Dropdown visibility state updated:", { 
+      isDropdownVisible, 
+      searchTermLength: searchTerm.length, 
+      hasResults: searchResults.length > 0,
+      isLoading
+    });
+  }, [searchTerm, searchResults, selectedProductId, isLoading]);
 
   return {
     searchTerm,
@@ -170,6 +184,7 @@ export const useProductSearch = (selectedProductId?: string) => {
     isLoading,
     isDropdownVisible,
     setIsDropdownVisible,
-    selectedProduct
+    selectedProduct,
+    isError
   };
 };
