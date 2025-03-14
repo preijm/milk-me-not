@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
-import { HelpCircle, Plus } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -28,19 +28,19 @@ export const ProductRegistrationDialog = ({
   // Form state
   const [brandId, setBrandId] = useState("");
   const [productName, setProductName] = useState("");
+  const [nameId, setNameId] = useState<string | null>(null);
   const [selectedProductTypes, setSelectedProductTypes] = useState<string[]>([]);
   const [isBarista, setIsBarista] = useState(false);
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
 
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
       setBrandId("");
       setProductName("");
+      setNameId(null);
       setSelectedProductTypes([]);
       setIsBarista(false);
       setSelectedFlavors([]);
@@ -48,17 +48,14 @@ export const ProductRegistrationDialog = ({
   }, [open]);
 
   // Fetch product_flavors
-  const {
-    data: flavors = []
-  } = useQuery({
+  const { data: flavors = [] } = useQuery({
     queryKey: ['product_flavors'],
     queryFn: async () => {
-      const {
-        data,
-        error
-      } = await supabase.from('flavors').select('id, name').order('ordering', {
-        ascending: true
-      });
+      const { data, error } = await supabase
+        .from('flavors')
+        .select('id, name')
+        .order('ordering', { ascending: true });
+        
       if (error) {
         console.error('Error fetching product flavors:', error);
         throw error;
@@ -68,7 +65,11 @@ export const ProductRegistrationDialog = ({
   });
 
   const handleFlavorToggle = (flavorId: string) => {
-    setSelectedFlavors(prev => prev.includes(flavorId) ? prev.filter(id => id !== flavorId) : [...prev, flavorId]);
+    setSelectedFlavors(prev => 
+      prev.includes(flavorId) 
+        ? prev.filter(id => id !== flavorId) 
+        : [...prev, flavorId]
+    );
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,9 +93,13 @@ export const ProductRegistrationDialog = ({
     setIsSubmitting(true);
     try {
       // First check if product already exists with this name and brand
-      const {
-        data: existingProduct
-      } = await supabase.from('products').select('id').eq('name', productName.trim()).eq('brand_id', brandId).maybeSingle();
+      const { data: existingProduct } = await supabase
+        .from('products')
+        .select('id')
+        .eq('name', productName.trim())
+        .eq('brand_id', brandId)
+        .maybeSingle();
+        
       if (existingProduct) {
         // If product exists, select it instead of showing an error
         toast({
@@ -107,55 +112,42 @@ export const ProductRegistrationDialog = ({
         return;
       }
 
-      // First, check if the product name exists in names table
-      let nameId: string | undefined;
-      const {
-        data: existingName
-      } = await supabase.from('names').select('id').eq('name', productName.trim()).maybeSingle();
-      if (existingName) {
-        nameId = existingName.id;
-      } else {
-        // Add the name to the names table
-        const {
-          data: newName,
-          error: nameError
-        } = await supabase.from('names').insert({
-          name: productName.trim()
-        }).select().single();
+      // If name doesn't exist yet, create it
+      let finalNameId = nameId;
+      if (!finalNameId) {
+        const { data: newName, error: nameError } = await supabase
+          .from('names')
+          .insert({ name: productName.trim() })
+          .select()
+          .single();
+          
         if (nameError) {
           console.error('Error adding product name:', nameError);
           // Continue even if name addition fails
         } else {
-          nameId = newName.id;
+          finalNameId = newName.id;
         }
       }
 
       // If barista is selected, add it to product properties
-      const finalProductProperties = isBarista ? [...selectedProductTypes, "barista"] : selectedProductTypes;
+      const finalProductProperties = isBarista 
+        ? [...selectedProductTypes, "barista"] 
+        : selectedProductTypes;
 
       // Create the new product
-      const {
-        data: newProduct,
-        error: productError
-      } = await supabase.from('products').insert({
-        name: productName.trim(),
-        brand_id: brandId,
-        product_types: finalProductProperties.length > 0 ? finalProductProperties : null
-      }).select().single();
+      const { data: newProduct, error: productError } = await supabase
+        .from('products')
+        .insert({
+          name: productName.trim(),
+          brand_id: brandId,
+          name_id: finalNameId,
+          product_types: finalProductProperties.length > 0 ? finalProductProperties : null
+        })
+        .select()
+        .single();
+        
       if (productError) {
         throw productError;
-      }
-
-      // Link the product to the name in product_names_link table if nameId exists
-      if (nameId) {
-        const { error: linkError } = await supabase.from('product_names_link').insert({
-          product_id: newProduct.id,
-          name_id: nameId
-        });
-        if (linkError) {
-          console.error('Error linking product to name:', linkError);
-          // Continue even if linking fails
-        }
       }
 
       // Add flavors if selected
@@ -164,18 +156,22 @@ export const ProductRegistrationDialog = ({
           product_id: newProduct.id,
           flavor_id: flavorId
         }));
-        const {
-          error: flavorError
-        } = await supabase.from('product_flavors').insert(flavorLinks);
+        
+        const { error: flavorError } = await supabase
+          .from('product_flavors')
+          .insert(flavorLinks);
+          
         if (flavorError) {
           console.error('Error adding flavors:', flavorError);
           // Continue even if flavor addition fails
         }
       }
+      
       toast({
         title: "Product added",
         description: "Your new product has been registered successfully"
       });
+      
       onSuccess(newProduct.id, brandId);
       onOpenChange(false);
     } catch (error) {
@@ -190,7 +186,8 @@ export const ProductRegistrationDialog = ({
     }
   };
   
-  return <Dialog open={open} onOpenChange={onOpenChange}>
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -216,7 +213,11 @@ export const ProductRegistrationDialog = ({
           
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Product Name *</h3>
-            <NameSelect productName={productName} setProductName={setProductName} />
+            <NameSelect 
+              productName={productName} 
+              setProductName={setProductName} 
+              onNameIdChange={setNameId}
+            />
           </div>
           
           <Separator />
@@ -266,5 +267,6 @@ export const ProductRegistrationDialog = ({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+  );
 };

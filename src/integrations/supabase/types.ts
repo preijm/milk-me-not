@@ -281,52 +281,13 @@ export type Database = {
           },
         ]
       }
-      product_names_link: {
-        Row: {
-          created_at: string
-          name_id: string
-          product_id: string
-        }
-        Insert: {
-          created_at?: string
-          name_id: string
-          product_id: string
-        }
-        Update: {
-          created_at?: string
-          name_id?: string
-          product_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_names_link_name_id_fkey"
-            columns: ["name_id"]
-            isOneToOne: false
-            referencedRelation: "names"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "product_names_link_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "product_search_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "product_names_link_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       products: {
         Row: {
           brand_id: string
           created_at: string
           id: string
           name: string
+          name_id: string | null
           product_name_id: string | null
           product_types: string[] | null
         }
@@ -335,6 +296,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          name_id?: string | null
           product_name_id?: string | null
           product_types?: string[] | null
         }
@@ -343,6 +305,7 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          name_id?: string | null
           product_name_id?: string | null
           product_types?: string[] | null
         }
@@ -352,6 +315,13 @@ export type Database = {
             columns: ["brand_id"]
             isOneToOne: false
             referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_name_id_fkey"
+            columns: ["name_id"]
+            isOneToOne: false
+            referencedRelation: "names"
             referencedColumns: ["id"]
           },
         ]

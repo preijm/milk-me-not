@@ -9,9 +9,10 @@ import { Plus } from "lucide-react";
 interface NameSelectProps {
   productName: string;
   setProductName: (name: string) => void;
+  onNameIdChange?: (nameId: string | null) => void;
 }
 
-export const NameSelect = ({ productName, setProductName }: NameSelectProps) => {
+export const NameSelect = ({ productName, setProductName, onNameIdChange }: NameSelectProps) => {
   const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string }>>([]);
   const [showAddNew, setShowAddNew] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -40,6 +41,7 @@ export const NameSelect = ({ productName, setProductName }: NameSelectProps) => 
     if (productName.trim() === '') {
       setSuggestions([]);
       setShowAddNew(false);
+      if (onNameIdChange) onNameIdChange(null);
       return;
     }
 
@@ -49,11 +51,18 @@ export const NameSelect = ({ productName, setProductName }: NameSelectProps) => 
 
     setSuggestions(filteredNames);
     
-    const exactMatch = names.some(
+    const exactMatch = names.find(
       name => name.name.toLowerCase() === productName.trim().toLowerCase()
     );
+    
+    if (exactMatch && onNameIdChange) {
+      onNameIdChange(exactMatch.id);
+    } else if (onNameIdChange) {
+      onNameIdChange(null);
+    }
+    
     setShowAddNew(!exactMatch && productName.trim() !== '');
-  }, [productName, names]);
+  }, [productName, names, onNameIdChange]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProductName(e.target.value);
@@ -61,6 +70,7 @@ export const NameSelect = ({ productName, setProductName }: NameSelectProps) => 
 
   const handleSelectName = (selectedName: { id: string; name: string }) => {
     setProductName(selectedName.name);
+    if (onNameIdChange) onNameIdChange(selectedName.id);
     setIsDropdownVisible(false);
   };
 
@@ -88,6 +98,7 @@ export const NameSelect = ({ productName, setProductName }: NameSelectProps) => 
       description: "New product name added successfully!",
     });
     
+    if (onNameIdChange) onNameIdChange(data.id);
     setIsDropdownVisible(false);
   };
 
