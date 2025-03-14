@@ -39,13 +39,13 @@ export const SelectedProduct = ({ product }: SelectedProductProps) => {
       });
     }
     
-    // Add flavor badges with the new styling
+    // Add flavor badges with improved styling
     if (product.flavor_names && product.flavor_names.length > 0) {
       product.flavor_names.forEach(flavor => {
         badges.push({
           key: `flavor-${flavor}`,
           text: flavor,
-          className: "bg-gray-100 border-gray-200 text-gray-700"
+          className: "bg-blue-500 border-blue-600 text-white"
         });
       });
     }

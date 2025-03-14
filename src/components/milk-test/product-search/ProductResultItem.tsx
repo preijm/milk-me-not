@@ -57,12 +57,12 @@ export const ProductResultItem = ({ product, onSelect }: ProductResultItemProps)
           </Badge>
         ))}
         
-        {/* Display flavor badges with consistent styling */}
+        {/* Updated flavor badges with better contrast */}
         {flavorNames.length > 0 && flavorNames.map(flavor => (
           <Badge 
             key={`flavor-${flavor}`} 
             variant="outline" 
-            className="rounded-full px-3 py-0.5 text-xs bg-gray-100 border-gray-200 text-gray-700"
+            className="rounded-full px-3 py-0.5 text-xs bg-blue-500 text-white border-blue-600"
           >
             {flavor}
           </Badge>
