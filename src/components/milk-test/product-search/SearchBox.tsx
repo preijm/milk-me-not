@@ -11,6 +11,7 @@ interface SearchBoxProps {
   onSearchChange: (value: string) => void;
   onAddNew: () => void;
   onClear: () => void;
+  onFocus: () => void;
   hasSelectedProduct: boolean;
 }
 
@@ -19,6 +20,7 @@ export const SearchBox = ({
   onSearchChange,
   onAddNew,
   onClear,
+  onFocus,
   hasSelectedProduct
 }: SearchBoxProps) => {
   const isMobile = useIsMobile();
@@ -36,7 +38,7 @@ export const SearchBox = ({
             placeholder="Search for product..." 
             value={searchTerm} 
             onChange={handleInputChange}
-            onFocus={() => !hasSelectedProduct} 
+            onFocus={!hasSelectedProduct ? onFocus : undefined} 
             className="pl-9 w-full" 
           />
           {searchTerm && (
