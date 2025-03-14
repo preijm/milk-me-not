@@ -217,60 +217,64 @@ export const ProductRegistrationDialog = ({
                   <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent side="bottom" align="center" className="max-w-xs">
-                  <p className="font-normal">Enter product details to add a new product to the database. Brand and product name are required. Product types and flavors are optional but helpful for filtering and searches.</p>
+                  <p className="font-normal">Enter product details to add a new product to the database. Brand and product name are required, with the product name based on its main ingredients.
+
+If a product package includes flavor, barista type, or specific properties, be sure to add them! This helps make each product unique and easier to find. 😊</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </DialogTitle>
         </DialogHeader>
         
+        
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">Brand *</h3>
+          
+          
+          
+            
             <BrandSelect brandId={brandId} setBrandId={setBrandId} />
-          </div>
           
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">Product *</h3>
+          
+          
+            
             <NameSelect productName={productName} setProductName={setProductName} onNameIdChange={setNameId} />
-          </div>
           
-          <Separator />
           
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">Barista Version</h3>
-            <div className="flex items-center">
+          
+          
+          
+            
+            
               <Switch id="barista-version" checked={isBarista} onCheckedChange={setIsBarista} />
-            </div>
-          </div>
+            
           
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">Properties</h3>
+          
+          
+            
             <ProductOptions selectedTypes={selectedProductTypes} setSelectedTypes={setSelectedProductTypes} />
-          </div>
           
-          <Separator />
           
-          <div className="space-y-4">
-            <h3 className="text-sm font-medium">Flavors</h3>
-            <div className="flex flex-wrap gap-2">
+          
+          
+            
+            
               {flavors.map(flavor => <Badge key={flavor.id} variant="outline" className={`
                     rounded-full px-4 py-1 cursor-pointer transition-all 
                     ${selectedFlavors.includes(flavor.key) ? 'bg-blue-500 text-white border-blue-600 font-medium shadow-sm hover:bg-blue-600' : 'bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700'}
                   `} onClick={() => handleFlavorToggle(flavor.key)}>
                   {flavor.name}
                 </Badge>)}
-            </div>
-          </div>
+            
           
-          <DialogFooter>
+          
+          
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting} className="bg-black text-white">
               {isSubmitting ? "Registering..." : "Register Product"}
             </Button>
-          </DialogFooter>
+          
         </form>
       </DialogContent>
     </Dialog>;
