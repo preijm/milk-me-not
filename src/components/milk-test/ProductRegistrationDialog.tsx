@@ -53,7 +53,7 @@ export const ProductRegistrationDialog = ({
     queryFn: async () => {
       const { data, error } = await supabase
         .from('flavors')
-        .select('id, name')
+        .select('id, name, key')
         .order('ordering', { ascending: true });
         
       if (error) {
@@ -64,11 +64,11 @@ export const ProductRegistrationDialog = ({
     }
   });
 
-  const handleFlavorToggle = (flavorId: string) => {
+  const handleFlavorToggle = (flavorKey: string) => {
     setSelectedFlavors(prev => 
-      prev.includes(flavorId) 
-        ? prev.filter(id => id !== flavorId) 
-        : [...prev, flavorId]
+      prev.includes(flavorKey) 
+        ? prev.filter(key => key !== flavorKey) 
+        : [...prev, flavorKey]
     );
   };
   
@@ -153,18 +153,29 @@ export const ProductRegistrationDialog = ({
 
       // Add flavors if selected
       if (selectedFlavors.length > 0) {
-        const flavorLinks = selectedFlavors.map(flavorId => ({
-          product_id: newProduct.id,
-          flavor_id: flavorId
-        }));
-        
-        const { error: flavorError } = await supabase
-          .from('product_flavors')
-          .insert(flavorLinks);
+        // Get the flavor IDs from their keys
+        const { data: flavorData, error: flavorLookupError } = await supabase
+          .from('flavors')
+          .select('id, key')
+          .in('key', selectedFlavors);
           
-        if (flavorError) {
-          console.error('Error adding flavors:', flavorError);
-          // Continue even if flavor addition fails
+        if (flavorLookupError) {
+          console.error('Error looking up flavor IDs:', flavorLookupError);
+          // Continue even if flavor lookup fails
+        } else if (flavorData && flavorData.length > 0) {
+          const flavorLinks = flavorData.map(flavor => ({
+            product_id: newProduct.id,
+            flavor_id: flavor.id
+          }));
+          
+          const { error: flavorError } = await supabase
+            .from('product_flavors')
+            .insert(flavorLinks);
+            
+          if (flavorError) {
+            console.error('Error adding flavors:', flavorError);
+            // Continue even if flavor addition fails
+          }
         }
       }
       
@@ -246,11 +257,11 @@ export const ProductRegistrationDialog = ({
                   variant="outline" 
                   className={`
                     rounded-full px-4 py-1 text-gray-700 cursor-pointer 
-                    ${selectedFlavors.includes(flavor.id) 
+                    ${selectedFlavors.includes(flavor.key) 
                       ? 'bg-cream-200 border-cream-300' 
                       : 'bg-gray-100 hover:bg-gray-200 border-gray-200'}
                   `}
-                  onClick={() => handleFlavorToggle(flavor.id)}
+                  onClick={() => handleFlavorToggle(flavor.key)}
                 >
                   {flavor.name}
                 </Badge>
