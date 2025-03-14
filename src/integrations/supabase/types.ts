@@ -281,24 +281,6 @@ export type Database = {
           },
         ]
       }
-      product_names: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
       product_names_link: {
         Row: {
           created_at: string
@@ -365,13 +347,6 @@ export type Database = {
           product_types?: string[] | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_product_name_id"
-            columns: ["product_name_id"]
-            isOneToOne: false
-            referencedRelation: "product_names"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "products_brand_id_fkey"
             columns: ["brand_id"]
@@ -541,13 +516,6 @@ export type Database = {
           product_types: string[] | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_product_name_id"
-            columns: ["product_name_id"]
-            isOneToOne: false
-            referencedRelation: "product_names"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "products_brand_id_fkey"
             columns: ["brand_id"]
