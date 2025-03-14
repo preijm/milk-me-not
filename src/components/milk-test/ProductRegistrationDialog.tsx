@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { BrandSelect } from "./BrandSelect";
 import { NameSelect } from "./NameSelect";
 import { ProductOptions } from "./ProductOptions";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Separator } from "@/components/ui/separator";
 import { useQuery } from "@tanstack/react-query";
@@ -65,9 +65,11 @@ export const ProductRegistrationDialog = ({
       return data || [];
     }
   });
+  
   const handleFlavorToggle = (flavorKey: string) => {
     setSelectedFlavors(prev => prev.includes(flavorKey) ? prev.filter(key => key !== flavorKey) : [...prev, flavorKey]);
   };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!brandId) {
@@ -80,12 +82,13 @@ export const ProductRegistrationDialog = ({
     }
     if (!productName) {
       toast({
-        title: "Missing product name",
+        title: "Missing product",
         description: "Please enter a name for this product",
         variant: "destructive"
       });
       return;
     }
+    
     setIsSubmitting(true);
     try {
       // First check if product already exists with this brand and name_id
@@ -111,8 +114,9 @@ export const ProductRegistrationDialog = ({
       const {
         data: existingProduct
       } = await supabase.from('products').select('id').eq('name_id', finalNameId).eq('brand_id', brandId).maybeSingle();
+
+      // If product exists, select it instead of showing an error
       if (existingProduct) {
-        // If product exists, select it instead of showing an error
         toast({
           title: "Product exists",
           description: "This product already exists and has been selected"
@@ -183,9 +187,10 @@ export const ProductRegistrationDialog = ({
           }
         }
       }
+      
       toast({
         title: "Product added",
-        description: "Your new product has been registered successfully"
+        description: "New product added successfully!"
       });
       onSuccess(newProduct.id, brandId);
       onOpenChange(false);
@@ -200,6 +205,7 @@ export const ProductRegistrationDialog = ({
       setIsSubmitting(false);
     }
   };
+  
   return <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
