@@ -92,11 +92,30 @@ export const ProductRegistrationDialog = ({
     }
     setIsSubmitting(true);
     try {
-      // First check if product already exists with this name and brand
+      // First check if product already exists with this brand and name_id
+      let finalNameId = nameId;
+      
+      // If name doesn't exist yet, create it
+      if (!finalNameId) {
+        const { data: newName, error: nameError } = await supabase
+          .from('names')
+          .insert({ name: productName.trim() })
+          .select()
+          .single();
+          
+        if (nameError) {
+          console.error('Error adding product name:', nameError);
+          // Continue even if name addition fails
+        } else {
+          finalNameId = newName.id;
+        }
+      }
+      
+      // Once we have a name_id, check if the product exists
       const { data: existingProduct } = await supabase
         .from('products')
         .select('id')
-        .eq('name', productName.trim())
+        .eq('name_id', finalNameId)
         .eq('brand_id', brandId)
         .maybeSingle();
         
@@ -112,23 +131,6 @@ export const ProductRegistrationDialog = ({
         return;
       }
 
-      // If name doesn't exist yet, create it
-      let finalNameId = nameId;
-      if (!finalNameId) {
-        const { data: newName, error: nameError } = await supabase
-          .from('names')
-          .insert({ name: productName.trim() })
-          .select()
-          .single();
-          
-        if (nameError) {
-          console.error('Error adding product name:', nameError);
-          // Continue even if name addition fails
-        } else {
-          finalNameId = newName.id;
-        }
-      }
-
       // If barista is selected, add it to product properties
       const finalProductProperties = isBarista 
         ? [...selectedProductTypes, "barista"] 
@@ -138,7 +140,6 @@ export const ProductRegistrationDialog = ({
       const { data: newProduct, error: productError } = await supabase
         .from('products')
         .insert({
-          name: productName.trim(),
           brand_id: brandId,
           name_id: finalNameId,
           product_types: finalProductProperties.length > 0 ? finalProductProperties : null
