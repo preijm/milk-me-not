@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { ProductSearch } from "./ProductSearch";
 import { ProductRegistrationDialog } from "./registration-ui/ProductRegistrationDialog";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductInformationProps {
   brandId: string;
@@ -27,13 +27,7 @@ export const ProductInformation = ({
     setProductId(productId);
     setBrandId(brandId);
     
-    // Show toast only when actually selecting a product (not when clearing)
-    if (productId) {
-      toast({
-        title: "Product selected",
-        description: "You've selected an existing product",
-      });
-    }
+    // Toast removed - no longer showing notification when selecting a product
   };
 
   const handleAddNewProduct = () => {
