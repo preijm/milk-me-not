@@ -21,8 +21,8 @@ import { motion } from "framer-motion";
 
 interface MilkTestResult {
   id: string;
-  brand: string;
-  type: string;
+  brand_name: string;
+  product_type_keys: string[];
   rating: number;
   notes: string | null;
   created_at: string;
@@ -45,11 +45,28 @@ export const MilkCharts = ({ results }: { results: MilkTestResult[] }) => {
 
   // Prepare data for bar chart - average rating by milk type
   const typeData = results.reduce((acc: { [key: string]: { count: number; total: number } }, curr) => {
-    if (!acc[curr.type || 'Unknown']) {
-      acc[curr.type || 'Unknown'] = { count: 0, total: 0 };
+    const productTypes = curr.product_type_keys || [];
+    
+    // If no product types, use 'Unknown'
+    if (productTypes.length === 0) {
+      if (!acc['Unknown']) {
+        acc['Unknown'] = { count: 0, total: 0 };
+      }
+      acc['Unknown'].count += 1;
+      acc['Unknown'].total += curr.rating;
+      return acc;
     }
-    acc[curr.type || 'Unknown'].count += 1;
-    acc[curr.type || 'Unknown'].total += curr.rating;
+    
+    // Otherwise, count for each product type
+    productTypes.forEach(type => {
+      const displayType = type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      if (!acc[displayType]) {
+        acc[displayType] = { count: 0, total: 0 };
+      }
+      acc[displayType].count += 1;
+      acc[displayType].total += curr.rating;
+    });
+    
     return acc;
   }, {});
 
@@ -190,6 +207,7 @@ export const MilkCharts = ({ results }: { results: MilkTestResult[] }) => {
   };
 
   return (
+    
     <div className="bg-white rounded-lg p-6 shadow-lg">
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Milk Rating Analytics</h2>
       

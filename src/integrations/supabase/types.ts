@@ -400,17 +400,18 @@ export type Database = {
       }
     }
     Views: {
-      milk_tests_with_brands: {
+      milk_tests_view: {
         Row: {
-          brand: string | null
           brand_id: string | null
-          country: string | null
+          brand_name: string | null
           created_at: string | null
           display_name: string | null
           drink_preference: string | null
+          flavor_names: string[] | null
           id: string | null
           is_barista: boolean | null
           notes: string | null
+          picture_path: string | null
           price: number | null
           product_id: string | null
           product_name: string | null
@@ -420,8 +421,8 @@ export type Database = {
           shop_country_code: string | null
           shop_id: string | null
           shop_name: string | null
-          type: string | null
           user_id: string | null
+          username: string | null
         }
         Relationships: [
           {

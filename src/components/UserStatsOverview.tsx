@@ -3,8 +3,8 @@ import React from "react";
 
 interface MilkTestResult {
   rating: number;
-  type: string;
-  brand: string;
+  product_type_keys: string[];
+  brand_name: string;
   created_at: string;
 }
 
@@ -13,7 +13,7 @@ export const UserStatsOverview = ({ results }: { results: MilkTestResult[] }) =>
     ? (results.reduce((acc, curr) => acc + curr.rating, 0) / results.length).toFixed(1)
     : "0.0";
 
-  const uniqueBrands = [...new Set(results.map((r) => r.brand))];
+  const uniqueBrands = [...new Set(results.map((r) => r.brand_name))];
 
   return (
     <div className="bg-cream-100 rounded-lg p-6 mb-8">
@@ -34,4 +34,3 @@ export const UserStatsOverview = ({ results }: { results: MilkTestResult[] }) =>
     </div>
   );
 };
-

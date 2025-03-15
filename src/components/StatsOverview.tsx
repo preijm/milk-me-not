@@ -4,7 +4,7 @@ import { Milk } from "lucide-react";
 
 interface MilkTestResult {
   rating: number;
-  type: string;
+  product_type_keys: string[];
   created_at: string;
 }
 
@@ -13,7 +13,10 @@ export const StatsOverview = ({ results }: { results: MilkTestResult[] }) => {
     ? (results.reduce((acc, curr) => acc + curr.rating, 0) / results.length).toFixed(1)
     : "0.0";
 
-  const types = [...new Set(results.map((r) => r.type))];
+  // Get unique product types from the product_type_keys array
+  const types = results.length
+    ? [...new Set(results.flatMap(r => r.product_type_keys || []))]
+    : [];
 
   return (
     <div className="bg-cream-100 rounded-lg p-6 mb-8">
@@ -39,4 +42,3 @@ export const StatsOverview = ({ results }: { results: MilkTestResult[] }) => {
     </div>
   );
 };
-

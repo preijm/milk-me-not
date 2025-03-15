@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import {
@@ -28,7 +27,7 @@ const Results = () => {
     queryKey: ['milk-tests', sortConfig],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('milk_tests_with_brands')
+        .from('milk_tests_view')
         .select('*')
         .order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
       
@@ -56,7 +55,7 @@ const Results = () => {
   const filteredResults = results.filter((result) => {
     const searchString = searchTerm.toLowerCase();
     return (
-      (result.brand || "").toLowerCase().includes(searchString) ||
+      (result.brand_name || "").toLowerCase().includes(searchString) ||
       (result.product_name || "").toLowerCase().includes(searchString) ||
       (result.display_name || "").toLowerCase().includes(searchString)
     );
@@ -115,10 +114,10 @@ const Results = () => {
                 <TableHead>
                   <Button
                     variant="ghost"
-                    onClick={() => handleSort('brand')}
+                    onClick={() => handleSort('brand_name')}
                     className="hover:bg-transparent"
                   >
-                    Brand {getSortIcon('brand')}
+                    Brand {getSortIcon('brand_name')}
                   </Button>
                 </TableHead>
                 <TableHead>
@@ -147,7 +146,7 @@ const Results = () => {
               {filteredResults.map((result) => (
                 <TableRow key={result.id}>
                   <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell className="font-medium">{result.brand}</TableCell>
+                  <TableCell className="font-medium">{result.brand_name}</TableCell>
                   <TableCell>{result.product_name}</TableCell>
                   <TableCell>
                     <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
