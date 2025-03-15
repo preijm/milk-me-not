@@ -89,10 +89,13 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
           title: "Product added",
           description: "New product added successfully!"
         });
-        onSuccess(result.productId, brandId);
-        handleOpenChange(false);
+        
+        // Important: Clear submitting state BEFORE calling onSuccess
         setIsSubmitting(false);
         console.log("New product added, isSubmitting set to false");
+        
+        onSuccess(result.productId, brandId);
+        handleOpenChange(false);
       } else {
         setIsSubmitting(false);
         console.log("No product ID returned, isSubmitting set to false");
@@ -131,7 +134,12 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
       
       <DuplicateAlertHandler 
         onSuccess={handleSuccessWithExisting} 
-        onClose={() => handleOpenChange(false)} 
+        onClose={() => {
+          // Make sure we reset the submitting state before closing
+          setIsSubmitting(false);
+          console.log("DuplicateAlert onClose, isSubmitting set to false");
+          handleOpenChange(false);
+        }} 
       />
     </>
   );

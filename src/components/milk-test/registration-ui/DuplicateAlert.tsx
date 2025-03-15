@@ -26,7 +26,9 @@ export const useDuplicateHandling = (onSuccess: (productId: string, brandId: str
       // Call onSuccess without showing a toast - the ProductInformation component
       // will handle showing the appropriate toast
       onSuccess(duplicateProductId, brandId);
-      onClose(); // Close the dialog after selecting existing product
+      
+      // Close the dialog after selecting existing product - do this last
+      onClose(); 
       
       console.log("handleUseExisting completed, isSubmitting set to false");
     }
