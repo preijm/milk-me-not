@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { KeyboardEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,14 @@ export const SearchBox = ({
     onSearchChange(e.target.value);
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // If the user presses backspace when there's a selected product, clear it
+    if (e.key === 'Backspace' && hasSelectedProduct) {
+      e.preventDefault(); // Prevent the default backspace behavior
+      onClear(); // Trigger the clear function (same as clicking the X)
+    }
+  };
+
   return (
     <>
       <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-2`}>
@@ -37,6 +45,7 @@ export const SearchBox = ({
             placeholder="Search for product..." 
             value={searchTerm} 
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             onFocus={!hasSelectedProduct ? onFocus : undefined} 
             className="pl-9 w-full" 
           />

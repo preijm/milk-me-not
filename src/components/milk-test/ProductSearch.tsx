@@ -52,6 +52,8 @@ export const ProductSearch = ({
     if (selectedProductId) {
       onSelectProduct('', '');
     }
+    // Show the dropdown again to allow for new selection
+    setIsDropdownVisible(true);
   };
 
   const handleProductRegistrationSuccess = (newProductId: string, newBrandId: string) => {

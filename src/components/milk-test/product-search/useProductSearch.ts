@@ -15,22 +15,38 @@ interface ProductSearchResult {
 export const useProductSearch = (selectedProductId?: string) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [localSelectedProductId, setLocalSelectedProductId] = useState(selectedProductId);
+  
+  // Keep local state in sync with prop
+  useEffect(() => {
+    setLocalSelectedProductId(selectedProductId);
+  }, [selectedProductId]);
+  
+  // Custom setter for search term that also manages the selected product state
+  const handleSetSearchTerm = (term: string) => {
+    setSearchTerm(term);
+    
+    // If we're clearing the search or starting a new one, also clear the selected product locally
+    if (term === "" && localSelectedProductId) {
+      setLocalSelectedProductId(undefined);
+    }
+  };
   
   // Fetch selected product details if available
   const {
     data: selectedProduct,
     isLoading: isLoadingSelectedProduct
   } = useQuery({
-    queryKey: ['selected_product', selectedProductId],
+    queryKey: ['selected_product', localSelectedProductId],
     queryFn: async () => {
-      if (!selectedProductId) return null;
+      if (!localSelectedProductId) return null;
       
-      console.log("Fetching selected product with ID:", selectedProductId);
+      console.log("Fetching selected product with ID:", localSelectedProductId);
       // Use maybeSingle instead of single for RLS compatibility
       const {
         data,
         error
-      } = await supabase.from('product_search_view').select('*').eq('id', selectedProductId).maybeSingle();
+      } = await supabase.from('product_search_view').select('*').eq('id', localSelectedProductId).maybeSingle();
       
       if (error) {
         console.error('Error fetching selected product:', error);
@@ -39,22 +55,23 @@ export const useProductSearch = (selectedProductId?: string) => {
       console.log("Selected product data:", data);
       return data;
     },
-    enabled: !!selectedProductId
+    enabled: !!localSelectedProductId
   });
 
   // Update search term when selected product changes
   useEffect(() => {
     if (selectedProduct) {
       setSearchTerm(`${selectedProduct.brand_name} - ${selectedProduct.product_name}`);
-    } else if (!selectedProductId) {
-      // Only clear search term if selectedProductId is explicitly empty or null
+    } else if (!localSelectedProductId) {
+      // Only clear search term if localSelectedProductId is explicitly empty or null
       // This prevents clearing when the query is just loading
       if (!isLoadingSelectedProduct) {
         setSearchTerm("");
       }
     }
-  }, [selectedProduct, selectedProductId, isLoadingSelectedProduct]);
+  }, [selectedProduct, localSelectedProductId, isLoadingSelectedProduct]);
 
+  // Rest of the code for product search
   const {
     data: searchResults = [],
     isLoading,
@@ -181,21 +198,21 @@ export const useProductSearch = (selectedProductId?: string) => {
         is_barista: item.is_barista
       })) || [];
     },
-    enabled: searchTerm.length >= 2 && !selectedProductId
+    enabled: searchTerm.length >= 2 && !localSelectedProductId
   });
 
   // We'll update the dropdown visibility state based on search results
   useEffect(() => {
-    if (searchTerm.length >= 2 && !selectedProductId) {
+    if (searchTerm.length >= 2 && !localSelectedProductId) {
       setIsDropdownVisible(true);
     } else {
       setIsDropdownVisible(false);
     }
-  }, [searchTerm, searchResults, selectedProductId, isLoading]);
+  }, [searchTerm, searchResults, localSelectedProductId, isLoading]);
 
   return {
     searchTerm,
-    setSearchTerm,
+    setSearchTerm: handleSetSearchTerm,
     searchResults,
     isLoading,
     isDropdownVisible,
