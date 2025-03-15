@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -148,7 +147,8 @@ export const FlavorSelector = ({
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2">
+      {/* Flavors list */}
+      <div className="flex flex-wrap gap-2 mb-3">
         {flavors.map(flavor => (
           <Badge 
             key={flavor.id} 
@@ -165,24 +165,27 @@ export const FlavorSelector = ({
             {flavor.name || formatDisplayName(flavor.key)}
           </Badge>
         ))}
-        
-        {!isAddingFlavor ? (
-          <Button
-            variant="outline"
-            size="sm"
-            className="rounded-full bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700 h-8 w-8 p-0"
-            onClick={() => setIsAddingFlavor(true)}
-            aria-label="Add new flavor"
-          >
-            <Plus size={16} />
-          </Button>
-        ) : (
-          <div className="flex gap-1 items-center">
+      </div>
+      
+      {/* Add flavor section */}
+      {!isAddingFlavor ? (
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-full bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700 h-8 w-8 p-0"
+          onClick={() => setIsAddingFlavor(true)}
+          aria-label="Add new flavor"
+        >
+          <Plus size={16} />
+        </Button>
+      ) : (
+        <div className="p-4 bg-white rounded-lg border shadow-sm mb-2">
+          <div className="flex gap-2 items-center">
             <Input
               value={newFlavorName}
               onChange={(e) => setNewFlavorName(e.target.value)}
-              placeholder="Flavor name"
-              className="h-8 min-w-[140px] max-w-[200px] text-sm"
+              placeholder="Add new flavor"
+              className="h-10 border-2 rounded-lg text-sm flex-1"
               autoFocus
               disabled={isSubmitting}
               onKeyDown={(e) => {
@@ -196,31 +199,17 @@ export const FlavorSelector = ({
             />
             <Button
               type="button"
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={handleCancel}
-              disabled={isSubmitting}
-            >
-              <X size={16} />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 text-green-600"
+              variant="outline"
+              size="default"
+              className="bg-cream-200 hover:bg-cream-300 border-cream-200 text-gray-800"
               onClick={handleAddFlavor}
               disabled={isSubmitting}
             >
-              {isSubmitting ? (
-                <span className="animate-spin">...</span>
-              ) : (
-                <Check size={16} />
-              )}
+              {isSubmitting ? "Adding..." : "Add"}
             </Button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
