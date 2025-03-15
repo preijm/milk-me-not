@@ -9,12 +9,16 @@ export const useDuplicateHandling = (onSuccess: (productId: string, brandId: str
     setDuplicateAlertOpen,
     duplicateProductId,
     brandId,
+    setIsSubmitting,
     toast
   } = useProductRegistration();
   
   // Use the existing product
   const handleUseExisting = () => {
     if (duplicateProductId) {
+      // Very important: reset the isSubmitting state to prevent the form from remaining frozen
+      setIsSubmitting(false);
+      
       // Call onSuccess without showing a toast - the ProductInformation component
       // will handle showing the appropriate toast
       onSuccess(duplicateProductId, brandId);
@@ -26,6 +30,8 @@ export const useDuplicateHandling = (onSuccess: (productId: string, brandId: str
   const handleModifyInputs = () => {
     // Just close the duplicate alert dialog, main form will remain open
     setDuplicateAlertOpen(false);
+    // Also ensure submitting state is cleared here
+    setIsSubmitting(false);
   };
   
   return {

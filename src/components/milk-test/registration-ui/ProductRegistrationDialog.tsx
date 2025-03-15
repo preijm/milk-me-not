@@ -33,6 +33,15 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     toast
   } = useProductRegistration();
   
+  // Handle dialog close to ensure isSubmitting is reset
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      // Reset the isSubmitting state when the dialog is closed
+      setIsSubmitting(false);
+    }
+    onOpenChange(newOpen);
+  };
+  
   // Handle form submission with duplicate product check
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +87,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
           description: "New product added successfully!"
         });
         onSuccess(result.productId, brandId);
-        onOpenChange(false);
+        handleOpenChange(false);
         setIsSubmitting(false);
       } else {
         setIsSubmitting(false);
@@ -96,7 +105,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
   
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <ProductRegistrationHeader />
           <DialogDescription className="sr-only">
@@ -109,7 +118,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
       
       <DuplicateAlertHandler 
         onSuccess={onSuccess} 
-        onClose={() => onOpenChange(false)} 
+        onClose={() => handleOpenChange(false)} 
       />
     </>
   );
