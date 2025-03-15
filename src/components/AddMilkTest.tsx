@@ -18,7 +18,7 @@ export const AddMilkTest = () => {
   } = useMilkTestForm();
 
   // Form validation for the main submit button
-  const isFormValid = formState.brandId && formState.productId && formState.rating > 0;
+  const isFormValid = formState.productId && formState.rating > 0;
 
   return (
     <form 
@@ -33,8 +33,6 @@ export const AddMilkTest = () => {
       className="space-y-8 bg-white rounded-lg shadow-md p-6 animate-fade-up"
     >
       <ProductInformation
-        brandId={formState.brandId}
-        setBrandId={formSetters.setBrandId}
         productId={formState.productId}
         setProductId={formSetters.setProductId}
       />

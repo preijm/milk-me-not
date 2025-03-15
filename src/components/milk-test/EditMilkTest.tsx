@@ -5,10 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { BrandSelect } from "./BrandSelect";
 import { ShopSelect } from "./ShopSelect";
 import { RatingSelect } from "./RatingSelect";
-import { ProductOptions } from "./ProductOptions";
 import { PictureCapture } from "./PictureCapture";
 import { Separator } from "@/components/ui/separator";
 import { BaristaToggle } from "./BaristaToggle";
@@ -26,7 +24,7 @@ interface EditMilkTestProps {
     brand: string;
     brand_id: string;
     product_name?: string;
-    country?: string;
+    product_id: string;
     shop?: string;
     is_barista?: boolean;
     rating: number;
@@ -42,8 +40,7 @@ interface EditMilkTestProps {
 
 export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTestProps) => {
   const [rating, setRating] = useState(test.rating);
-  const [brandId, setBrandId] = useState(test.brand_id);
-  const [productName, setProductName] = useState(test.product_name || "");
+  const [productId, setProductId] = useState(test.product_id);
   const [notes, setNotes] = useState(test.notes || "");
   const [selectedProductProperties, setSelectedProductProperties] = useState<string[]>(test.product_type_keys || []);
   const [shop, setShop] = useState(test.shop_name || "");
@@ -81,7 +78,7 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!brandId || !rating) {
+    if (!productId || !rating) {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
@@ -131,17 +128,15 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
         }
       }
 
-      // Update milk test with the is_barista field
+      // Update milk test without brand_id and is_barista (they're in the products table now)
       const { error: milkTestError } = await supabase
         .from('milk_tests')
         .update({
-          brand_id: brandId,
-          product_name: productName,
+          product_id: productId,
           shop_id: shopData?.id || null,
           rating,
           notes,
-          picture_path: picturePath,
-          is_barista: isBarista
+          picture_path: picturePath
         })
         .eq('id', test.id);
 
@@ -177,18 +172,13 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Product information section remains largely the same */}
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-gray-900">Product Information</h2>
-            <BrandSelect
-              brandId={brandId}
-              setBrandId={setBrandId}
-            />
-            <Input
-              placeholder="Product name"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              className="w-full"
-            />
+            <div className="p-4 bg-gray-100 rounded-md">
+              <p className="font-medium">{test.brand}</p>
+              <p className="text-sm text-gray-500">{test.product_name}</p>
+            </div>
           </div>
 
           <Separator />
@@ -209,10 +199,7 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
               <BaristaToggle
                 isBarista={isBarista}
                 onToggle={handleBaristaToggle}
-              />
-              <ProductOptions
-                selectedTypes={selectedProductProperties}
-                setSelectedTypes={setSelectedProductProperties}
+                disabled={true} // Disable since is_barista is now part of products table
               />
             </div>
           </div>
