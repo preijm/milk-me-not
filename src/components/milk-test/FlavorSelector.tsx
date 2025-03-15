@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -147,7 +148,7 @@ export const FlavorSelector = ({
 
   return (
     <div>
-      {/* Flavors list */}
+      {/* Flavors list with plus button inline */}
       <div className="flex flex-wrap gap-2 mb-3">
         {flavors.map(flavor => (
           <Badge 
@@ -165,27 +166,29 @@ export const FlavorSelector = ({
             {flavor.name || formatDisplayName(flavor.key)}
           </Badge>
         ))}
+        
+        {!isAddingFlavor && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700 h-8 w-8 p-0"
+            onClick={() => setIsAddingFlavor(true)}
+            aria-label="Add new flavor"
+          >
+            <Plus size={16} />
+          </Button>
+        )}
       </div>
       
       {/* Add flavor section */}
-      {!isAddingFlavor ? (
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-full bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700 h-8 w-8 p-0"
-          onClick={() => setIsAddingFlavor(true)}
-          aria-label="Add new flavor"
-        >
-          <Plus size={16} />
-        </Button>
-      ) : (
-        <div className="p-4 bg-white rounded-lg border shadow-sm mb-2">
+      {isAddingFlavor && (
+        <div className="p-3 bg-white rounded-lg border shadow-sm mb-2 max-w-md">
           <div className="flex gap-2 items-center">
             <Input
               value={newFlavorName}
               onChange={(e) => setNewFlavorName(e.target.value)}
               placeholder="Add new flavor"
-              className="h-10 border-2 rounded-lg text-sm flex-1"
+              className="h-9 border-2 rounded-lg text-sm flex-1"
               autoFocus
               disabled={isSubmitting}
               onKeyDown={(e) => {
@@ -200,8 +203,8 @@ export const FlavorSelector = ({
             <Button
               type="button"
               variant="outline"
-              size="default"
-              className="bg-cream-200 hover:bg-cream-300 border-cream-200 text-gray-800"
+              size="sm"
+              className="bg-cream-200 hover:bg-cream-300 border-cream-200 text-gray-800 h-9"
               onClick={handleAddFlavor}
               disabled={isSubmitting}
             >
