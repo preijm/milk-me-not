@@ -2,11 +2,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useProductFlavors } from "./useProductFlavors";
-import { useFormValidation } from "./formValidation";
-import { 
-  handleProductSubmit, 
-  resetFormState 
-} from "./product-registration";
+import { handleProductSubmit, resetFormState } from "./product-registration";
 import { UseProductRegistrationFormProps } from "./types";
 
 export const useProductRegistrationForm = ({
@@ -23,7 +19,6 @@ export const useProductRegistrationForm = ({
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  const { validateForm } = useFormValidation();
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -65,12 +60,7 @@ export const useProductRegistrationForm = ({
       productNameEmpty: !productName || productName.trim() === ''
     });
     
-    // Only validate the required fields: brandId and productName
-    if (!validateForm(brandId, productName)) {
-      return null;
-    }
-    
-    setIsSubmitting(true);
+    // No validation here, moved to the dialog component
     
     try {
       const result = await handleProductSubmit({
@@ -85,11 +75,9 @@ export const useProductRegistrationForm = ({
         onOpenChange: skipAutoSuccess ? () => {} : onOpenChange
       });
       
-      setIsSubmitting(false);
       return result;
     } catch (error) {
       console.error('Error adding product:', error);
-      setIsSubmitting(false);
       return null;
     }
   };
@@ -108,6 +96,7 @@ export const useProductRegistrationForm = ({
     selectedFlavors,
     handleFlavorToggle,
     isSubmitting,
+    setIsSubmitting,
     handleSubmit,
     flavors
   };
