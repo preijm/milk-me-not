@@ -62,15 +62,15 @@ export const FlavorSelector = ({
           </Badge>
         ))}
         
-        {/* Add New Flavor button with plus icon */}
+        {/* Add New Flavor button with only plus icon */}
         <Button
           variant="outline"
           size="sm"
-          className="rounded-full bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700"
+          className="rounded-full bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700 h-8 w-8 p-0"
           onClick={onAddNewFlavor}
+          aria-label="Add new flavor"
         >
-          <Plus size={16} className="mr-1" />
-          Add Flavor
+          <Plus size={16} />
         </Button>
       </div>
     </div>

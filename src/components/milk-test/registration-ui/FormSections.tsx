@@ -1,10 +1,12 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { BrandSelect } from "../BrandSelect";
 import { NameSelect } from "../NameSelect";
 import { BaristaToggle } from "../BaristaToggle";
 import { ProductOptions } from "../ProductOptions";
 import { FlavorSelector } from "../FlavorSelector";
+import { AddFlavorDialog } from "../AddFlavorDialog";
 import { useProductRegistration } from "./ProductRegistrationContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -60,14 +62,14 @@ export const PropertiesSection = () => {
 };
 
 export const FlavorsSection = () => {
-  const { flavors, selectedFlavors, handleFlavorToggle } = useProductRegistration();
-  const { toast } = useToast();
+  const { flavors, selectedFlavors, handleFlavorToggle, refetchFlavors } = useProductRegistration();
+  const [addFlavorDialogOpen, setAddFlavorDialogOpen] = useState(false);
   
-  const handleAddNewFlavor = () => {
-    toast({
-      title: "Feature coming soon",
-      description: "Adding new flavors will be available in a future update.",
-    });
+  const handleFlavorAdded = () => {
+    // Refetch flavors after a new one is added
+    if (refetchFlavors) {
+      refetchFlavors();
+    }
   };
   
   return (
@@ -77,7 +79,12 @@ export const FlavorsSection = () => {
         flavors={flavors} 
         selectedFlavors={selectedFlavors} 
         onFlavorToggle={handleFlavorToggle}
-        onAddNewFlavor={handleAddNewFlavor}
+        onAddNewFlavor={() => setAddFlavorDialogOpen(true)}
+      />
+      <AddFlavorDialog 
+        open={addFlavorDialogOpen} 
+        onOpenChange={setAddFlavorDialogOpen}
+        onFlavorAdded={handleFlavorAdded}
       />
     </div>
   );

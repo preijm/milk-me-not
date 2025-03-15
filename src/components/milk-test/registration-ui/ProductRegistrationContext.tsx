@@ -10,6 +10,7 @@ type ProductRegistrationContextType = ReturnType<typeof useProductRegistrationFo
   isSubmitting: boolean;
   setIsSubmitting: (value: boolean) => void;
   handleSubmit: (e: React.FormEvent) => Promise<any>;
+  refetchFlavors?: () => void;
 };
 
 const ProductRegistrationContext = createContext<ProductRegistrationContextType | undefined>(undefined);
@@ -40,7 +41,8 @@ export const ProductRegistrationProvider: React.FC<ProductRegistrationProviderPr
     isSubmitting,
     setIsSubmitting,
     // The handleSubmit will be overridden in the Dialog component
-    handleSubmit: async (e: React.FormEvent) => Promise.resolve(null)
+    handleSubmit: async (e: React.FormEvent) => Promise.resolve(null),
+    refetchFlavors: formState.flavorQuery?.refetch
   };
   
   return (
