@@ -31,6 +31,11 @@ export const useProductSearch = (selectedProductId?: string) => {
       setLocalSelectedProductId(undefined);
     }
   };
+
+  // Method to explicitly clear the selected product
+  const clearSelectedProduct = () => {
+    setLocalSelectedProductId(undefined);
+  };
   
   // Fetch selected product details if available
   const {
@@ -218,6 +223,7 @@ export const useProductSearch = (selectedProductId?: string) => {
     isDropdownVisible,
     setIsDropdownVisible,
     selectedProduct,
+    clearSelectedProduct, // Add the new method
     isError
   };
 };

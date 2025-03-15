@@ -26,7 +26,8 @@ export const ProductSearch = ({
     isLoading,
     isDropdownVisible,
     setIsDropdownVisible,
-    selectedProduct
+    selectedProduct,
+    clearSelectedProduct
   } = useProductSearch(selectedProductId);
 
   // Handle product selection
@@ -48,10 +49,13 @@ export const ProductSearch = ({
   // Handle clearing the search and selected product
   const handleClearSearch = () => {
     setSearchTerm('');
+    clearSelectedProduct();
+    
     // Clear the selected product in the parent component
     if (selectedProductId) {
       onSelectProduct('', '');
     }
+    
     // Show the dropdown again to allow for new selection
     setIsDropdownVisible(true);
   };

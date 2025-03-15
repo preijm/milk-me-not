@@ -29,10 +29,16 @@ export const SearchBox = ({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    // If the user presses backspace when there's a selected product, clear it
+    // If the user presses backspace when there's a selected product, 
+    // don't trigger clear but allow the normal backspace behavior
     if (e.key === 'Backspace' && hasSelectedProduct) {
-      e.preventDefault(); // Prevent the default backspace behavior
-      onClear(); // Trigger the clear function (same as clicking the X)
+      // We're no longer preventing default or clearing the entire field
+      // This allows normal backspace editing behavior
+      
+      // If they've deleted the entire text, then clear the selection
+      if (searchTerm.length === 1) {
+        onClear();
+      }
     }
   };
 
