@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { 
+  handleProductSubmit, 
+  resetFormState 
+} from "./productRegistrationUtils";
 
 interface UseProductRegistrationFormProps {
   open: boolean;
@@ -28,12 +32,14 @@ export const useProductRegistrationForm = ({
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
-      setBrandId("");
-      setProductName("");
-      setNameId(null);
-      setSelectedProductTypes([]);
-      setIsBarista(false);
-      setSelectedFlavors([]);
+      resetFormState({
+        setBrandId,
+        setProductName,
+        setNameId,
+        setSelectedProductTypes,
+        setIsBarista,
+        setSelectedFlavors
+      });
     }
   }, [open]);
 
@@ -68,6 +74,8 @@ export const useProductRegistrationForm = ({
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form
     if (!brandId) {
       toast({
         title: "Missing brand",
@@ -86,132 +94,22 @@ export const useProductRegistrationForm = ({
     }
     
     setIsSubmitting(true);
+    
     try {
-      // First check if product already exists with this brand and name_id
-      let finalNameId = nameId;
-
-      // If name doesn't exist yet, create it
-      if (!finalNameId) {
-        const { data: newName, error: nameError } = await supabase
-          .from('names')
-          .insert({ name: productName.trim() })
-          .select()
-          .single();
-        
-        if (nameError) {
-          console.error('Error adding product name:', nameError);
-          // Continue even if name addition fails, but don't show error toast
-        } else {
-          finalNameId = newName.id;
-        }
-      }
-
-      // Once we have a name_id, check if the product exists
-      const { data: existingProduct } = await supabase
-        .from('products')
-        .select('id')
-        .eq('name_id', finalNameId)
-        .eq('brand_id', brandId)
-        .maybeSingle();
-
-      // If product exists, select it instead of showing an error
-      if (existingProduct) {
-        toast({
-          title: "Product exists",
-          description: "This product already exists and has been selected"
-        });
-        onSuccess(existingProduct.id, brandId);
-        onOpenChange(false);
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Create the new product
-      const { data: newProduct, error: productError } = await supabase
-        .from('products')
-        .insert({
-          brand_id: brandId,
-          name_id: finalNameId
-        })
-        .select()
-        .single();
-      
-      if (productError) {
-        // Don't show an error toast here, just log the error
-        console.error('Error adding product:', productError);
-        throw productError;
-      }
-
-      // Get the property IDs for selected types
-      if (selectedProductTypes.length > 0 || isBarista) {
-        const finalProductTypes = isBarista 
-          ? [...selectedProductTypes, "barista"] 
-          : selectedProductTypes;
-        
-        const { data: propertyData, error: propertyLookupError } = await supabase
-          .from('properties')
-          .select('id, key')
-          .in('key', finalProductTypes);
-        
-        if (propertyLookupError) {
-          console.error('Error looking up property IDs:', propertyLookupError);
-          // Just log the error, don't show error toast
-        } else if (propertyData && propertyData.length > 0) {
-          // Insert product type links
-          const propertyLinks = propertyData.map(property => ({
-            product_id: newProduct.id,
-            property_id: property.id
-          }));
-          
-          const { error: propertiesError } = await supabase
-            .from('product_properties')
-            .insert(propertyLinks);
-          
-          if (propertiesError) {
-            console.error('Error adding product properties:', propertiesError);
-            // Just log the error, don't show error toast
-          }
-        }
-      }
-
-      // Add flavors if selected
-      if (selectedFlavors.length > 0) {
-        // Get the flavor IDs from their keys
-        const { data: flavorData, error: flavorLookupError } = await supabase
-          .from('flavors')
-          .select('id, key')
-          .in('key', selectedFlavors);
-        
-        if (flavorLookupError) {
-          console.error('Error looking up flavor IDs:', flavorLookupError);
-          // Just log the error, don't show error toast
-        } else if (flavorData && flavorData.length > 0) {
-          const flavorLinks = flavorData.map(flavor => ({
-            product_id: newProduct.id,
-            flavor_id: flavor.id
-          }));
-          
-          const { error: flavorError } = await supabase
-            .from('product_flavors')
-            .insert(flavorLinks);
-          
-          if (flavorError) {
-            console.error('Error adding flavors:', flavorError);
-            // Just log the error, don't show error toast
-          }
-        }
-      }
-      
-      toast({
-        title: "Product added",
-        description: "New product added successfully!"
+      await handleProductSubmit({
+        brandId,
+        productName,
+        nameId,
+        selectedProductTypes,
+        isBarista,
+        selectedFlavors,
+        toast,
+        onSuccess,
+        onOpenChange
       });
-      onSuccess(newProduct.id, brandId);
-      onOpenChange(false);
     } catch (error) {
       console.error('Error adding product:', error);
-      // Remove the error toast to prevent the error popup from showing
-      // Let the user see any console errors, but don't display a toast
+      // Intentionally not showing any error toast to prevent flash
     } finally {
       setIsSubmitting(false);
     }
