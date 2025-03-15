@@ -16,11 +16,12 @@ export const useDuplicateHandling = (onSuccess: (productId: string, brandId: str
   // Use the existing product
   const handleUseExisting = () => {
     if (duplicateProductId) {
-      // CRITICAL: Reset the isSubmitting state to prevent the form from remaining frozen
-      // Must be set to false BEFORE calling onSuccess or onClose
+      console.log("Starting handleUseExisting with duplicateProductId:", duplicateProductId);
+      
+      // CRITICAL: Reset the isSubmitting state FIRST to prevent the form from remaining frozen
       setIsSubmitting(false);
       
-      // Close the alert dialog first
+      // Close the alert dialog
       setDuplicateAlertOpen(false);
       
       // Call onSuccess without showing a toast - the ProductInformation component
@@ -36,10 +37,16 @@ export const useDuplicateHandling = (onSuccess: (productId: string, brandId: str
   
   // Modify inputs to create a unique product
   const handleModifyInputs = () => {
+    console.log("Starting handleModifyInputs");
+    
+    // CRITICAL: Reset the isSubmitting state FIRST
+    setIsSubmitting(false);
+    
     // Just close the duplicate alert dialog, main form will remain open
     setDuplicateAlertOpen(false);
-    // Also ensure submitting state is cleared here
-    setIsSubmitting(false);
+    
+    // DO NOT call onClose() here - we want the form to remain open
+    
     console.log("handleModifyInputs completed, isSubmitting set to false");
   };
   

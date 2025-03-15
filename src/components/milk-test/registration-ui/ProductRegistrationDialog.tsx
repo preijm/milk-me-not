@@ -28,6 +28,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     productName,
     originalHandleSubmit,
     setIsSubmitting,
+    isSubmitting,
     setDuplicateProductId,
     setDuplicateAlertOpen,
     toast
@@ -35,6 +36,8 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
   
   // Handle dialog close to ensure isSubmitting is reset
   const handleOpenChange = (newOpen: boolean) => {
+    console.log("handleOpenChange called with:", newOpen, "current isSubmitting:", isSubmitting);
+    
     if (!newOpen) {
       // Reset the isSubmitting state when the dialog is closed
       setIsSubmitting(false);
@@ -82,7 +85,8 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
         setDuplicateProductId(result.productId);
         setDuplicateAlertOpen(true);
         console.log("Duplicate product detected, showing alert");
-        setIsSubmitting(false); // Clear submitting state to unfreeze the button
+        // Clear submitting state so the form is not frozen while showing the alert
+        setIsSubmitting(false);
       } else if (result?.productId) {
         // Success with new product
         toast({
@@ -113,6 +117,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
   };
   
   const handleSuccessWithExisting = (productId: string, brandId: string) => {
+    console.log("handleSuccessWithExisting called with:", productId, brandId);
     // Ensure we're not submitting when handling success with existing product
     setIsSubmitting(false);
     console.log("handleSuccessWithExisting called, passing to onSuccess, isSubmitting set to false");
