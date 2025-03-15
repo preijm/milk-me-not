@@ -1,8 +1,11 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Plus, X, Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface FlavorSelectorProps {
   flavors: Array<{ id: string; name: string; key: string }>;
@@ -42,6 +45,107 @@ export const FlavorSelector = ({
   onFlavorToggle,
   onAddNewFlavor 
 }: FlavorSelectorProps) => {
+  const [isAddingFlavor, setIsAddingFlavor] = useState(false);
+  const [newFlavorName, setNewFlavorName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const createFlavorKey = (name: string): string => {
+    return name
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_]/g, '');
+  };
+
+  const handleAddFlavor = async () => {
+    if (!newFlavorName.trim()) {
+      toast({
+        title: "Invalid flavor name",
+        description: "Please enter a flavor name",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    const key = createFlavorKey(newFlavorName);
+    
+    try {
+      // Get the current user's session
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      if (!sessionData.session) {
+        toast({
+          title: "Authentication required",
+          description: "You must be signed in to add flavors",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Check if flavor with this key already exists
+      const { data: existingFlavors } = await supabase
+        .from('flavors')
+        .select('key')
+        .eq('key', key);
+      
+      if (existingFlavors && existingFlavors.length > 0) {
+        toast({
+          title: "Flavor already exists",
+          description: "A flavor with this name already exists",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Add new flavor to database with RLS compliance
+      const { error } = await supabase
+        .from('flavors')
+        .insert({
+          name: newFlavorName.trim(),
+          key: key,
+          ordering: 999 // Default ordering
+        });
+      
+      if (error) {
+        console.error('Error adding flavor:', error);
+        toast({
+          title: "Error",
+          description: error.message || "Failed to add flavor. Please try again.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "New flavor added"
+        });
+        setNewFlavorName("");
+        if (onAddNewFlavor) {
+          onAddNewFlavor();
+        }
+        setIsAddingFlavor(false);
+      }
+    } catch (error) {
+      console.error('Error adding flavor:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add flavor. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsAddingFlavor(false);
+    setNewFlavorName("");
+  };
+
   return (
     <div>
       <div className="flex flex-wrap gap-2">
@@ -62,16 +166,60 @@ export const FlavorSelector = ({
           </Badge>
         ))}
         
-        {/* Add New Flavor button with only plus icon */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-full bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700 h-8 w-8 p-0"
-          onClick={onAddNewFlavor}
-          aria-label="Add new flavor"
-        >
-          <Plus size={16} />
-        </Button>
+        {!isAddingFlavor ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-full bg-gray-100 hover:bg-gray-200 border-gray-200 text-gray-700 h-8 w-8 p-0"
+            onClick={() => setIsAddingFlavor(true)}
+            aria-label="Add new flavor"
+          >
+            <Plus size={16} />
+          </Button>
+        ) : (
+          <div className="flex gap-1 items-center">
+            <Input
+              value={newFlavorName}
+              onChange={(e) => setNewFlavorName(e.target.value)}
+              placeholder="Flavor name"
+              className="h-8 min-w-[140px] max-w-[200px] text-sm"
+              autoFocus
+              disabled={isSubmitting}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddFlavor();
+                } else if (e.key === 'Escape') {
+                  handleCancel();
+                }
+              }}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={handleCancel}
+              disabled={isSubmitting}
+            >
+              <X size={16} />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-green-600"
+              onClick={handleAddFlavor}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="animate-spin">...</span>
+              ) : (
+                <Check size={16} />
+              )}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
