@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ProductRegistrationHeader } from "../ProductRegistrationHeader";
 import { DialogDescription } from "@/components/ui/dialog";
@@ -41,6 +41,22 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
   } = useProductRegistration();
   
   const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  
+  // Reset isSubmitting state when the dialog is closed
+  useEffect(() => {
+    if (!open) {
+      setIsSubmitting(false);
+      console.log("Dialog closed, isSubmitting reset to false");
+    }
+  }, [open, setIsSubmitting]);
+  
+  // Also reset isSubmitting when duplicate dialog opens
+  useEffect(() => {
+    if (duplicateDialogOpen) {
+      setIsSubmitting(false);
+      console.log("Duplicate dialog opened, isSubmitting reset to false");
+    }
+  }, [duplicateDialogOpen, setIsSubmitting]);
   
   // Handle dialog close to ensure isSubmitting is reset
   const handleOpenChange = (newOpen: boolean) => {
@@ -94,6 +110,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
         // Show simple duplicate product dialog
         setDuplicateDialogOpen(true);
         setIsSubmitting(false);
+        console.log("Duplicate found, isSubmitting reset to false");
       } else if (result?.productId) {
         // Normal success handling for new product
         toast({
@@ -105,6 +122,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
       } else {
         // Something went wrong
         setIsSubmitting(false);
+        console.log("No product ID returned, isSubmitting reset to false");
       }
     } catch (error) {
       console.error('Error adding product:', error);
@@ -116,6 +134,12 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
         variant: "destructive"
       });
     }
+  };
+  
+  // Handle the duplicate dialog close
+  const handleDuplicateDialogAction = () => {
+    setDuplicateDialogOpen(false);
+    setIsSubmitting(false); // Ensure isSubmitting is reset
   };
   
   return (
@@ -142,7 +166,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={() => setDuplicateDialogOpen(false)}>
+            <AlertDialogAction onClick={handleDuplicateDialogAction}>
               OK
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import { 
   useProductRegistrationForm
 } from "../hooks/useProductRegistrationForm";
@@ -35,6 +35,14 @@ export const ProductRegistrationProvider: React.FC<ProductRegistrationProviderPr
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   
   const formState = useProductRegistrationForm(formProps);
+  
+  // Reset isSubmitting state when dialog opens/closes
+  useEffect(() => {
+    if (formProps.open) {
+      // When dialog opens, ensure isSubmitting is false
+      setIsSubmitting(false);
+    }
+  }, [formProps.open]);
   
   const value = {
     ...formState,
