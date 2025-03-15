@@ -40,14 +40,16 @@ export const AddMilkTest = () => {
       }} 
       className="space-y-8 bg-white rounded-lg shadow-md p-6 animate-fade-up"
     >
-      <div id="validation-alert" className={`${isFormValid ? 'hidden' : ''}`}>
-        <Alert variant="destructive">
-          <AlertTitle>Missing fields</AlertTitle>
-          <AlertDescription>
-            Please provide: brand, product and rating before submitting
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Alert 
+        id="validation-alert" 
+        variant="destructive" 
+        className={`${isFormValid ? 'hidden' : ''}`}
+      >
+        <AlertTitle>Missing fields</AlertTitle>
+        <AlertDescription>
+          Please provide: brand, product and rating before submitting
+        </AlertDescription>
+      </Alert>
 
       <ProductInformation
         brandId={formState.brandId}
