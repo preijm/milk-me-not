@@ -5,12 +5,10 @@ import { useProductRegistration } from "./ProductRegistrationContext";
 
 interface DuplicateAlertHandlerProps {
   onSuccess: (productId: string, brandId: string) => void;
-  onClose: () => void;
 }
 
 export const DuplicateAlertHandler: React.FC<DuplicateAlertHandlerProps> = ({
-  onSuccess,
-  onClose
+  onSuccess
 }) => {
   const {
     duplicateAlertOpen,
@@ -20,9 +18,10 @@ export const DuplicateAlertHandler: React.FC<DuplicateAlertHandlerProps> = ({
     setIsSubmitting
   } = useProductRegistration();
 
+  // Handle using the existing product
   const handleUseExisting = () => {
     console.log("Using existing product:", duplicateProductId);
-    // Make sure to reset the submitting state
+    // Reset the submitting state
     setIsSubmitting(false);
     
     // Only call onSuccess if we have a valid product ID
@@ -34,6 +33,7 @@ export const DuplicateAlertHandler: React.FC<DuplicateAlertHandlerProps> = ({
     setDuplicateAlertOpen(false);
   };
 
+  // Handle modifying inputs (just close the alert and return to form)
   const handleModify = () => {
     console.log("User chose to modify inputs");
     // Reset the submitting state
@@ -42,11 +42,11 @@ export const DuplicateAlertHandler: React.FC<DuplicateAlertHandlerProps> = ({
     setDuplicateAlertOpen(false);
   };
 
+  // Handle dialog close via ESC or clicking outside
   const handleAlertOpenChange = (open: boolean) => {
     console.log("Alert open state changing to:", open);
     if (!open) {
-      // When the alert is closing (via ESC key or clicking outside)
-      // Reset the submitting state
+      // Reset the submitting state when alert is closed
       setIsSubmitting(false);
       setDuplicateAlertOpen(false);
     }

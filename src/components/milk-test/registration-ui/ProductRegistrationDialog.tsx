@@ -55,7 +55,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
       productName
     });
     
-    // CRITICAL: Only validate the required fields for PRODUCT REGISTRATION: brandId and productName
+    // Validate required fields
     if (!brandId || brandId.trim() === '') {
       toast({
         title: "Missing required field",
@@ -85,7 +85,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
         setDuplicateProductId(result.productId);
         setDuplicateAlertOpen(true);
         console.log("Duplicate product detected, showing alert");
-        // Clear submitting state so the form is not frozen while showing the alert
+        // Clear submitting state so the form is not frozen
         setIsSubmitting(false);
       } else if (result?.productId) {
         // Success with new product
@@ -94,7 +94,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
           description: "New product added successfully!"
         });
         
-        // Important: Clear submitting state BEFORE calling onSuccess
+        // Clear submitting state BEFORE calling onSuccess
         setIsSubmitting(false);
         console.log("New product added, isSubmitting set to false");
         
@@ -116,11 +116,13 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     }
   };
   
+  // Handle success with existing product (from duplicate alert)
   const handleSuccessWithExisting = (productId: string, brandId: string) => {
     console.log("handleSuccessWithExisting called with:", productId, brandId);
-    // Ensure we're not submitting when handling success with existing product
-    setIsSubmitting(false);
-    console.log("handleSuccessWithExisting called, passing to onSuccess, isSubmitting set to false");
+    toast({
+      title: "Existing product selected",
+      description: "You've selected an existing product"
+    });
     onSuccess(productId, brandId);
     handleOpenChange(false); // Close the dialog after selecting existing product
   };
@@ -140,12 +142,6 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
       
       <DuplicateAlertHandler 
         onSuccess={handleSuccessWithExisting} 
-        onClose={() => {
-          // Make sure we reset the submitting state before closing
-          setIsSubmitting(false);
-          console.log("DuplicateAlert onClose, isSubmitting set to false");
-          // We don't close the main dialog here anymore
-        }} 
       />
     </>
   );
