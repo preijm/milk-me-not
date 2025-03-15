@@ -9,7 +9,6 @@ import { DrinkPreference } from "./milk-test/DrinkPreference";
 import { PriceInput } from "./milk-test/PriceInput";
 import { PictureCapture } from "./milk-test/PictureCapture";
 import { useMilkTestForm } from "@/hooks/useMilkTestForm";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export const AddMilkTest = () => {
   const {
@@ -29,28 +28,10 @@ export const AddMilkTest = () => {
         // Only submit if the form is valid
         if (isFormValid) {
           handleSubmit(e);
-        } else {
-          const missingFields = [];
-          if (!formState.brandId || !formState.productId) missingFields.push("brand, product");
-          if (formState.rating === 0) missingFields.push("rating");
-          
-          // Show an inline validation message instead of a toast
-          document.getElementById("validation-alert")?.classList.remove("hidden");
         }
       }} 
       className="space-y-8 bg-white rounded-lg shadow-md p-6 animate-fade-up"
     >
-      <Alert 
-        id="validation-alert" 
-        variant="destructive" 
-        className={`${isFormValid ? 'hidden' : ''}`}
-      >
-        <AlertTitle>Missing fields</AlertTitle>
-        <AlertDescription>
-          Please provide: brand, product and rating before submitting
-        </AlertDescription>
-      </Alert>
-
       <ProductInformation
         brandId={formState.brandId}
         setBrandId={formSetters.setBrandId}
@@ -105,7 +86,7 @@ export const AddMilkTest = () => {
       <Button 
         type="submit" 
         className="w-full bg-cream-300 hover:bg-cream-200 text-milk-500"
-        disabled={formState.isSubmitting}
+        disabled={formState.isSubmitting || !isFormValid}
       >
         {formState.isSubmitting ? "Adding..." : "Add Result"}
       </Button>
