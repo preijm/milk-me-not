@@ -9,6 +9,7 @@ import { DrinkPreference } from "./milk-test/DrinkPreference";
 import { PriceInput } from "./milk-test/PriceInput";
 import { PictureCapture } from "./milk-test/PictureCapture";
 import { useMilkTestForm } from "@/hooks/useMilkTestForm";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export const AddMilkTest = () => {
   const {
@@ -17,8 +18,37 @@ export const AddMilkTest = () => {
     handleSubmit,
   } = useMilkTestForm();
 
+  // Form validation for the main submit button
+  const isFormValid = formState.brandId && formState.productId && formState.rating > 0;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-lg shadow-md p-6 animate-fade-up">
+    <form 
+      onSubmit={(e) => {
+        // Prevent default here to ensure no unwanted submissions occur
+        e.preventDefault();
+        // Only submit if the form is valid
+        if (isFormValid) {
+          handleSubmit(e);
+        } else {
+          const missingFields = [];
+          if (!formState.brandId || !formState.productId) missingFields.push("brand, product");
+          if (formState.rating === 0) missingFields.push("rating");
+          
+          // Show an inline validation message instead of a toast
+          document.getElementById("validation-alert")?.classList.remove("hidden");
+        }
+      }} 
+      className="space-y-8 bg-white rounded-lg shadow-md p-6 animate-fade-up"
+    >
+      <div id="validation-alert" className={`${isFormValid ? 'hidden' : ''}`}>
+        <Alert variant="destructive">
+          <AlertTitle>Missing fields</AlertTitle>
+          <AlertDescription>
+            Please provide: brand, product and rating before submitting
+          </AlertDescription>
+        </Alert>
+      </div>
+
       <ProductInformation
         brandId={formState.brandId}
         setBrandId={formSetters.setBrandId}

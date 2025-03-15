@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -32,40 +33,9 @@ export const useMilkTestForm = () => {
       price
     });
     
-    // Create list of missing fields - THIS IS FOR MILK TEST FORM ONLY, NOT PRODUCT REGISTRATION
-    const missingFields = [];
+    // Validation moved to the component itself
+    // This prevents toast notifications from appearing when not needed
     
-    if (!brandId) {
-      missingFields.push("brand");
-    }
-    
-    if (!productId) {
-      missingFields.push("product");
-    }
-    
-    if (rating === 0) {
-      missingFields.push("rating");
-    }
-    
-    // Show toast with appropriate message if fields are missing
-    if (missingFields.length > 0) {
-      let description = "";
-      
-      if (missingFields.length === 1) {
-        description = `Please provide: ${missingFields[0]}`;
-      } else {
-        const lastField = missingFields.pop();
-        description = `Please provide: ${missingFields.join(", ")} and ${lastField}`;
-      }
-      
-      toast({
-        title: "Missing fields",
-        description: description,
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {

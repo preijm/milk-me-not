@@ -46,6 +46,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent the event from bubbling up to parent forms
     
     console.log("Product Registration Form - validating fields:", {
       brandId, 
