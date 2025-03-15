@@ -58,7 +58,12 @@ export const useProductRegistrationForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log("Submitting form with brandId:", brandId);
+    console.log("Submitting form with:", {
+      brandId,
+      productName,
+      brandIdEmpty: !brandId || brandId.trim() === '',
+      productNameEmpty: !productName || productName.trim() === ''
+    });
     
     // Only validate the required fields: brandId and productName
     if (!validateForm(brandId, productName)) {

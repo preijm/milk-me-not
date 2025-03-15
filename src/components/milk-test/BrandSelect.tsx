@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Plus } from "lucide-react";
 
 interface BrandSelectProps {
@@ -41,9 +41,11 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
   // Update the input value when brands or brandId changes
   useEffect(() => {
     if (brandId) {
+      console.log("BrandSelect: brandId changed to", brandId);
       const selectedBrand = brands.find(brand => brand.id === brandId);
       if (selectedBrand) {
         setInputValue(selectedBrand.name);
+        console.log("BrandSelect: Setting input value to", selectedBrand.name);
       }
     }
   }, [brandId, brands]);
@@ -83,19 +85,26 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
   }, [inputValue, brands, setBrandId, brandId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    const newValue = e.target.value;
+    console.log("BrandSelect: Input changed to", newValue);
+    setInputValue(newValue);
     
     // If the input matches any existing brand, update the brandId
     const exactMatch = brands.find(
-      brand => brand.name.toLowerCase() === e.target.value.trim().toLowerCase()
+      brand => brand.name.toLowerCase() === newValue.trim().toLowerCase()
     );
     
     if (exactMatch) {
+      console.log("BrandSelect: Exact match found, setting brandId to", exactMatch.id);
       setBrandId(exactMatch.id);
+    } else if (newValue.trim() === '') {
+      console.log("BrandSelect: Input is empty, clearing brandId");
+      setBrandId('');
     }
   };
 
   const handleSelectBrand = (selectedBrand: { id: string; name: string }) => {
+    console.log("BrandSelect: Selected brand", selectedBrand);
     setInputValue(selectedBrand.name);
     setBrandId(selectedBrand.id);
     setIsDropdownVisible(false);
@@ -137,6 +146,7 @@ export const BrandSelect = ({ brandId, setBrandId, defaultBrand }: BrandSelectPr
         description: "New brand added successfully!",
       });
       
+      console.log("BrandSelect: New brand created, setting brandId to", data.id);
       setBrandId(data.id);
       setIsDropdownVisible(false);
     } catch (error) {
