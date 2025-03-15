@@ -122,39 +122,33 @@ export const AddFlavorDialog = ({ open, onOpenChange, onFlavorAdded }: AddFlavor
           <DialogTitle className="text-center">Add Flavor</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-2">
-            <Label htmlFor="flavor-name">Name</Label>
-            <Input 
-              id="flavor-name"
-              placeholder="e.g. Vanilla"
-              value={flavorName}
-              onChange={(e) => setFlavorName(e.target.value)}
-              autoFocus
-            />
-          </div>
+        <div className="space-y-4">
+          <Input 
+            placeholder="Flavor name"
+            value={flavorName}
+            onChange={(e) => setFlavorName(e.target.value)}
+            className="w-full"
+            autoFocus
+          />
           
-          <DialogFooter className="pt-2">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
-              className="w-full sm:w-auto"
-              size="sm"
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={isSubmitting} 
-              className="bg-black text-white w-full sm:w-auto"
-              size="sm"
-            >
-              {isSubmitting ? "Adding..." : "Add"}
-            </Button>
-          </DialogFooter>
-        </form>
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="w-full bg-cream-300 hover:bg-cream-200 text-milk-500"
+          >
+            {isSubmitting ? "Adding..." : "Add Flavor"}
+          </Button>
+          
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
+            className="w-full"
+          >
+            Cancel
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
