@@ -11,7 +11,7 @@ import { BaristaToggle } from "./BaristaToggle";
 import { FlavorSelector } from "./FlavorSelector";
 import { useProductRegistrationForm } from "./hooks/useProductRegistrationForm";
 import { DuplicateProductAlert } from "./DuplicateProductAlert";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductRegistrationDialogProps {
   open: boolean;
