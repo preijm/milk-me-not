@@ -79,8 +79,7 @@ export const useProductRegistrationForm = ({
       });
     } catch (error) {
       console.error('Error adding product:', error);
-      // Intentionally not showing any error toast to prevent flash
-    } finally {
+      // Reset submission state even if there's an error
       setIsSubmitting(false);
     }
   };
