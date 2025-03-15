@@ -33,28 +33,35 @@ export const useMilkTestForm = () => {
       price
     });
     
+    // Create list of missing fields
+    const missingFields = [];
+    
     if (!brandId) {
-      toast({
-        title: "Missing fields",
-        description: "Please select a brand",
-        variant: "destructive",
-      });
-      return;
+      missingFields.push("brand");
     }
     
     if (!productId) {
-      toast({
-        title: "Missing fields",
-        description: "Please select a product",
-        variant: "destructive",
-      });
-      return;
+      missingFields.push("product");
     }
     
     if (rating === 0) {
+      missingFields.push("rating");
+    }
+    
+    // Show toast with appropriate message if fields are missing
+    if (missingFields.length > 0) {
+      let description = "";
+      
+      if (missingFields.length === 1) {
+        description = `Please provide: ${missingFields[0]}`;
+      } else {
+        const lastField = missingFields.pop();
+        description = `Please provide: ${missingFields.join(", ")} and ${lastField}`;
+      }
+      
       toast({
         title: "Missing fields",
-        description: "Please provide a rating",
+        description: description,
         variant: "destructive",
       });
       return;
