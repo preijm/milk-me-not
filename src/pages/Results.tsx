@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import {
@@ -142,10 +141,21 @@ const Results = () => {
   });
 
   const handleSort = (column: string) => {
-    setSortConfig(current => ({
-      column: column === 'rating' ? 'avg_rating' : column,
-      direction: current.column === column && current.direction === 'asc' ? 'desc' : 'asc'
-    }));
+    setSortConfig(current => {
+      // If clicking on the same column, toggle direction
+      if (current.column === (column === 'rating' ? 'avg_rating' : column)) {
+        return {
+          column: column === 'rating' ? 'avg_rating' : column,
+          direction: current.direction === 'asc' ? 'desc' : 'asc'
+        };
+      }
+      
+      // If clicking on a different column, default to desc direction
+      return {
+        column: column === 'rating' ? 'avg_rating' : column,
+        direction: 'desc'
+      };
+    });
   };
 
   const getSortIcon = (column: string) => {
