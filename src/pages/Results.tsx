@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import {
@@ -105,7 +106,7 @@ const Results = () => {
         .from('milk_tests_view')
         .select('id, created_at, brand_name, product_name, rating, username, notes, shop_name, picture_path, drink_preference')
         .eq('product_id', expandedProduct)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }); // Ensure newest results are on top
       
       if (error) throw error;
       return data as MilkTest[];
