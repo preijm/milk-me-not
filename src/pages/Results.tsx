@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import {
@@ -228,41 +227,41 @@ const Results = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
+                <TableHead className="text-left">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort('brand_name')}
-                    className="hover:bg-transparent"
+                    className="hover:bg-transparent pl-0"
                   >
                     Brand {getSortIcon('brand_name')}
                   </Button>
                 </TableHead>
-                <TableHead>
+                <TableHead className="text-left pr-0">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort('product_name')}
-                    className="hover:bg-transparent"
+                    className="hover:bg-transparent pl-0"
                   >
                     Product {getSortIcon('product_name')}
                   </Button>
                 </TableHead>
-                <TableHead>
-                  {/* Combined badges column - no header or sorting */}
+                <TableHead className="w-auto pl-1">
+                  {/* Badges column - no header or sorting */}
                 </TableHead>
-                <TableHead>
+                <TableHead className="text-left">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort('avg_rating')}
-                    className="hover:bg-transparent"
+                    className="hover:bg-transparent pl-0"
                   >
                     Score {getSortIcon('avg_rating')}
                   </Button>
                 </TableHead>
-                <TableHead>
+                <TableHead className="text-left">
                   <Button
                     variant="ghost"
                     onClick={() => handleSort('count')}
-                    className="hover:bg-transparent"
+                    className="hover:bg-transparent pl-0"
                   >
                     Tests {getSortIcon('count')}
                   </Button>
@@ -277,9 +276,9 @@ const Results = () => {
                     onClick={() => toggleProductExpand(result.product_id)}
                   >
                     <TableCell className="font-medium">{result.brand_name}</TableCell>
-                    <TableCell>{result.product_name}</TableCell>
-                    <TableCell>
-                      {/* Combined badges in a single column */}
+                    <TableCell className="pr-0">{result.product_name}</TableCell>
+                    <TableCell className="pl-1">
+                      {/* Badges in single column with less spacing */}
                       <ProductPropertyBadges 
                         propertyNames={result.property_names}
                         isBarista={result.is_barista}
@@ -392,7 +391,7 @@ const Results = () => {
         </div>
       </div>
 
-      {/* Image modal for enlarged view */}
+      {/* Image modal */}
       {selectedImage && (
         <ImageModal 
           imageUrl={selectedImage} 
