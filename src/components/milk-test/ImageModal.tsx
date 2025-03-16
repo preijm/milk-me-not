@@ -39,8 +39,9 @@ export const ImageModal = ({ imageUrl, isOpen, onClose }: ImageModalProps) => {
             />
             <button 
               onClick={onClose}
-              className="absolute top-2 right-2 z-10 bg-black/50 rounded-full p-1 text-white hover:bg-black/70 transition-colors"
+              className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-1 text-white hover:bg-black/70 transition-colors"
               aria-label="Close"
+              style={{ transform: 'none' }}
             >
               <X className="h-5 w-5" />
             </button>

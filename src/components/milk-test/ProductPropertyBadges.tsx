@@ -33,8 +33,7 @@ interface ProductPropertyBadgesProps {
   flavorNames?: string[] | null;
   className?: string;
   compact?: boolean;
-  splitDisplay?: boolean; // New prop to determine if we should split into separate badges or not
-  displayType?: 'all' | 'barista' | 'properties' | 'flavors'; // New prop to control which type to show
+  displayType?: 'all' | 'barista' | 'properties' | 'flavors';
 }
 
 export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({ 
@@ -43,7 +42,6 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   flavorNames,
   className = "",
   compact = false,
-  splitDisplay = false,
   displayType = 'all'
 }) => {
   // Safety check

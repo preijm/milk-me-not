@@ -2,6 +2,7 @@
 import React from "react";
 import { Milk } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 
 interface MilkTestResult {
   id: string;
@@ -12,6 +13,8 @@ interface MilkTestResult {
   created_at: string;
   username?: string | null;
   product_name?: string;
+  is_barista?: boolean;
+  flavor_names?: string[] | null;
 }
 
 interface MilkCardProps {
@@ -20,11 +23,6 @@ interface MilkCardProps {
 }
 
 export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
-  // Get the first product type to display as the "type"
-  const type = result.property_names?.length > 0 
-    ? result.property_names[0] 
-    : 'Unknown';
-
   return (
     <div className="bg-white rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow relative h-[200px] flex flex-col">
       <div className="flex items-center justify-between mb-4">
@@ -38,9 +36,13 @@ export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
       </div>
       
       <div className="mb-3">
-        <span className="inline-block text-milk-500 text-sm">
-          {type}
-        </span>
+        <ProductPropertyBadges
+          propertyNames={result.property_names}
+          isBarista={result.is_barista}
+          flavorNames={result.flavor_names}
+          compact={true}
+        />
+        
         {showUsername && result.username && (
           <span className="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm ml-2">
             {result.username}
