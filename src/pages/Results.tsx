@@ -21,6 +21,7 @@ import {
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { DrinkPreferenceIcon } from "@/components/milk-test/DrinkPreferenceIcon";
 import { ImageModal } from "@/components/milk-test/ImageModal";
+import { NotesPopover } from "@/components/milk-test/NotesPopover";
 
 type SortConfig = {
   column: string;
@@ -54,6 +55,7 @@ const Results = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ column: 'avg_rating', direction: 'desc' });
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedNotes, setSelectedNotes] = useState<string | null>(null);
 
   // Fetch aggregated results with average ratings
   const { data: aggregatedResults = [], isLoading: isLoadingAggregated } = useQuery({
@@ -250,8 +252,8 @@ const Results = () => {
                                 <TableHeader>
                                   <TableRow>
                                     <TableHead>Date</TableHead>
-                                    <TableHead>Score</TableHead>
                                     <TableHead>Tester</TableHead>
+                                    <TableHead>Score</TableHead>
                                     <TableHead className="hidden md:table-cell">Shop</TableHead>
                                     <TableHead>Notes</TableHead>
                                     <TableHead>Style</TableHead>
@@ -262,14 +264,16 @@ const Results = () => {
                                   {productTests.map((test) => (
                                     <TableRow key={test.id}>
                                       <TableCell>{new Date(test.created_at).toLocaleDateString()}</TableCell>
+                                      <TableCell>{test.username || "Anonymous"}</TableCell>
                                       <TableCell>
                                         <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
                                           <span className="font-semibold text-milk-500">{Number(test.rating).toFixed(1)}</span>
                                         </div>
                                       </TableCell>
-                                      <TableCell>{test.username || "Anonymous"}</TableCell>
                                       <TableCell className="hidden md:table-cell">{test.shop_name || "-"}</TableCell>
-                                      <TableCell className="max-w-xs truncate">{test.notes || "-"}</TableCell>
+                                      <TableCell className="max-w-xs">
+                                        <NotesPopover notes={test.notes || "-"} />
+                                      </TableCell>
                                       <TableCell>
                                         <DrinkPreferenceIcon preference={test.drink_preference} />
                                       </TableCell>
