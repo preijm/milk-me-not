@@ -33,6 +33,8 @@ interface ProductPropertyBadgesProps {
   flavorNames?: string[] | null;
   className?: string;
   compact?: boolean;
+  splitDisplay?: boolean; // New prop to determine if we should split into separate badges or not
+  displayType?: 'all' | 'barista' | 'properties' | 'flavors'; // New prop to control which type to show
 }
 
 export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({ 
@@ -40,7 +42,9 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   isBarista,
   flavorNames,
   className = "",
-  compact = false
+  compact = false,
+  splitDisplay = false,
+  displayType = 'all'
 }) => {
   // Safety check
   if (!propertyNames && !isBarista && !flavorNames) {
@@ -50,11 +54,15 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   const badgeBaseClasses = compact 
     ? "text-xs px-2 py-0.5" 
     : "rounded-full px-4 py-1";
+    
+  const shouldRenderBarista = displayType === 'all' || displayType === 'barista';
+  const shouldRenderProperties = displayType === 'all' || displayType === 'properties';
+  const shouldRenderFlavors = displayType === 'all' || displayType === 'flavors';
 
   return (
-    <div className={`flex flex-wrap gap-1 ${compact ? "inline-flex ml-2" : "mt-1"} ${className}`}>
+    <div className={`flex flex-wrap gap-1 ${compact ? "inline-flex" : "mt-1"} ${className}`}>
       {/* Barista badge with priority styling */}
-      {isBarista && (
+      {shouldRenderBarista && isBarista && (
         <Badge 
           variant="outline" 
           className={`${badgeBaseClasses} bg-cream-200 border-cream-300 font-medium`}
@@ -64,7 +72,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
       )}
       
       {/* Property badges */}
-      {propertyNames && propertyNames.map((property, index) => (
+      {shouldRenderProperties && propertyNames && propertyNames.map((property, index) => (
         <Badge 
           key={`property-${index}`} 
           variant="outline" 
@@ -75,7 +83,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
       ))}
       
       {/* Flavor badges */}
-      {flavorNames && flavorNames.map((flavor, index) => (
+      {shouldRenderFlavors && flavorNames && flavorNames.map((flavor, index) => (
         <Badge 
           key={`flavor-${index}`} 
           variant="outline" 

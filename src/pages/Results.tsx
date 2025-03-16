@@ -123,16 +123,19 @@ const Results = () => {
           comparison = a.avg_rating - b.avg_rating;
         } else if (sortConfig.column === 'count') {
           comparison = a.count - b.count;
-        } else if (sortConfig.column === 'properties') {
-          // Sort by barista first, then by number of properties
+        } else if (sortConfig.column === 'barista') {
+          // Sort based on barista property
           if (a.is_barista && !b.is_barista) {
             comparison = 1;
           } else if (!a.is_barista && b.is_barista) {
             comparison = -1;
-          } else {
-            comparison = ((a.property_names?.length || 0) + (a.flavor_names?.length || 0)) - 
-                         ((b.property_names?.length || 0) + (b.flavor_names?.length || 0));
           }
+        } else if (sortConfig.column === 'properties') {
+          // Sort by number of properties
+          comparison = (a.property_names?.length || 0) - (b.property_names?.length || 0);
+        } else if (sortConfig.column === 'flavors') {
+          // Sort by number of flavors
+          comparison = (a.flavor_names?.length || 0) - (b.flavor_names?.length || 0);
         }
         
         return sortConfig.direction === 'asc' ? comparison : -comparison;
@@ -164,24 +167,23 @@ const Results = () => {
   const handleSort = (column: string) => {
     setSortConfig(current => {
       // If clicking on the same column, toggle direction
-      if (current.column === (column === 'rating' ? 'avg_rating' : column)) {
+      if (current.column === column) {
         return {
-          column: column === 'rating' ? 'avg_rating' : column,
+          column,
           direction: current.direction === 'asc' ? 'desc' : 'asc'
         };
       }
       
       // If clicking on a different column, default to desc direction
       return {
-        column: column === 'rating' ? 'avg_rating' : column,
+        column,
         direction: 'desc'
       };
     });
   };
 
   const getSortIcon = (column: string) => {
-    const compareColumn = column === 'rating' ? 'avg_rating' : column;
-    if (sortConfig.column !== compareColumn) return <ArrowUpDown className="w-4 h-4" />;
+    if (sortConfig.column !== column) return <ArrowUpDown className="w-4 h-4" />;
     return sortConfig.direction === 'asc' ? (
       <ChevronUp className="w-4 h-4" />
     ) : (
@@ -260,6 +262,15 @@ const Results = () => {
                 <TableHead>
                   <Button
                     variant="ghost"
+                    onClick={() => handleSort('barista')}
+                    className="hover:bg-transparent"
+                  >
+                    Barista {getSortIcon('barista')}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
                     onClick={() => handleSort('properties')}
                     className="hover:bg-transparent"
                   >
@@ -269,10 +280,19 @@ const Results = () => {
                 <TableHead>
                   <Button
                     variant="ghost"
-                    onClick={() => handleSort('rating')}
+                    onClick={() => handleSort('flavors')}
                     className="hover:bg-transparent"
                   >
-                    Score {getSortIcon('rating')}
+                    Flavors {getSortIcon('flavors')}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('avg_rating')}
+                    className="hover:bg-transparent"
+                  >
+                    Score {getSortIcon('avg_rating')}
                   </Button>
                 </TableHead>
                 <TableHead>
@@ -296,11 +316,27 @@ const Results = () => {
                     <TableCell className="font-medium">{result.brand_name}</TableCell>
                     <TableCell>{result.product_name}</TableCell>
                     <TableCell>
+                      {/* Only Barista status */}
+                      <ProductPropertyBadges 
+                        isBarista={result.is_barista}
+                        compact={true}
+                        displayType="barista"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {/* Only Properties */}
                       <ProductPropertyBadges 
                         propertyNames={result.property_names}
-                        isBarista={result.is_barista}
+                        compact={true}
+                        displayType="properties"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {/* Only Flavors */}
+                      <ProductPropertyBadges 
                         flavorNames={result.flavor_names}
                         compact={true}
+                        displayType="flavors"
                       />
                     </TableCell>
                     <TableCell>
@@ -312,7 +348,7 @@ const Results = () => {
                   </TableRow>
                   
                   <TableRow>
-                    <TableCell colSpan={5} className="p-0">
+                    <TableCell colSpan={7} className="p-0">
                       <Collapsible open={expandedProduct === result.product_id}>
                         <CollapsibleContent>
                           <div className="bg-gray-50 p-4">
@@ -398,7 +434,7 @@ const Results = () => {
               
               {filteredResults.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={7} className="text-center py-8">
                     No results found
                   </TableCell>
                 </TableRow>
