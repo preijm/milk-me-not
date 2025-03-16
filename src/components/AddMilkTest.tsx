@@ -1,13 +1,12 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { ShopSelect } from "./milk-test/ShopSelect";
 import { RatingSelect } from "./milk-test/RatingSelect";
 import { ProductInformation } from "./milk-test/ProductInformation";
 import { DrinkPreference } from "./milk-test/DrinkPreference";
 import { PriceInput } from "./milk-test/PriceInput";
-import { PictureCapture } from "./milk-test/PictureCapture";
+import { ResponsiveNotesArea } from "./milk-test/ResponsiveNotesArea";
 import { useMilkTestForm } from "@/hooks/useMilkTestForm";
 
 export const AddMilkTest = () => {
@@ -45,22 +44,14 @@ export const AddMilkTest = () => {
           rating={formState.rating} 
           setRating={formSetters.setRating} 
         />
-        <div className="flex gap-4 items-stretch">
-          <Textarea
-            placeholder="Tasting notes..."
-            value={formState.notes}
-            onChange={(e) => formSetters.setNotes(e.target.value)}
-            className="flex-1 min-h-[120px]"
-          />
-          <div className="w-[120px]">
-            <PictureCapture
-              picture={formState.picture}
-              picturePreview={formState.picturePreview}
-              setPicture={formSetters.setPicture}
-              setPicturePreview={formSetters.setPicturePreview}
-            />
-          </div>
-        </div>
+        <ResponsiveNotesArea
+          notes={formState.notes}
+          setNotes={formSetters.setNotes}
+          picture={formState.picture}
+          picturePreview={formState.picturePreview}
+          setPicture={formSetters.setPicture}
+          setPicturePreview={formSetters.setPicturePreview}
+        />
       </div>
 
       <div className="space-y-4">
