@@ -10,7 +10,7 @@ interface ShopSearchInputProps {
 export const ShopSearchInput = ({ value, onChange }: ShopSearchInputProps) => {
   return (
     <Input
-      placeholder="Search shop by name..."
+      placeholder="Search for shop..."
       value={value}
       onChange={onChange}
       className="w-full"
