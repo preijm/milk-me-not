@@ -1,14 +1,7 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-
-interface ProductData {
-  brand_name: string;
-  product_name: string;
-  property_names?: string[] | null;
-  flavor_names: string[] | null;
-  is_barista?: boolean;
-}
+import { ProductData } from "./search-utils/types";
 
 interface SelectedProductProps {
   product: ProductData;

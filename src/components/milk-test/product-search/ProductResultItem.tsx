@@ -1,18 +1,10 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-
-interface ProductResult {
-  id: string;
-  brand_name: string;
-  product_name: string;
-  property_names?: string[] | null;
-  flavor_names: string[] | null;
-  is_barista?: boolean;
-}
+import { ProductData } from "./search-utils/types";
 
 interface ProductResultItemProps {
-  product: ProductResult;
+  product: ProductData & { id: string };
   onSelect: (productId: string) => void;
 }
 

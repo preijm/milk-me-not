@@ -20,3 +20,12 @@ export interface SearchState {
   clearSelectedProduct: () => void;
   isError: boolean;
 }
+
+// Add a common interface that can be used by both components
+export interface ProductData {
+  brand_name: string;
+  product_name: string;
+  property_names?: string[] | null;
+  flavor_names: string[] | null;
+  is_barista?: boolean;
+}

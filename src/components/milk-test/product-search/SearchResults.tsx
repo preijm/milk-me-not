@@ -1,14 +1,10 @@
 
 import React from "react";
 import { ProductResultItem } from "./ProductResultItem";
+import { ProductData } from "./search-utils/types";
 
-interface ProductResult {
+interface ProductResult extends ProductData {
   id: string;
-  brand_name: string;
-  product_name: string;
-  property_names?: string[] | null;
-  flavor_names: string[] | null;
-  is_barista?: boolean;
 }
 
 interface SearchResultsProps {

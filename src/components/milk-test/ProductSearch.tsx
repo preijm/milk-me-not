@@ -5,6 +5,7 @@ import { SearchResults } from "./product-search/SearchResults";
 import { useProductSearch } from "./product-search/useProductSearch";
 import { SelectedProduct } from "./product-search/SelectedProduct";
 import { ProductRegistrationDialog } from "./registration-ui/ProductRegistrationDialog";
+import { ProductData } from "./product-search/search-utils/types";
 
 interface ProductSearchProps {
   onSelectProduct: (productId: string, brandId: string) => void;
@@ -74,6 +75,15 @@ export const ProductSearch = ({
     searchResultsCount: searchResults.length
   });
 
+  // Map the selectedProduct (if it exists) to the format expected by SelectedProduct component
+  const selectedProductData: ProductData | null = selectedProduct ? {
+    brand_name: selectedProduct.brand_name,
+    product_name: selectedProduct.name, // Map name to product_name
+    property_names: selectedProduct.property_names,
+    flavor_names: selectedProduct.flavor_names,
+    is_barista: selectedProduct.is_barista
+  } : null;
+
   return (
     <div className="space-y-4">
       <div className="relative">
@@ -86,8 +96,8 @@ export const ProductSearch = ({
           hasSelectedProduct={!!selectedProductId}
         />
         
-        {selectedProductId && selectedProduct && (
-          <SelectedProduct product={selectedProduct} />
+        {selectedProductId && selectedProductData && (
+          <SelectedProduct product={selectedProductData} />
         )}
         
         {/* Search results dropdown */}
@@ -95,7 +105,7 @@ export const ProductSearch = ({
           results={searchResults.map(result => ({
             id: result.id,
             brand_name: result.brand_name,
-            product_name: result.name, // Fix: Use name property instead of product_name
+            product_name: result.name, // Map name to product_name
             property_names: result.property_names,
             flavor_names: result.flavor_names,
             is_barista: result.is_barista
