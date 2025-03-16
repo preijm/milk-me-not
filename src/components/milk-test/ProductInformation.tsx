@@ -28,7 +28,12 @@ export const ProductInformation = ({
     setProductId(productId);
     setBrandId(brandId);
     
-    // Toast removed - no longer showing notification when selecting a product
+    // Toast notification added to confirm product selection
+    toast({
+      title: "Product selected",
+      description: "You can now continue with your milk test.",
+      duration: 2000,
+    });
   };
 
   const handleAddNewProduct = () => {

@@ -76,7 +76,7 @@ export const useProductSearch = (selectedProductId?: string) => {
     }
   }, [selectedProduct, localSelectedProductId, isLoadingSelectedProduct]);
 
-  // Rest of the code for product search
+  // Enhanced product search with better support for properties, barista, and flavors
   const {
     data: searchResults = [],
     isLoading,
@@ -88,125 +88,126 @@ export const useProductSearch = (selectedProductId?: string) => {
       console.log('Searching for products:', searchTerm);
 
       const lowercaseSearchTerm = searchTerm.toLowerCase();
-      // Format search term for product property search
       const formattedSearchTerm = lowercaseSearchTerm.replace(/\s+/g, '_');
+      const combinedResults = [];
+      const processedIds = new Set(); // To track already added products
 
-      // First query - search for partial matches in product name, brand name
-      const {
-        data: initialResults,
-        error
-      } = await supabase.from('product_search_view')
-        .select('*')
-        .or(`product_name.ilike.%${lowercaseSearchTerm}%,brand_name.ilike.%${lowercaseSearchTerm}%`)
-        .limit(20);
-      
-      if (error) {
-        console.error('Error searching products:', error);
-        throw error;
-      }
-
-      // Second query - improved flavor search with partial matching
-      const {
-        data: flavorResults,
-        error: flavorError
-      } = await supabase
-        .from('product_search_view')
-        .select('*')
-        .filter('flavor_names', 'cs', `{${lowercaseSearchTerm}}`)
-        .limit(20);
-      
-      if (flavorError) {
-        console.error('Error searching flavors:', flavorError);
-      }
-      
-      // Additional flavor query for better partial matching
-      const {
-        data: additionalFlavorResults,
-        error: additionalFlavorError
-      } = await supabase
-        .from('product_search_view')
-        .select('*')
-        .filter('flavor_names', 'cs', `{%${lowercaseSearchTerm}%}`)
-        .limit(20);
-      
-      if (additionalFlavorError) {
-        console.error('Error with additional flavor search:', additionalFlavorError);
-      }
-
-      // Third query - product property search with partial matching
-      const {
-        data: productPropertyResults,
-        error: productPropertyError
-      } = await supabase.from('product_search_view')
-        .select('*')
-        .filter('property_names', 'cs', `{%${lowercaseSearchTerm}%}`)
-        .limit(20);
-      
-      if (productPropertyError) {
-        console.error('Error searching product properties:', productPropertyError);
-      }
-
-      // Query for barista products if search term contains 'barista'
-      const {
-        data: baristaResults,
-        error: baristaError
-      } = await supabase.from('product_search_view')
-        .select('*')
-        .eq('is_barista', true)
-        .ilike('product_name', `%${lowercaseSearchTerm}%`)
-        .limit(20);
+      // Helper function to add results without duplicates
+      const addUniqueResults = (results: any[]) => {
+        if (!results || !results.length) return;
         
-      if (baristaError) {
-        console.error('Error searching for barista products:', baristaError);
-      }
-
-      // Combine results, removing duplicates by id
-      let combinedResults = [...(initialResults || [])];
-      
-      // Add all additional results if they exist, avoiding duplicates
-      [flavorResults, additionalFlavorResults, productPropertyResults, baristaResults].forEach(resultSet => {
-        if (resultSet) {
-          resultSet.forEach(item => {
-            if (!combinedResults.some(existing => existing.id === item.id)) {
-              combinedResults.push(item);
-            }
-          });
+        for (const item of results) {
+          if (!processedIds.has(item.id)) {
+            processedIds.add(item.id);
+            combinedResults.push(item);
+          }
         }
-      });
+      };
 
-      // Enhanced logging for debugging RLS issues
-      console.log('Combined search results:', combinedResults);
-      
-      if (combinedResults.length > 0) {
-        combinedResults.forEach((result, index) => {
-          if (index < 3) { // Log first 3 results for debugging
+      try {
+        // 1. Basic search for product name and brand name
+        const { data: basicResults, error: basicError } = await supabase
+          .from('product_search_view')
+          .select('*')
+          .or(`product_name.ilike.%${lowercaseSearchTerm}%,brand_name.ilike.%${lowercaseSearchTerm}%`)
+          .limit(20);
+        
+        if (basicError) throw basicError;
+        addUniqueResults(basicResults);
+
+        // 2. Search for barista products - prioritize if 'barista' is in the search term
+        if (lowercaseSearchTerm.includes('barista')) {
+          const { data: baristaResults, error: baristaError } = await supabase
+            .from('product_search_view')
+            .select('*')
+            .eq('is_barista', true)
+            .limit(20);
+          
+          if (baristaError) throw baristaError;
+          addUniqueResults(baristaResults);
+        }
+
+        // 3. Property names search (improved matching for property terms)
+        const { data: propertyResults, error: propertyError } = await supabase
+          .from('product_search_view')
+          .select('*')
+          .filter('property_names', 'cs', `{%${formattedSearchTerm}%}`)
+          .limit(20);
+        
+        if (propertyError) throw propertyError;
+        addUniqueResults(propertyResults);
+
+        // 4. Flavor search (with better partial matching)
+        const { data: flavorResults, error: flavorError } = await supabase
+          .from('product_search_view')
+          .select('*')
+          .filter('flavor_names', 'cs', `{%${formattedSearchTerm}%}`)
+          .limit(20);
+        
+        if (flavorError) throw flavorError;
+        addUniqueResults(flavorResults);
+
+        // 5. Special case for percentage values or specific properties
+        // For example, handling searches like "3.5%", "oat", "lactose free"
+        const specialTerms = [
+          "oat", "soy", "almond", "lactose", "free", "organic", 
+          "1%", "2%", "3%", "3.5%", "4%", "0%", "whole", "skim", "fat"
+        ];
+        
+        const matchedSpecialTerms = specialTerms.filter(term => 
+          lowercaseSearchTerm.includes(term)
+        );
+        
+        if (matchedSpecialTerms.length > 0) {
+          for (const term of matchedSpecialTerms) {
+            const formattedTerm = term.replace(/\./g, '_point_').replace(/%/g, '_percent');
+            
+            const { data: specialResults, error: specialError } = await supabase
+              .from('product_search_view')
+              .select('*')
+              .or(`property_names.cs.{%${formattedTerm}%},flavor_names.cs.{%${formattedTerm}%}`)
+              .limit(20);
+            
+            if (specialError) throw specialError;
+            addUniqueResults(specialResults);
+          }
+        }
+
+        console.log(`Found ${combinedResults.length} combined search results`);
+        
+        // Log sample results for debugging
+        if (combinedResults.length > 0) {
+          combinedResults.slice(0, 3).forEach((result, index) => {
             console.log(`Result ${index + 1}:`, {
               id: result.id,
               productName: result.product_name,
-              flavorNames: result.flavor_names,
+              brandName: result.brand_name,
+              isBarista: result.is_barista,
               propertyNames: result.property_names,
-              isBarista: result.is_barista
+              flavorNames: result.flavor_names
             });
-          }
-        });
-      }
+          });
+        }
 
-      // Transform the results to match the format expected by the component
-      // Ensure flavor_names is always an array even if null
-      return combinedResults.map(item => ({
-        id: item.id,
-        name: item.product_name,
-        brand_id: item.brand_id,
-        brand_name: item.brand_name,
-        property_names: item.property_names || [],
-        flavor_names: item.flavor_names || [],
-        is_barista: item.is_barista
-      })) || [];
+        // Transform results to match expected format
+        return combinedResults.map(item => ({
+          id: item.id,
+          name: item.product_name,
+          brand_id: item.brand_id,
+          brand_name: item.brand_name,
+          property_names: item.property_names || [],
+          flavor_names: item.flavor_names || [],
+          is_barista: item.is_barista
+        }));
+      } catch (error) {
+        console.error('Error searching for products:', error);
+        return [];
+      }
     },
     enabled: searchTerm.length >= 2 && !localSelectedProductId
   });
 
-  // We'll update the dropdown visibility state based on search results
+  // Update dropdown visibility based on search results
   useEffect(() => {
     if (searchTerm.length >= 2 && !localSelectedProductId) {
       setIsDropdownVisible(true);
@@ -223,7 +224,7 @@ export const useProductSearch = (selectedProductId?: string) => {
     isDropdownVisible,
     setIsDropdownVisible,
     selectedProduct,
-    clearSelectedProduct, // Add the new method
+    clearSelectedProduct,
     isError
   };
 };
