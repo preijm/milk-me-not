@@ -95,11 +95,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
         setIsSubmitting(false);
         console.log("Duplicate found, isSubmitting reset to false");
       } else if (result?.productId) {
-        // Normal success handling for new product
-        toast({
-          title: "Product Registered",
-          description: "Your product was registered successfully."
-        });
+        // Normal success handling for new product - removed toast notification
         onSuccess(result.productId, brandId);
         onOpenChange(false);
       } else {
