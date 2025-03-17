@@ -22,6 +22,7 @@ export const ImageModal = ({ imageUrl, isOpen, onClose }: ImageModalProps) => {
               src={imageUrl}
               alt="Product"
               className="object-contain w-full h-full rounded-lg border-0"
+              style={{ borderRadius: '0.5rem' }}
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = 'none';
