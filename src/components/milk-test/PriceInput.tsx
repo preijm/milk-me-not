@@ -1,7 +1,6 @@
 
 import React from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Coins } from "lucide-react";
 
 interface PriceInputProps {
   price: string;
@@ -16,32 +15,34 @@ export const PriceInput = ({
   hasChanged,
   setHasChanged
 }: PriceInputProps) => {
-  // Convert price string to number for the toggle group
-  const priceValue = price ? price.toString() : "3";
+  // The price value might be empty to allow for no selection
+  const priceValue = price || "";
 
   const handlePriceChange = (value: string) => {
-    if (value) {
-      setPrice(value);
-      if (!hasChanged) {
-        setHasChanged(true);
-      }
+    // If value is empty or the same as current (toggle off), reset it
+    const newValue = value === price ? "" : value;
+    setPrice(newValue);
+    
+    // Mark as changed even when deselecting
+    if (!hasChanged) {
+      setHasChanged(true);
     }
   };
 
   const getPriceLabel = (value: string) => {
     switch (value) {
       case "1":
-        return "❌ Total waste of money";
+        return "Total waste of money";
       case "2":
-        return "⚠️ Not worth it";
+        return "Not worth it";
       case "3":
-        return "✅ Fair price";
+        return "Fair price";
       case "4":
-        return "🏆 Good deal";
+        return "Good deal";
       case "5":
-        return "💎 Great value for money";
+        return "Great value for money";
       default:
-        return "✅ Fair price";
+        return "Select a price rating";
     }
   };
 
@@ -60,16 +61,15 @@ export const PriceInput = ({
             className="flex-1 py-2 border rounded-md data-[state=on]:bg-cream-300 data-[state=on]:text-milk-500 min-w-16"
             aria-label={`Rating ${value}`}
           >
-            <span className="flex flex-col items-center gap-1">
-              <span className="text-xl font-bold">{value}</span>
-              {value === parseInt(priceValue) && <Coins className="h-5 w-5" />}
+            <span className="text-sm font-medium">
+              {getPriceLabel(value.toString())}
             </span>
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
       
       <div className="text-sm text-center font-medium">
-        {getPriceLabel(priceValue)}
+        {priceValue ? getPriceLabel(priceValue) : "No price rating selected"}
       </div>
     </div>
   );
