@@ -62,7 +62,7 @@ export const PriceInput = ({
             aria-label={`Rating ${value}`}
           >
             <span className="text-sm font-medium">
-              {getPriceLabel(value.toString()).split(" ")[0]}
+              {getPriceLabel(value.toString())}
             </span>
           </ToggleGroupItem>
         ))}
