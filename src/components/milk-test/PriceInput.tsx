@@ -25,17 +25,13 @@ export const PriceInput = ({
   const priceValue = price || "";
 
   const handlePriceChange = (value: string) => {
-    if (value) {
-      // If a value is selected, update the price
-      setPrice(value);
-      
-      // Mark as changed
-      if (!hasChanged) {
-        setHasChanged(true);
-      }
-    } else {
-      // If no value is passed (empty string), reset it
-      setPrice("");
+    // Update the price even if it's the same value clicked again
+    // This ensures the UI shows the selection
+    setPrice(value);
+    
+    // Mark as changed if not already
+    if (!hasChanged) {
+      setHasChanged(true);
     }
   };
 

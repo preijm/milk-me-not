@@ -31,7 +31,7 @@ export const useMilkTestForm = () => {
       notes,
       shop,
       drinkPreference,
-      priceQualityRatio: price // Log the actual price value
+      price // Log the actual price value
     });
     
     // Validation moved to the component itself
@@ -97,7 +97,7 @@ export const useMilkTestForm = () => {
         picture_path: picturePath
       };
       
-      // Only add price_quality_ratio if the user actually changed it and selected a value
+      // Only add price if the user actually changed it and selected a value
       if (priceHasChanged && price) {
         milkTestData.price = parseFloat(price);
       }
