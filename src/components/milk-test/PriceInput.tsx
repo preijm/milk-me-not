@@ -1,7 +1,6 @@
 
 import React from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { X, AlertTriangle, Check, Trophy, Diamond } from "lucide-react";
 import { 
   Tooltip,
   TooltipContent,
@@ -53,18 +52,18 @@ export const PriceInput = ({
     }
   };
 
-  const getPriceIcon = (value: string) => {
+  const getPriceEmoji = (value: string) => {
     switch (value) {
       case "1":
-        return <X className="h-5 w-5" color="#FF0000" />;
+        return "❌";
       case "2":
-        return <AlertTriangle className="h-5 w-5" color="#FFA500" />;
+        return "⚠️";
       case "3":
-        return <Check className="h-5 w-5" color="#00A000" />;
+        return "✅";
       case "4":
-        return <Trophy className="h-5 w-5" color="#FFC107" />;
+        return "🏆";
       case "5":
-        return <Diamond className="h-5 w-5" color="#00BFFF" />;
+        return "💎";
       default:
         return null;
     }
@@ -87,7 +86,7 @@ export const PriceInput = ({
                   className="flex-1 py-2 border rounded-md data-[state=on]:bg-cream-300 data-[state=on]:text-milk-500 min-w-16 flex items-center justify-center"
                   aria-label={`Rating ${value}`}
                 >
-                  {getPriceIcon(value.toString())}
+                  <span className="text-xl">{getPriceEmoji(value.toString())}</span>
                 </ToggleGroupItem>
               </TooltipTrigger>
               <TooltipContent>
