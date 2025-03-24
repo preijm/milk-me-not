@@ -25,15 +25,16 @@ export const PriceInput = ({
   const priceValue = price || "";
 
   const handlePriceChange = (value: string) => {
-    // Only update if we have a real value (empty string means no selection)
-    if (value) {
-      setPrice(value);
-      
-      // Mark as changed if not already changed
-      if (!hasChanged) {
-        setHasChanged(true);
-      }
+    // Always update the price when a button is clicked
+    setPrice(value);
+    
+    // Mark as changed if not already changed
+    if (!hasChanged) {
+      setHasChanged(true);
     }
+    
+    // For debugging
+    console.log('Price selected:', value);
   };
 
   const getPriceTooltip = (value: string) => {
