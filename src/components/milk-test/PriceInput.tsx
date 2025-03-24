@@ -34,7 +34,7 @@ export const PriceInput = ({
     }
     
     // For debugging
-    console.log('Price selected:', value);
+    console.log('Price quality ratio selected:', value);
   };
 
   const getPriceTooltip = (value: string) => {
@@ -72,7 +72,7 @@ export const PriceInput = ({
   };
 
   // For debugging
-  console.log('Price value in PriceInput:', priceValue);
+  console.log('Price quality ratio value in PriceInput:', priceValue);
 
   return (
     <div className="space-y-4 w-full">
