@@ -1,19 +1,13 @@
 
 import React from "react";
-
-interface MilkTestResult {
-  rating: number;
-  property_names: string[];
-  brand_name: string;
-  created_at: string;
-}
+import { MilkTestResult } from "@/types/milk-test";
 
 export const UserStatsOverview = ({ results }: { results: MilkTestResult[] }) => {
   const avgRating = results.length
     ? (results.reduce((acc, curr) => acc + curr.rating, 0) / results.length).toFixed(1)
     : "0.0";
 
-  const uniqueBrands = [...new Set(results.map((r) => r.brand_name))];
+  const uniqueBrands = [...new Set(results.map((r) => r.brand_name).filter(Boolean))];
 
   return (
     <div className="bg-cream-100 rounded-lg p-6 mb-8">

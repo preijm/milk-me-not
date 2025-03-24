@@ -1,19 +1,14 @@
 
 import React from "react";
 import { Milk } from "lucide-react";
-
-interface MilkTestResult {
-  rating: number;
-  property_names: string[];
-  created_at: string;
-}
+import { MilkTestResult } from "@/types/milk-test";
 
 export const StatsOverview = ({ results }: { results: MilkTestResult[] }) => {
   const avgRating = results.length
     ? (results.reduce((acc, curr) => acc + curr.rating, 0) / results.length).toFixed(1)
     : "0.0";
 
-  // Get unique product types from the property_names array
+  // Get unique product types from the property_names array, filtering out any nulls or undefined
   const types = results.length
     ? [...new Set(results.flatMap(r => r.property_names || []))]
     : [];

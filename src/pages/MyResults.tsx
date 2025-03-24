@@ -202,7 +202,16 @@ const MyResults = () => {
                         variant="secondary"
                         size="icon"
                         className="bg-white hover:bg-gray-100"
-                        onClick={() => setEditingTest(result)}
+                        onClick={() => {
+                          // Map the MilkTestResult to the format expected by EditMilkTest
+                          const testForEdit: MilkTestResult = {
+                            ...result,
+                            brand: result.brand_name || '',
+                            shop: result.shop_name || '',
+                            product_type_keys: result.property_names || []
+                          };
+                          setEditingTest(testForEdit);
+                        }}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -224,7 +233,7 @@ const MyResults = () => {
 
         {editingTest && (
           <EditMilkTest
-            test={editingTest}
+            test={editingTest as any}
             open={!!editingTest}
             onOpenChange={(open) => !open && setEditingTest(null)}
             onSuccess={refetch}
