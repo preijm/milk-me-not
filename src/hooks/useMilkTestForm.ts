@@ -31,7 +31,8 @@ export const useMilkTestForm = () => {
       notes,
       shop,
       drinkPreference,
-      price // Log the actual price value
+      price, // Log the actual price value
+      priceHasChanged // Log whether price has changed
     });
     
     // Validation moved to the component itself
@@ -86,7 +87,7 @@ export const useMilkTestForm = () => {
 
       console.log("Inserting milk test with user_id:", userData.user.id);
       
-      // Only include price_quality_ratio if the user has changed it
+      // Base milk test data
       const milkTestData: any = {
         product_id: productId,
         shop_id: shopData?.id || null,
@@ -97,9 +98,10 @@ export const useMilkTestForm = () => {
         picture_path: picturePath
       };
       
-      // Only add price if the user actually changed it and selected a value
+      // Only add price_quality_ratio if the user actually changed it and selected a value
       if (priceHasChanged && price) {
-        milkTestData.price = parseFloat(price);
+        console.log("Adding price_quality_ratio:", parseFloat(price));
+        milkTestData.price_quality_ratio = parseFloat(price);
       }
 
       const { data: milkTest, error: milkTestError } = await supabase

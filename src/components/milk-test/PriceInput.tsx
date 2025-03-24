@@ -21,17 +21,18 @@ export const PriceInput = ({
   hasChanged,
   setHasChanged
 }: PriceInputProps) => {
-  // The price value might be empty to allow for no selection
+  // Ensure price is a string and default to empty string if null/undefined
   const priceValue = price || "";
 
   const handlePriceChange = (value: string) => {
-    // Update the price even if it's the same value clicked again
-    // This ensures the UI shows the selection
-    setPrice(value);
-    
-    // Mark as changed if not already
-    if (!hasChanged) {
-      setHasChanged(true);
+    // Only update if we have a real value (empty string means no selection)
+    if (value) {
+      setPrice(value);
+      
+      // Mark as changed if not already changed
+      if (!hasChanged) {
+        setHasChanged(true);
+      }
     }
   };
 
@@ -68,6 +69,9 @@ export const PriceInput = ({
         return null;
     }
   };
+
+  // For debugging
+  console.log('Price value in PriceInput:', priceValue);
 
   return (
     <div className="space-y-4 w-full">
