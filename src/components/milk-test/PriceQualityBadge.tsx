@@ -1,5 +1,11 @@
 
 import React from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PriceQualityBadgeProps {
   priceQuality?: string | null;
@@ -24,8 +30,17 @@ export const PriceQualityBadge: React.FC<PriceQualityBadgeProps> = ({ priceQuali
   const { emoji, label } = priceQualityMap[priceQuality as keyof typeof priceQualityMap];
 
   return (
-    <div className="flex items-center" title={label}>
-      <span className="text-xl">{emoji}</span>
-    </div>
+    <TooltipProvider>
+      <Tooltip delayDuration={300}>
+        <TooltipTrigger asChild>
+          <div className="flex items-center cursor-help">
+            <span className="text-xl">{emoji}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
