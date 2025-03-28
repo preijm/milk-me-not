@@ -79,8 +79,7 @@ export type Database = {
           id: string
           notes: string | null
           picture_path: string | null
-          price: number | null
-          price_quality_ratio: number | null
+          price_quality_ratio: string | null
           product_id: string | null
           rating: number
           shop_id: string | null
@@ -92,8 +91,7 @@ export type Database = {
           id?: string
           notes?: string | null
           picture_path?: string | null
-          price?: number | null
-          price_quality_ratio?: number | null
+          price_quality_ratio?: string | null
           product_id?: string | null
           rating: number
           shop_id?: string | null
@@ -105,8 +103,7 @@ export type Database = {
           id?: string
           notes?: string | null
           picture_path?: string | null
-          price?: number | null
-          price_quality_ratio?: number | null
+          price_quality_ratio?: string | null
           product_id?: string | null
           rating?: number
           shop_id?: string | null
@@ -394,8 +391,7 @@ export type Database = {
           is_barista: boolean | null
           notes: string | null
           picture_path: string | null
-          price: number | null
-          price_quality_ratio: number | null
+          price_quality_ratio: string | null
           product_id: string | null
           product_name: string | null
           property_names: string[] | null

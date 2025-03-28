@@ -44,31 +44,31 @@ export const PriceInput = ({
 
   const buttons = [
     {
-      value: "1",
+      value: "waste_of_money",
       emoji: "🚫",
       label: "Total waste of money",
       activeClass: "bg-white text-red-500 border-red-500",
     },
     {
-      value: "2",
+      value: "not_worth_it",
       emoji: "⚠️",
       label: "Not worth it",
       activeClass: "bg-white text-amber-500 border-amber-500",
     },
     {
-      value: "3",
+      value: "fair_price",
       emoji: "✅",
       label: "Fair price",
       activeClass: "bg-white text-green-500 border-green-500",
     },
     {
-      value: "4",
+      value: "good_deal",
       emoji: "🏆",
       label: "Good deal",
       activeClass: "bg-white text-amber-500 border-amber-500",
     },
     {
-      value: "5",
+      value: "great_value",
       emoji: "💎",
       label: "Great value for money",
       activeClass: "bg-white text-blue-500 border-blue-500",

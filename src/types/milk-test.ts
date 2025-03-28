@@ -6,8 +6,7 @@ export interface MilkTestResult {
   notes?: string | null;
   picture_path?: string | null;
   drink_preference?: string | null;
-  price?: number | null;
-  price_quality_ratio?: number | null;
+  price_quality_ratio?: string | null;
   product_id?: string | null;
   shop_id?: string | null;
   user_id?: string | null;

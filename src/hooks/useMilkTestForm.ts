@@ -100,8 +100,8 @@ export const useMilkTestForm = () => {
       
       // Only add price_quality_ratio if the user actually changed it and selected a value
       if (priceHasChanged && price) {
-        console.log("Adding price_quality_ratio:", parseFloat(price));
-        milkTestData.price_quality_ratio = parseFloat(price);
+        console.log("Adding price_quality_ratio:", price);
+        milkTestData.price_quality_ratio = price;
       }
 
       const { data: milkTest, error: milkTestError } = await supabase

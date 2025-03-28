@@ -33,7 +33,7 @@ interface EditMilkTestProps {
     product_type_keys?: string[];
     shop_name?: string;
     picture_path?: string;
-    price_quality_ratio?: number;
+    price_quality_ratio?: string;
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -47,7 +47,7 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
   const [selectedProductProperties, setSelectedProductProperties] = useState<string[]>(test.product_type_keys || []);
   const [shop, setShop] = useState(test.shop_name || "");
   const [isBarista, setIsBarista] = useState(test.is_barista || false);
-  const [priceQualityRatio, setPriceQualityRatio] = useState(test.price_quality_ratio ? test.price_quality_ratio.toString() : "");
+  const [priceQualityRatio, setPriceQualityRatio] = useState(test.price_quality_ratio || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [picture, setPicture] = useState<File | null>(null);
   const [picturePreview, setPicturePreview] = useState<string | null>(null);
@@ -143,7 +143,7 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
 
       // Only include price if the user has interacted with the slider
       if (priceHasChanged) {
-        updateData.price_quality_ratio = priceQualityRatio ? parseFloat(priceQualityRatio) : null;
+        updateData.price_quality_ratio = priceQualityRatio || null;
       }
 
       const { error: milkTestError } = await supabase
