@@ -331,7 +331,7 @@ const Results = () => {
                                       <TableCell>
                                         {test.picture_path ? (
                                           <div 
-                                            className="w-10 h-10 relative overflow-hidden rounded-lg cursor-pointer transition-transform hover:scale-105"
+                                            className="w-10 h-10 relative overflow-hidden rounded-md cursor-pointer transition-transform hover:scale-105"
                                             onClick={(e) => {
                                               e.stopPropagation();
                                               handleImageClick(test.picture_path!);
@@ -341,7 +341,7 @@ const Results = () => {
                                               <img 
                                                 src={`${supabase.storage.from('milk-pictures').getPublicUrl(test.picture_path).data.publicUrl}`} 
                                                 alt="Product"
-                                                className="object-cover w-full h-full rounded-lg"
+                                                className="object-cover w-full h-full"
                                                 onError={(e) => {
                                                   const target = e.target as HTMLImageElement;
                                                   target.style.display = 'none';
@@ -351,13 +351,13 @@ const Results = () => {
                                                   }
                                                 }}
                                               />
-                                              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg" style={{display: 'none'}}>
+                                              <div className="absolute inset-0 flex items-center justify-center bg-gray-100" style={{display: 'none'}}>
                                                 <ImageIcon className="w-5 h-5 text-gray-400" />
                                               </div>
                                             </AspectRatio>
                                           </div>
                                         ) : (
-                                          <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg">
+                                          <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-md">
                                             <ImageIcon className="w-5 h-5 text-gray-400" />
                                           </div>
                                         )}

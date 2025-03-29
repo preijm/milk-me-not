@@ -13,7 +13,6 @@ interface PictureCaptureProps {
   picturePreview: string | null;
   setPicture: (file: File | null) => void;
   setPicturePreview: (url: string | null) => void;
-  onImageClick?: () => void;
 }
 
 export const PictureCapture: React.FC<PictureCaptureProps> = ({
@@ -21,7 +20,6 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
   picturePreview,
   setPicture,
   setPicturePreview,
-  onImageClick,
 }) => {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -58,14 +56,6 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
     }
   };
 
-  const handleImageClick = () => {
-    if (onImageClick) {
-      onImageClick();
-    } else {
-      setIsImageDialogOpen(true);
-    }
-  };
-
   return (
     <div className="h-full flex flex-col items-center justify-center">
       {/* Hidden file input that accepts camera capture and file selection */}
@@ -84,8 +74,8 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
             <img 
               src={picturePreview} 
               alt="Milk product" 
-              className="w-full h-full object-cover cursor-pointer rounded-lg"
-              onClick={handleImageClick}
+              className="w-full h-full object-cover cursor-pointer"
+              onClick={() => setIsImageDialogOpen(true)}
             />
           </div>
           <Button 
@@ -97,20 +87,18 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
             <X className="h-4 w-4" />
           </Button>
           
-          {!onImageClick && (
-            <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
-              <DialogContent className="max-w-3xl p-0 overflow-hidden bg-transparent border-none">
-                <DialogClose className="absolute right-4 top-4 rounded-sm bg-white/10 opacity-70 ring-offset-background z-10 hover:opacity-100" />
-                <div className="relative w-full">
-                  <img 
-                    src={picturePreview} 
-                    alt="Milk product full view" 
-                    className="w-full h-full object-contain rounded-xl"
-                  />
-                </div>
-              </DialogContent>
-            </Dialog>
-          )}
+          <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
+            <DialogContent className="max-w-3xl p-0 overflow-hidden bg-transparent border-none">
+              <DialogClose className="absolute right-4 top-4 rounded-sm bg-white/10 opacity-70 ring-offset-background z-10 hover:opacity-100" />
+              <div className="relative w-full">
+                <img 
+                  src={picturePreview} 
+                  alt="Milk product full view" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       ) : (
         <div className="h-full w-full flex items-center justify-center">

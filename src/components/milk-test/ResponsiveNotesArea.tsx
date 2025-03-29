@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { PictureCapture } from "./PictureCapture";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ImageModal } from "./ImageModal";
 
 interface ResponsiveNotesAreaProps {
   notes: string;
@@ -24,18 +23,11 @@ export const ResponsiveNotesArea: React.FC<ResponsiveNotesAreaProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const [isTextareaFocused, setIsTextareaFocused] = useState(false);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   // Determine if we should show the picture section
   // On mobile: hide when textarea is focused
   // On desktop: always show
   const showPictureSection = !isMobile || !isTextareaFocused;
-  
-  const handleImageClick = () => {
-    if (picturePreview) {
-      setIsImageModalOpen(true);
-    }
-  };
 
   return (
     <div className="flex gap-4 items-stretch">
@@ -59,17 +51,8 @@ export const ResponsiveNotesArea: React.FC<ResponsiveNotesAreaProps> = ({
             picturePreview={picturePreview}
             setPicture={setPicture}
             setPicturePreview={setPicturePreview}
-            onImageClick={handleImageClick}
           />
         </div>
-      )}
-      
-      {picturePreview && (
-        <ImageModal
-          imageUrl={picturePreview}
-          isOpen={isImageModalOpen}
-          onClose={() => setIsImageModalOpen(false)}
-        />
       )}
     </div>
   );
