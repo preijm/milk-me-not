@@ -54,14 +54,6 @@ export const MyResultsTable = ({
           </TableHead>
           <TableHead>
             <SortableColumnHeader
-              column="product_name"
-              label="Product"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
               column="rating"
               label="Score"
               sortConfig={sortConfig}
@@ -69,6 +61,14 @@ export const MyResultsTable = ({
             />
           </TableHead>
           <TableHead>Price</TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="product_name"
+              label="Style"
+              sortConfig={sortConfig}
+              onSort={handleSort}
+            />
+          </TableHead>
           <TableHead>Shop</TableHead>
           <TableHead className="w-48">Notes</TableHead>
           <TableHead>Actions</TableHead>
@@ -86,7 +86,6 @@ export const MyResultsTable = ({
             <TableRow key={result.id}>
               <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
               <TableCell className="font-medium">{result.brand_name}</TableCell>
-              <TableCell>{result.product_name}</TableCell>
               <TableCell>
                 <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
                   <span className="font-semibold text-milk-500">{Number(result.rating).toFixed(1)}</span>
@@ -95,6 +94,7 @@ export const MyResultsTable = ({
               <TableCell>
                 <PriceQualityBadge priceQuality={result.price_quality_ratio} />
               </TableCell>
+              <TableCell>{result.product_name}</TableCell>
               <TableCell>
                 {result.shop_name}
                 {result.shop_country_code && (
