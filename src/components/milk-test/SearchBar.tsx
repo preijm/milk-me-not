@@ -6,13 +6,19 @@ interface SearchBarProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
   className?: string;
+  placeholder?: string;
 }
 
-export const SearchBar = ({ searchTerm, setSearchTerm, className }: SearchBarProps) => {
+export const SearchBar = ({ 
+  searchTerm, 
+  setSearchTerm, 
+  className,
+  placeholder = "Search by brand or product..." 
+}: SearchBarProps) => {
   return (
     <div className={className}>
       <Input
-        placeholder="Search by brand or product..."
+        placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="max-w-sm"

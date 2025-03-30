@@ -1,24 +1,15 @@
+
 import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Pencil, Trash2, ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { EditMilkTest } from "@/components/milk-test/EditMilkTest";
 import { UserStatsOverview } from "@/components/UserStatsOverview";
 import { MilkTestResult } from "@/types/milk-test";
-import { PriceQualityBadge } from "@/components/milk-test/PriceQualityBadge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { SearchBar } from "@/components/milk-test/SearchBar";
+import { MyResultsTable } from "@/components/milk-test/MyResultsTable";
 
 type SortConfig = {
   column: string;
@@ -84,13 +75,15 @@ const MyResults = () => {
     }));
   };
 
-  const getSortIcon = (column: string) => {
-    if (sortConfig.column !== column) return <ArrowUpDown className="w-4 h-4" />;
-    return sortConfig.direction === 'asc' ? (
-      <ChevronUp className="w-4 h-4" />
-    ) : (
-      <ChevronDown className="w-4 h-4" />
-    );
+  const handleEdit = (test: MilkTestResult) => {
+    // Map the MilkTestResult to the format expected by EditMilkTest
+    const testForEdit: MilkTestResult = {
+      ...test,
+      brand: test.brand_name || '',
+      shop: test.shop_name || '',
+      product_type_keys: test.property_names || []
+    };
+    setEditingTest(testForEdit);
   };
 
   const filteredResults = results.filter((result) => {
@@ -132,107 +125,20 @@ const MyResults = () => {
         <UserStatsOverview results={results} />
         
         <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="mb-4">
-            <Input
-              placeholder="Search by brand or product..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-sm"
-            />
-          </div>
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            className="mb-4"
+            placeholder="Search by brand or product..."
+          />
           
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort('created_at')}
-                    className="hover:bg-transparent"
-                  >
-                    Date {getSortIcon('created_at')}
-                  </Button>
-                </TableHead>
-                <TableHead>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort('brand_name')}
-                    className="hover:bg-transparent"
-                  >
-                    Brand {getSortIcon('brand_name')}
-                  </Button>
-                </TableHead>
-                <TableHead>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort('product_name')}
-                    className="hover:bg-transparent"
-                  >
-                    Product {getSortIcon('product_name')}
-                  </Button>
-                </TableHead>
-                <TableHead>
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort('rating')}
-                    className="hover:bg-transparent"
-                  >
-                    Score {getSortIcon('rating')}
-                  </Button>
-                </TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Notes</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredResults.map((result) => (
-                <TableRow key={result.id}>
-                  <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell className="font-medium">{result.brand_name}</TableCell>
-                  <TableCell>{result.product_name}</TableCell>
-                  <TableCell>
-                    <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
-                      <span className="font-semibold text-milk-500">{Number(result.rating).toFixed(1)}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <PriceQualityBadge priceQuality={result.price_quality_ratio} />
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate">{result.notes}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        className="bg-white hover:bg-gray-100"
-                        onClick={() => {
-                          // Map the MilkTestResult to the format expected by EditMilkTest
-                          const testForEdit: MilkTestResult = {
-                            ...result,
-                            brand: result.brand_name || '',
-                            shop: result.shop_name || '',
-                            product_type_keys: result.property_names || []
-                          };
-                          setEditingTest(testForEdit);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="icon"
-                        className="bg-white hover:bg-gray-100"
-                        onClick={() => handleDelete(result.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <MyResultsTable
+            results={filteredResults}
+            sortConfig={sortConfig}
+            handleSort={handleSort}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         </div>
 
         {editingTest && (
