@@ -29,9 +29,9 @@ export const TestDetailsTable = ({ productTests, handleImageClick }: TestDetails
           <TableHead>Date</TableHead>
           <TableHead>Tester</TableHead>
           <TableHead>Score</TableHead>
-          <TableHead className="hidden md:table-cell">Shop</TableHead>
           <TableHead>Style</TableHead>
           <TableHead>Price</TableHead>
+          <TableHead className="hidden md:table-cell">Shop</TableHead>
           <TableHead className="w-48">Notes</TableHead>
           <TableHead>Image</TableHead>
         </TableRow>
@@ -46,6 +46,12 @@ export const TestDetailsTable = ({ productTests, handleImageClick }: TestDetails
                 <span className="font-semibold text-milk-500">{Number(test.rating).toFixed(1)}</span>
               </div>
             </TableCell>
+            <TableCell>
+              <DrinkPreferenceIcon preference={test.drink_preference} />
+            </TableCell>
+            <TableCell>
+              <PriceQualityBadge priceQuality={test.price_quality_ratio} />
+            </TableCell>
             <TableCell className="hidden md:table-cell">
               {test.shop_name ? (
                 <>
@@ -59,12 +65,6 @@ export const TestDetailsTable = ({ productTests, handleImageClick }: TestDetails
               ) : (
                 "-"
               )}
-            </TableCell>
-            <TableCell>
-              <DrinkPreferenceIcon preference={test.drink_preference} />
-            </TableCell>
-            <TableCell>
-              <PriceQualityBadge priceQuality={test.price_quality_ratio} />
             </TableCell>
             <TableCell className="w-48">
               <NotesPopover notes={test.notes || "-"} />
