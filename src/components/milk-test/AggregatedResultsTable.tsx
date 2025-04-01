@@ -136,7 +136,9 @@ export const AggregatedResultsTable = ({
                         <React.Suspense fallback={<div>Loading...</div>}>
                           <TestDetailsTable 
                             productTests={productTests} 
-                            handleImageClick={handleImageClick} 
+                            handleImageClick={handleImageClick}
+                            sortConfig={sortConfig}
+                            handleSort={handleSort}
                           />
                         </React.Suspense>
                       )}

@@ -41,7 +41,7 @@ const Results = () => {
       // Get all milk test data first
       const { data, error } = await supabase
         .from('milk_tests_view')
-        .select('brand_id, brand_name, product_id, product_name, property_names, is_barista, flavor_names, rating') as unknown as {
+        .select('brand_id, brand_name, product_id, product_name, property_names, is_barista, flavor_names, rating, price_quality_ratio') as unknown as {
           data: MilkTestResult[] | null,
           error: Error | null
         };
@@ -94,7 +94,7 @@ const Results = () => {
           comparison = a.avg_rating - b.avg_rating;
         } else if (sortConfig.column === 'count') {
           comparison = a.count - b.count;
-        }
+        } 
         
         return sortConfig.direction === 'asc' ? comparison : -comparison;
       });
@@ -106,18 +106,28 @@ const Results = () => {
 
   // Fetch individual tests for expanded product
   const { data: productTests = [], isLoading: isLoadingTests } = useQuery({
-    queryKey: ['milk-tests-details', expandedProduct],
+    queryKey: ['milk-tests-details', expandedProduct, sortConfig],
     queryFn: async () => {
       if (!expandedProduct) return [];
       
-      const { data, error } = await supabase
+      let query = supabase
         .from('milk_tests_view')
         .select('id, created_at, brand_name, product_name, rating, username, notes, shop_name, picture_path, drink_preference, property_names, is_barista, flavor_names, price_quality_ratio, shop_country_code')
-        .eq('product_id', expandedProduct)
-        .order('created_at', { ascending: false }) as unknown as {
-          data: MilkTestResult[] | null,
-          error: Error | null
-        };
+        .eq('product_id', expandedProduct);
+      
+      // Add sorting based on sortConfig if applicable to this detail view
+      const detailSortableColumns = ['created_at', 'rating', 'price_quality_ratio', 'username'];
+      if (detailSortableColumns.includes(sortConfig.column)) {
+        query = query.order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
+      } else {
+        // Default ordering if the current sort column doesn't apply to details
+        query = query.order('created_at', { ascending: false });
+      }
+      
+      const { data, error } = await query as unknown as {
+        data: MilkTestResult[] | null,
+        error: Error | null
+      };
       
       if (error) throw error;
       return data || [];

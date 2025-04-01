@@ -69,7 +69,14 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead>Price</TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="price_quality_ratio"
+              label="Price"
+              sortConfig={sortConfig}
+              onSort={handleSort}
+            />
+          </TableHead>
           <TableHead>Image</TableHead>
           <TableHead className="w-48">Notes</TableHead>
           <TableHead>Actions</TableHead>

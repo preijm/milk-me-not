@@ -15,13 +15,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { SortableColumnHeader } from "./SortableColumnHeader";
 
 interface TestDetailsTableProps {
   productTests: MilkTestResult[];
   handleImageClick: (path: string) => void;
+  sortConfig?: {
+    column: string;
+    direction: 'asc' | 'desc';
+  };
+  handleSort?: (column: string) => void;
 }
 
-export const TestDetailsTable = ({ productTests, handleImageClick }: TestDetailsTableProps) => {
+export const TestDetailsTable = ({ 
+  productTests, 
+  handleImageClick,
+  sortConfig,
+  handleSort
+}: TestDetailsTableProps) => {
+  // Default handlers if not provided (for backward compatibility)
+  const onSort = handleSort || (() => {});
+  const sortCfg = sortConfig || { column: '', direction: 'asc' };
+
   return (
     <Table>
       <TableHeader>
@@ -30,7 +45,18 @@ export const TestDetailsTable = ({ productTests, handleImageClick }: TestDetails
           <TableHead>Tester</TableHead>
           <TableHead>Score</TableHead>
           <TableHead>Style</TableHead>
-          <TableHead>Price</TableHead>
+          <TableHead>
+            {handleSort ? (
+              <SortableColumnHeader
+                column="price_quality_ratio"
+                label="Price"
+                sortConfig={sortCfg}
+                onSort={onSort}
+              />
+            ) : (
+              "Price"
+            )}
+          </TableHead>
           <TableHead className="hidden md:table-cell">Shop</TableHead>
           <TableHead className="w-48">Notes</TableHead>
           <TableHead>Image</TableHead>
