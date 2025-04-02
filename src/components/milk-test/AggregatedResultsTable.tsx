@@ -73,7 +73,12 @@ export const AggregatedResultsTable = ({
             />
           </TableHead>
           <TableHead className="w-auto pl-1">
-            {/* Badges column - no header or sorting */}
+            <SortableColumnHeader 
+              column="property_names" 
+              label="Properties" 
+              sortConfig={sortConfig} 
+              onSort={handleSort} 
+            />
           </TableHead>
           <TableHead className="text-left">
             <SortableColumnHeader 

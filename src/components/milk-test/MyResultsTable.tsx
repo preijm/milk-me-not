@@ -60,7 +60,14 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead>Shop</TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="shop_name"
+              label="Shop"
+              sortConfig={sortConfig}
+              onSort={handleSort}
+            />
+          </TableHead>
           <TableHead>
             <SortableColumnHeader
               column="product_name"
@@ -77,8 +84,22 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead>Image</TableHead>
-          <TableHead className="w-48">Notes</TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="picture_path"
+              label="Image"
+              sortConfig={sortConfig}
+              onSort={handleSort}
+            />
+          </TableHead>
+          <TableHead className="w-48">
+            <SortableColumnHeader
+              column="notes"
+              label="Notes"
+              sortConfig={sortConfig}
+              onSort={handleSort}
+            />
+          </TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>

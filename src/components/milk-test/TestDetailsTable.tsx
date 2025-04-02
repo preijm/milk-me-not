@@ -41,25 +41,70 @@ export const TestDetailsTable = ({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Date</TableHead>
-          <TableHead>Tester</TableHead>
-          <TableHead>Score</TableHead>
-          <TableHead>Style</TableHead>
           <TableHead>
-            {handleSort ? (
-              <SortableColumnHeader
-                column="price_quality_ratio"
-                label="Price"
-                sortConfig={sortCfg}
-                onSort={onSort}
-              />
-            ) : (
-              "Price"
-            )}
+            <SortableColumnHeader
+              column="created_at"
+              label="Date"
+              sortConfig={sortCfg}
+              onSort={onSort}
+            />
           </TableHead>
-          <TableHead className="hidden md:table-cell">Shop</TableHead>
-          <TableHead className="w-48">Notes</TableHead>
-          <TableHead>Image</TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="username"
+              label="Tester"
+              sortConfig={sortCfg}
+              onSort={onSort}
+            />
+          </TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="rating"
+              label="Score"
+              sortConfig={sortCfg}
+              onSort={onSort}
+            />
+          </TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="drink_preference"
+              label="Style"
+              sortConfig={sortCfg}
+              onSort={onSort}
+            />
+          </TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="price_quality_ratio"
+              label="Price"
+              sortConfig={sortCfg}
+              onSort={onSort}
+            />
+          </TableHead>
+          <TableHead className="hidden md:table-cell">
+            <SortableColumnHeader
+              column="shop_name"
+              label="Shop"
+              sortConfig={sortCfg}
+              onSort={onSort}
+            />
+          </TableHead>
+          <TableHead className="w-48">
+            <SortableColumnHeader
+              column="notes"
+              label="Notes"
+              sortConfig={sortCfg}
+              onSort={onSort}
+            />
+          </TableHead>
+          <TableHead>
+            <SortableColumnHeader
+              column="picture_path"
+              label="Image"
+              sortConfig={sortCfg}
+              onSort={onSort}
+            />
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

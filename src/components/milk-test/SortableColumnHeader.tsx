@@ -36,7 +36,7 @@ export const SortableColumnHeader = ({
     <Button
       variant="ghost"
       onClick={() => onSort(column)}
-      className={`hover:bg-transparent pl-0 ${className}`}
+      className={`hover:bg-transparent pl-0 ${className || ''}`}
     >
       {label} {getSortIcon()}
     </Button>
