@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -28,7 +27,8 @@ type AggregatedResult = {
 
 const Results = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ column: 'avg_rating', direction: 'desc' });
+  // Set default sort to created_at in descending order to show latest tests first
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ column: 'created_at', direction: 'desc' });
   const [expandedProduct, setExpandedProduct] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 

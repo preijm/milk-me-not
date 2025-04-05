@@ -24,7 +24,9 @@ export const SortableColumnHeader = ({
   className
 }: SortableColumnHeaderProps) => {
   const getSortIcon = () => {
-    if (sortConfig.column !== column) return <ArrowUpDown className="w-4 h-4" />;
+    // Only show directional icons if this column is currently sorted
+    if (sortConfig.column !== column) return null;
+    
     return sortConfig.direction === 'asc' ? (
       <ChevronUp className="w-4 h-4" />
     ) : (
