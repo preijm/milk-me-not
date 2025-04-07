@@ -26,12 +26,12 @@ export const ProductResultItem = ({ product, onSelect }: ProductResultItemProps)
   
   return (
     <div 
-      className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex flex-col"
+      className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex flex-col border-b last:border-b-0"
       onClick={handleItemClick}
     >
-      <div className="font-medium">{product.brand_name} - {product.product_name}</div>
+      <div className="font-medium text-gray-900">{product.brand_name} - {product.product_name}</div>
       
-      <div className="mt-2">
+      <div className="mt-2 flex flex-wrap gap-1">
         {/* Barista status */}
         {product.is_barista && (
           <ProductPropertyBadges

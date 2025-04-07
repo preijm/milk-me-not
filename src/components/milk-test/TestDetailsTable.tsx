@@ -34,193 +34,218 @@ export const TestDetailsTable = ({
   sortConfig,
   handleSort
 }: TestDetailsTableProps) => {
+  const getRatingColorClass = (rating: number) => {
+    if (rating >= 8.5) return "bg-green-500 text-white";
+    if (rating >= 7.5) return "bg-green-400 text-white";
+    if (rating >= 6.5) return "bg-blue-400 text-white";
+    if (rating >= 5.5) return "bg-yellow-400 text-gray-800";
+    if (rating >= 4.5) return "bg-orange-400 text-white";
+    return "bg-red-400 text-white";
+  };
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>
-            <SortableColumnHeader
-              column="created_at"
-              label="Date"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="username"
-              label="Tester"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="rating"
-              label="Score"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="is_barista"
-              label="Barista"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="property_names"
-              label="Properties"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="flavor_names"
-              label="Flavors"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="drink_preference"
-              label="Style"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="price_quality_ratio"
-              label="Price"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead className="hidden md:table-cell">
-            <SortableColumnHeader
-              column="shop_name"
-              label="Shop"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead className="w-48">
-            <SortableColumnHeader
-              column="notes"
-              label="Notes"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="picture_path"
-              label="Image"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {productTests.map((test) => (
-          <TableRow key={test.id}>
-            <TableCell>{new Date(test.created_at).toLocaleDateString()}</TableCell>
-            <TableCell>{test.username || "Anonymous"}</TableCell>
-            <TableCell>
-              <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
-                <span className="font-semibold text-milk-500">{Number(test.rating).toFixed(1)}</span>
-              </div>
-            </TableCell>
-            <TableCell>
-              {test.is_barista && (
-                <ProductPropertyBadges 
-                  isBarista={test.is_barista} 
-                  compact={true} 
-                  displayType="barista" 
-                />
-              )}
-            </TableCell>
-            <TableCell>
-              <ProductPropertyBadges 
-                propertyNames={test.property_names}
-                compact={true}
-                displayType="properties"
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-gray-100 text-sm">
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="created_at"
+                label="Date"
+                sortConfig={sortConfig}
+                onSort={handleSort}
               />
-            </TableCell>
-            <TableCell>
-              <ProductPropertyBadges 
-                flavorNames={test.flavor_names}
-                compact={true}
-                displayType="flavors"
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="username"
+                label="Tester"
+                sortConfig={sortConfig}
+                onSort={handleSort}
               />
-            </TableCell>
-            <TableCell>
-              <DrinkPreferenceIcon preference={test.drink_preference} />
-            </TableCell>
-            <TableCell>
-              <PriceQualityBadge priceQuality={test.price_quality_ratio} />
-            </TableCell>
-            <TableCell className="hidden md:table-cell">
-              {test.shop_name ? (
-                <>
-                  {test.shop_name} 
-                  {test.shop_country_code && (
-                    <span className="text-gray-500 ml-1">
-                      [{test.shop_country_code}]
-                    </span>
-                  )}
-                </>
-              ) : (
-                "-"
-              )}
-            </TableCell>
-            <TableCell className="w-48">
-              <NotesPopover notes={test.notes || "-"} />
-            </TableCell>
-            <TableCell>
-              {test.picture_path ? (
-                <div 
-                  className="w-10 h-10 relative overflow-hidden rounded-lg cursor-pointer transition-transform hover:scale-105"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleImageClick(test.picture_path!);
-                  }}
-                >
-                  <AspectRatio ratio={1/1}>
-                    <img 
-                      src={`${supabase.storage.from('milk-pictures').getPublicUrl(test.picture_path).data.publicUrl}`} 
-                      alt="Product"
-                      className="object-cover w-full h-full"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const nextSibling = target.nextSibling as HTMLElement;
-                        if (nextSibling) {
-                          nextSibling.style.display = 'flex';
-                        }
-                      }}
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="rating"
+                label="Score"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="is_barista"
+                label="Barista"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="property_names"
+                label="Properties"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="flavor_names"
+                label="Flavors"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="drink_preference"
+                label="Style"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="price_quality_ratio"
+                label="Price"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="hidden md:table-cell font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="shop_name"
+                label="Shop"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="w-48 font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="notes"
+                label="Notes"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700">
+              <SortableColumnHeader
+                column="picture_path"
+                label="Image"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {productTests.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={11} className="text-center py-8 text-gray-500">
+                <div className="flex flex-col items-center justify-center">
+                  <p className="text-lg mb-1">No test details available</p>
+                  <p className="text-sm">Be the first to add a test for this product!</p>
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : (
+            productTests.map((test, index) => (
+              <TableRow 
+                key={test.id} 
+                className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+              >
+                <TableCell className="text-sm">{new Date(test.created_at).toLocaleDateString()}</TableCell>
+                <TableCell>{test.username || "Anonymous"}</TableCell>
+                <TableCell>
+                  <div className={`rounded-full h-8 w-8 flex items-center justify-center ${getRatingColorClass(Number(test.rating))}`}>
+                    <span className="font-semibold">{Number(test.rating).toFixed(1)}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {test.is_barista && (
+                    <ProductPropertyBadges 
+                      isBarista={test.is_barista} 
+                      compact={true} 
+                      displayType="barista" 
                     />
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100" style={{display: 'none'}}>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <ProductPropertyBadges 
+                    propertyNames={test.property_names}
+                    compact={true}
+                    displayType="properties"
+                  />
+                </TableCell>
+                <TableCell>
+                  <ProductPropertyBadges 
+                    flavorNames={test.flavor_names}
+                    compact={true}
+                    displayType="flavors"
+                  />
+                </TableCell>
+                <TableCell>
+                  <DrinkPreferenceIcon preference={test.drink_preference} />
+                </TableCell>
+                <TableCell>
+                  <PriceQualityBadge priceQuality={test.price_quality_ratio} />
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {test.shop_name ? (
+                    <>
+                      {test.shop_name} 
+                      {test.shop_country_code && (
+                        <span className="text-gray-500 ml-1 text-xs">
+                          [{test.shop_country_code}]
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
+                <TableCell className="w-48">
+                  <NotesPopover notes={test.notes || "-"} />
+                </TableCell>
+                <TableCell>
+                  {test.picture_path ? (
+                    <div 
+                      className="w-10 h-10 relative overflow-hidden rounded-lg cursor-pointer transition-transform hover:scale-105 border border-gray-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleImageClick(test.picture_path!);
+                      }}
+                    >
+                      <AspectRatio ratio={1/1}>
+                        <img 
+                          src={`${supabase.storage.from('milk-pictures').getPublicUrl(test.picture_path).data.publicUrl}`} 
+                          alt="Product"
+                          className="object-cover w-full h-full"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const nextSibling = target.nextSibling as HTMLElement;
+                            if (nextSibling) {
+                              nextSibling.style.display = 'flex';
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100" style={{display: 'none'}}>
+                          <ImageIcon className="w-5 h-5 text-gray-400" />
+                        </div>
+                      </AspectRatio>
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg">
                       <ImageIcon className="w-5 h-5 text-gray-400" />
                     </div>
-                  </AspectRatio>
-                </div>
-              ) : (
-                <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg">
-                  <ImageIcon className="w-5 h-5 text-gray-400" />
-                </div>
-              )}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 };

@@ -21,12 +21,14 @@ export const SortableColumnHeader = ({
 }: SortableColumnHeaderProps) => {
   const getSortIcon = () => {
     // Only show directional icons if this column is currently sorted
-    if (sortConfig.column !== column) return null;
+    if (sortConfig.column !== column) {
+      return <ArrowUpDown className="w-3.5 h-3.5 ml-1 text-gray-400" />;
+    }
     
     return sortConfig.direction === 'asc' ? (
-      <ChevronUp className="w-4 h-4" />
+      <ChevronUp className="w-4 h-4 ml-1 text-blue-500" />
     ) : (
-      <ChevronDown className="w-4 h-4" />
+      <ChevronDown className="w-4 h-4 ml-1 text-blue-500" />
     );
   };
 
@@ -34,9 +36,12 @@ export const SortableColumnHeader = ({
     <Button
       variant="ghost"
       onClick={() => onSort(column)}
-      className={`hover:bg-transparent pl-0 ${className || ''}`}
+      className={`hover:bg-gray-100 px-2 h-8 font-medium text-gray-700 ${sortConfig.column === column ? 'text-blue-600' : ''} ${className || ''}`}
     >
-      {label} {getSortIcon()}
+      <span className="flex items-center">
+        {label}
+        {getSortIcon()}
+      </span>
     </Button>
   );
 };

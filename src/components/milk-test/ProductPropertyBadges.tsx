@@ -50,20 +50,20 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   }
 
   const badgeBaseClasses = compact 
-    ? "text-xs px-2 py-0.5" 
-    : "rounded-full px-4 py-1";
+    ? "text-xs px-2 py-0.5 font-medium" 
+    : "rounded-full px-3 py-1 font-medium text-sm";
     
   const shouldRenderBarista = displayType === 'all' || displayType === 'barista';
   const shouldRenderProperties = displayType === 'all' || displayType === 'properties';
   const shouldRenderFlavors = displayType === 'all' || displayType === 'flavors';
 
   return (
-    <div className={`flex flex-wrap gap-1 ${compact ? "inline-flex" : "mt-1"} ${className}`}>
+    <div className={`flex flex-wrap gap-1.5 ${compact ? "inline-flex" : "mt-1"} ${className}`}>
       {/* Barista badge with priority styling */}
       {shouldRenderBarista && isBarista && (
         <Badge 
           variant="outline" 
-          className={`${badgeBaseClasses} bg-cream-200 border-cream-300 font-medium`}
+          className={`${badgeBaseClasses} bg-cream-300 border-cream-400 text-milk-600 hover:bg-cream-400`}
         >
           Barista
         </Badge>
@@ -74,7 +74,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
         <Badge 
           key={`property-${index}`} 
           variant="outline" 
-          className={`${badgeBaseClasses} bg-gray-100 border-gray-200`}
+          className={`${badgeBaseClasses} bg-gray-100 border-gray-200 text-gray-700 hover:bg-gray-200`}
         >
           {formatDisplayName(property)}
         </Badge>
@@ -85,7 +85,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
         <Badge 
           key={`flavor-${index}`} 
           variant="outline" 
-          className={`${badgeBaseClasses} bg-blue-500 border-blue-600 text-white`}
+          className={`${badgeBaseClasses} bg-blue-100 border-blue-200 text-blue-700 hover:bg-blue-200`}
         >
           {formatDisplayName(flavor)}
         </Badge>

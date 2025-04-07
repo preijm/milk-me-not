@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { SortableColumnHeader } from "./SortableColumnHeader";
 import { ProductPropertyBadges } from "./ProductPropertyBadges";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 type SortConfig = {
   column: string;
@@ -52,11 +53,20 @@ export const AggregatedResultsTable = ({
   // Import the TestDetailsTable component here to avoid circular dependencies
   const TestDetailsTable = React.lazy(() => import("./TestDetailsTable").then(module => ({ default: module.TestDetailsTable })));
 
+  const getRatingColorClass = (rating: number) => {
+    if (rating >= 8.5) return "bg-green-500 text-white";
+    if (rating >= 7.5) return "bg-green-400 text-white";
+    if (rating >= 6.5) return "bg-blue-400 text-white";
+    if (rating >= 5.5) return "bg-yellow-400 text-gray-800";
+    if (rating >= 4.5) return "bg-orange-400 text-white";
+    return "bg-red-400 text-white";
+  };
+
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead className="text-left">
+        <TableRow className="bg-gray-50 border-b border-gray-200">
+          <TableHead className="text-left font-semibold text-gray-700">
             <SortableColumnHeader 
               column="brand_name" 
               label="Brand" 
@@ -64,7 +74,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="text-left pr-0">
+          <TableHead className="text-left pr-0 font-semibold text-gray-700">
             <SortableColumnHeader 
               column="product_name" 
               label="Product" 
@@ -72,7 +82,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="w-auto">
+          <TableHead className="w-auto font-semibold text-gray-700">
             <SortableColumnHeader 
               column="is_barista" 
               label="Barista" 
@@ -80,7 +90,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="w-auto">
+          <TableHead className="w-auto font-semibold text-gray-700">
             <SortableColumnHeader 
               column="property_names" 
               label="Properties" 
@@ -88,7 +98,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="w-auto">
+          <TableHead className="w-auto font-semibold text-gray-700">
             <SortableColumnHeader 
               column="flavor_names" 
               label="Flavors" 
@@ -96,7 +106,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="text-left">
+          <TableHead className="text-left font-semibold text-gray-700">
             <SortableColumnHeader 
               column="avg_rating" 
               label="Score" 
@@ -104,7 +114,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="text-left">
+          <TableHead className="text-left font-semibold text-gray-700">
             <SortableColumnHeader 
               column="count" 
               label="Tests" 
@@ -117,19 +127,31 @@ export const AggregatedResultsTable = ({
       <TableBody>
         {results.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={7} className="text-center py-8">
-              No results found
+            <TableCell colSpan={7} className="text-center py-12 text-gray-500">
+              <div className="flex flex-col items-center justify-center">
+                <p className="text-lg mb-2">No results found</p>
+                <p className="text-sm">Try adjusting your search criteria</p>
+              </div>
             </TableCell>
           </TableRow>
         ) : (
           results.map((result) => (
             <React.Fragment key={result.product_id}>
               <TableRow 
-                className="cursor-pointer hover:bg-gray-50"
+                className={`cursor-pointer hover:bg-gray-50 ${expandedProduct === result.product_id ? 'bg-gray-50 border-b-0' : ''}`}
                 onClick={() => toggleProductExpand(result.product_id)}
               >
-                <TableCell className="font-medium">{result.brand_name}</TableCell>
-                <TableCell className="pr-0">{result.product_name}</TableCell>
+                <TableCell className="font-medium text-gray-900">{result.brand_name}</TableCell>
+                <TableCell className="pr-0">
+                  <div className="flex items-center">
+                    {result.product_name}
+                    <span className="ml-1 text-gray-400">
+                      {expandedProduct === result.product_id ? 
+                        <ChevronUp className="w-4 h-4" /> : 
+                        <ChevronDown className="w-4 h-4" />}
+                    </span>
+                  </div>
+                </TableCell>
                 <TableCell>
                   {result.is_barista && (
                     <ProductPropertyBadges 
@@ -154,22 +176,26 @@ export const AggregatedResultsTable = ({
                   />
                 </TableCell>
                 <TableCell>
-                  <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
-                    <span className="font-semibold text-milk-500">{result.avg_rating.toFixed(1)}</span>
+                  <div className={`rounded-full h-8 w-8 flex items-center justify-center ${getRatingColorClass(result.avg_rating)}`}>
+                    <span className="font-semibold">{result.avg_rating.toFixed(1)}</span>
                   </div>
                 </TableCell>
-                <TableCell>{result.count}</TableCell>
+                <TableCell>
+                  <div className="inline-flex items-center justify-center rounded-full bg-gray-100 h-7 w-7">
+                    <span className="text-gray-700 font-medium">{result.count}</span>
+                  </div>
+                </TableCell>
               </TableRow>
               
               {expandedProduct === result.product_id && (
                 <TableRow>
-                  <TableCell colSpan={7} className="p-0">
-                    <div className="bg-gray-50 p-4">
-                      <h3 className="text-lg font-medium mb-4">Individual Tests</h3>
+                  <TableCell colSpan={7} className="p-0 border-t-0">
+                    <div className="bg-gray-50 p-6 rounded-b-lg border-t border-dashed border-gray-200">
+                      <h3 className="text-lg font-semibold mb-4 text-gray-900">Individual Tests</h3>
                       {isLoadingTests ? (
-                        <div className="text-center py-4">Loading test details...</div>
+                        <div className="text-center py-8 text-gray-500">Loading test details...</div>
                       ) : (
-                        <React.Suspense fallback={<div>Loading...</div>}>
+                        <React.Suspense fallback={<div className="text-center py-8">Loading...</div>}>
                           <TestDetailsTable 
                             productTests={productTests} 
                             handleImageClick={handleImageClick}
