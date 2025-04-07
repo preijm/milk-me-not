@@ -107,29 +107,34 @@ export const MyResultsTable = ({
               <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
               <TableCell className="font-medium">{result.brand_name}</TableCell>
               <TableCell>
-                <div>
+                <div className="flex items-center">
                   <span className="font-medium">{result.product_name}</span>
-                  <div className="flex flex-wrap gap-1 mt-0.5">
-                    {result.is_barista && (
+                  {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
+                    <div className="inline-flex">
+                      {result.is_barista && (
+                        <ProductPropertyBadges 
+                          isBarista={result.is_barista}
+                          compact={true}
+                          displayType="barista"
+                          inline={true}
+                        />
+                      )}
+                      
                       <ProductPropertyBadges 
-                        isBarista={result.is_barista}
+                        propertyNames={result.property_names}
                         compact={true}
-                        displayType="barista"
+                        displayType="properties"
+                        inline={true}
                       />
-                    )}
-                    
-                    <ProductPropertyBadges 
-                      propertyNames={result.property_names}
-                      compact={true}
-                      displayType="properties"
-                    />
-                    
-                    <ProductPropertyBadges 
-                      flavorNames={result.flavor_names}
-                      compact={true}
-                      displayType="flavors"
-                    />
-                  </div>
+                      
+                      <ProductPropertyBadges 
+                        flavorNames={result.flavor_names}
+                        compact={true}
+                        displayType="flavors"
+                        inline={true}
+                      />
+                    </div>
+                  )}
                 </div>
               </TableCell>
               <TableCell>

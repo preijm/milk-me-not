@@ -138,29 +138,34 @@ export const TestDetailsTable = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-center gap-2">
                     <DrinkPreferenceIcon preference={test.drink_preference} />
-                    <div className="flex flex-wrap gap-1">
-                      {test.is_barista && (
+                    {(test.is_barista || (test.property_names && test.property_names.length > 0) || (test.flavor_names && test.flavor_names.length > 0)) && (
+                      <div className="inline-flex">
+                        {test.is_barista && (
+                          <ProductPropertyBadges 
+                            isBarista={test.is_barista} 
+                            compact={true} 
+                            displayType="barista" 
+                            inline={true}
+                          />
+                        )}
+                        
                         <ProductPropertyBadges 
-                          isBarista={test.is_barista} 
-                          compact={true} 
-                          displayType="barista" 
+                          propertyNames={test.property_names}
+                          compact={true}
+                          displayType="properties"
+                          inline={true}
                         />
-                      )}
-                      
-                      <ProductPropertyBadges 
-                        propertyNames={test.property_names}
-                        compact={true}
-                        displayType="properties"
-                      />
-                      
-                      <ProductPropertyBadges 
-                        flavorNames={test.flavor_names}
-                        compact={true}
-                        displayType="flavors"
-                      />
-                    </div>
+                        
+                        <ProductPropertyBadges 
+                          flavorNames={test.flavor_names}
+                          compact={true}
+                          displayType="flavors"
+                          inline={true}
+                        />
+                      </div>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell>
@@ -225,4 +230,3 @@ export const TestDetailsTable = ({
     </div>
   );
 };
-

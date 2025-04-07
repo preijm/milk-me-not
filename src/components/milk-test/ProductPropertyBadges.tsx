@@ -34,6 +34,7 @@ interface ProductPropertyBadgesProps {
   className?: string;
   compact?: boolean;
   displayType?: 'all' | 'barista' | 'properties' | 'flavors';
+  inline?: boolean; // New prop to enable inline display
 }
 
 export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({ 
@@ -42,7 +43,8 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   flavorNames,
   className = "",
   compact = false,
-  displayType = 'all'
+  displayType = 'all',
+  inline = false // Default to false for backward compatibility
 }) => {
   // Safety check
   if (!propertyNames && !isBarista && !flavorNames) {
@@ -58,7 +60,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   const shouldRenderFlavors = displayType === 'all' || displayType === 'flavors';
 
   return (
-    <div className={`flex flex-wrap gap-1 ${compact ? "inline-flex" : ""} ${className}`}>
+    <div className={`flex flex-wrap gap-1 ${inline ? "inline-flex ml-2" : ""} ${compact ? "inline-flex" : ""} ${className}`}>
       {/* Barista badge with priority styling */}
       {shouldRenderBarista && isBarista && (
         <Badge 
