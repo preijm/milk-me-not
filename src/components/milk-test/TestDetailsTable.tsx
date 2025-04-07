@@ -74,30 +74,6 @@ export const TestDetailsTable = ({
             </TableHead>
             <TableHead className="font-semibold text-gray-700">
               <SortableColumnHeader
-                column="is_barista"
-                label="Barista"
-                sortConfig={sortConfig}
-                onSort={handleSort}
-              />
-            </TableHead>
-            <TableHead className="font-semibold text-gray-700">
-              <SortableColumnHeader
-                column="property_names"
-                label="Properties"
-                sortConfig={sortConfig}
-                onSort={handleSort}
-              />
-            </TableHead>
-            <TableHead className="font-semibold text-gray-700">
-              <SortableColumnHeader
-                column="flavor_names"
-                label="Flavors"
-                sortConfig={sortConfig}
-                onSort={handleSort}
-              />
-            </TableHead>
-            <TableHead className="font-semibold text-gray-700">
-              <SortableColumnHeader
                 column="drink_preference"
                 label="Style"
                 sortConfig={sortConfig}
@@ -141,7 +117,7 @@ export const TestDetailsTable = ({
         <TableBody>
           {productTests.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={11} className="text-center py-8 text-gray-500">
+              <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                 <div className="flex flex-col items-center justify-center">
                   <p className="text-lg mb-1">No test details available</p>
                   <p className="text-sm">Be the first to add a test for this product!</p>
@@ -162,30 +138,31 @@ export const TestDetailsTable = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {test.is_barista && (
-                    <ProductPropertyBadges 
-                      isBarista={test.is_barista} 
-                      compact={true} 
-                      displayType="barista" 
-                    />
-                  )}
-                </TableCell>
-                <TableCell>
-                  <ProductPropertyBadges 
-                    propertyNames={test.property_names}
-                    compact={true}
-                    displayType="properties"
-                  />
-                </TableCell>
-                <TableCell>
-                  <ProductPropertyBadges 
-                    flavorNames={test.flavor_names}
-                    compact={true}
-                    displayType="flavors"
-                  />
-                </TableCell>
-                <TableCell>
-                  <DrinkPreferenceIcon preference={test.drink_preference} />
+                  <div className="flex flex-col gap-2">
+                    <DrinkPreferenceIcon preference={test.drink_preference} />
+                    
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {test.is_barista && (
+                        <ProductPropertyBadges 
+                          isBarista={test.is_barista} 
+                          compact={true} 
+                          displayType="barista" 
+                        />
+                      )}
+                      
+                      <ProductPropertyBadges 
+                        propertyNames={test.property_names}
+                        compact={true}
+                        displayType="properties"
+                      />
+                      
+                      <ProductPropertyBadges 
+                        flavorNames={test.flavor_names}
+                        compact={true}
+                        displayType="flavors"
+                      />
+                    </div>
+                  </div>
                 </TableCell>
                 <TableCell>
                   <PriceQualityBadge priceQuality={test.price_quality_ratio} />

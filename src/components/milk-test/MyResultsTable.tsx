@@ -53,6 +53,14 @@ export const MyResultsTable = ({
           </TableHead>
           <TableHead>
             <SortableColumnHeader
+              column="product_name"
+              label="Product"
+              sortConfig={sortConfig}
+              onSort={handleSort}
+            />
+          </TableHead>
+          <TableHead>
+            <SortableColumnHeader
               column="rating"
               label="Score"
               sortConfig={sortConfig}
@@ -61,40 +69,8 @@ export const MyResultsTable = ({
           </TableHead>
           <TableHead>
             <SortableColumnHeader
-              column="is_barista"
-              label="Barista"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="property_names"
-              label="Properties"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="flavor_names"
-              label="Flavors"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
               column="shop_name"
               label="Shop"
-              sortConfig={sortConfig}
-              onSort={handleSort}
-            />
-          </TableHead>
-          <TableHead>
-            <SortableColumnHeader
-              column="product_name"
-              label="Style"
               sortConfig={sortConfig}
               onSort={handleSort}
             />
@@ -121,7 +97,7 @@ export const MyResultsTable = ({
       <TableBody>
         {results.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={11} className="text-center py-8">
+            <TableCell colSpan={8} className="text-center py-8">
               No results found
             </TableCell>
           </TableRow>
@@ -130,33 +106,36 @@ export const MyResultsTable = ({
             <TableRow key={result.id}>
               <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
               <TableCell className="font-medium">{result.brand_name}</TableCell>
+              <TableCell className="max-w-[240px]">
+                <div className="flex flex-col">
+                  <span className="font-medium">{result.product_name}</span>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {result.is_barista && (
+                      <ProductPropertyBadges 
+                        isBarista={result.is_barista}
+                        compact={true}
+                        displayType="barista"
+                      />
+                    )}
+                    
+                    <ProductPropertyBadges 
+                      propertyNames={result.property_names}
+                      compact={true}
+                      displayType="properties"
+                    />
+                    
+                    <ProductPropertyBadges 
+                      flavorNames={result.flavor_names}
+                      compact={true}
+                      displayType="flavors"
+                    />
+                  </div>
+                </div>
+              </TableCell>
               <TableCell>
                 <div className="rounded-full h-8 w-8 flex items-center justify-center bg-cream-300">
                   <span className="font-semibold text-milk-500">{Number(result.rating).toFixed(1)}</span>
                 </div>
-              </TableCell>
-              <TableCell>
-                {result.is_barista && (
-                  <ProductPropertyBadges 
-                    isBarista={result.is_barista}
-                    compact={true}
-                    displayType="barista"
-                  />
-                )}
-              </TableCell>
-              <TableCell>
-                <ProductPropertyBadges 
-                  propertyNames={result.property_names}
-                  compact={true}
-                  displayType="properties"
-                />
-              </TableCell>
-              <TableCell>
-                <ProductPropertyBadges 
-                  flavorNames={result.flavor_names}
-                  compact={true}
-                  displayType="flavors"
-                />
               </TableCell>
               <TableCell>
                 {result.shop_name}
@@ -166,7 +145,6 @@ export const MyResultsTable = ({
                   </span>
                 )}
               </TableCell>
-              <TableCell>{result.product_name}</TableCell>
               <TableCell>
                 <PriceQualityBadge priceQuality={result.price_quality_ratio} />
               </TableCell>

@@ -82,30 +82,6 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="w-auto font-semibold text-gray-700">
-            <SortableColumnHeader 
-              column="is_barista" 
-              label="Barista" 
-              sortConfig={sortConfig} 
-              onSort={handleSort} 
-            />
-          </TableHead>
-          <TableHead className="w-auto font-semibold text-gray-700">
-            <SortableColumnHeader 
-              column="property_names" 
-              label="Properties" 
-              sortConfig={sortConfig} 
-              onSort={handleSort} 
-            />
-          </TableHead>
-          <TableHead className="w-auto font-semibold text-gray-700">
-            <SortableColumnHeader 
-              column="flavor_names" 
-              label="Flavors" 
-              sortConfig={sortConfig} 
-              onSort={handleSort} 
-            />
-          </TableHead>
           <TableHead className="text-left font-semibold text-gray-700">
             <SortableColumnHeader 
               column="avg_rating" 
@@ -127,7 +103,7 @@ export const AggregatedResultsTable = ({
       <TableBody>
         {results.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={7} className="text-center py-12 text-gray-500">
+            <TableCell colSpan={4} className="text-center py-12 text-gray-500">
               <div className="flex flex-col items-center justify-center">
                 <p className="text-lg mb-2">No results found</p>
                 <p className="text-sm">Try adjusting your search criteria</p>
@@ -143,37 +119,38 @@ export const AggregatedResultsTable = ({
               >
                 <TableCell className="font-medium text-gray-900">{result.brand_name}</TableCell>
                 <TableCell className="pr-0">
-                  <div className="flex items-center">
-                    {result.product_name}
-                    <span className="ml-1 text-gray-400">
-                      {expandedProduct === result.product_id ? 
-                        <ChevronUp className="w-4 h-4" /> : 
-                        <ChevronDown className="w-4 h-4" />}
-                    </span>
+                  <div className="flex flex-col">
+                    <div className="flex items-center">
+                      <span className="font-medium">{result.product_name}</span>
+                      <span className="ml-1 text-gray-400">
+                        {expandedProduct === result.product_id ? 
+                          <ChevronUp className="w-4 h-4" /> : 
+                          <ChevronDown className="w-4 h-4" />}
+                      </span>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {result.is_barista && (
+                        <ProductPropertyBadges 
+                          isBarista={result.is_barista}
+                          compact={true}
+                          displayType="barista"
+                        />
+                      )}
+                      
+                      <ProductPropertyBadges 
+                        propertyNames={result.property_names}
+                        compact={true}
+                        displayType="properties"
+                      />
+                      
+                      <ProductPropertyBadges 
+                        flavorNames={result.flavor_names}
+                        compact={true}
+                        displayType="flavors"
+                      />
+                    </div>
                   </div>
-                </TableCell>
-                <TableCell>
-                  {result.is_barista && (
-                    <ProductPropertyBadges 
-                      isBarista={result.is_barista}
-                      compact={true}
-                      displayType="barista"
-                    />
-                  )}
-                </TableCell>
-                <TableCell>
-                  <ProductPropertyBadges 
-                    propertyNames={result.property_names}
-                    compact={true}
-                    displayType="properties"
-                  />
-                </TableCell>
-                <TableCell>
-                  <ProductPropertyBadges 
-                    flavorNames={result.flavor_names}
-                    compact={true}
-                    displayType="flavors"
-                  />
                 </TableCell>
                 <TableCell>
                   <div className={`rounded-full h-8 w-8 flex items-center justify-center ${getRatingColorClass(result.avg_rating)}`}>
@@ -189,7 +166,7 @@ export const AggregatedResultsTable = ({
               
               {expandedProduct === result.product_id && (
                 <TableRow>
-                  <TableCell colSpan={7} className="p-0 border-t-0">
+                  <TableCell colSpan={4} className="p-0 border-t-0">
                     <div className="bg-gray-50 p-6 rounded-b-lg border-t border-dashed border-gray-200">
                       <h3 className="text-lg font-semibold mb-4 text-gray-900">Individual Tests</h3>
                       {isLoadingTests ? (
