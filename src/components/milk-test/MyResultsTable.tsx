@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
@@ -34,7 +35,7 @@ export const MyResultsTable = ({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="text-left">
+          <TableHead className="text-left pl-4">
             <SortableColumnHeader
               column="created_at"
               label="Date"
@@ -42,7 +43,7 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead className="text-left">
+          <TableHead className="text-left pl-4">
             <SortableColumnHeader
               column="brand_name"
               label="Brand"
@@ -50,7 +51,7 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead className="text-left">
+          <TableHead className="text-left pl-4">
             <SortableColumnHeader
               column="product_name"
               label="Product"
@@ -58,7 +59,7 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead className="text-left">
+          <TableHead className="text-left pl-4">
             <SortableColumnHeader
               column="rating"
               label="Score"
@@ -66,7 +67,7 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead className="text-left">
+          <TableHead className="text-left pl-4">
             <SortableColumnHeader
               column="shop_name"
               label="Shop"
@@ -74,7 +75,7 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead className="text-left">
+          <TableHead className="text-left pl-4">
             <SortableColumnHeader
               column="price_quality_ratio"
               label="Price"
@@ -82,7 +83,7 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead className="text-left">
+          <TableHead className="text-left pl-4">
             <SortableColumnHeader
               column="notes"
               label="Notes"
@@ -90,7 +91,7 @@ export const MyResultsTable = ({
               onSort={handleSort}
             />
           </TableHead>
-          <TableHead className="text-left">Actions</TableHead>
+          <TableHead className="text-left pl-4">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

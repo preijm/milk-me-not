@@ -36,7 +36,7 @@ export const SortableColumnHeader = ({
     <Button
       variant="ghost"
       onClick={() => onSort(column)}
-      className={`hover:bg-gray-100 px-2 h-8 font-medium text-gray-700 justify-start ${sortConfig.column === column ? 'text-blue-600' : ''} ${className || ''}`}
+      className={`hover:bg-gray-100 px-0 h-8 font-medium text-gray-700 justify-start w-full text-left ${sortConfig.column === column ? 'text-blue-600' : ''} ${className || ''}`}
     >
       <span className="flex items-center">
         {label}

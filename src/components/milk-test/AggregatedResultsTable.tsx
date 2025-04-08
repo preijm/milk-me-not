@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Table,
@@ -65,7 +66,7 @@ export const AggregatedResultsTable = ({
     <Table>
       <TableHeader>
         <TableRow className="bg-gray-50 border-b border-gray-200">
-          <TableHead className="text-left font-semibold text-gray-700 pl-4">
+          <TableHead className="font-semibold text-gray-700 text-left pl-4">
             <SortableColumnHeader 
               column="brand_name" 
               label="Brand" 
@@ -73,7 +74,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="text-left pr-0 font-semibold text-gray-700">
+          <TableHead className="font-semibold text-gray-700 text-left pl-4 pr-0">
             <SortableColumnHeader 
               column="product_name" 
               label="Product" 
@@ -81,7 +82,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="text-left font-semibold text-gray-700">
+          <TableHead className="font-semibold text-gray-700 text-left pl-4">
             <SortableColumnHeader 
               column="avg_rating" 
               label="Score" 
@@ -89,7 +90,7 @@ export const AggregatedResultsTable = ({
               onSort={handleSort} 
             />
           </TableHead>
-          <TableHead className="text-left font-semibold text-gray-700">
+          <TableHead className="font-semibold text-gray-700 text-left pl-4">
             <SortableColumnHeader 
               column="count" 
               label="Tests" 
