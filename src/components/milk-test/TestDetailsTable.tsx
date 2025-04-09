@@ -7,7 +7,6 @@ import { DrinkPreferenceIcon } from "./DrinkPreferenceIcon";
 import { PriceQualityBadge } from "./PriceQualityBadge";
 import { NotesPopover } from "./NotesPopover";
 import { MilkTestResult } from "@/types/milk-test";
-import { ProductPropertyBadges } from "./ProductPropertyBadges";
 import {
   Table,
   TableBody,
@@ -138,34 +137,8 @@ export const TestDetailsTable = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center">
                     <DrinkPreferenceIcon preference={test.drink_preference} />
-                    {(test.is_barista || (test.property_names && test.property_names.length > 0) || (test.flavor_names && test.flavor_names.length > 0)) && (
-                      <div className="inline-flex">
-                        {test.is_barista && (
-                          <ProductPropertyBadges 
-                            isBarista={test.is_barista} 
-                            compact={true} 
-                            displayType="barista" 
-                            inline={true}
-                          />
-                        )}
-                        
-                        <ProductPropertyBadges 
-                          propertyNames={test.property_names}
-                          compact={true}
-                          displayType="properties"
-                          inline={true}
-                        />
-                        
-                        <ProductPropertyBadges 
-                          flavorNames={test.flavor_names}
-                          compact={true}
-                          displayType="flavors"
-                          inline={true}
-                        />
-                      </div>
-                    )}
                   </div>
                 </TableCell>
                 <TableCell>
