@@ -173,12 +173,12 @@ export const AggregatedResultsTable = ({
               {expandedProduct === result.product_id && (
                 <TableRow>
                   <TableCell colSpan={4} className="p-0 border-t-0">
-                    <div className="bg-gray-50 p-6 rounded-b-lg border-t border-dashed border-gray-200">
-                      <h3 className="text-lg font-semibold mb-4 text-gray-900">Individual Tests</h3>
+                    <div className="bg-gray-50 px-6 pt-1 pb-4 rounded-b-lg border-t border-dashed border-gray-200">
+                      <h3 className="text-lg font-semibold mb-2 text-gray-900">Individual Tests</h3>
                       {isLoadingTests ? (
-                        <div className="text-center py-8 text-gray-500">Loading test details...</div>
+                        <div className="text-center py-4 text-gray-500">Loading test details...</div>
                       ) : (
-                        <React.Suspense fallback={<div className="text-center py-8">Loading...</div>}>
+                        <React.Suspense fallback={<div className="text-center py-4">Loading...</div>}>
                           <TestDetailsTable 
                             productTests={productTests} 
                             handleImageClick={handleImageClick}
@@ -198,3 +198,4 @@ export const AggregatedResultsTable = ({
     </Table>
   );
 };
+
