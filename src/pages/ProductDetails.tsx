@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
@@ -163,13 +162,12 @@ const ProductDetails = () => {
               
               <div className="flex flex-col items-end">
                 <div className="text-sm text-gray-500 mb-1">Average Score</div>
-                <div className="flex items-center gap-3">
-                  <div className={`rounded-full h-10 w-10 flex items-center justify-center ${getRatingColorClass(product.avg_rating)}`}>
-                    <span className="font-semibold">{product.avg_rating.toFixed(1)}</span>
-                  </div>
-                  <div className="inline-flex items-center justify-center rounded-full bg-gray-100 h-8 w-8">
-                    <span className="text-gray-700 font-medium">{product.count}</span>
-                  </div>
+                <div className={`rounded-full h-10 w-10 flex items-center justify-center mb-2 ${getRatingColorClass(product.avg_rating)}`}>
+                  <span className="font-semibold">{product.avg_rating.toFixed(1)}</span>
+                </div>
+                <div className="text-xs text-gray-500">Total Tests</div>
+                <div className="inline-flex items-center justify-center rounded-full bg-gray-100 h-8 w-8">
+                  <span className="text-gray-700 font-medium">{product.count}</span>
                 </div>
               </div>
             </div>
