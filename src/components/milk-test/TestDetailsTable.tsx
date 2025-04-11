@@ -47,7 +47,7 @@ export const TestDetailsTable = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 text-sm">
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[12%]">
               <SortableColumnHeader
                 column="created_at"
                 label="Date"
@@ -65,7 +65,7 @@ export const TestDetailsTable = ({
                 width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
               <SortableColumnHeader
                 column="rating"
                 label="Score"
@@ -74,7 +74,7 @@ export const TestDetailsTable = ({
                 width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
               <SortableColumnHeader
                 column="drink_preference"
                 label="Style"
@@ -83,7 +83,7 @@ export const TestDetailsTable = ({
                 width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
               <SortableColumnHeader
                 column="price_quality_ratio"
                 label="Price"
@@ -101,7 +101,7 @@ export const TestDetailsTable = ({
                 width="100%"
               />
             </TableHead>
-            <TableHead className="w-[10%] font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="w-[8%] font-semibold text-gray-700 text-left pl-4">
               <SortableColumnHeader
                 column="notes"
                 label="Notes"
