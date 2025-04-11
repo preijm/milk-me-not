@@ -147,15 +147,21 @@ export const AggregatedResultsTable = ({
                 </div>
               </TableCell>
               <TableCell>
-                <div className={`rounded-full h-8 w-8 flex items-center justify-center ${getRatingColorClass(result.avg_rating)}`}>
-                  <span className="font-semibold">{result.avg_rating.toFixed(1)}</span>
+                <div className="flex flex-col items-center space-y-2">
+                  <div>
+                    <div className={`rounded-full h-8 w-8 flex items-center justify-center ${getRatingColorClass(result.avg_rating)}`}>
+                      <span className="font-semibold">{result.avg_rating.toFixed(1)}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center justify-center rounded-full bg-gray-100 h-7 w-7">
+                      <span className="text-gray-700 font-medium">{result.count}</span>
+                    </div>
+                  </div>
                 </div>
               </TableCell>
               <TableCell className="relative">
-                <div className="flex items-center justify-between">
-                  <div className="inline-flex items-center justify-center rounded-full bg-gray-100 h-7 w-7">
-                    <span className="text-gray-700 font-medium">{result.count}</span>
-                  </div>
+                <div className="flex items-center justify-center h-full">
                   <ChevronRight className="opacity-0 group-hover:opacity-100 text-black transition-opacity" size={24} />
                 </div>
               </TableCell>
