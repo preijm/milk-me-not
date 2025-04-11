@@ -54,36 +54,40 @@ export const AggregatedResultsTable = ({
     <Table>
       <TableHeader>
         <TableRow className="bg-gray-50 border-b border-gray-200">
-          <TableHead className="font-semibold text-gray-700 text-left pl-4">
+          <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[25%]">
             <SortableColumnHeader 
               column="brand_name" 
               label="Brand" 
               sortConfig={sortConfig} 
               onSort={handleSort} 
+              width="100%"
             />
           </TableHead>
-          <TableHead className="font-semibold text-gray-700 text-left pl-4 pr-0">
+          <TableHead className="font-semibold text-gray-700 text-left pl-4 pr-0 w-[45%]">
             <SortableColumnHeader 
               column="product_name" 
               label="Product" 
               sortConfig={sortConfig} 
-              onSort={handleSort} 
+              onSort={handleSort}
+              width="100%" 
             />
           </TableHead>
-          <TableHead className="font-semibold text-gray-700 text-left pl-4">
+          <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[15%]">
             <SortableColumnHeader 
               column="avg_rating" 
               label="Score" 
               sortConfig={sortConfig} 
-              onSort={handleSort} 
+              onSort={handleSort}
+              width="100%" 
             />
           </TableHead>
-          <TableHead className="font-semibold text-gray-700 text-left pl-4">
+          <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[15%]">
             <SortableColumnHeader 
               column="count" 
               label="Tests" 
               sortConfig={sortConfig} 
-              onSort={handleSort} 
+              onSort={handleSort}
+              width="100%" 
             />
           </TableHead>
         </TableRow>

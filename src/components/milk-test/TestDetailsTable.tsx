@@ -47,68 +47,76 @@ export const TestDetailsTable = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 text-sm">
-            <TableHead className="font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
               <SortableColumnHeader
                 column="created_at"
                 label="Date"
                 sortConfig={sortConfig}
                 onSort={handleSort}
+                width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[12%]">
               <SortableColumnHeader
                 column="username"
                 label="Tester"
                 sortConfig={sortConfig}
                 onSort={handleSort}
+                width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
               <SortableColumnHeader
                 column="rating"
                 label="Score"
                 sortConfig={sortConfig}
                 onSort={handleSort}
+                width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
               <SortableColumnHeader
                 column="drink_preference"
                 label="Style"
                 sortConfig={sortConfig}
                 onSort={handleSort}
+                width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
               <SortableColumnHeader
                 column="price_quality_ratio"
                 label="Price"
                 sortConfig={sortConfig}
                 onSort={handleSort}
+                width="100%"
               />
             </TableHead>
-            <TableHead className="hidden md:table-cell font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="hidden md:table-cell font-semibold text-gray-700 text-left pl-4 w-[15%]">
               <SortableColumnHeader
                 column="shop_name"
                 label="Shop"
                 sortConfig={sortConfig}
                 onSort={handleSort}
+                width="100%"
               />
             </TableHead>
-            <TableHead className="w-48 font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="w-[25%] font-semibold text-gray-700 text-left pl-4">
               <SortableColumnHeader
                 column="notes"
                 label="Notes"
                 sortConfig={sortConfig}
                 onSort={handleSort}
+                width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
               <SortableColumnHeader
                 column="picture_path"
                 label="Image"
                 sortConfig={sortConfig}
                 onSort={handleSort}
+                width="100%"
               />
             </TableHead>
           </TableRow>
