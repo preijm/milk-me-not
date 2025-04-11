@@ -30,13 +30,14 @@ export const useProductTests = (productId: string | null, sortConfig: SortConfig
         query = query.order('created_at', { ascending: false });
       }
       
-      const { data, error } = await query as unknown as {
-        data: MilkTestResult[] | null,
-        error: Error | null
-      };
+      const { data, error } = await query;
       
-      if (error) throw error;
-      return data || [];
+      if (error) {
+        console.error("Error fetching product tests:", error);
+        throw error;
+      }
+      
+      return (data || []) as MilkTestResult[];
     },
     enabled: !!productId
   });

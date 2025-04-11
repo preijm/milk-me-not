@@ -13,26 +13,55 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 
+type ProductDetails = {
+  product_id: string;
+  brand_name: string;
+  product_name: string;
+  property_names: string[] | null;
+  is_barista: boolean;
+  flavor_names: string[] | null;
+  avg_rating: number;
+  count: number;
+}
+
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   // Set default sort to created_at in descending order to show latest tests first
   const [sortConfig, setSortConfig] = useState<SortConfig>({ column: 'created_at', direction: 'desc' });
   
-  // Fetch product details
+  // Fetch product details using milk_tests_view to aggregate the data
   const { data: product, isLoading: isLoadingProduct } = useQuery({
     queryKey: ['product-details', productId],
     queryFn: async () => {
       if (!productId) return null;
       
-      const { data, error } = await supabase
-        .from('products_aggregated_view')
-        .select('product_id, brand_name, product_name, property_names, is_barista, flavor_names, avg_rating, count')
-        .eq('product_id', productId)
-        .single();
+      // Get all tests for this product
+      const { data: testData, error: testError } = await supabase
+        .from('milk_tests_view')
+        .select('product_id, brand_name, product_name, property_names, is_barista, flavor_names, rating')
+        .eq('product_id', productId);
       
-      if (error) throw error;
-      return data;
+      if (testError) throw testError;
+      if (!testData || testData.length === 0) return null;
+      
+      // Aggregate the data
+      const aggregatedData: ProductDetails = {
+        product_id: productId,
+        brand_name: testData[0].brand_name || '',
+        product_name: testData[0].product_name || '',
+        property_names: testData[0].property_names || null,
+        is_barista: testData[0].is_barista || false,
+        flavor_names: testData[0].flavor_names || null,
+        avg_rating: 0,
+        count: testData.length
+      };
+      
+      // Calculate average rating
+      const totalRating = testData.reduce((sum, test) => sum + (test.rating || 0), 0);
+      aggregatedData.avg_rating = totalRating / testData.length;
+      
+      return aggregatedData;
     },
     enabled: !!productId
   });
