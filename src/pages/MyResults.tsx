@@ -31,10 +31,7 @@ const MyResults = () => {
         variant: "destructive",
       });
     } else {
-      toast({
-        title: "Success",
-        description: "Test result deleted",
-      });
+      // Success toast removed
       refetch();
     }
   };

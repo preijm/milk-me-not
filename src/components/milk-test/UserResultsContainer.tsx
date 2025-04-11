@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { SearchBar } from "@/components/milk-test/SearchBar";
 import { MyResultsTable } from "@/components/milk-test/MyResultsTable";
 import { MyResultsGrid } from "@/components/milk-test/MyResultsGrid";
@@ -7,6 +7,16 @@ import { MilkTestResult } from "@/types/milk-test";
 import { SortConfig } from "@/hooks/useUserMilkTests";
 import { Grid, Rows } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface UserResultsContainerProps {
   filteredResults: MilkTestResult[];
@@ -31,9 +41,27 @@ export const UserResultsContainer = ({
   viewMode,
   setViewMode
 }: UserResultsContainerProps) => {
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   // Create a wrapper for handleSort that doesn't change the view mode
   const handleSortWithoutViewChange = (column: string) => {
     handleSort(column);
+  };
+
+  // Handle delete confirmation
+  const handleDeleteClick = (id: string) => {
+    setDeleteId(id);
+    setShowDeleteDialog(true);
+  };
+
+  // Confirm delete
+  const confirmDelete = () => {
+    if (deleteId) {
+      onDelete(deleteId);
+      setDeleteId(null);
+    }
+    setShowDeleteDialog(false);
   };
 
   return (
@@ -72,7 +100,7 @@ export const UserResultsContainer = ({
         <MyResultsGrid
           results={filteredResults}
           onEdit={onEdit}
-          onDelete={onDelete}
+          onDelete={handleDeleteClick}
         />
       ) : (
         <MyResultsTable
@@ -80,9 +108,29 @@ export const UserResultsContainer = ({
           sortConfig={sortConfig}
           handleSort={handleSortWithoutViewChange}
           onEdit={onEdit}
-          onDelete={onDelete}
+          onDelete={handleDeleteClick}
         />
       )}
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the milk test from your account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
