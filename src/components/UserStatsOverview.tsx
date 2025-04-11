@@ -26,29 +26,29 @@ export const UserStatsOverview = ({ results }: { results: MilkTestResult[] }) =>
     : "None";
 
   return (
-    <div className="bg-cream-100 rounded-lg p-6 mb-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="flex flex-col bg-soft-blue rounded-lg p-4 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
-          <p className="text-sm text-milk-500 mb-1">Average Rating</p>
-          <p className="text-2xl font-semibold text-gray-900">{avgRating}/10</p>
+    <div className="bg-cream-100 rounded-lg p-4 mb-6">
+      <div className="grid grid-cols-5 gap-3">
+        <div className="flex flex-col bg-soft-peach rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
+          <p className="text-xs text-milk-500 mb-1">Average Rating</p>
+          <p className="text-xl font-semibold text-gray-900">{avgRating}/10</p>
         </div>
-        <div className="flex flex-col bg-soft-blue rounded-lg p-4 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
-          <p className="text-sm text-milk-500 mb-1">Total Tests</p>
-          <p className="text-2xl font-semibold text-gray-900">{results.length}</p>
+        <div className="flex flex-col bg-soft-peach rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
+          <p className="text-xs text-milk-500 mb-1">Total Tests</p>
+          <p className="text-xl font-semibold text-gray-900">{results.length}</p>
         </div>
-        <div className="flex flex-col bg-soft-blue rounded-lg p-4 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
-          <p className="text-sm text-milk-500 mb-1">Unique Brands</p>
-          <p className="text-2xl font-semibold text-gray-900">{uniqueBrands.length}</p>
+        <div className="flex flex-col bg-soft-peach rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
+          <p className="text-xs text-milk-500 mb-1">Unique Brands</p>
+          <p className="text-xl font-semibold text-gray-900">{uniqueBrands.length}</p>
         </div>
-        <div className="flex flex-col bg-soft-blue rounded-lg p-4 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
-          <p className="text-sm text-milk-500 mb-1">Highest Rated</p>
-          <p className="text-2xl font-semibold text-gray-900">
-            {highestRated ? `${highestRated.brand_name || 'Unknown'} (${highestRated.rating}/10)` : 'None'}
+        <div className="flex flex-col bg-soft-peach rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
+          <p className="text-xs text-milk-500 mb-1">Highest Rated</p>
+          <p className="text-xl font-semibold text-gray-900 truncate">
+            {highestRated ? `${highestRated.brand_name || 'Unknown'} (${highestRated.rating})` : 'None'}
           </p>
         </div>
-        <div className="flex flex-col bg-soft-blue rounded-lg p-4 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
-          <p className="text-sm text-milk-500 mb-1">Most Tested Brand</p>
-          <p className="text-2xl font-semibold text-gray-900">{mostTestedBrand}</p>
+        <div className="flex flex-col bg-soft-peach rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1">
+          <p className="text-xs text-milk-500 mb-1">Most Tested</p>
+          <p className="text-xl font-semibold text-gray-900 truncate">{mostTestedBrand}</p>
         </div>
       </div>
     </div>

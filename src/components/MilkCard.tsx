@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Milk } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,8 +23,8 @@ interface MilkCardProps {
 }
 
 export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
-  // Use consistent bg-soft-blue for all cards
-  const bgColorClass = "bg-soft-blue";
+  // Use consistent bg-soft-peach for all cards
+  const bgColorClass = "bg-soft-peach";
 
   return (
     <div className={`rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow relative h-[200px] flex flex-col ${bgColorClass} border border-gray-100`}>
