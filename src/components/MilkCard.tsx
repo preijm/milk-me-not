@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Milk } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,18 +22,11 @@ interface MilkCardProps {
 }
 
 export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
-  // Add a background color based on the rating
-  const getBgColorClass = (rating: number) => {
-    if (rating >= 4.5) return "bg-soft-green";
-    if (rating >= 3.5) return "bg-soft-yellow";
-    if (rating >= 2.5) return "bg-soft-blue";
-    return "bg-soft-pink";
-  };
-
-  const bgColorClass = getBgColorClass(result.rating);
+  // Use consistent bg-soft-blue for all cards
+  const bgColorClass = "bg-soft-blue";
 
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow relative h-[200px] flex flex-col ${bgColorClass} border border-gray-100`}>
+    <div className={`rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow relative h-[200px] flex flex-col ${bgColorClass} border border-gray-100`}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Milk className="w-6 h-6 text-milk-400" />
