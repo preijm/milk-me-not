@@ -65,7 +65,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
       {shouldRenderBarista && isBarista && (
         <Badge 
           variant="outline" 
-          className={`${badgeBaseClasses} bg-cream-300 border-cream-400 text-milk-600 hover:bg-cream-400`}
+          className={`${badgeBaseClasses} bg-cream-300 border-cream-400 text-milk-600`}
         >
           Barista
         </Badge>
@@ -76,7 +76,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
         <Badge 
           key={`property-${index}`} 
           variant="outline" 
-          className={`${badgeBaseClasses} bg-gray-100 border-gray-200 text-gray-700 hover:bg-gray-200`}
+          className={`${badgeBaseClasses} bg-gray-100 border-gray-200 text-gray-700`}
         >
           {formatDisplayName(property)}
         </Badge>
@@ -87,7 +87,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
         <Badge 
           key={`flavor-${index}`} 
           variant="outline" 
-          className={`${badgeBaseClasses} bg-blue-100 border-blue-200 text-blue-700 hover:bg-blue-200`}
+          className={`${badgeBaseClasses} bg-blue-100 border-blue-200 text-blue-700`}
         >
           {formatDisplayName(flavor)}
         </Badge>
