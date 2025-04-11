@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ShopSelect } from "./ShopSelect";
@@ -11,6 +9,8 @@ import { PictureCapture } from "./PictureCapture";
 import { Separator } from "@/components/ui/separator";
 import { BaristaToggle } from "./BaristaToggle";
 import { PriceInput } from "./PriceInput";
+import { ResponsiveNotesArea } from "./ResponsiveNotesArea";
+import { DrinkPreference } from "./DrinkPreference";
 import {
   Dialog,
   DialogContent,
@@ -27,13 +27,14 @@ interface EditMilkTestProps {
     product_name?: string;
     product_id: string;
     shop?: string;
+    shop_name?: string;
     is_barista?: boolean;
     rating: number;
     notes?: string;
     product_type_keys?: string[];
-    shop_name?: string;
     picture_path?: string;
     price_quality_ratio?: string;
+    drink_preference?: string;
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,9 +43,7 @@ interface EditMilkTestProps {
 
 export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTestProps) => {
   const [rating, setRating] = useState(test.rating);
-  const [productId, setProductId] = useState(test.product_id);
   const [notes, setNotes] = useState(test.notes || "");
-  const [selectedProductProperties, setSelectedProductProperties] = useState<string[]>(test.product_type_keys || []);
   const [shop, setShop] = useState(test.shop_name || "");
   const [isBarista, setIsBarista] = useState(test.is_barista || false);
   const [priceQualityRatio, setPriceQualityRatio] = useState(test.price_quality_ratio || "");
@@ -52,6 +51,7 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
   const [picture, setPicture] = useState<File | null>(null);
   const [picturePreview, setPicturePreview] = useState<string | null>(null);
   const [priceHasChanged, setPriceHasChanged] = useState(test.price_quality_ratio !== undefined && test.price_quality_ratio !== null);
+  const [drinkPreference, setDrinkPreference] = useState(test.drink_preference || "cold");
 
   const { toast } = useToast();
 
@@ -75,14 +75,10 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
     loadExistingPicture();
   }, [test.picture_path]);
 
-  const handleBaristaToggle = (checked: boolean) => {
-    setIsBarista(checked);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!productId || !rating) {
+    if (!test.product_id || !rating) {
       toast({
         title: "Missing fields",
         description: "Please fill in all required fields",
@@ -132,13 +128,13 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
         }
       }
 
-      // Create the base update data without price
+      // Create the base update data
       const updateData: any = {
-        product_id: productId,
         shop_id: shopData?.id || null,
         rating,
         notes,
-        picture_path: picturePath
+        picture_path: picturePath,
+        drink_preference: drinkPreference
       };
 
       // Only include price if the user has interacted with the slider
@@ -195,67 +191,45 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
           <Separator />
 
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Buying Location</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Rating</h2>
+            <RatingSelect 
+              rating={rating} 
+              setRating={setRating} 
+            />
+            <ResponsiveNotesArea
+              notes={notes}
+              setNotes={setNotes}
+              picture={picture}
+              picturePreview={picturePreview}
+              setPicture={setPicture}
+              setPicturePreview={setPicturePreview}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900">Price-to-Quality Ratio</h2>
+            <PriceInput 
+              price={priceQualityRatio} 
+              setPrice={setPriceQualityRatio}
+              hasChanged={priceHasChanged}
+              setHasChanged={setPriceHasChanged}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-900">Buying Information</h2>
             <ShopSelect
               shop={shop}
               setShop={setShop}
             />
           </div>
 
-          <Separator />
-
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Product Properties</h2>
-            <div className="space-y-4">
-              <BaristaToggle
-                isBarista={isBarista}
-                onToggle={handleBaristaToggle}
-                disabled={true} // Disable since is_barista is now part of products table
-              />
-            </div>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold text-gray-900">Judgment</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Rating</label>
-                <RatingSelect rating={rating} setRating={setRating} />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block">Price-to-Quality Ratio</label>
-                <PriceInput 
-                  price={priceQualityRatio} 
-                  setPrice={setPriceQualityRatio}
-                  hasChanged={priceHasChanged}
-                  setHasChanged={setPriceHasChanged}
-                />
-              </div>
-              
-              <div className="flex gap-4 items-start">
-                <div className="flex-1">
-                  <label className="text-sm font-medium mb-2 block">Notes</label>
-                  <Textarea
-                    placeholder="Tasting notes..."
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Picture</label>
-                  <PictureCapture
-                    picture={picture}
-                    picturePreview={picturePreview}
-                    setPicture={setPicture}
-                    setPicturePreview={setPicturePreview}
-                  />
-                </div>
-              </div>
-            </div>
+            <h2 className="text-lg font-semibold text-gray-900">Drinking Style</h2>
+            <DrinkPreference
+              preference={drinkPreference}
+              setPreference={setDrinkPreference}
+            />
           </div>
 
           <div className="flex justify-end space-x-2">
@@ -263,6 +237,7 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
