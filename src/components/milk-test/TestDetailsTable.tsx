@@ -104,7 +104,7 @@ export const TestDetailsTable = ({
             <TableHead className="w-[8%] font-semibold text-gray-700 text-left pl-4">
               <SortableColumnHeader
                 column="notes"
-                label="Notes"
+                label="Note"
                 sortConfig={sortConfig}
                 onSort={handleSort}
                 width="100%"
@@ -166,7 +166,7 @@ export const TestDetailsTable = ({
                     "-"
                   )}
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="text-left">
                   <NotesPopover notes={test.notes || "-"} />
                 </TableCell>
                 <TableCell>

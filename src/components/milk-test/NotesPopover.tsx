@@ -13,7 +13,7 @@ export const NotesPopover = ({ notes }: NotesPopoverProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="inline-flex items-center text-blue-500 hover:text-blue-700 transition-colors">
+        <button className="inline-flex items-center text-black hover:text-gray-700 transition-colors">
           <FileText className="h-5 w-5" />
         </button>
       </PopoverTrigger>
