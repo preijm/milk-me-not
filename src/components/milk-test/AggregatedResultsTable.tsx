@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { SortableColumnHeader } from "./SortableColumnHeader";
 import { ProductPropertyBadges } from "./ProductPropertyBadges";
+import { ChevronRight } from "lucide-react";
 
 type SortConfig = {
   column: string;
@@ -154,9 +155,7 @@ export const AggregatedResultsTable = ({
                 <div className="inline-flex items-center justify-center rounded-full bg-gray-100 h-7 w-7">
                   <span className="text-gray-700 font-medium">{result.count}</span>
                 </div>
-                <span className="absolute right-4 opacity-0 group-hover:opacity-100 text-blue-500 text-xs font-medium transition-opacity">
-                  Click for details
-                </span>
+                <ChevronRight className="absolute right-4 opacity-0 group-hover:opacity-100 text-blue-500 transition-opacity" size={18} />
               </TableCell>
             </TableRow>
           ))
