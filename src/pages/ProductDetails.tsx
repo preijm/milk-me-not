@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
@@ -164,9 +163,9 @@ const ProductDetails = () => {
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Product</div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center">
                     <h3 className="text-lg font-medium">{product.product_name}</h3>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap ml-2">
                       {product.is_barista && (
                         <ProductPropertyBadges 
                           isBarista={product.is_barista}
@@ -210,8 +209,6 @@ const ProductDetails = () => {
                 </div>
               </div>
             </div>
-
-            {/* Remove the separate product properties section since we've moved them inline */}
           </CardContent>
         </Card>
 

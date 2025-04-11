@@ -63,7 +63,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[20%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[22%]">
               <SortableColumnHeader
                 column="product_name"
                 label="Product"
@@ -71,7 +71,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
               <SortableColumnHeader
                 column="rating"
                 label="Score"
@@ -79,7 +79,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
               <SortableColumnHeader
                 column="drink_preference"
                 label="Style"
@@ -87,7 +87,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[12%]">
               <SortableColumnHeader
                 column="price_quality_ratio"
                 label="Price"
@@ -127,34 +127,32 @@ export const MyResultsTable = ({
                 <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
                 <TableCell className="font-medium">{result.brand_name}</TableCell>
                 <TableCell>
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-2">
                     <span className="font-medium">{result.product_name}</span>
-                    {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
-                      <div className="inline-flex ml-1">
-                        {result.is_barista && (
-                          <ProductPropertyBadges 
-                            isBarista={result.is_barista}
-                            compact={true}
-                            displayType="barista"
-                            inline={true}
-                          />
-                        )}
-                        
+                    <div className="flex flex-wrap gap-2">
+                      {result.is_barista && (
                         <ProductPropertyBadges 
-                          propertyNames={result.property_names}
+                          isBarista={result.is_barista}
                           compact={true}
-                          displayType="properties"
+                          displayType="barista"
                           inline={true}
                         />
-                        
-                        <ProductPropertyBadges 
-                          flavorNames={result.flavor_names}
-                          compact={true}
-                          displayType="flavors"
-                          inline={true}
-                        />
-                      </div>
-                    )}
+                      )}
+                      
+                      <ProductPropertyBadges 
+                        propertyNames={result.property_names}
+                        compact={true}
+                        displayType="properties"
+                        inline={true}
+                      />
+                      
+                      <ProductPropertyBadges 
+                        flavorNames={result.flavor_names}
+                        compact={true}
+                        displayType="flavors"
+                        inline={true}
+                      />
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>
