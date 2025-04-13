@@ -19,56 +19,38 @@ export default {
     },
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        // Soft blue and green color palette
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#1EAEDB", // Bright Blue
+          50: "#D3E4FD", // Soft Blue
+          100: "#33C3F0", // Sky Blue
+          200: "#0FA0CE", // Bright Blue
+          foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "#2ECC71", // Soft Green
+          50: "#F2FCE2", // Soft Green
+          100: "#58D68D", // Bright Green
+          200: "#45B39D", // Teal Green
+          foreground: "#FFFFFF",
         },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+        background: {
+          DEFAULT: "#F0F4F8", // Light Blue-Gray
+          foreground: "#1A1A1A",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#E6F2F0", // Very Light Mint Green
+          foreground: "#2C3E50",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "#48C774", // Vibrant Green
+          foreground: "#FFFFFF",
         },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+        destructive: {
+          DEFAULT: "#FF3860", // Bright Red (for contrast)
+          foreground: "#FFFFFF",
         },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        milk: {
-          50: "#fdfcfb",
-          100: "#f7f4f2",
-          200: "#e8e4e1",
-          300: "#d1ccc8",
-          400: "#b3aba5",
-          500: "#8c8580",
-        },
-        cream: {
-          100: "#fff9f0",
-          200: "#fff3e0",
-          300: "#ffe0b2",
-        },
-        "soft-blue": "#D3E4FD",
-        "soft-peach": "#FDE1D3",
-        "soft-brown": "#F5E6D3",
-        "soft-gray": "#E5E7EB",
+        border: "#A0D8EF", // Light Blue Border
       },
       borderRadius: {
         lg: "var(--radius)",

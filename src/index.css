@@ -1,64 +1,44 @@
 
-@import './styles/colors.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 200 82% 45%; /* Changed from purple to a nice blue */
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 200 82% 45%; /* Changed from purple to match primary */
+    --background: 212 33% 97%; /* Light blue-gray */
+    --foreground: 222 47% 11%; /* Dark blue-gray */
+    --primary: 197 86% 53%; /* Bright blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 152 69% 51%; /* Soft green */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 40% 96%; /* Very light blue */
+    --muted-foreground: 215 20% 65%;
+    --accent: 152 69% 51%; /* Soft green */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 348 100% 61%; /* Bright red */
+    --destructive-foreground: 0 0% 100%;
+    --border: 200 18% 80%; /* Soft blue border */
+    --input: 214 32% 91%; /* Light blue input */
+    --ring: 197 86% 53%; /* Bright blue ring */
     --radius: 0.5rem;
-    
-    /* Custom colors for milk app */
-    --milk-100: 0 0% 96%; /* #F5F5F5 */
-    --milk-200: 0 0% 90%; /* #E5E5E5 */
-    --milk-300: 0 0% 80%; /* #CCCCCC */
-    --milk-400: 0 0% 70%; /* #B3B3B3 */
-    --milk-500: 0 0% 30%; /* #4D4D4D */
-    
-    --cream-100: 40 100% 97%; /* #FFF9E5 */
-    --cream-200: 40 100% 94%; /* #FFF2CC */
-    --cream-300: 40 100% 91%; /* #FFEAB2 */
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 200 70% 40%; /* Changed from purple to a nice blue */
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 200 70% 40%; /* Changed from purple to match primary */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --primary: 197 86% 53%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 152 69% 51%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 217 11% 65%;
+    --accent: 152 69% 51%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 348 100% 61%;
+    --destructive-foreground: 222 47% 11%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 197 86% 53%;
   }
 }
 
