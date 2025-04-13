@@ -1,128 +1,111 @@
 
 import React from "react";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { useProductRegistration } from "./ProductRegistrationContext";
 import { BrandSelect } from "../BrandSelect";
-import { NameSelect } from "../NameSelect";
+import { FlavorSelector } from "../FlavorSelector";
 import { BaristaToggle } from "../BaristaToggle";
 import { ProductOptions } from "../ProductOptions";
-import { FlavorSelector } from "../FlavorSelector";
-import { useProductRegistration } from "./ProductRegistrationContext";
 
-export const BrandSection = () => {
-  const { brandId, setBrandId } = useProductRegistration();
-  
-  return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-medium">Brand *</h3>
-      <BrandSelect brandId={brandId} setBrandId={setBrandId} />
-    </div>
-  );
-};
+interface ProductFormProps {
+  onSubmit: (e: React.FormEvent) => Promise<void>;
+  onCancel: (e: React.MouseEvent) => void;
+}
 
-export const ProductNameSection = () => {
-  const { productName, setProductName, setNameId } = useProductRegistration();
-  
-  return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-medium">Product *</h3>
-      <NameSelect 
-        productName={productName} 
-        setProductName={setProductName} 
-        onNameIdChange={setNameId} 
-      />
-    </div>
-  );
-};
+export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) => {
+  const {
+    brandId,
+    setBrandId,
+    productName,
+    setProductName,
+    selectedProductTypes,
+    setSelectedProductTypes,
+    isBarista,
+    setIsBarista,
+    selectedFlavors,
+    handleFlavorToggle,
+    flavors = [],
+    isSubmitting
+  } = useProductRegistration();
 
-export const BaristaSection = () => {
-  const { isBarista, setIsBarista } = useProductRegistration();
-  
-  return (
-    <BaristaToggle 
-      isBarista={isBarista} 
-      onToggle={setIsBarista} 
-    />
-  );
-};
+  // Form validation logic
+  const isFormValid = !!brandId && !!productName;
 
-export const PropertiesSection = () => {
-  const { selectedProductTypes, setSelectedProductTypes } = useProductRegistration();
-  
-  return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-medium">Properties</h3>
-      <ProductOptions 
-        selectedTypes={selectedProductTypes} 
-        setSelectedTypes={setSelectedProductTypes} 
-      />
-    </div>
-  );
-};
-
-export const FlavorsSection = () => {
-  const { flavors, selectedFlavors, handleFlavorToggle, refetchFlavors } = useProductRegistration();
-  
-  return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-medium">Flavors</h3>
-      <FlavorSelector 
-        flavors={flavors} 
-        selectedFlavors={selectedFlavors} 
-        onFlavorToggle={handleFlavorToggle}
-        onAddNewFlavor={refetchFlavors}
-      />
-    </div>
-  );
-};
-
-export const ProductForm: React.FC<{ onSubmit: (e: React.FormEvent) => Promise<any> }> = ({ onSubmit }) => {
-  const { isSubmitting, brandId, productName } = useProductRegistration();
-  
-  // Check if form has required fields filled
-  const isFormValid = brandId !== "" && productName.trim() !== "";
-  
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <BrandSection />
-      
-      <ProductNameSection />
-      
-      <Separator />
-      
-      <BaristaSection />
-      
-      <PropertiesSection />
-      
-      <Separator />
-      
-      <FlavorsSection />
-      
-      <DialogButtons isSubmitting={isSubmitting} isFormValid={isFormValid} />
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label htmlFor="brand" className="block font-medium">
+            Brand <span className="text-red-500">*</span>
+          </label>
+          <BrandSelect
+            value={brandId}
+            onChange={setBrandId}
+            className="w-full"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="product" className="block font-medium">
+            Product <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="product"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
+            placeholder="Enter product name..."
+            required
+          />
+        </div>
+
+        <hr className="my-4" />
+
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <span className="font-medium">Barista</span>
+            <BaristaToggle checked={isBarista} onCheckedChange={setIsBarista} />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <span className="block font-medium">Properties</span>
+          <ProductOptions
+            selectedOptions={selectedProductTypes}
+            setSelectedOptions={setSelectedProductTypes}
+          />
+        </div>
+
+        <hr className="my-4" />
+
+        <div className="space-y-2">
+          <span className="block font-medium">Flavors</span>
+          <FlavorSelector
+            flavors={flavors}
+            selectedFlavors={selectedFlavors}
+            onToggle={handleFlavorToggle}
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end space-x-2 pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          className="px-4"
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          disabled={!isFormValid || isSubmitting}
+          className="px-4 bg-cream-300 hover:bg-cream-200 text-milk-500"
+        >
+          {isSubmitting ? "Registering..." : "Register Product"}
+        </Button>
+      </div>
     </form>
-  );
-};
-
-import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
-
-export const DialogButtons: React.FC<{ isSubmitting: boolean; isFormValid: boolean }> = ({ isSubmitting, isFormValid }) => {
-  return (
-    <DialogFooter>
-      <Button 
-        type="button" 
-        variant="outline" 
-        onClick={() => window.history.back()}
-        disabled={isSubmitting}
-      >
-        Cancel
-      </Button>
-      <Button 
-        type="submit" 
-        disabled={isSubmitting || !isFormValid} 
-        className={`${isFormValid ? 'bg-black text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-      >
-        {isSubmitting ? "Registering..." : "Register Product"}
-      </Button>
-    </DialogFooter>
   );
 };

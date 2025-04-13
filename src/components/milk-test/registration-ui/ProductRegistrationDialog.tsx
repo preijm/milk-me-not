@@ -58,7 +58,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     }
   }, [duplicateDialogOpen, setIsSubmitting]);
   
-  // Handle dialog close to ensure isSubmitting is reset
+  // Handle dialog close to ensure isSubmitting is reset and prevent default navigation
   const handleOpenChange = (newOpen: boolean) => {
     console.log("handleOpenChange called with:", newOpen, "current isSubmitting:", isSubmitting);
     
@@ -121,6 +121,13 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     setIsSubmitting(false); // Ensure isSubmitting is reset
   };
   
+  // Handle cancel button click - just close the dialog without navigation
+  const handleCancel = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleOpenChange(false);
+  };
+  
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -130,7 +137,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
             Register a new milk product with brand, product details, properties, and flavors
           </DialogDescription>
           
-          <ProductForm onSubmit={handleSubmit} />
+          <ProductForm onSubmit={handleSubmit} onCancel={handleCancel} />
         </DialogContent>
       </Dialog>
       
