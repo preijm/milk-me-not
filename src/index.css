@@ -5,23 +5,31 @@
 
 @layer base {
   :root {
-    --background: 212 33% 97%; /* Light blue-gray */
-    --foreground: 222 47% 11%; /* Dark blue-gray */
-    --primary: 197 86% 53%; /* Bright blue */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 152 69% 51%; /* Soft green */
-    --secondary-foreground: 0 0% 100%;
-    --muted: 210 40% 96%; /* Very light blue */
-    --muted-foreground: 215 20% 65%;
-    --accent: 152 69% 51%; /* Soft green */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 348 100% 61%; /* Bright red */
-    --destructive-foreground: 0 0% 100%;
-    --border: 200 18% 80%; /* Soft blue border */
-    --input: 214 32% 91%; /* Light blue input */
-    --ring: 197 86% 53%; /* Bright blue ring */
+    --background: 200 30% 95%;           /* Soft blue-gray background */
+    --foreground: 210 50% 20%;           /* Deep blue-gray text */
+
+    --primary: 195 100% 45%;             /* Vivid sky blue */
+    --primary-foreground: 0 0% 100%;     /* White text on primary */
+
+    --secondary: 160 60% 45%;            /* Balanced teal green */
+    --secondary-foreground: 0 0% 100%;   /* White text on secondary */
+
+    --muted: 200 25% 85%;                /* Muted light blue */
+    --muted-foreground: 200 20% 30%;     /* Muted dark blue-gray */
+
+    --accent: 175 70% 40%;               /* Greenish aqua */
+    --accent-foreground: 0 0% 100%;      /* White on accent */
+
+    --destructive: 0 80% 60%;            /* Standard red */
+    --destructive-foreground: 0 0% 100%; /* White text on red */
+
+    --border: 200 20% 70%;               /* Subtle blue border */
+    --input: 200 30% 95%;                /* Match background for input */
+    --ring: 195 100% 45%;                /* Match primary for ring */
+
     --radius: 0.5rem;
   }
+}
 
   .dark {
     --background: 222 47% 11%;
