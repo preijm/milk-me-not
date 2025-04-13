@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { SearchBar } from "@/components/milk-test/SearchBar";
 import { MyResultsTable } from "@/components/milk-test/MyResultsTable";
@@ -7,17 +6,7 @@ import { MilkTestResult } from "@/types/milk-test";
 import { SortConfig } from "@/hooks/useUserMilkTests";
 import { Grid, Rows } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 interface UserResultsContainerProps {
   filteredResults: MilkTestResult[];
   sortConfig: SortConfig;
@@ -29,7 +18,6 @@ interface UserResultsContainerProps {
   viewMode: 'grid' | 'table';
   setViewMode: (mode: 'grid' | 'table') => void;
 }
-
 export const UserResultsContainer = ({
   filteredResults,
   sortConfig,
@@ -63,54 +51,23 @@ export const UserResultsContainer = ({
     }
     setShowDeleteDialog(false);
   };
-
-  return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+  return <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          className="w-full max-w-md"
-          placeholder="Search by brand or product..."
-        />
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} className="w-full max-w-md" placeholder="Search by brand or product..." />
         
         <div className="flex gap-2">
-          <Button 
-            variant={viewMode === 'grid' ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setViewMode('grid')}
-            className="flex items-center gap-1"
-          >
+          <Button variant={viewMode === 'grid' ? "default" : "outline"} size="sm" onClick={() => setViewMode('grid')} className="flex items-center gap-1">
             <Grid className="h-4 w-4" />
-            <span className="hidden sm:inline">Grid</span>
+            <span className="hidden sm:inline text-[#0eee0e]">Grid</span>
           </Button>
-          <Button 
-            variant={viewMode === 'table' ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setViewMode('table')}
-            className="flex items-center gap-1"
-          >
+          <Button variant={viewMode === 'table' ? "default" : "outline"} size="sm" onClick={() => setViewMode('table')} className="flex items-center gap-1">
             <Rows className="h-4 w-4" />
             <span className="hidden sm:inline">Table</span>
           </Button>
         </div>
       </div>
       
-      {viewMode === 'grid' ? (
-        <MyResultsGrid
-          results={filteredResults}
-          onEdit={onEdit}
-          onDelete={handleDeleteClick}
-        />
-      ) : (
-        <MyResultsTable
-          results={filteredResults}
-          sortConfig={sortConfig}
-          handleSort={handleSortWithoutViewChange}
-          onEdit={onEdit}
-          onDelete={handleDeleteClick}
-        />
-      )}
+      {viewMode === 'grid' ? <MyResultsGrid results={filteredResults} onEdit={onEdit} onDelete={handleDeleteClick} /> : <MyResultsTable results={filteredResults} sortConfig={sortConfig} handleSort={handleSortWithoutViewChange} onEdit={onEdit} onDelete={handleDeleteClick} />}
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
@@ -122,15 +79,11 @@ export const UserResultsContainer = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
-  );
+    </div>;
 };
