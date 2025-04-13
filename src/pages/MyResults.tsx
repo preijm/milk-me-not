@@ -44,14 +44,8 @@ const MyResults = () => {
   };
 
   const handleEdit = (test: MilkTestResult) => {
-    // Map the MilkTestResult to the format expected by EditMilkTest
-    const testForEdit: MilkTestResult = {
-      ...test,
-      brand: test.brand_name || '',
-      shop: test.shop_name || '',
-      product_type_keys: test.property_names || []
-    };
-    setEditingTest(testForEdit);
+    // Pass the complete MilkTestResult object
+    setEditingTest(test);
   };
 
   const filteredResults = results.filter((result) => {
@@ -106,7 +100,7 @@ const MyResults = () => {
 
         {editingTest && (
           <EditMilkTest
-            test={editingTest as any}
+            test={editingTest}
             open={!!editingTest}
             onOpenChange={(open) => !open && setEditingTest(null)}
             onSuccess={refetch}

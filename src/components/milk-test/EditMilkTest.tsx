@@ -9,24 +9,10 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { MilkTestResult } from "@/types/milk-test";
 
 interface EditMilkTestProps {
-  test: {
-    id: string;
-    brand: string;
-    brand_id: string;
-    product_name?: string;
-    product_id: string;
-    shop?: string;
-    shop_name?: string;
-    is_barista?: boolean;
-    rating: number;
-    notes?: string;
-    product_type_keys?: string[];
-    picture_path?: string;
-    price_quality_ratio?: string;
-    drink_preference?: string;
-  };
+  test: MilkTestResult;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
@@ -53,7 +39,7 @@ export const EditMilkTest = ({ test, open, onOpenChange, onSuccess }: EditMilkTe
         <EditMilkTestForm
           formState={formState}
           formSetters={formSetters}
-          brand={test.brand}
+          brand={test.brand || test.brand_name || ""}
           productName={test.product_name}
           onSubmit={handleSubmit}
           onCancel={() => onOpenChange(false)}
