@@ -32,28 +32,29 @@ export const UserStatsOverview = ({
   
   return <div className="rounded-lg p-4 mb-6 bg-white">
       <div className="grid grid-cols-5 gap-3">
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#F2FCE2' }}>
           <p className="text-xs text-[#444] mb-1">Average Rating</p>
           <p className="text-xl font-semibold text-gray-900">{avgRating}/10</p>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#F2FCE2' }}>
           <p className="text-xs text-[#444] mb-1">Total Tests</p>
           <p className="text-xl font-semibold text-gray-900">{results.length}</p>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#F2FCE2' }}>
           <p className="text-xs text-[#444] mb-1">Unique Brands</p>
           <p className="text-xl font-semibold text-gray-900">{uniqueBrands.length}</p>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#F2FCE2' }}>
           <p className="text-xs text-[#444] mb-1">Latest Test</p>
           <p className="text-xl font-semibold text-gray-900 truncate">
             {latestTest ? formatDate(latestTest.created_at) : 'None'}
           </p>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#F2FCE2' }}>
           <p className="text-xs text-[#444] mb-1">Most Tested</p>
           <p className="text-xl font-semibold text-gray-900 truncate">{mostTestedBrand}</p>
         </div>
       </div>
     </div>;
 };
+
