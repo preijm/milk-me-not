@@ -35,6 +35,16 @@ const MenuBar = () => {
             >
               About
             </Link>
+            <Link 
+              to="/contact" 
+              className={`transition-colors ${
+                location.pathname === '/contact' 
+                  ? 'text-emerald-600 font-medium' 
+                  : 'text-gray-700 hover:text-gray-900'
+              }`}
+            >
+              Contact
+            </Link>
             <AuthButton />
           </div>
         </div>
