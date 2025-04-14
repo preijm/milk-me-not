@@ -3,7 +3,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { LogIn, UserRound } from "lucide-react";
+import { LogIn } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 
 export const AuthButton = () => {
@@ -36,22 +42,55 @@ export const AuthButton = () => {
     }
   };
 
+  if (!user) {
+    return (
+      <Button 
+        onClick={handleAuth}
+        variant="outline"
+        className="bg-blue-600 text-white hover:bg-blue-700"
+      >
+        <LogIn className="w-4 h-4 mr-2" />
+        Get started
+      </Button>
+    );
+  }
+
   return (
-    <Button
-      onClick={handleAuth}
-      className="bg-cream-300 hover:bg-cream-200 text-milk-500"
-    >
-      {user ? (
-        <div className="flex items-center gap-2">
-          <UserRound className="w-4 h-4" />
-          <span>Account</span>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2">
-          <LogIn className="w-4 h-4" />
-          <span>Sign In</span>
-        </div>
-      )}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button 
+          variant="outline" 
+          className="bg-gray-50 hover:bg-gray-100 text-gray-700"
+        >
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center mr-2">
+              {user.email?.[0].toUpperCase()}
+            </div>
+            Account
+          </div>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => navigate('/account')}>
+          Settings
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/my-results')}>
+          My Results
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={async () => {
+            await supabase.auth.signOut();
+            navigate('/');
+            toast({
+              title: "Signed out successfully",
+              duration: 3000,
+            });
+          }}
+          className="text-red-600"
+        >
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
