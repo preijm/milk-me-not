@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { LogIn, Settings, ChevronDown } from "lucide-react";
+import { LogIn, Settings, ChevronDown, Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 export const AuthButton = () => {
@@ -58,15 +58,19 @@ export const AuthButton = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-24 bg-white/95 backdrop-blur-lg border-white/20 shadow-lg rounded-xl p-1">
-        <DropdownMenuItem onClick={() => navigate('/account')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
-          <Settings className="w-4 h-4 opacity-70" />
-          <span>Settings</span>
+        <DropdownMenuItem onClick={() => navigate('/')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
+          <Plus className="w-4 h-4 opacity-70" />
+          <span>Add Results</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate('/my-results')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
           <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
           <span>My Results</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/account')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
+          <Settings className="w-4 h-4 opacity-70" />
+          <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={async () => {
         await supabase.auth.signOut();
@@ -84,3 +88,5 @@ export const AuthButton = () => {
       </DropdownMenuContent>
     </DropdownMenu>;
 };
+
+export default AuthButton;
