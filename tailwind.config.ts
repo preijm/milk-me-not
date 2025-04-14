@@ -19,11 +19,13 @@ export default {
     },
     extend: {
       colors: {
+        // Core HSL-based system
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -52,25 +54,42 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        // Extended brand palette (CSS HEX fallback)
         milk: {
-          50: "#f2f2f2",   // Very light gray
-          100: "#e6e6e6",  // Light gray
-          200: "#cccccc",  // Medium gray
-          300: "#b3b3b3",  // Darker gray
-          400: "#999999",  // Dark gray
-          500: "#666666",  // Almost black
+          100: "#f2f2f2",
+          200: "#d9d9d9",
+          300: "#bfbfbf",
+          400: "#999999",
+          500: "#333333",
         },
         cream: {
           100: "#fff9f0",
           200: "#fff3e0",
           300: "#ffe0b2",
         },
+        green: {
+          100: "#ccf5df",
+          200: "#99ecbf",
+          300: "#66e29f",
+          400: "#33d97f",
+          500: "#00c266", // Main green from logo
+        },
+        blue: {
+          100: "#ccd4ff",
+          200: "#99aaff",
+          300: "#6680ff",
+          400: "#3356ff",
+          500: "#254bff", // Main blue from logo
+        },
       },
+
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -91,6 +110,7 @@ export default {
           },
         },
       },
+
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
