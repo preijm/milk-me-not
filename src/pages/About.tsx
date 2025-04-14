@@ -7,7 +7,7 @@ const About = () => {
   return (
     <div className="min-h-screen">
       <MenuBar />
-      <div className="min-h-screen pt-16 bg-gradient-to-br from-emerald-50/80 via-blue-50/80 to-emerald-50/80">
+      <div className="min-h-screen pt-16 bg-gradient-to-br from-emerald-50/80 via-blue-50/80 to-emerald-50/80 flex items-center justify-center">
         <div className="container max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">

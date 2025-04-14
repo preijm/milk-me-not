@@ -1,16 +1,14 @@
 
 import React from "react";
 import MenuBar from "@/components/MenuBar";
-import { Mail, MessageCircle, PhoneOff } from "lucide-react";
+import { PhoneOff, Mail, MessageCircle } from "lucide-react";
 
 const Contact = () => {
   return (
     <div className="min-h-screen">
       <MenuBar />
-      <div className="min-h-screen pt-16 bg-gradient-to-br from-emerald-50/80 via-blue-50/80 to-emerald-50/80">
+      <div className="min-h-screen pt-16 bg-gradient-to-br from-emerald-50/80 via-blue-50/80 to-emerald-50/80 flex items-center justify-center">
         <div className="container max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-8 text-gray-900">Don't Contact Us</h1>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
               <div className="flex flex-col items-center text-center gap-4">
