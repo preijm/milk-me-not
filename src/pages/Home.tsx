@@ -1,68 +1,38 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { ChartPie, Table, Milk, Info } from "lucide-react";
-import { AuthButton } from "@/components/AuthButton";
+import { Milk } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import MenuBar from "@/components/MenuBar";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-white py-8 px-4">
-      <div className="container max-w-5xl mx-auto">
-        <div className="flex justify-end mb-8">
-          <AuthButton />
-        </div>
+    <div className="min-h-screen">
+      <MenuBar />
+      
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-emerald-50 relative overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI1MDAiIHZpZXdCb3g9IjAgMCAxNDQwIDUwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNLTM0OS42NzkgMjQxLjQzN0MtMjI5LjU1MSA5Ny4zNzYgMTA1LjY0OSAtODEuNjk5NyAzOTcuNzEgNjUuNzk5N0M2ODkuNzcxIDIxMy4yOTkgOTE2LjQ4OCA0MjguODE0IDEwNjEuMDEgNTE5LjIzQzEyMDUuNTMgNjA5LjY0NiAxNTMyLjI1IDU0My40ODQgMTY5NS42MSA0NzQuODIyIiBzdHJva2U9InVybCgjcGFpbnQwX2xpbmVhcikiIHN0cm9rZS13aWR0aD0iMiIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhciIgeDE9IjY3MyIgeTE9IjAiIHgyPSI2NzMiIHkyPSI1NzYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjMEVCNUI1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMzREMzk5Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+')] 
+          opacity-30 animate-[wave_8s_ease-in-out_infinite]"
+        />
+        
+        <div className="container max-w-6xl mx-auto px-4 pt-32">
+          <div className="flex flex-col items-center justify-center min-h-[80vh] text-center relative z-10">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 max-w-4xl">
+              Discover Your Perfect <span className="text-emerald-600">Dairy Match</span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl">
+              Start your journey through the world of dairy, one taste test at a time.
+            </p>
 
-        <div className="text-center mb-16">
-          <img 
-            src="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png"
-            alt="Dairy Taste Trove Logo"
-            className="w-24 h-24 mx-auto mb-6"
-          />
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Dairy Taste Trove</h1>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-            Your personal journey through the world of dairy, one taste test at a time.
-          </p>
-          <Link to="/add">
-            <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600">
-              <Milk className="mr-2 h-5 w-5" />
-              Start your first milk test
-            </Button>
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Link to="/dashboard" className="group">
-            <div className="p-6 rounded-lg border border-gray-200 hover:border-emerald-500 transition-colors">
-              <ChartPie className="w-12 h-12 text-emerald-500 mb-4" />
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Dashboard</h2>
-              <p className="text-gray-600">Track your milk tasting progress with an interactive dashboard.</p>
-            </div>
-          </Link>
-
-          <Link to="/results" className="group">
-            <div className="p-6 rounded-lg border border-gray-200 hover:border-blue-500 transition-colors">
-              <Table className="w-12 h-12 text-blue-500 mb-4" />
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Results</h2>
-              <p className="text-gray-600">View and analyze your milk tasting results.</p>
-            </div>
-          </Link>
-
-          <Link to="/add" className="group">
-            <div className="p-6 rounded-lg border border-gray-200 hover:border-emerald-500 transition-colors">
-              <Milk className="w-12 h-12 text-emerald-500 mb-4" />
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">Add Test</h2>
-              <p className="text-gray-600">Begin a new milk tasting and record your impressions.</p>
-            </div>
-          </Link>
-
-          <Link to="/about" className="group">
-            <div className="p-6 rounded-lg border border-gray-200 hover:border-blue-500 transition-colors">
-              <Info className="w-12 h-12 text-blue-500 mb-4" />
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">About</h2>
-              <p className="text-gray-600">Learn more about our milk tasting methodology.</p>
-            </div>
-          </Link>
+            <Link to="/add">
+              <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-lg px-8">
+                <Milk className="mr-2 h-6 w-6" />
+                Begin Your Dairy Adventure
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
