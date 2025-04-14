@@ -11,9 +11,9 @@ const MenuBar = () => {
             <img 
               src="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png"
               alt="Milk Me Not Logo"
-              className="w-10 h-10"
+              className="h-12 w-12" /* Increased from w-10 h-10 */
             />
-            <span className="text-lg font-semibold text-gray-800">Milk Me Not</span>
+            <span className="text-2xl font-semibold text-gray-800">Milk Me Not</span>
           </Link>
           
           <div className="flex items-center gap-6">
@@ -32,3 +32,4 @@ const MenuBar = () => {
 };
 
 export default MenuBar;
+
