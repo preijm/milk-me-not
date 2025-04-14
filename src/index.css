@@ -5,59 +5,91 @@
 
 @layer base {
   :root {
-    --background: 40 100% 97%; /* Cream background */
-    --foreground: 0 0% 20%; /* Dark gray text */
-    --card: 40 100% 95%; /* Lighter cream for cards */
-    --card-foreground: 0 0% 20%;
+    /* Base UI */
+    --background: 40 100% 97%; /* Soft cream background */
+    --foreground: 0 0% 15%; /* Deep gray for body text */
+
+    --card: 40 100% 95%;
+    --card-foreground: 0 0% 15%;
+    
     --popover: 40 100% 95%;
-    --popover-foreground: 0 0% 20%;
-    --primary: 142 69% 44%; /* Bright green from logo */
-    --primary-foreground: 0 0% 100%; /* White text on green */
-    --secondary: 224 82% 45%; /* Bright blue from logo */
-    --secondary-foreground: 0 0% 100%; /* White text on blue */
-    --muted: 0 0% 90%; /* Light gray */
-    --muted-foreground: 0 0% 45%; /* Darker gray */
-    --accent: 40 100% 75%; /* Bright cream accent */
-    --accent-foreground: 0 0% 20%;
-    --destructive: 0 84.2% 60.2%; /* Bright red */
+    --popover-foreground: 0 0% 15%;
+
+    /* Brand Colors */
+    --primary: 142 69% 44%; /* Logo green */
+    --primary-foreground: 0 0% 100%; /* White */
+
+    --secondary: 234 100% 60%; /* Refined bright blue */
+    --secondary-foreground: 0 0% 100%; /* White */
+
+    --accent: 40 100% 80%; /* Bright cream accent */
+    --accent-foreground: 0 0% 20%; /* Dark gray */
+
+    --muted: 0 0% 92%; /* Light gray */
+    --muted-foreground: 0 0% 45%; /* Medium gray */
+
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 80%; /* Visible border */
-    --input: 0 0% 85%; /* Visible input borders */
-    --ring: 142 69% 44%; /* Green ring to match primary */
+
+    --border: 0 0% 85%; /* Input & card borders */
+    --input: 0 0% 88%;
+    --ring: 142 69% 44%; /* Match primary green for focus rings */
+
     --radius: 0.5rem;
-    
-    /* Custom colors for milk app */
-    --milk-100: 0 0% 95%; /* Very light gray */
-    --milk-200: 0 0% 85%; /* Light gray */
-    --milk-300: 0 0% 70%; /* Medium gray */
-    --milk-400: 0 0% 50%; /* Dark gray */
-    --milk-500: 0 0% 20%; /* Almost black */
-    
-    --cream-100: 40 100% 95%; /* Very light cream */
-    --cream-200: 40 100% 85%; /* Light cream */
-    --cream-300: 40 100% 75%; /* Bright cream */
+
+    /* Brand Scale */
+    --green-100: 142 69% 85%;
+    --green-200: 142 69% 70%;
+    --green-300: 142 69% 55%;
+    --green-400: 142 69% 44%;
+    --green-500: 142 69% 34%;
+
+    --blue-100: 234 100% 85%;
+    --blue-200: 234 100% 70%;
+    --blue-300: 234 100% 60%;
+    --blue-400: 234 100% 50%;
+    --blue-500: 234 100% 40%;
+
+    /* Neutral / Milk */
+    --milk-100: 0 0% 95%;
+    --milk-200: 0 0% 85%;
+    --milk-300: 0 0% 70%;
+    --milk-400: 0 0% 50%;
+    --milk-500: 0 0% 20%;
+
+    --cream-100: 40 100% 95%;
+    --cream-200: 40 100% 85%;
+    --cream-300: 40 100% 75%;
   }
 
   .dark {
     --background: 224 71.4% 4.1%;
     --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
+
+    --card: 224 71.4% 6%;
     --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
+
+    --popover: 224 71.4% 6%;
     --popover-foreground: 210 20% 98%;
-    --primary: 200 70% 40%; /* Changed from purple to a nice blue */
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
+
+    --primary: 142 69% 44%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 234 100% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 40 100% 25%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 215 28% 20%;
+    --muted-foreground: 217 10% 64%;
+
+    --destructive: 0 72% 42%;
     --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 200 70% 40%; /* Changed from purple to match primary */
+
+    --border: 215 28% 20%;
+    --input: 215 28% 22%;
+    --ring: 142 69% 44%;
   }
 }
 
