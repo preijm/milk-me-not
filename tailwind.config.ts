@@ -19,7 +19,6 @@ export default {
     },
     extend: {
       colors: {
-        // Core HSL-based system
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -55,7 +54,6 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
 
-        // Extended brand palette (CSS HEX fallback)
         milk: {
           100: "#f2f2f2",
           200: "#d9d9d9",
@@ -63,24 +61,19 @@ export default {
           400: "#999999",
           500: "#333333",
         },
-        cream: {
-          100: "#fff9f0",
-          200: "#fff3e0",
-          300: "#ffe0b2",
-        },
         green: {
           100: "#ccf5df",
           200: "#99ecbf",
           300: "#66e29f",
           400: "#33d97f",
-          500: "#00c266", // Main green from logo
+          500: "#00c266",
         },
         blue: {
           100: "#ccd4ff",
           200: "#99aaff",
           300: "#6680ff",
           400: "#3356ff",
-          500: "#254bff", // Main blue from logo
+          500: "#254bff",
         },
       },
 
