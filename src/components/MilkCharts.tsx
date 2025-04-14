@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, Area, AreaChart } from "recharts";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { Card, CardContent } from "@/components/ui/card";
 import { MilkTestResult } from "@/types/milk-test";
+
 const COLORS = ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6"];
 const chartConfig = {
   rating: {
@@ -11,6 +13,7 @@ const chartConfig = {
     color: "#ec4899"
   }
 };
+
 export const MilkCharts = ({
   results
 }: {
@@ -157,19 +160,32 @@ export const MilkCharts = ({
           </AreaChart>;
     }
   };
-  return <div className="rounded-lg p-6">
-      
-      
-      <div className="flex flex-wrap gap-2 mb-6">
-        {chartButtons.map(button => <button key={button.id} onClick={() => setSelectedChart(button.id)} className={`px-4 py-2 rounded-full transition-colors ${selectedChart === button.id ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-            {button.label}
-          </button>)}
-      </div>
 
-      <div className="h-[400px]">
-        <ChartContainer config={chartConfig}>
-          {renderChart()}
-        </ChartContainer>
-      </div>
-    </div>;
+  return (
+    <Card className="bg-white rounded-lg shadow-md overflow-hidden">
+      <CardContent className="p-0">
+        <div className="flex flex-wrap gap-2 mb-6 p-6 pb-0">
+          {chartButtons.map(button => (
+            <button 
+              key={button.id} 
+              onClick={() => setSelectedChart(button.id)} 
+              className={`px-4 py-2 rounded-full transition-colors ${
+                selectedChart === button.id 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {button.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="h-[400px] p-6 pt-0">
+          <ChartContainer config={chartConfig}>
+            {renderChart()}
+          </ChartContainer>
+        </div>
+      </CardContent>
+    </Card>
+  );
 };
