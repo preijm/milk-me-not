@@ -20,7 +20,8 @@ const Home = () => {
         <div className="container max-w-6xl mx-auto px-4 pt-32">
           <div className="flex flex-col items-center justify-center min-h-[80vh] text-center relative z-10">
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 max-w-4xl animate-fade-in">
-              Ditch the Moo. <span className="text-emerald-600">Find Your New!</span>
+              Ditch the Moo. <br />
+              <span className="text-emerald-600">Find Your New!</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl animate-fade-in">
@@ -28,9 +29,12 @@ const Home = () => {
             </p>
 
             <Link to="/add">
-              <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-lg px-8 animate-fade-in">
+              <Button 
+                size="lg" 
+                className="bg-emerald-600 hover:bg-emerald-700 text-lg px-8 animate-fade-in"
+              >
                 <Milk className="mr-2 h-6 w-6" />
-                Start Your Taste Test
+                Start Your Taste Journey
               </Button>
             </Link>
           </div>
@@ -41,4 +45,3 @@ const Home = () => {
 };
 
 export default Home;
-
