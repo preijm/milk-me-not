@@ -1,7 +1,7 @@
 
 import React from "react";
 import MenuBar from "@/components/MenuBar";
-import { Zap, PizzaSlice, BellRing } from "lucide-react";
+import { Zap, Pizza, BellRing } from "lucide-react";
 
 const Contact = () => {
   return (
@@ -26,7 +26,7 @@ const Contact = () => {
             <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
               <div className="flex flex-col items-center text-center gap-4">
                 <div className="h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center">
-                  <PizzaSlice className="w-8 h-8 text-emerald-600 animate-pulse" />
+                  <Pizza className="w-8 h-8 text-emerald-600 animate-pulse" />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-800">Pizza Signals</h2>
                 <p className="text-gray-700">
