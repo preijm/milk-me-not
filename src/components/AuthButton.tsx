@@ -47,7 +47,7 @@ export const AuthButton = () => {
       <Button 
         onClick={handleAuth}
         variant="outline"
-        className="bg-blue-600 text-white hover:bg-blue-700"
+        className="bg-gradient-to-r from-emerald-500/80 to-blue-500/80 text-white hover:from-emerald-600/80 hover:to-blue-600/80 border-white/20 backdrop-blur-sm transition-all duration-300"
       >
         <LogIn className="w-4 h-4 mr-2" />
         Get started
@@ -60,21 +60,21 @@ export const AuthButton = () => {
       <DropdownMenuTrigger asChild>
         <Button 
           variant="outline" 
-          className="bg-gray-50 hover:bg-gray-100 text-gray-700"
+          className="bg-white/10 hover:bg-white/20 text-gray-800 border-white/20 backdrop-blur-sm transition-all duration-300"
         >
           <div className="flex items-center">
-            <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center mr-2">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500/80 to-blue-500/80 flex items-center justify-center mr-2 text-white">
               {user.email?.[0].toUpperCase()}
             </div>
             Account
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => navigate('/account')}>
+      <DropdownMenuContent align="end" className="bg-white/95 backdrop-blur-lg border-white/20 shadow-lg">
+        <DropdownMenuItem onClick={() => navigate('/account')} className="hover:bg-emerald-50 transition-colors">
           Settings
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/my-results')}>
+        <DropdownMenuItem onClick={() => navigate('/my-results')} className="hover:bg-emerald-50 transition-colors">
           My Results
         </DropdownMenuItem>
         <DropdownMenuItem 
@@ -86,7 +86,7 @@ export const AuthButton = () => {
               duration: 3000,
             });
           }}
-          className="text-red-600"
+          className="text-red-600 hover:bg-red-50 transition-colors"
         >
           Sign out
         </DropdownMenuItem>
