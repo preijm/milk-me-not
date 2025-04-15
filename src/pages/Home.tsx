@@ -10,15 +10,14 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       <MenuBar />
+      
       <BackgroundPattern>
         <div className="container max-w-6xl mx-auto px-4 pt-32">
           <div className="flex flex-col items-center justify-center min-h-[80vh] text-center relative z-10">
-            <div className="bg-white/30 backdrop-blur-md rounded-xl px-8 py-6 mb-6">
-              <h1 className="text-5xl md:text-7xl font-bold text-gray-900 animate-fade-in" style={{ color: '#00BF63' }}>
-                Ditch the Moo. <br />
-                <span style={{ color: '#00BF63' }}>Find Your New!</span>
-              </h1>
-            </div>
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 max-w-4xl animate-fade-in" style={{ color: '#00BF63' }}>
+              Ditch the Moo. <br />
+              <span style={{ color: '#00BF63' }}>Find Your New!</span>
+            </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl animate-fade-in">
               Tired of tasteless plant milks? Rate, discover, and share your faves with a community that's just as obsessed. Whether it's for coffee, cereal, or cooking—find the dairy-free match that actually delivers.
