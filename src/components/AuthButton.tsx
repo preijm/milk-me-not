@@ -40,7 +40,7 @@ export const AuthButton = () => {
     }
   };
   if (!user) {
-    return <Button onClick={handleAuth} variant="outline" className="w-full bg-[#2144ff] text-white">
+    return <Button onClick={handleAuth} variant="outline" className="w-full bg-[#2144ff] text-white font-normal">
         <LogIn className="w-4 h-4 mr-2" />
         Get started
       </Button>;
