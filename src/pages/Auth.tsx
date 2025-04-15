@@ -92,7 +92,7 @@ const Auth = () => {
               
               <form onSubmit={handleAuth} className="space-y-6">
                 {!isLogin && <div>
-                    <Input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required={!isLogin} minLength={3} maxLength={30} pattern="^[a-zA-Z0-9_-]+$" title="Username can only contain letters, numbers, underscores, and hyphens" className="bg-white/80 border-white/20 backdrop-blur-sm" />
+                    <Input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required={!isLogin} minLength={3} maxLength={30} pattern="^[a-zA-Z0-9_-]+$" title="Username can only contain letters, numbers, underscores, and hyphens" className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm" />
                   </div>}
                 
                 <div>
