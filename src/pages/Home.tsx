@@ -17,9 +17,9 @@ const Home = () => {
         
         <div className="container max-w-6xl mx-auto px-4 pt-32">
           <div className="flex flex-col items-center justify-center min-h-[80vh] text-center relative z-10">
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 max-w-4xl animate-fade-in">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 max-w-4xl animate-fade-in" style={{ color: '#00BF63' }}>
               Ditch the Moo. <br />
-              <span className="text-emerald-600">Find Your New!</span>
+              <span style={{ color: '#00BF63' }}>Find Your New!</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl animate-fade-in">
@@ -29,7 +29,12 @@ const Home = () => {
             <Link to="/add">
               <Button 
                 size="lg" 
-                className="bg-emerald-600 hover:bg-emerald-700 text-lg px-8 animate-fade-in"
+                className="text-lg px-8 animate-fade-in"
+                style={{ 
+                  backgroundColor: '#2144FF', 
+                  color: 'white',
+                  '&:hover': { backgroundColor: '#1A35CC' }
+                }}
               >
                 <Milk className="mr-2 h-6 w-6" />
                 Start Your Taste Journey
