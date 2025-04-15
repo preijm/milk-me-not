@@ -20,6 +20,9 @@ const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
       {/* Fourth curved line in bottom-left */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMzAwMCAyMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0tMTAwMCAyMDBDLTUwMCAzMDAgMCA0MDAgNTAwIDUwMEMxMDUwIDYwMCAxNTAwIDcwMCAyMDAwIDYwMEMyNTAwIDUwMCAzMDAwIDQwMCAzNTAwIDMwMCIgc3Ryb2tlPSJ1cmwoI2dyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVFRjBFNiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzBFQjVCNSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==')] opacity-40" />
       
+      {/* Fifth curved line going in opposite direction */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMzAwMCAyMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00NTAwIDMwMEM0MDAwIDIwMCAzNTAwIDAgMzAwMCAtMjAwQzI1MDAgLTQwMCAyMDAwIC02MDAgMTUwMCAtODAwQzEwMDAgLTEwMDAgNTAwIC0xMjAwIDAgLTE0MDAiIHN0cm9rZT0idXJsKCNncmFkaWVudCkiIHN0cm9rZS13aWR0aD0iMiIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM1RUYwRTYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwRUI1QjUiLy48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4=')] opacity-10" />
+      
       {/* Content */}
       {children}
     </div>
