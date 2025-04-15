@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Milk } from "lucide-react";
@@ -29,11 +30,10 @@ const Home = () => {
             <Link to="/add">
               <Button 
                 size="lg" 
-                className="text-lg px-8 animate-fade-in"
+                className="text-lg px-8 animate-fade-in hover:bg-blue-700"
                 style={{ 
                   backgroundColor: '#2144FF', 
-                  color: 'white',
-                  '&:hover': { backgroundColor: '#1A35CC' }
+                  color: 'white'
                 }}
               >
                 <Milk className="mr-2 h-6 w-6" />
