@@ -39,7 +39,7 @@ const About = () => {
               
               <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center gap-4">
-                  <div className="h-16 w-16 bg-[#F2FCE2] rounded-full flex items-center justify-center">
+                  <div className="h-16 w-16 rounded-full flex items-center justify-center bg-[#00bf62]">
                     <Heart className="w-8 h-8 text-[#FFFFFF] animate-pulse" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800">Join Our Milk Mob</h2>
