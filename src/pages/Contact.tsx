@@ -36,7 +36,7 @@ const Contact = () => {
               <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center gap-4">
                   <div className="h-16 w-16 bg-[#F2FCE2] rounded-full flex items-center justify-center">
-                    <MessageSquare className="w-8 h-8 text-[#00BF63] animate-pulse" />
+                    <MessageSquare className="w-8 h-8 text-[#FFFFFF] animate-none" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800">Chat</h2>
                   <p className="text-gray-700">
