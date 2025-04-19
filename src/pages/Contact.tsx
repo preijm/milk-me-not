@@ -14,8 +14,8 @@ const Contact = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center gap-4">
-                  <div className="h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center">
-                    <Phone className="w-8 h-8 text-emerald-600 animate-bounce" />
+                  <div className="h-16 w-16 bg-[#F2FCE2] rounded-full flex items-center justify-center">
+                    <Phone className="w-8 h-8 text-[#00BF63] animate-bounce" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800">Phone</h2>
                   <p className="text-gray-700">
@@ -26,8 +26,8 @@ const Contact = () => {
               
               <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center gap-4">
-                  <div className="h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center">
-                    <Mail className="w-8 h-8 text-emerald-600 animate-pulse" />
+                  <div className="h-16 w-16 bg-[#F2FCE2] rounded-full flex items-center justify-center">
+                    <Mail className="w-8 h-8 text-[#00BF63] animate-pulse" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800">Email</h2>
                   <p className="text-gray-700">
@@ -38,8 +38,8 @@ const Contact = () => {
               
               <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                 <div className="flex flex-col items-center text-center gap-4">
-                  <div className="h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center">
-                    <MessageSquare className="w-8 h-8 text-emerald-600 animate-pulse" />
+                  <div className="h-16 w-16 bg-[#F2FCE2] rounded-full flex items-center justify-center">
+                    <MessageSquare className="w-8 h-8 text-[#00BF63] animate-pulse" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800">Chat</h2>
                   <p className="text-gray-700">
