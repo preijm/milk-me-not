@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AddMilkTest } from "@/components/AddMilkTest";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,18 +7,36 @@ import MenuBar from "@/components/MenuBar";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
-      if (!session) {
+      try {
+        const {
+          data: { session }
+        } = await supabase.auth.getSession();
+        
+        if (!session) {
+          // Redirect to auth page if not logged in
+          navigate("/auth");
+        } else {
+          // Only set loading to false if we're authenticated
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        // On error, redirect to auth page as a fallback
         navigate("/auth");
       }
     };
+    
     checkAuth();
   }, [navigate]);
+
+  // Don't render content until authentication check is complete
+  if (isLoading) {
+    return null; // Return nothing while checking auth
+  }
 
   return (
     <div className="min-h-screen">
