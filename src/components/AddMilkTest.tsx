@@ -43,7 +43,7 @@ export const AddMilkTest = () => {
         <DrinkPreference preference={formState.drinkPreference} setPreference={formSetters.setDrinkPreference} />
       </div>
 
-      <Button type="submit" disabled={formState.isSubmitting || !isFormValid} className="w-full from-emerald-500 to-blue-500 text-white hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 shadow-md bg-[2144ff] bg-[#2144ff]">
+      <Button type="submit" disabled={formState.isSubmitting || !isFormValid} className="whitespace-nowrap text-white bg-[#2144ff]">
         {formState.isSubmitting ? "Adding..." : "Add Result"}
       </Button>
     </form>;
