@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -15,22 +16,26 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     console.log("Attempting authentication...");
     try {
       if (isLogin) {
-        const {
-          error
-        } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signInWithPassword({
           email,
           password
         });
-        if (error) throw error;
+        if (error) {
+          toast({
+            title: "Login failed",
+            description: "Incorrect email or password",
+            variant: "destructive"
+          });
+          throw error;
+        }
         console.log("Login successful");
         toast({
           title: "Welcome back!",
@@ -39,9 +44,12 @@ const Auth = () => {
         navigate("/dashboard");
       } else {
         // Check if username is available before signup
-        const {
-          data: existingUser
-        } = await supabase.from('profiles').select('username').eq('username', username).maybeSingle();
+        const { data: existingUser } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('username', username)
+          .maybeSingle();
+        
         if (existingUser) {
           toast({
             title: "Username taken",
@@ -51,9 +59,8 @@ const Auth = () => {
           setLoading(false);
           return;
         }
-        const {
-          error
-        } = await supabase.auth.signUp({
+
+        const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -79,6 +86,35 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      if (error) throw error;
+      toast({
+        title: "Password reset email sent",
+        description: "Check your email for the password reset link"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <MenuBar />
@@ -91,36 +127,88 @@ const Auth = () => {
               </h1>
               
               <form onSubmit={handleAuth} className="space-y-6">
-                {!isLogin && <div>
-                    <Input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required={!isLogin} minLength={3} maxLength={30} pattern="^[a-zA-Z0-9_-]+$" title="Username can only contain letters, numbers, underscores, and hyphens" className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm" />
-                  </div>}
+                {!isLogin && (
+                  <div>
+                    <Input
+                      type="text"
+                      placeholder="Username"
+                      value={username}
+                      onChange={e => setUsername(e.target.value)}
+                      required={!isLogin}
+                      minLength={3}
+                      maxLength={30}
+                      pattern="^[a-zA-Z0-9_-]+$"
+                      title="Username can only contain letters, numbers, underscores, and hyphens"
+                      className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+                    />
+                  </div>
+                )}
                 
                 <div>
-                  <Input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm" />
+                  <Input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    required
+                    className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+                  />
                 </div>
                 
                 <div>
-                  <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm" />
+                  <Input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+                  />
                 </div>
 
-                <Button type="submit" className="w-full" style={{
-                backgroundColor: '#2144FF',
-                color: 'white'
-              }} disabled={loading}>
-                  {loading ? "Loading..." : isLogin ? <div className="flex items-center justify-center gap-2">
+                {isLogin && (
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="text-sm text-[#9F9EA1] hover:text-[#8E9196] transition-colors text-right w-full"
+                  >
+                    Forgot password?
+                  </button>
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  style={{
+                    backgroundColor: '#2144FF',
+                    color: 'white'
+                  }}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    "Loading..."
+                  ) : isLogin ? (
+                    <div className="flex items-center justify-center gap-2">
                       <LogIn className="w-4 h-4" />
                       <span>Sign In</span>
-                    </div> : <div className="flex items-center justify-center gap-2">
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2">
                       <UserPlus className="w-4 h-4" />
                       <span>Sign Up</span>
-                    </div>}
+                    </div>
+                  )}
                 </Button>
               </form>
 
-              <button onClick={() => {
-              setIsLogin(!isLogin);
-              setUsername("");
-            }} className="mt-6 text-center w-full text-[#00BF63] hover:text-emerald-700 transition-colors">
+              <button
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setUsername("");
+                }}
+                className="mt-6 text-center w-full text-[#00BF63] hover:text-emerald-700 transition-colors"
+              >
                 {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
               </button>
             </div>
@@ -132,3 +220,4 @@ const Auth = () => {
 };
 
 export default Auth;
+
