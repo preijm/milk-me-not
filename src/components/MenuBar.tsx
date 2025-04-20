@@ -1,5 +1,7 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { AuthButton } from "@/components/AuthButton";
+
 const MenuBar = () => {
   const location = useLocation();
   return <nav className="bg-white/5 backdrop-blur-[2px] fixed w-full z-50 border-b border-white/10">
@@ -11,13 +13,13 @@ const MenuBar = () => {
           </Link>
           
           <div className="flex items-center gap-6">
-            <Link to="/results" className={`transition-colors ${location.pathname === '/results' ? 'text-emerald-600 font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+            <Link to="/results" className={`transition-colors ${location.pathname === '/results' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
               Results
             </Link>
-            <Link to="/about" className={`transition-colors ${location.pathname === '/about' ? 'text-emerald-600 font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+            <Link to="/about" className={`transition-colors ${location.pathname === '/about' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
               About
             </Link>
-            <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-emerald-600 font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+            <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
               Contact
             </Link>
             <AuthButton />
@@ -26,4 +28,5 @@ const MenuBar = () => {
       </div>
     </nav>;
 };
+
 export default MenuBar;
