@@ -1,4 +1,3 @@
-
 @import './styles/colors.css';
 @tailwind base;
 @tailwind components;
@@ -24,7 +23,7 @@
     --destructive-foreground: 210 20% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 200 82% 45%; /* Changed from purple to match primary */
+    --ring: 220 5% 45%; /* Neutral gray color */
     --radius: 0.5rem;
     
     /* Custom colors for milk app */
@@ -58,7 +57,7 @@
     --destructive-foreground: 210 20% 98%;
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 200 70% 40%; /* Changed from purple to match primary */
+    --ring: 220 5% 45%; /* Consistent neutral gray for dark mode */
   }
 }
 
