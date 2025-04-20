@@ -5,9 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { LogIn, UserPlus } from "lucide-react";
+import { LogIn, UserPlus, Lock } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
 import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +22,9 @@ const Auth = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetInProgress, setResetInProgress] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -88,30 +98,40 @@ const Auth = () => {
   };
 
   const handleForgotPassword = async () => {
-    if (!email) {
+    if (!resetEmail) {
       toast({
         title: "Email required",
-        description: "Please enter your email address first",
+        description: "Please enter your email address",
         variant: "destructive"
       });
       return;
     }
 
+    setResetInProgress(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth`,
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
       });
+
       if (error) throw error;
+
+      // Always show success message, even if email doesn't exist (security best practice)
       toast({
-        title: "Password reset email sent",
-        description: "Check your email for the password reset link"
+        title: "Reset instructions sent",
+        description: "If an account exists with this email, you'll receive password reset instructions.",
       });
+      setShowResetDialog(false);
+      setResetEmail("");
     } catch (error: any) {
+      console.error("Password reset error:", error.message);
+      // Generic error message to avoid revealing account existence
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Unable to process request",
+        description: "Please try again later",
         variant: "destructive"
       });
+    } finally {
+      setResetInProgress(false);
     }
   };
 
@@ -170,7 +190,7 @@ const Auth = () => {
                 {isLogin && (
                   <button
                     type="button"
-                    onClick={handleForgotPassword}
+                    onClick={() => setShowResetDialog(true)}
                     className="text-sm text-[#9F9EA1] hover:text-[#8E9196] transition-colors text-right w-full"
                   >
                     Forgot password?
@@ -215,9 +235,48 @@ const Auth = () => {
           </div>
         </div>
       </BackgroundPatternWithOverlay>
+
+      <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Enter your email address and we'll send you instructions to reset your password.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
+              className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+            />
+            <div className="flex justify-end space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowResetDialog(false)}
+                disabled={resetInProgress}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleForgotPassword}
+                disabled={resetInProgress}
+                style={{
+                  backgroundColor: '#2144FF',
+                  color: 'white'
+                }}
+              >
+                <Lock className="w-4 h-4 mr-2" />
+                {resetInProgress ? "Sending..." : "Send Instructions"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 export default Auth;
-
