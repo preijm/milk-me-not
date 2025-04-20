@@ -26,7 +26,7 @@ export const useAggregatedResults = (sortConfig: SortConfig) => {
     queryFn: async () => {
       console.log("Fetching with sort config:", sortConfig);
       
-      // Get all milk test data first
+      // Get all milk test data first - no auth check needed for public data
       const { data, error } = await supabase
         .from('milk_tests_view')
         .select('brand_id, brand_name, product_id, product_name, property_names, is_barista, flavor_names, rating, price_quality_ratio') as unknown as {
