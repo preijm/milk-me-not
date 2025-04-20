@@ -23,7 +23,7 @@
     --destructive-foreground: 210 20% 98%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 220 5% 45%; /* Neutral gray color */
+    --ring: 220 10% 50%; /* Softer, less harsh neutral gray */
     --radius: 0.5rem;
     
     /* Custom colors for milk app */
@@ -57,7 +57,7 @@
     --destructive-foreground: 210 20% 98%;
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 220 5% 45%; /* Consistent neutral gray for dark mode */
+    --ring: 220 10% 50%; /* Consistent softer gray for dark mode */
   }
 }
 
