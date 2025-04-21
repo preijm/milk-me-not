@@ -47,7 +47,7 @@ export const AuthButton = () => {
       color: 'white' 
     }}>
       <LogIn className="w-4 h-4 mr-2" />
-      Get started
+      Login here
     </Button>;
   }
   
