@@ -29,14 +29,24 @@ const AuthForm = ({ onForgotPassword }: AuthFormProps) => {
           email,
           password,
         });
+        
         if (error) {
+          // Provide a more specific error message
+          const errorMessage = error.message.includes('Invalid login credentials') 
+            ? 'Incorrect email or password. Please try again.' 
+            : error.message;
+          
           toast({
-            title: "Login failed",
-            description: "Incorrect email or password",
+            title: "Login Failed",
+            description: errorMessage,
             variant: "destructive",
           });
-          throw error;
+          
+          // Ensure loading state is reset
+          setLoading(false);
+          return;
         }
+        
         toast({
           title: "Welcome back!",
           description: "You've been successfully logged in.",
