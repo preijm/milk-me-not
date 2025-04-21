@@ -23,7 +23,8 @@ const Auth = () => {
 
   // Check if we're in password reset mode
   useEffect(() => {
-    const hash = location.hash;
+    // Look for the access token in the URL hash
+    const hash = window.location.hash || location.hash;
     if (hash && hash.includes('#access_token=')) {
       setIsPasswordReset(true);
     }
@@ -70,6 +71,8 @@ const Auth = () => {
         description: "You can now log in with your new password"
       });
 
+      // Clear the hash from URL and navigate to login page
+      window.history.replaceState(null, '', window.location.pathname);
       navigate('/auth');
       setIsPasswordReset(false);
     } catch (error: any) {

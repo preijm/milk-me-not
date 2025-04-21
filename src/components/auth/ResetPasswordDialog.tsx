@@ -28,11 +28,9 @@ const ResetPasswordDialog = ({ open, onOpenChange }: ResetPasswordDialogProps) =
     }
     setResetInProgress(true);
     try {
-      // Get the current origin but ensure it's not localhost
+      // Get the current origin for proper redirect
       const origin = window.location.origin;
-      const redirectUrl = origin.includes('localhost') 
-        ? 'https://jtabjndnietpewvknjrm.supabase.co/auth/v1/verify' 
-        : `${origin}/auth/reset-password`;
+      const redirectUrl = `${origin}/auth/reset-password`;
       
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: redirectUrl,
