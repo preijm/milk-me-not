@@ -17,6 +17,7 @@ const Auth = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isResetting, setIsResetting] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,9 +28,28 @@ const Auth = () => {
     const hash = window.location.hash || location.hash;
     const path = location.pathname;
     
-    if ((hash && hash.includes('#access_token=')) || path.includes('/auth/reset-password')) {
+    // Extract access token from URL hash if present
+    if (hash && hash.includes('#access_token=')) {
+      const tokenMatch = hash.match(/access_token=([^&]*)/);
+      if (tokenMatch && tokenMatch[1]) {
+        setAccessToken(tokenMatch[1]);
+      }
       setIsPasswordReset(true);
-      console.log("Password reset mode detected");
+      console.log("Password reset mode detected from hash with token");
+    } 
+    // For paths like /auth/reset-password
+    else if (path.includes('/auth/reset-password')) {
+      // The URL might have been redirected without hash
+      // Look for the token in the URL query params as well
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenFromQuery = urlParams.get('access_token');
+      
+      if (tokenFromQuery) {
+        setAccessToken(tokenFromQuery);
+      }
+      
+      setIsPasswordReset(true);
+      console.log("Password reset mode detected from path");
     }
   }, [location]);
 
@@ -91,6 +111,7 @@ const Auth = () => {
         description: error.message || "Please try again later",
         variant: "destructive"
       });
+      console.error("Password update error:", error);
     } finally {
       setIsResetting(false);
     }
