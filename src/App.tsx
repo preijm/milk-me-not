@@ -29,6 +29,7 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/reset-password" element={<Auth />} />
             <Route path="/my-results" element={<MyResults />} />
             <Route path="/account" element={<Account />} />
             <Route path="*" element={<NotFound />} />
