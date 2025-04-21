@@ -17,6 +17,7 @@ const AuthForm = ({ onForgotPassword }: AuthFormProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const { loading, handleLogin, handleSignUp } = useAuthForm();
   const { toast } = useToast();
+  const location = useLocation();
 
   // Check for confirmation success in URL
   useEffect(() => {

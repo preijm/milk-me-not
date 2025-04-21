@@ -75,20 +75,21 @@ export const useAuthForm = () => {
         return;
       }
 
+      // With email confirmation disabled, this should create an account and sign in immediately
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { 
           data: { 
             username 
-          },
-          emailRedirectTo: `${window.location.origin}/auth#type=signup`
+          }
         }
       });
       
       if (error) throw error;
       
-      if (data && data.session) {
+      // Check if user was immediately signed in (no email confirmation needed)
+      if (data && data.user) {
         toast({
           title: "Account created!",
           description: "You're now logged in. Welcome to the community!",
@@ -96,9 +97,10 @@ export const useAuthForm = () => {
         
         navigate(fromAdd ? "/add" : "/my-results");
       } else {
+        // This should rarely happen with email confirmation disabled
         toast({
-          title: "Verification email sent",
-          description: "Please check your email to verify your account.",
+          title: "Account created",
+          description: "Please check your email to complete registration.",
         });
       }
     } catch (error: any) {
