@@ -136,6 +136,7 @@ const Auth = () => {
                       onChange={e => setNewPassword(e.target.value)}
                       required
                       minLength={6}
+                      showPasswordToggle
                       className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
                     />
                     <Input
@@ -145,6 +146,7 @@ const Auth = () => {
                       onChange={e => setConfirmPassword(e.target.value)}
                       required
                       minLength={6}
+                      showPasswordToggle
                       className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
                     />
                     <Button

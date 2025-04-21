@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LogIn, UserPlus } from "lucide-react";
@@ -115,6 +114,7 @@ const AuthForm = ({ onForgotPassword }: AuthFormProps) => {
         onChange={e => setPassword(e.target.value)}
         required
         minLength={6}
+        showPasswordToggle
         className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
       />
 
