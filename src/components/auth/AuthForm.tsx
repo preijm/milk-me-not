@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LogIn, UserPlus } from "lucide-react";
@@ -18,13 +19,29 @@ const AuthForm = ({ onForgotPassword }: AuthFormProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
-
   const location = useLocation();
+
+  // Check for confirmation success in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const type = params.get('type');
+    
+    if (type === 'signup') {
+      toast({
+        title: "Account created!",
+        description: "Your account has been successfully verified. Please log in.",
+      });
+      // Clear the hash without causing a page reload
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, [toast]);
+
   const fromAdd = location.state?.from === '/add';
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
@@ -74,20 +91,21 @@ const AuthForm = ({ onForgotPassword }: AuthFormProps) => {
           return;
         }
 
-        // Fix: Only send username in the metadata to match the database schema
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: { 
             data: { 
               username 
-            } 
+            },
+            emailRedirectTo: `${window.location.origin}/auth#type=signup`
           }
         });
         
         if (error) throw error;
+        
         toast({
-          title: "Account created!",
+          title: "Verification email sent",
           description: "Please check your email to verify your account.",
         });
       }
