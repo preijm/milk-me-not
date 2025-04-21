@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,11 +60,17 @@ const AuthForm = ({ onForgotPassword }: AuthFormProps) => {
           return;
         }
 
+        // Fix: Only send username in the metadata to match the database schema
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { username } }
+          options: { 
+            data: { 
+              username 
+            } 
+          }
         });
+        
         if (error) throw error;
         toast({
           title: "Account created!",
