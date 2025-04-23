@@ -36,10 +36,12 @@ const AuthForm = ({ onForgotPassword }: AuthFormProps) => {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted:", isLogin ? "login" : "signup");
     
     if (isLogin) {
       await handleLogin(email, password);
     } else {
+      console.log("Calling handleSignUp with:", { email, password, username });
       await handleSignUp({ email, password, username });
     }
   };

@@ -75,6 +75,8 @@ export const useAuthForm = () => {
         return;
       }
 
+      console.log("Starting sign up process with:", { email, username });
+      
       // With email confirmation disabled, this should create an account and sign in immediately
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -86,24 +88,40 @@ export const useAuthForm = () => {
         }
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error("Signup error:", error);
+        throw error;
+      }
+      
+      console.log("Signup response:", data);
       
       // Check if user was immediately signed in (no email confirmation needed)
-      if (data && data.user) {
+      if (data && data.session) {
+        console.log("User signed in successfully with session");
         toast({
           title: "Account created!",
           description: "You're now logged in. Welcome to the community!",
         });
         
         navigate(fromAdd ? "/add" : "/my-results");
-      } else {
-        // This should rarely happen with email confirmation disabled
+      } else if (data && data.user && !data.session) {
+        // This can happen if email confirmation is required despite settings
+        console.log("User created but no session - email confirmation may be required");
         toast({
           title: "Account created",
           description: "Please check your email to complete registration.",
         });
+      } else {
+        // Fallback for unexpected scenarios
+        console.log("Unexpected signup response:", data);
+        toast({
+          title: "Something went wrong",
+          description: "Please try again or contact support.",
+          variant: "destructive"
+        });
       }
     } catch (error: any) {
+      console.error("Caught error during signup:", error);
       toast({
         title: "Error",
         description: error.message,
