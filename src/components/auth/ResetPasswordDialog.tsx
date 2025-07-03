@@ -26,30 +26,53 @@ const ResetPasswordDialog = ({ open, onOpenChange }: ResetPasswordDialogProps) =
       });
       return;
     }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(resetEmail)) {
+      toast({
+        title: "Invalid email format",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setResetInProgress(true);
+    console.log("Starting password reset for email:", resetEmail);
+    
     try {
       // Get the current origin for proper redirect - ensure we use window.location.origin
       const origin = window.location.origin;
       // Use a specific path for password reset to ensure proper routing
       const redirectUrl = `${origin}/auth/reset-password`;
       
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      console.log("Redirect URL:", redirectUrl);
+      
+      const { data, error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: redirectUrl,
       });
 
-      if (error) throw error;
+      console.log("Reset password response:", { data, error });
 
+      if (error) {
+        console.error("Reset password error:", error);
+        throw error;
+      }
+
+      console.log("Password reset email sent successfully");
+      
       toast({
         title: "Reset instructions sent",
-        description: "If an account exists with this email, you'll receive password reset instructions.",
+        description: "If an account exists with this email, you'll receive password reset instructions. Check your email and spam folder.",
       });
       onOpenChange(false);
       setResetEmail("");
     } catch (error: any) {
-      // Generic error message to avoid revealing account existence
+      console.error("Password reset error:", error);
       toast({
-        title: "Unable to process request",
-        description: "Please try again later",
+        title: "Reset password failed",
+        description: error.message || "Please check your email address and try again.",
         variant: "destructive"
       });
     } finally {
