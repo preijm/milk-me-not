@@ -41,10 +41,8 @@ const ResetPasswordDialog = ({
     setResetInProgress(true);
     console.log("Starting password reset for email:", resetEmail);
     try {
-      // Get the current origin for proper redirect - ensure we use window.location.origin
-      const origin = window.location.origin;
-      // Use the auth page for password reset to ensure proper routing
-      const redirectUrl = `${origin}/auth`;
+      // Use the deployed domain for password reset emails to avoid localhost issues
+      const redirectUrl = "https://534a6b8e-9504-4d1c-9f7f-e02ff5b37b5b.lovableproject.com/auth";
       console.log("Redirect URL:", redirectUrl);
       const {
         data,
