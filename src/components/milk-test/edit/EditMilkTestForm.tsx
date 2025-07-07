@@ -46,20 +46,20 @@ export const EditMilkTestForm = ({
   onCancel,
 }: EditMilkTestFormProps) => {
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-4">
       {/* Product Information Card */}
       <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardContent className="p-6">
+        <CardContent className="p-4">
           <ProductInfo brand={brand} productName={productName} />
         </CardContent>
       </Card>
 
       {/* Rating and Notes Card */}
       <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardHeader className="pb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Rating & Notes</h2>
+        <CardHeader className="pb-2 pt-4">
+          <h2 className="text-base font-semibold text-gray-900">Rating & Notes</h2>
         </CardHeader>
-        <CardContent className="pt-0 space-y-4">
+        <CardContent className="pt-0 pb-4 space-y-3">
           <RatingSelect 
             rating={formState.rating} 
             setRating={formSetters.setRating} 
@@ -75,40 +75,37 @@ export const EditMilkTestForm = ({
         </CardContent>
       </Card>
 
-      {/* Price-to-Quality Card */}
+      {/* Price and Shop Information Combined Card */}
       <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardHeader className="pb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Price-to-Quality Ratio</h2>
+        <CardHeader className="pb-2 pt-4">
+          <h2 className="text-base font-semibold text-gray-900">Purchase Details</h2>
         </CardHeader>
-        <CardContent className="pt-0">
-          <PriceInput 
-            price={formState.priceQualityRatio} 
-            setPrice={formSetters.setPriceQualityRatio}
-            hasChanged={formState.priceHasChanged}
-            setHasChanged={formSetters.setPriceHasChanged}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Shop Information Card */}
-      <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardHeader className="pb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Buying Information</h2>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <ShopSelect
-            shop={formState.shop}
-            setShop={formSetters.setShop}
-          />
+        <CardContent className="pt-0 pb-4 space-y-3">
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Price-to-Quality Ratio</label>
+            <PriceInput 
+              price={formState.priceQualityRatio} 
+              setPrice={formSetters.setPriceQualityRatio}
+              hasChanged={formState.priceHasChanged}
+              setHasChanged={formSetters.setPriceHasChanged}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Shop</label>
+            <ShopSelect
+              shop={formState.shop}
+              setShop={formSetters.setShop}
+            />
+          </div>
         </CardContent>
       </Card>
 
       {/* Drinking Style Card */}
       <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardHeader className="pb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Drinking Style</h2>
+        <CardHeader className="pb-2 pt-4">
+          <h2 className="text-base font-semibold text-gray-900">Drinking Style</h2>
         </CardHeader>
-        <CardContent className="pt-0">
+        <CardContent className="pt-0 pb-4">
           <DrinkPreference
             preference={formState.drinkPreference}
             setPreference={formSetters.setDrinkPreference}
@@ -117,12 +114,13 @@ export const EditMilkTestForm = ({
       </Card>
 
       {/* Action Buttons */}
-      <div className="flex justify-end space-x-2 pt-4">
+      <div className="flex justify-end space-x-2 pt-2">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
           disabled={formState.isSubmitting}
+          className="px-4 py-2"
         >
           Cancel
         </Button>
@@ -130,6 +128,7 @@ export const EditMilkTestForm = ({
           type="submit" 
           variant="brand"
           disabled={formState.isSubmitting}
+          className="px-4 py-2"
         >
           {formState.isSubmitting ? "Updating..." : "Update"}
         </Button>
