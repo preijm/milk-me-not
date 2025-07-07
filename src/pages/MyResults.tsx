@@ -10,9 +10,13 @@ import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ImageModal } from "@/components/milk-test/ImageModal";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const MyResults = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [editingTest, setEditingTest] = useState<MilkTestResult | null>(null);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ column: 'created_at', direction: 'desc' });
@@ -94,7 +98,17 @@ const MyResults = () => {
       <MenuBar />
       <BackgroundPattern>
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">My Results</h1>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">My Results</h1>
+            <Button 
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+              variant="brand"
+            >
+              <Plus className="h-4 w-4" />
+              Add Milk Test
+            </Button>
+          </div>
           
           {/* Stats Overview Card - Separated like product details page */}
           <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-6 animate-fade-in">
