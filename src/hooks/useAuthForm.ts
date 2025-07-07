@@ -104,7 +104,8 @@ export const useAuthForm = () => {
         options: { 
           data: { 
             username 
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/auth`
         }
       });
       
