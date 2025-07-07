@@ -31,6 +31,13 @@ const badgeVariants = cva(
         scoreBadgePoor: "bg-transparent text-red-600 border-2 border-red-600 rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center hover:shadow-lg",
         // Test count badge
         testCount: "bg-transparent text-slate-600 border-slate-600 rounded-md px-2.5 py-1.5 text-sm font-medium min-w-[40px] justify-center hover:shadow-md",
+        // Circular score badges
+        circularScoreExcellent: "bg-emerald-500 text-white rounded-full h-12 w-12 text-sm font-bold flex items-center justify-center shadow-lg",
+        circularScoreGood: "bg-sky-600 text-white rounded-full h-12 w-12 text-sm font-bold flex items-center justify-center shadow-lg", 
+        circularScoreFair: "bg-orange-500 text-white rounded-full h-12 w-12 text-sm font-bold flex items-center justify-center shadow-lg",
+        circularScorePoor: "bg-red-500 text-white rounded-full h-12 w-12 text-sm font-bold flex items-center justify-center shadow-lg",
+        // Circular test count badge
+        circularTestCount: "bg-gray-200 text-gray-700 rounded-full h-12 w-12 text-sm font-medium flex items-center justify-center shadow-lg",
       },
     },
     defaultVariants: {

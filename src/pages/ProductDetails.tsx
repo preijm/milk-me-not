@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
+import { CircularStats } from "@/components/CircularStats";
 
 type ProductDetails = {
   product_id: string;
@@ -94,15 +95,6 @@ const ProductDetails = () => {
     
     const imageUrl = supabase.storage.from('milk-pictures').getPublicUrl(picturePath).data.publicUrl;
     setSelectedImage(imageUrl);
-  };
-
-  const getRatingColorClass = (rating: number) => {
-    if (rating >= 8.5) return "bg-green-500 text-white";
-    if (rating >= 7.5) return "bg-green-400 text-white";
-    if (rating >= 6.5) return "bg-blue-400 text-white";
-    if (rating >= 5.5) return "bg-yellow-400 text-gray-800";
-    if (rating >= 4.5) return "bg-orange-400 text-white";
-    return "bg-red-400 text-white";
   };
 
   if (isLoadingProduct) {
@@ -199,21 +191,10 @@ const ProductDetails = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3">
-                  <div className="flex flex-col items-center">
-                    <div className="text-xs text-gray-500 mb-1">Score</div>
-                    <div className={`rounded-full h-10 w-10 flex items-center justify-center ${getRatingColorClass(product.avg_rating)}`}>
-                      <span className="font-semibold">{product.avg_rating.toFixed(1)}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="text-xs text-gray-500 mb-1">Tests</div>
-                    <div className="inline-flex items-center justify-center rounded-full bg-gray-100 h-10 w-10">
-                      <span className="text-gray-700 font-medium">{product.count}</span>
-                    </div>
-                  </div>
-                </div>
+                <CircularStats 
+                  score={product.avg_rating} 
+                  testCount={product.count} 
+                />
               </div>
             </CardContent>
           </Card>
