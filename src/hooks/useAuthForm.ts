@@ -112,9 +112,15 @@ export const useAuthForm = () => {
       
       if (error) {
         console.error("Signup error:", error);
+        console.error("Error message:", error.message);
+        console.error("Error code:", error.status);
         
-        // Handle duplicate email error specifically
-        if (error.message.includes('User already registered')) {
+        // Handle various duplicate email error messages
+        if (error.message.includes('User already registered') || 
+            error.message.includes('already registered') ||
+            error.message.includes('already been registered') ||
+            error.message.includes('email address is already registered') ||
+            error.status === 422) {
           toast({
             title: "Email already registered",
             description: "An account with this email already exists. Please log in instead.",
@@ -124,7 +130,36 @@ export const useAuthForm = () => {
           return;
         }
         
-        throw error;
+        // Handle invalid email format
+        if (error.message.includes('Invalid email')) {
+          toast({
+            title: "Invalid email",
+            description: "Please enter a valid email address.",
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+        
+        // Handle weak password
+        if (error.message.includes('Password should be at least')) {
+          toast({
+            title: "Weak password",
+            description: error.message,
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+        
+        // For any other signup error, show the message and stop loading
+        toast({
+          title: "Signup failed",
+          description: error.message || "Something went wrong during signup. Please try again.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
       }
       
       console.log("Signup response:", data);
