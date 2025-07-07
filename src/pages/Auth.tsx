@@ -22,62 +22,42 @@ const Auth = () => {
 
   // Check if we're in password reset mode
   useEffect(() => {
-    const checkResetMode = async () => {
+    const checkResetMode = () => {
       // Check if we're on the reset password route
       const isResetRoute = location.pathname === '/auth/reset-password';
       
       // Check for tokens in hash fragment (Supabase reset links use hash)
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get('access_token');
-      const refreshToken = hashParams.get('refresh_token');
-      const type = hashParams.get('type');
+      const hash = window.location.hash;
+      console.log("Full hash:", hash);
       
-      console.log("Checking for reset mode, route:", location.pathname, "type:", type, "has tokens:", !!accessToken);
-      
-      // Show reset form if we're on reset route OR if we have recovery tokens
-      if (isResetRoute || (type === 'recovery' && accessToken && refreshToken)) {
-        if (accessToken && refreshToken) {
-          console.log("Found reset tokens, setting session");
-          try {
-            const { data, error } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken
-            });
-            
-            if (error) {
-              console.error("Error setting session:", error);
-              toast({
-                title: "Invalid reset link",
-                description: "Please request a new password reset",
-                variant: "destructive"
-              });
-              return;
-            }
-            
-            if (data.session) {
-              console.log("Session established successfully");
-              setIsPasswordReset(true);
-              
-              // Clean up the URL to avoid issues
-              window.history.replaceState(null, '', '/auth/reset-password');
-            }
-          } catch (error) {
-            console.error("Session setup error:", error);
-            toast({
-              title: "Error processing reset link",
-              description: "Please request a new password reset",
-              variant: "destructive"
-            });
-          }
+      if (hash && hash.length > 1) {
+        // Remove the # and parse parameters
+        const hashParams = new URLSearchParams(hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        const type = hashParams.get('type');
+        
+        console.log("Hash parsing results:", { type, hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
+        
+        // Show reset form if we have recovery tokens OR if we're on the reset route
+        if (type === 'recovery' && accessToken && refreshToken) {
+          console.log("Found valid recovery tokens, showing reset form");
+          setIsPasswordReset(true);
+          
+          // Clean up the URL but preserve the hash for password update
+          // Don't replace state here, we need the tokens for the password update
         } else if (isResetRoute) {
-          // On reset route but no tokens yet - show the reset form anyway
+          console.log("On reset route without tokens, showing reset form");
           setIsPasswordReset(true);
         }
+      } else if (isResetRoute) {
+        console.log("On reset route without hash, showing reset form");
+        setIsPasswordReset(true);
       }
     };
     
     checkResetMode();
-  }, [location, toast]);
+  }, [location]);
 
   const handlePasswordUpdate = async () => {
     if (!newPassword) {
@@ -118,7 +98,7 @@ const Auth = () => {
       
       if (accessToken && refreshToken) {
         console.log("Setting session from hash tokens before password update");
-        const { error: sessionError } = await supabase.auth.setSession({
+        const { data, error: sessionError } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken
         });
@@ -127,7 +107,19 @@ const Auth = () => {
           console.error("Session error:", sessionError);
           throw new Error("Failed to establish session. Please click the reset link from your email again.");
         }
+        
+        console.log("Session set successfully:", !!data.session);
       }
+
+      // Verify we have a valid session before proceeding
+      const { data: { session }, error: getSessionError } = await supabase.auth.getSession();
+      
+      if (getSessionError || !session) {
+        console.error("No valid session found:", getSessionError);
+        throw new Error("No authentication session found. Please click the reset link from your email again.");
+      }
+      
+      console.log("Valid session confirmed, proceeding with password update");
 
       // Now update the password
       const { error } = await supabase.auth.updateUser({
