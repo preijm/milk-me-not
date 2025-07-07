@@ -90,4 +90,10 @@
   .btn-brand:disabled {
     @apply bg-[hsl(var(--brand-blue-disabled))] text-gray-500 cursor-not-allowed opacity-60 transform-none shadow-none;
   }
+
+  /* Apply disabled color to all UI buttons */
+  .inline-flex.items-center.justify-center:disabled,
+  button[class*="inline-flex"]:disabled {
+    @apply bg-[hsl(var(--brand-blue-disabled))] text-gray-500 !important;
+  }
 }
