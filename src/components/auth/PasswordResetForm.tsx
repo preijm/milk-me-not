@@ -52,11 +52,8 @@ const PasswordResetForm = ({ isResetting, onPasswordUpdate }: PasswordResetFormP
                 className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
               />
               <Button
+                variant="brand"
                 className="w-full"
-                style={{
-                  backgroundColor: '#2144FF',
-                  color: 'white'
-                }}
                 disabled={isResetting}
                 onClick={handleSubmit}
               >

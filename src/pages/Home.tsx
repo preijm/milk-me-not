@@ -37,11 +37,8 @@ const Home = () => {
             <Button 
               onClick={handleStartJourney}
               size="lg" 
-              className="text-lg px-8 animate-fade-in hover:bg-blue-700"
-              style={{ 
-                backgroundColor: '#2144FF', 
-                color: 'white'
-              }}
+              variant="brand"
+              className="text-lg px-8 animate-fade-in"
             >
               <Milk className="mr-2 h-6 w-6" />
               Start Your Taste Journey

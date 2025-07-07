@@ -34,10 +34,7 @@ const ResetPassword = () => {
                   <div className="text-center">
                     <Button
                       asChild
-                      style={{
-                        backgroundColor: '#2144FF',
-                        color: 'white'
-                      }}
+                      variant="brand"
                     >
                       <a href="/auth">Go to Login</a>
                     </Button>

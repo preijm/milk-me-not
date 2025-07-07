@@ -30,11 +30,8 @@ const AuthFormButtons = ({
 
       <Button
         type="submit"
+        variant="brand"
         className="w-full"
-        style={{
-          backgroundColor: '#2144FF',
-          color: 'white'
-        }}
         disabled={loading}
       >
         {loading ? (

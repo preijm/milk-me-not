@@ -88,10 +88,7 @@ const ResetPasswordDialog = ({
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={resetInProgress}>
               Cancel
             </Button>
-            <Button onClick={handleForgotPassword} disabled={resetInProgress} style={{
-            backgroundColor: '#2144FF',
-            color: 'white'
-          }}>
+            <Button onClick={handleForgotPassword} disabled={resetInProgress} variant="brand">
               <Lock className="w-4 h-4 mr-2" />
               {resetInProgress ? "Sending..." : "Send Instructions"}
             </Button>

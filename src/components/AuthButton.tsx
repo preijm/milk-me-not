@@ -43,10 +43,7 @@ export const AuthButton = () => {
   };
   
   if (!user) {
-    return <Button onClick={handleAuth} className="w-full" style={{ 
-      backgroundColor: '#2144FF', 
-      color: 'white' 
-    }}>
+    return <Button onClick={handleAuth} variant="brand" className="w-full">
       <LogIn className="w-4 h-4 mr-2" />
       Login here
     </Button>;

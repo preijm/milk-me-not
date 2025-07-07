@@ -44,14 +44,14 @@ export const SearchBox = ({
             </button>}
         </div>
         
-        {!isMobile && <Button type="button" onClick={onAddNew} className="whitespace-nowrap text-white bg-[#2144ff]">
+        {!isMobile && <Button type="button" onClick={onAddNew} variant="brand" className="whitespace-nowrap">
             <Plus className="h-4 w-4 mr-2" />
             New Product
           </Button>}
       </div>
       
       {isMobile && <div className="mt-2">
-          <Button type="button" onClick={onAddNew} className="w-full">
+          <Button type="button" onClick={onAddNew} variant="brand" className="w-full">
             <Plus className="h-4 w-4 mr-2" />
             New Product
           </Button>

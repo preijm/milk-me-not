@@ -153,11 +153,8 @@ const Account = () => {
 
                 <Button 
                   type="submit" 
+                  variant="brand"
                   className="w-full" 
-                  style={{
-                    backgroundColor: '#2144FF',
-                    color: 'white'
-                  }} 
                   disabled={loading}
                 >
                   <Save className="w-4 h-4 mr-2" />
@@ -190,11 +187,8 @@ const Account = () => {
                 />
                 <Button 
                   type="submit" 
+                  variant="brand"
                   className="w-full" 
-                  style={{
-                    backgroundColor: '#2144FF',
-                    color: 'white'
-                  }} 
                   disabled={isChangingPassword}
                 >
                   <Lock className="w-4 h-4 mr-2" />

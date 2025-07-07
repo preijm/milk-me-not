@@ -151,7 +151,8 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
         <Popover>
           <PopoverTrigger asChild>
             <Button 
-              className="whitespace-nowrap text-white bg-[#2144ff]"
+              variant="brand"
+              className="whitespace-nowrap"
               size="default"
             >
               <Plus className="h-4 w-4 mr-2" />
