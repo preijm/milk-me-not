@@ -95,6 +95,7 @@ export const useAuthForm = () => {
         return;
       }
 
+
       console.log("Starting sign up process with:", { email, username });
       
       // With email confirmation disabled, this should create an account and sign in immediately
