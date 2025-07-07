@@ -9,6 +9,7 @@ import { useUserMilkTests, SortConfig } from "@/hooks/useUserMilkTests";
 import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { ImageModal } from "@/components/milk-test/ImageModal";
 
 const MyResults = () => {
   const { toast } = useToast();
@@ -16,6 +17,7 @@ const MyResults = () => {
   const [editingTest, setEditingTest] = useState<MilkTestResult | null>(null);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ column: 'created_at', direction: 'desc' });
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [selectedImagePath, setSelectedImagePath] = useState<string | null>(null);
 
   const { data: results = [], isLoading, error, refetch } = useUserMilkTests(sortConfig);
 
@@ -47,6 +49,10 @@ const MyResults = () => {
   const handleEdit = (test: MilkTestResult) => {
     // Pass the complete MilkTestResult object
     setEditingTest(test);
+  };
+
+  const handleImageClick = (imagePath: string) => {
+    setSelectedImagePath(imagePath);
   };
 
   const filteredResults = results.filter((result) => {
@@ -114,6 +120,7 @@ const MyResults = () => {
                   setSearchTerm={setSearchTerm}
                   viewMode={viewMode}
                   setViewMode={setViewMode}
+                  onImageClick={handleImageClick}
                 />
               </div>
             </CardContent>
@@ -125,6 +132,14 @@ const MyResults = () => {
               open={!!editingTest}
               onOpenChange={(open) => !open && setEditingTest(null)}
               onSuccess={refetch}
+            />
+          )}
+
+          {selectedImagePath && (
+            <ImageModal 
+              imageUrl={supabase.storage.from('milk-pictures').getPublicUrl(selectedImagePath).data.publicUrl}
+              isOpen={!!selectedImagePath}
+              onClose={() => setSelectedImagePath(null)}
             />
           )}
         </div>

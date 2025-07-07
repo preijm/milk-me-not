@@ -12,6 +12,9 @@ import { DrinkPreferenceIcon } from "@/components/milk-test/DrinkPreferenceIcon"
 import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import { formatScore } from "@/lib/scoreFormatter";
+import { ImageIcon } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Table,
   TableBody,
@@ -27,6 +30,7 @@ interface MyResultsTableProps {
   handleSort: (column: string) => void;
   onEdit: (result: MilkTestResult) => void;
   onDelete: (id: string) => void;
+  onImageClick?: (path: string) => void;
 }
 
 export const MyResultsTable = ({ 
@@ -34,7 +38,8 @@ export const MyResultsTable = ({
   sortConfig, 
   handleSort, 
   onEdit, 
-  onDelete 
+  onDelete,
+  onImageClick 
 }: MyResultsTableProps) => {
   const getRatingColorClass = (rating: number) => {
     if (rating >= 8.5) return "bg-green-500 text-white";
@@ -50,7 +55,15 @@ export const MyResultsTable = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 text-sm">
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[12%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
+              <SortableColumnHeader
+                column="picture_path"
+                label="Image"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
               <SortableColumnHeader
                 column="created_at"
                 label="Date"
@@ -58,7 +71,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[15%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[12%]">
               <SortableColumnHeader
                 column="brand_name"
                 label="Brand"
@@ -66,7 +79,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[22%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[25%]">
               <SortableColumnHeader
                 column="product_name"
                 label="Product"
@@ -74,7 +87,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[7%]">
               <SortableColumnHeader
                 column="rating"
                 label="Score"
@@ -82,7 +95,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[7%]">
               <SortableColumnHeader
                 column="drink_preference"
                 label="Style"
@@ -90,7 +103,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[12%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
               <SortableColumnHeader
                 column="price_quality_ratio"
                 label="Price"
@@ -98,7 +111,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[15%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[18%]">
               <SortableColumnHeader
                 column="shop_name"
                 label="Shop"
@@ -106,7 +119,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[7%]">
               <SortableColumnHeader
                 column="notes"
                 label="Note"
@@ -114,19 +127,53 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[12%]">Actions</TableHead>
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {results.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className="text-center py-8">
+              <TableCell colSpan={10} className="text-center py-8">
                 No results found
               </TableCell>
             </TableRow>
           ) : (
             results.map((result) => (
               <TableRow key={result.id}>
+                <TableCell>
+                  {result.picture_path ? (
+                    <div 
+                      className="w-10 h-10 relative overflow-hidden rounded-lg cursor-pointer transition-transform hover:scale-105 border border-gray-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onImageClick?.(result.picture_path!);
+                      }}
+                    >
+                      <AspectRatio ratio={1/1}>
+                        <img 
+                          src={`${supabase.storage.from('milk-pictures').getPublicUrl(result.picture_path).data.publicUrl}`} 
+                          alt="Product"
+                          className="object-cover w-full h-full"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            const nextSibling = target.nextSibling as HTMLElement;
+                            if (nextSibling) {
+                              nextSibling.style.display = 'flex';
+                            }
+                          }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100" style={{display: 'none'}}>
+                          <ImageIcon className="w-5 h-5 text-gray-400" />
+                        </div>
+                      </AspectRatio>
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg">
+                      <ImageIcon className="w-5 h-5 text-gray-400" />
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
                 <TableCell className="font-medium">{result.brand_name}</TableCell>
                 <TableCell>

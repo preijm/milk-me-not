@@ -28,6 +28,7 @@ interface UserResultsContainerProps {
   setSearchTerm: (term: string) => void;
   viewMode: 'grid' | 'table';
   setViewMode: (mode: 'grid' | 'table') => void;
+  onImageClick?: (path: string) => void;
 }
 
 export const UserResultsContainer = ({
@@ -39,7 +40,8 @@ export const UserResultsContainer = ({
   searchTerm,
   setSearchTerm,
   viewMode,
-  setViewMode
+  setViewMode,
+  onImageClick
 }: UserResultsContainerProps) => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -101,6 +103,7 @@ export const UserResultsContainer = ({
           handleSort={handleSortWithoutViewChange}
           onEdit={onEdit}
           onDelete={handleDeleteClick}
+          onImageClick={onImageClick}
         />
       )}
 
