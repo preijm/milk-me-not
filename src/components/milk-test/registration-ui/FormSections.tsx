@@ -34,10 +34,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-4">
         <div className="space-y-2">
-          <label htmlFor="brand" className="block font-medium">
+          <label htmlFor="brand" className="block font-medium text-gray-900">
             Brand <span className="text-red-500">*</span>
           </label>
-          <div className="w-full"> {/* Wrap BrandSelect in a div with width */}
+          <div className="w-full">
             <BrandSelect
               brandId={brandId}
               setBrandId={setBrandId}
@@ -46,7 +46,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="product" className="block font-medium">
+          <label htmlFor="product" className="block font-medium text-gray-900">
             Product <span className="text-red-500">*</span>
           </label>
           <input
@@ -54,33 +54,33 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
             id="product"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter product name..."
             required
           />
         </div>
 
-        <hr className="my-4" />
+        <hr className="my-4 border-gray-200" />
 
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <span className="font-medium">Barista</span>
+            <span className="font-medium text-gray-900">Barista</span>
             <BaristaToggle isBarista={isBarista} onToggle={setIsBarista} />
           </div>
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium">Properties</span>
+          <span className="block font-medium text-gray-900">Properties</span>
           <ProductOptions
             selectedTypes={selectedProductTypes}
             setSelectedTypes={setSelectedProductTypes}
           />
         </div>
 
-        <hr className="my-4" />
+        <hr className="my-4 border-gray-200" />
 
         <div className="space-y-2">
-          <span className="block font-medium">Flavors</span>
+          <span className="block font-medium text-gray-900">Flavors</span>
           <FlavorSelector
             flavors={flavors}
             selectedFlavors={selectedFlavors}
@@ -101,7 +101,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
         <Button
           type="submit"
           disabled={!isFormValid || isSubmitting}
-          className="px-4 bg-cream-300 hover:bg-cream-200 text-milk-500"
+          className="px-4 bg-blue-600 hover:bg-blue-700 text-white"
         >
           {isSubmitting ? "Registering..." : "Register Product"}
         </Button>

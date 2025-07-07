@@ -159,7 +159,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
             </Button>
           </PopoverTrigger>
           <PopoverContent 
-            className="p-0 w-[90vw] sm:w-64" 
+            className="p-0 w-[90vw] sm:w-64 bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl" 
             align={isMobile ? "center" : "end"}
             side="bottom"
             sideOffset={8}

@@ -131,7 +131,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl">
           <ProductRegistrationHeader />
           <DialogDescription className="sr-only">
             Register a new milk product with brand, product details, properties, and flavors
@@ -143,7 +143,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
       
       {/* Simplified Alert dialog for duplicate products */}
       <AlertDialog open={duplicateDialogOpen} onOpenChange={setDuplicateDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl">
           <AlertDialogHeader>
             <AlertDialogTitle>Duplicate Product</AlertDialogTitle>
             <AlertDialogDescription>
@@ -152,7 +152,10 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={handleDuplicateDialogAction}>
+            <AlertDialogAction 
+              onClick={handleDuplicateDialogAction}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
               OK
             </AlertDialogAction>
           </AlertDialogFooter>
