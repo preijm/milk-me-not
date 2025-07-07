@@ -91,15 +91,6 @@ export const useAuthFlow = () => {
         } finally {
           setIsResetting(false);
         }
-      } else if (location.pathname === '/auth/reset-password') {
-        console.log("On reset route without code, redirecting to login");
-        toast({
-          title: "Reset link required",
-          description: "Please click the reset link from your email to set a new password.",
-          variant: "destructive"
-        });
-        window.history.replaceState(null, '', '/auth');
-        setIsPasswordReset(false);
       }
     };
     

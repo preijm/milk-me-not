@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import MyResults from "./pages/MyResults";
 import Account from "./pages/Account";
 import ProductDetails from "./pages/ProductDetails";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,7 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/auth/reset-password" element={<Auth />} />
+            <Route path="/auth/reset-password" element={<ResetPassword />} />
             <Route path="/my-results" element={<MyResults />} />
             <Route path="/account" element={<Account />} />
             <Route path="*" element={<NotFound />} />
