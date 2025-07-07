@@ -23,10 +23,26 @@ export const useAuthFlow = () => {
         return;
       }
 
+      // Log the full URL for debugging
+      console.log("Current URL:", window.location.href);
+      console.log("Search params:", window.location.search);
+      console.log("Hash:", window.location.hash);
+
       const urlParams = new URLSearchParams(window.location.search);
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      
+      // Check for various possible parameters that Supabase might use
       const code = urlParams.get('code') || hashParams.get('code');
-      const type = hashParams.get('type');
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+      const type = hashParams.get('type') || urlParams.get('type');
+      
+      console.log("URL parameters found:", { 
+        code: !!code, 
+        accessToken: !!accessToken, 
+        refreshToken: !!refreshToken, 
+        type 
+      });
       
       // Handle email confirmation - sign out user and show success message
       if (type === 'signup') {
@@ -39,58 +55,69 @@ export const useAuthFlow = () => {
         return;
       }
       
-      console.log("Checking for reset code:", { code: !!code });
-      
-      if (code) {
+      // Handle password reset - check for various possible indicators
+      if (code || (accessToken && refreshToken) || type === 'recovery') {
         try {
-          console.log("Found reset code, exchanging for session");
+          console.log("Password reset link detected, processing...");
           setIsResetting(true);
           
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-          
-          if (error) {
-            console.error("Code exchange error:", error);
-            toast({
-              title: "Invalid reset link",
-              description: "This password reset link is invalid or has expired. Please request a new one.",
-              variant: "destructive"
-            });
-            window.history.replaceState(null, '', '/auth');
-            setIsPasswordReset(false);
-            return;
+          // If we have a code, try to exchange it for a session
+          if (code) {
+            console.log("Found reset code, exchanging for session");
+            const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+            
+            if (error) {
+              console.error("Code exchange error:", error);
+              throw error;
+            }
+            console.log("Code exchange successful:", data);
           }
           
-          console.log("Code exchange successful, verifying session...");
+          // If we have tokens in the hash, set the session directly
+          if (accessToken && refreshToken) {
+            console.log("Found tokens in hash, setting session");
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            });
+            
+            if (error) {
+              console.error("Session setting error:", error);
+              throw error;
+            }
+            console.log("Session set successfully:", data);
+          }
           
+          // Verify we have a valid session
+          console.log("Verifying session...");
           const { data: { session: verifySession }, error: sessionError } = await supabase.auth.getSession();
           
           if (sessionError || !verifySession) {
             console.error("Session verification failed:", sessionError);
-            toast({
-              title: "Session Error",
-              description: "Failed to establish session. Please try the reset link again.",
-              variant: "destructive"
-            });
-            window.history.replaceState(null, '', '/auth');
-            setIsPasswordReset(false);
-            return;
+            throw new Error("Failed to establish valid session");
           }
           
-          console.log("Session verified successfully");
+          console.log("Session verified successfully, user can reset password");
           setIsPasswordReset(true);
           
+          // Clean up the URL
+          window.history.replaceState(null, '', window.location.pathname);
+          
         } catch (error: any) {
-          console.error("Code exchange failed:", error);
+          console.error("Password reset setup failed:", error);
           toast({
-            title: "Error",
-            description: "Failed to process reset link. Please try again.",
+            title: "Invalid reset link",
+            description: "This password reset link is invalid or has expired. Please request a new one.",
             variant: "destructive"
           });
-          window.history.replaceState(null, '', '/auth');
           setIsPasswordReset(false);
         } finally {
           setIsResetting(false);
         }
+      } else {
+        // No reset parameters found
+        console.log("No reset parameters found in URL");
+        setIsPasswordReset(false); 
       }
     };
     
