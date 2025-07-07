@@ -51,11 +51,27 @@ const Auth = () => {
             return;
           }
           
-          console.log("Code exchange successful, session established");
+          console.log("Code exchange successful, verifying session...");
+          
+          // Verify session is actually available after code exchange
+          const { data: { session: verifySession }, error: sessionError } = await supabase.auth.getSession();
+          
+          if (sessionError || !verifySession) {
+            console.error("Session verification failed:", sessionError);
+            toast({
+              title: "Session Error",
+              description: "Failed to establish session. Please try the reset link again.",
+              variant: "destructive"
+            });
+            window.history.replaceState(null, '', '/auth');
+            setIsPasswordReset(false);
+            return;
+          }
+          
+          console.log("Session verified successfully");
           setIsPasswordReset(true);
           
-          // Clean up URL
-          window.history.replaceState(null, '', '/auth/reset-password');
+          // Keep the URL with the code until password is successfully updated
           
         } catch (error: any) {
           console.error("Code exchange failed:", error);
