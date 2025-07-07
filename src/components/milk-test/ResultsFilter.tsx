@@ -92,11 +92,6 @@ export const ResultsFilter = ({ filters, onFiltersChange }: ResultsFilterProps) 
           >
             <Filter className="h-4 w-4" />
             <span>Filter</span>
-            {activeFilterCount > 0 && (
-              <Badge variant="default" className="ml-1 h-4 w-4 p-0 text-xs flex items-center justify-center">
-                {activeFilterCount}
-              </Badge>
-            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 p-4" align="start">
