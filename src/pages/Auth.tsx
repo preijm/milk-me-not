@@ -45,6 +45,9 @@ const Auth = () => {
               description: "This password reset link is invalid or has expired. Please request a new one.",
               variant: "destructive"
             });
+            // Redirect to login form if code exchange fails
+            window.history.replaceState(null, '', '/auth');
+            setIsPasswordReset(false);
             return;
           }
           
@@ -61,13 +64,22 @@ const Auth = () => {
             description: "Failed to process reset link. Please try again.",
             variant: "destructive"
           });
+          // Redirect to login form if code exchange fails
+          window.history.replaceState(null, '', '/auth');
+          setIsPasswordReset(false);
         } finally {
           setIsResetting(false);
         }
       } else if (location.pathname === '/auth/reset-password') {
-        // If on reset route without code, show form anyway (fallback)
-        console.log("On reset route without code");
-        setIsPasswordReset(true);
+        // If on reset route without code, redirect to login and show message
+        console.log("On reset route without code, redirecting to login");
+        toast({
+          title: "Reset link required",
+          description: "Please click the reset link from your email to set a new password.",
+          variant: "destructive"
+        });
+        window.history.replaceState(null, '', '/auth');
+        setIsPasswordReset(false);
       }
     };
     
