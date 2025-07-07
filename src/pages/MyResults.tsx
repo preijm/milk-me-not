@@ -88,12 +88,19 @@ const MyResults = () => {
       <MenuBar />
       <BackgroundPattern>
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">My Results</h1>
+          
+          {/* Stats Overview Card - Separated like product details page */}
+          <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-6 animate-fade-in">
+            <CardContent className="p-6">
+              <UserStatsOverview results={results} />
+            </CardContent>
+          </Card>
+
+          {/* Results Table/Grid Card - Separated like product details page */}
           <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden animate-fade-in">
             <CardHeader className="bg-white/50 backdrop-blur-sm pb-4 pt-6 px-6">
-              <div className="flex flex-col gap-4">
-                <h1 className="text-3xl font-bold text-gray-900">My Results</h1>
-                <UserStatsOverview results={results} />
-              </div>
+              <h2 className="text-xl font-semibold text-gray-900">Test Results</h2>
             </CardHeader>
             <CardContent className="p-0">
               <div className="p-6 pt-0">

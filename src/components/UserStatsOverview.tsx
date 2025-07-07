@@ -30,30 +30,49 @@ export const UserStatsOverview = ({
     });
   };
   
-  return <div className="rounded-lg p-4 mb-6 bg-white">
-      <div className="grid grid-cols-5 gap-3">
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
-          <p className="text-xs text-[#444] mb-1">Average Rating</p>
-          <p className="text-xl font-semibold text-gray-900">{avgRating}/10</p>
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-blue-700">Average Rating</p>
+          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
-          <p className="text-xs text-[#444] mb-1">Total Tests</p>
-          <p className="text-xl font-semibold text-gray-900">{results.length}</p>
-        </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
-          <p className="text-xs text-[#444] mb-1">Unique Brands</p>
-          <p className="text-xl font-semibold text-gray-900">{uniqueBrands.length}</p>
-        </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
-          <p className="text-xs text-[#444] mb-1">Latest Test</p>
-          <p className="text-xl font-semibold text-gray-900 truncate">
-            {latestTest ? formatDate(latestTest.created_at) : 'None'}
-          </p>
-        </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md hover:-translate-y-1" style={{ backgroundColor: '#fff3e0' }}>
-          <p className="text-xs text-[#444] mb-1">Most Tested</p>
-          <p className="text-xl font-semibold text-gray-900 truncate">{mostTestedBrand}</p>
-        </div>
+        <p className="text-2xl font-bold text-blue-900">{avgRating}/10</p>
       </div>
-    </div>;
+      
+      <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-green-700">Total Tests</p>
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+        </div>
+        <p className="text-2xl font-bold text-green-900">{results.length}</p>
+      </div>
+      
+      <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-purple-700">Unique Brands</p>
+          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+        </div>
+        <p className="text-2xl font-bold text-purple-900">{uniqueBrands.length}</p>
+      </div>
+      
+      <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-orange-700">Latest Test</p>
+          <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+        </div>
+        <p className="text-lg font-bold text-orange-900 leading-tight">
+          {latestTest ? formatDate(latestTest.created_at) : 'None'}
+        </p>
+      </div>
+      
+      <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 border border-indigo-200 rounded-xl p-4 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-medium text-indigo-700">Most Tested</p>
+          <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+        </div>
+        <p className="text-lg font-bold text-indigo-900 truncate">{mostTestedBrand}</p>
+      </div>
+    </div>
+  );
 };
