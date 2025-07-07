@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
+import { formatScore } from "@/lib/scoreFormatter";
 import { 
   Tooltip,
   TooltipContent,
@@ -77,11 +78,11 @@ export const MyResultsGrid = ({ results, onEdit, onDelete }: MyResultsGridProps)
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Badge variant={getScoreBadgeVariant(Number(result.rating))}>
-                          {Number(result.rating).toFixed(1)}
+                          {formatScore(Number(result.rating))}
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Score: {Number(result.rating).toFixed(1)}</p>
+                        <p>Score: {formatScore(Number(result.rating))}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

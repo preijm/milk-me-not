@@ -18,6 +18,7 @@ import {
 import { SortableColumnHeader } from "./SortableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
+import { formatScore } from "@/lib/scoreFormatter";
 
 interface TestDetailsTableProps {
   productTests: MilkTestResult[];
@@ -143,7 +144,7 @@ export const TestDetailsTable = ({
                 <TableCell>{test.username || "Anonymous"}</TableCell>
                 <TableCell>
                   <Badge variant={getScoreBadgeVariant(Number(test.rating))}>
-                    {Number(test.rating).toFixed(1)}
+                    {formatScore(Number(test.rating))}
                   </Badge>
                 </TableCell>
                 <TableCell>

@@ -11,6 +11,7 @@ import { NotesPopover } from "@/components/milk-test/NotesPopover";
 import { DrinkPreferenceIcon } from "@/components/milk-test/DrinkPreferenceIcon";
 import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
+import { formatScore } from "@/lib/scoreFormatter";
 import {
   Table,
   TableBody,
@@ -159,7 +160,7 @@ export const MyResultsTable = ({
                 </TableCell>
                 <TableCell>
                   <Badge variant={getScoreBadgeVariant(Number(result.rating))}>
-                    {Number(result.rating).toFixed(1)}
+                    {formatScore(Number(result.rating))}
                   </Badge>
                 </TableCell>
                 <TableCell>

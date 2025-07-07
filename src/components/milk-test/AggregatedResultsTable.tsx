@@ -13,6 +13,7 @@ import { ProductPropertyBadges } from "./ProductPropertyBadges";
 import { ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
+import { formatScore } from "@/lib/scoreFormatter";
 
 type SortConfig = {
   column: string;
@@ -154,7 +155,7 @@ export const AggregatedResultsTable = ({
               </TableCell>
               <TableCell>
                 <Badge variant={getScoreBadgeVariant(result.avg_rating)}>
-                  {result.avg_rating.toFixed(1)}
+                  {formatScore(result.avg_rating)}
                 </Badge>
               </TableCell>
               <TableCell className="relative">
