@@ -21,9 +21,9 @@
     --accent-foreground: 220.9 39.3% 11%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 220 10% 50%; /* Softer, less harsh neutral gray */
+    --border: 0 0% 85%; /* Light grey for borders */
+    --input: 0 0% 85%; /* Light grey for input borders */
+    --ring: 0 0% 75%; /* Light grey for focus rings */
     --radius: 0.5rem;
     
     /* Custom colors for milk app */
@@ -63,9 +63,9 @@
     --accent-foreground: 210 20% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 220 10% 50%; /* Consistent softer gray for dark mode */
+    --border: 0 0% 25%; /* Light grey for dark mode borders */
+    --input: 0 0% 25%; /* Light grey for dark mode input borders */
+    --ring: 0 0% 35%; /* Light grey for dark mode focus rings */
   }
 }
 
