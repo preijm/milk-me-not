@@ -23,46 +23,55 @@ const Auth = () => {
   // Check if we're in password reset mode
   useEffect(() => {
     const checkResetMode = async () => {
+      // Check if we're on the reset password route
+      const isResetRoute = location.pathname === '/auth/reset-password';
+      
       // Check for tokens in hash fragment (Supabase reset links use hash)
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const accessToken = hashParams.get('access_token');
       const refreshToken = hashParams.get('refresh_token');
       const type = hashParams.get('type');
       
-      console.log("Checking for reset mode, type:", type, "has tokens:", !!accessToken);
+      console.log("Checking for reset mode, route:", location.pathname, "type:", type, "has tokens:", !!accessToken);
       
-      if (type === 'recovery' && accessToken && refreshToken) {
-        console.log("Found reset tokens, setting session");
-        try {
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken
-          });
-          
-          if (error) {
-            console.error("Error setting session:", error);
+      // Show reset form if we're on reset route OR if we have recovery tokens
+      if (isResetRoute || (type === 'recovery' && accessToken && refreshToken)) {
+        if (accessToken && refreshToken) {
+          console.log("Found reset tokens, setting session");
+          try {
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            });
+            
+            if (error) {
+              console.error("Error setting session:", error);
+              toast({
+                title: "Invalid reset link",
+                description: "Please request a new password reset",
+                variant: "destructive"
+              });
+              return;
+            }
+            
+            if (data.session) {
+              console.log("Session established successfully");
+              setIsPasswordReset(true);
+              
+              // Clean up the URL to avoid issues
+              window.history.replaceState(null, '', '/auth/reset-password');
+            }
+          } catch (error) {
+            console.error("Session setup error:", error);
             toast({
-              title: "Invalid reset link",
+              title: "Error processing reset link",
               description: "Please request a new password reset",
               variant: "destructive"
             });
-            return;
           }
-          
-          if (data.session) {
-            console.log("Session established successfully");
-            setIsPasswordReset(true);
-            
-            // Clean up the URL to avoid issues
-            window.history.replaceState(null, '', '/auth/reset-password');
-          }
-        } catch (error) {
-          console.error("Session setup error:", error);
-          toast({
-            title: "Error processing reset link",
-            description: "Please request a new password reset",
-            variant: "destructive"
-          });
+        } else if (isResetRoute) {
+          // On reset route but no tokens yet - show the reset form anyway
+          setIsPasswordReset(true);
         }
       }
     };

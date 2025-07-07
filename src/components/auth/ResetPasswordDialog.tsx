@@ -42,7 +42,7 @@ const ResetPasswordDialog = ({
     console.log("Starting password reset for email:", resetEmail);
     try {
       // Use the production domain for password reset emails
-      const redirectUrl = "https://milkmenot.com/auth";
+      const redirectUrl = "https://milkmenot.com/auth/reset-password";
       console.log("Redirect URL:", redirectUrl);
       const {
         data,
