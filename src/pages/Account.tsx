@@ -17,6 +17,8 @@ const Account = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [badgeColor, setBadgeColor] = useState("emerald");
+  const [isUpdatingColor, setIsUpdatingColor] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -31,12 +33,13 @@ const Account = () => {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('username')
+        .select('username, badge_color')
         .eq('id', user.id)
         .maybeSingle();
 
       if (profile) {
         setUsername(profile.username);
+        setBadgeColor(profile.badge_color || 'emerald');
       }
     };
 
@@ -124,6 +127,43 @@ const Account = () => {
     }
   };
 
+  const handleUpdateBadgeColor = async (color: string) => {
+    if (!userId) return;
+
+    setIsUpdatingColor(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ badge_color: color })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      setBadgeColor(color);
+      toast({
+        title: "Success",
+        description: "Badge color updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsUpdatingColor(false);
+    }
+  };
+
+  const colorOptions = [
+    { name: 'Emerald', value: 'emerald', from: 'from-emerald-500/90', to: 'to-emerald-600/90' },
+    { name: 'Blue', value: 'blue', from: 'from-blue-500/90', to: 'to-blue-600/90' },
+    { name: 'Purple', value: 'purple', from: 'from-purple-500/90', to: 'to-purple-600/90' },
+    { name: 'Pink', value: 'pink', from: 'from-pink-500/90', to: 'to-pink-600/90' },
+    { name: 'Orange', value: 'orange', from: 'from-orange-500/90', to: 'to-orange-600/90' },
+    { name: 'Red', value: 'red', from: 'from-red-500/90', to: 'to-red-600/90' },
+  ];
+
   return (
     <div className="min-h-screen">
       <MenuBar />
@@ -164,6 +204,31 @@ const Account = () => {
                   {loading ? "Saving..." : "Save Username"}
                 </Button>
               </form>
+
+              <div className="h-px bg-gray-200 my-8" />
+
+              <div className="mb-8">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800">Badge Color</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  {colorOptions.map((color) => (
+                    <button
+                      key={color.value}
+                      onClick={() => handleUpdateBadgeColor(color.value)}
+                      disabled={isUpdatingColor}
+                      className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
+                        badgeColor === color.value 
+                          ? 'border-blue-500 bg-blue-50' 
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${color.from} ${color.to} flex items-center justify-center text-white font-medium shadow-sm`}>
+                        {username?.[0]?.toUpperCase() || 'U'}
+                      </div>
+                      <span className="text-sm font-medium">{color.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               <div className="h-px bg-gray-200 my-8" />
 
