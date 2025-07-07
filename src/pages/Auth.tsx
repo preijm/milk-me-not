@@ -96,6 +96,13 @@ const Auth = () => {
 
     setIsResetting(true);
     try {
+      // Verify we have a session by getting the current session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        throw new Error("No authentication session found. Please click the reset link from your email again.");
+      }
+
       const { error } = await supabase.auth.updateUser({
         password: newPassword
       });
@@ -121,7 +128,7 @@ const Auth = () => {
     } catch (error: any) {
       toast({
         title: "Error updating password",
-        description: error.message || "Please try again later",
+        description: error.message || "Please click the reset link from your email again",
         variant: "destructive"
       });
       console.error("Password update error:", error);
