@@ -27,7 +27,7 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
             <span className="text-lg">🥛</span>
           </SliderPrimitive.Thumb>
         </SliderPrimitive.Root>
-        <span className="min-w-[4ch] text-right flex items-center justify-center bg-cream-300 rounded-full h-8 w-8 font-semibold">
+        <span className="min-w-[4ch] text-right flex items-center justify-center bg-[hsl(var(--rating-bg))] text-gray-700 rounded-full h-8 w-8 font-semibold">
           {rating.toFixed(1)}
         </span>
       </div>

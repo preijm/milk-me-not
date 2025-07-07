@@ -41,6 +41,9 @@
     --brand-blue: 225 100% 56%; /* #2144FF */
     --brand-blue-hover: 225 91% 54%; /* #1D3EF0 */
     --brand-blue-disabled: 225 100% 82%; /* #A8B3FF */
+    
+    /* Rating color */
+    --rating-bg: 225 100% 91%; /* #D1DCFF */
   }
 
   .dark {
