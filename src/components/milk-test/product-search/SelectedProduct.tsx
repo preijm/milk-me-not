@@ -36,7 +36,7 @@ export const SelectedProduct = ({
         
         {/* Flavor badges */}
         {product.flavor_names && product.flavor_names.length > 0 && <div>
-            <div className="text-sm text-gray-600 mb-1">Flavors:</div>
+            
             <ProductPropertyBadges flavorNames={product.flavor_names} displayType="flavors" />
           </div>}
       </div>
