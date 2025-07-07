@@ -61,7 +61,7 @@ export const MyResultsTable = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-100 text-sm">
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[12%]">
               <SortableColumnHeader
                 column="created_at"
                 label="Date"
@@ -85,7 +85,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[6%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
               <SortableColumnHeader
                 column="rating"
                 label="Score"
@@ -93,7 +93,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[6%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
               <SortableColumnHeader
                 column="drink_preference"
                 label="Style"
@@ -101,7 +101,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[7%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[8%]">
               <SortableColumnHeader
                 column="price_quality_ratio"
                 label="Price"
@@ -109,7 +109,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[20%]">
+            <TableHead className="hidden md:table-cell font-semibold text-gray-700 text-left pl-4 w-[15%]">
               <SortableColumnHeader
                 column="shop_name"
                 label="Shop"
@@ -117,7 +117,7 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[6%]">
+            <TableHead className="w-[8%] font-semibold text-gray-700 text-left pl-4">
               <SortableColumnHeader
                 column="notes"
                 label="Note"
@@ -190,7 +190,7 @@ export const MyResultsTable = ({
                 <TableCell>
                   <PriceQualityBadge priceQuality={result.price_quality_ratio} />
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden md:table-cell">
                   {result.shop_name}
                   {result.shop_country_code && (
                     <span className="text-gray-500 text-xs ml-1">
