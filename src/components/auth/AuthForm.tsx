@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import AuthFormInputs from "./AuthFormInputs";
 import AuthFormButtons from "./AuthFormButtons";
 import { useAuthForm } from "@/hooks/useAuthForm";
@@ -23,17 +24,24 @@ const AuthForm = ({ onForgotPassword }: AuthFormProps) => {
 
   // Check for confirmation success in URL or signup success state
   useEffect(() => {
-    const params = new URLSearchParams(window.location.hash.substring(1));
-    const type = params.get('type');
+    const handleEmailConfirmation = async () => {
+      const params = new URLSearchParams(window.location.hash.substring(1));
+      const type = params.get('type');
+      
+      if (type === 'signup') {
+        // User confirmed email - sign them out and show login form
+        await supabase.auth.signOut();
+        toast({
+          title: "Email confirmed!",
+          description: "Your account has been verified. Please log in with your credentials.",
+        });
+        // Clear the hash without causing a page reload
+        window.history.replaceState(null, '', window.location.pathname);
+        setIsLogin(true); // Ensure we're in login mode
+      }
+    };
     
-    if (type === 'signup') {
-      toast({
-        title: "Account created!",
-        description: "Your account has been successfully verified. Please log in.",
-      });
-      // Clear the hash without causing a page reload
-      window.history.replaceState(null, '', window.location.pathname);
-    }
+    handleEmailConfirmation();
     
     // Check if user was redirected from successful signup
     if (location.state?.signupSuccess) {
