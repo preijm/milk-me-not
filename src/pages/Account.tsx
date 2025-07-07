@@ -169,70 +169,54 @@ const Account = () => {
       <MenuBar />
       <BackgroundPatternWithOverlay>
         <div className="flex items-center justify-center min-h-screen">
-          <div className="container max-w-md mx-auto px-4 relative z-10">
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 animate-fade-up">
-              <h1 className="text-3xl font-bold text-center mb-8 text-[#00BF63]">
-                Account Settings
+        <div className="container max-w-sm mx-auto px-4 relative z-10">
+            <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-sm p-6 border border-white/30">
+              <h1 className="text-2xl font-medium text-center mb-6 text-gray-900">
+                Account
               </h1>
               
-              <form onSubmit={handleUpdateUsername} className="space-y-6 mb-8">
-                <div>
-                  <Input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                    minLength={3}
-                    maxLength={30}
-                    pattern="^[a-zA-Z0-9_-]+$"
-                    title="Username can only contain letters, numbers, underscores, and hyphens"
-                    className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
-                  />
-                </div>
+              <form onSubmit={handleUpdateUsername} className="space-y-4 mb-6">
+                <Input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  minLength={3}
+                  maxLength={30}
+                  pattern="^[a-zA-Z0-9_-]+$"
+                  title="Username can only contain letters, numbers, underscores, and hyphens"
+                  className="border-gray-300"
+                />
 
                 <Button 
                   type="submit" 
-                  className="w-full" 
-                  style={{
-                    backgroundColor: '#2144FF',
-                    color: 'white'
-                  }} 
+                  className="w-full bg-primary hover:bg-primary/90" 
                   disabled={loading}
                 >
-                  <Save className="w-4 h-4 mr-2" />
-                  {loading ? "Saving..." : "Save Username"}
+                  {loading ? "Saving..." : "Save"}
                 </Button>
               </form>
 
-              <div className="h-px bg-gray-200 my-8" />
-
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">Badge Color</h3>
-                <div className="grid grid-cols-3 gap-3">
+              <div className="mb-6">
+                <p className="text-sm text-gray-600 mb-3">Badge Color</p>
+                <div className="flex gap-2 justify-center">
                   {colorOptions.map((color) => (
                     <button
                       key={color.value}
                       onClick={() => handleUpdateBadgeColor(color.value)}
                       disabled={isUpdatingColor}
-                      className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
+                      className={`w-8 h-8 rounded-full bg-gradient-to-br ${color.from} ${color.to} transition-all ${
                         badgeColor === color.value 
-                          ? 'border-blue-500 bg-blue-50' 
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'ring-2 ring-primary ring-offset-2' 
+                          : 'hover:scale-110'
                       }`}
-                    >
-                      <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${color.from} ${color.to} flex items-center justify-center text-white font-medium shadow-sm`}>
-                        {username?.[0]?.toUpperCase() || 'U'}
-                      </div>
-                      <span className="text-sm font-medium">{color.name}</span>
-                    </button>
+                    />
                   ))}
                 </div>
               </div>
 
-              <div className="h-px bg-gray-200 my-8" />
-
-              <form onSubmit={handleUpdatePassword} className="space-y-6">
+              <form onSubmit={handleUpdatePassword} className="space-y-4">
                 <Input
                   type="password"
                   placeholder="New Password"
@@ -241,28 +225,23 @@ const Account = () => {
                   required
                   minLength={6}
                   showPasswordToggle
-                  className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+                  className="border-gray-300"
                 />
                 <Input
                   type="password"
-                  placeholder="Confirm New Password"
+                  placeholder="Confirm Password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={6}
                   showPasswordToggle
-                  className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+                  className="border-gray-300"
                 />
                 <Button 
                   type="submit" 
-                  className="w-full" 
-                  style={{
-                    backgroundColor: '#2144FF',
-                    color: 'white'
-                  }} 
+                  className="w-full bg-primary hover:bg-primary/90" 
                   disabled={isChangingPassword}
                 >
-                  <Lock className="w-4 h-4 mr-2" />
                   {isChangingPassword ? "Updating..." : "Update Password"}
                 </Button>
               </form>
