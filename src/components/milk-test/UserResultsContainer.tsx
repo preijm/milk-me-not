@@ -6,7 +6,7 @@ import { MyResultsGrid } from "@/components/milk-test/MyResultsGrid";
 import { MilkTestResult } from "@/types/milk-test";
 import { SortConfig } from "@/hooks/useUserMilkTests";
 import { Grid, Rows } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -74,26 +74,18 @@ export const UserResultsContainer = ({
           placeholder="Search by brand or product..."
         />
         
-        <div className="flex gap-2">
-          <Button 
-            variant={viewMode === 'grid' ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setViewMode('grid')}
-            className="flex items-center gap-1"
-          >
-            <Grid className="h-4 w-4" />
-            <span className="hidden sm:inline">Grid</span>
-          </Button>
-          <Button 
-            variant={viewMode === 'table' ? "default" : "outline"} 
-            size="sm"
-            onClick={() => setViewMode('table')}
-            className="flex items-center gap-1"
-          >
-            <Rows className="h-4 w-4" />
-            <span className="hidden sm:inline">Table</span>
-          </Button>
-        </div>
+        <Tabs value={viewMode} onValueChange={(v: 'grid' | 'table') => setViewMode(v)} className="w-auto">
+          <TabsList className="grid w-[200px] grid-cols-2 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
+            <TabsTrigger value="grid" className="flex items-center gap-2">
+              <Grid className="w-4 h-4" />
+              <span>Grid</span>
+            </TabsTrigger>
+            <TabsTrigger value="table" className="flex items-center gap-2">
+              <Rows className="w-4 h-4" />
+              <span>Table</span>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
       
       {viewMode === 'grid' ? (
