@@ -8,7 +8,6 @@ import { useToast } from "@/components/ui/use-toast";
 
 export const AuthButton = () => {
   const [user, setUser] = useState(null);
-  const [badgeColor, setBadgeColor] = useState('emerald');
   const navigate = useNavigate();
   const {
     toast
@@ -28,17 +27,8 @@ export const AuthButton = () => {
       data: {
         subscription
       }
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) {
-        // Fetch user's badge color preference
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('badge_color')
-          .eq('id', session.user.id)
-          .maybeSingle();
-        setBadgeColor(profile?.badge_color || 'emerald');
-      }
       console.log("Auth state changed:", session?.user ? "logged in" : "logged out");
     });
     return () => subscription.unsubscribe();
@@ -48,17 +38,6 @@ export const AuthButton = () => {
       navigate('/account');
     } else {
       navigate("/auth");
-    }
-  };
-
-  const getBadgeColorClasses = (color: string) => {
-    switch (color) {
-      case 'blue': return 'from-blue-500/90 to-blue-600/90';
-      case 'purple': return 'from-purple-500/90 to-purple-600/90';
-      case 'pink': return 'from-pink-500/90 to-pink-600/90';
-      case 'orange': return 'from-orange-500/90 to-orange-600/90';
-      case 'red': return 'from-red-500/90 to-red-600/90';
-      default: return 'from-emerald-500/90 to-emerald-600/90';
     }
   };
   
@@ -76,7 +55,7 @@ export const AuthButton = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="bg-white/10 hover:bg-white/20 text-gray-800 border-white/20 backdrop-blur-sm transition-all duration-300 pl-2 pr-3">
           <div className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${getBadgeColorClasses(badgeColor)} flex items-center justify-center text-white font-medium shadow-sm`}>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500/90 to-blue-500/90 flex items-center justify-center text-white font-medium shadow-sm">
               {user.email?.[0].toUpperCase()}
             </div>
             <span>Account</span>

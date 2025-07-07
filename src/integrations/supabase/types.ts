@@ -305,21 +305,18 @@ export type Database = {
       }
       profiles: {
         Row: {
-          badge_color: string | null
           created_at: string
           id: string
           updated_at: string
           username: string
         }
         Insert: {
-          badge_color?: string | null
           created_at?: string
           id: string
           updated_at?: string
           username: string
         }
         Update: {
-          badge_color?: string | null
           created_at?: string
           id?: string
           updated_at?: string
