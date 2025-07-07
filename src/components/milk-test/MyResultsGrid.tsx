@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Calendar, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
+import { Badge } from "@/components/ui/badge";
+import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import { 
   Tooltip,
   TooltipContent,
@@ -70,13 +72,13 @@ export const MyResultsGrid = ({ results, onEdit, onDelete }: MyResultsGridProps)
                 )}
                 
                 {/* Rating badge */}
-                <div className={`absolute top-2 right-2 rounded-full h-10 w-10 flex items-center justify-center shadow-md ${ratingColorClass}`}>
+                <div className="absolute top-2 right-2 shadow-md">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex items-center gap-1">
-                          <span className="font-semibold">{Number(result.rating).toFixed(1)}</span>
-                        </div>
+                        <Badge variant={getScoreBadgeVariant(Number(result.rating))}>
+                          {Number(result.rating).toFixed(1)}
+                        </Badge>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>Score: {Number(result.rating).toFixed(1)}</p>

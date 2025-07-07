@@ -63,10 +63,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
     <div className={`flex flex-wrap gap-2 ${inline ? "inline-flex ml-2" : ""} ${compact ? "inline-flex" : ""} ${className}`}>
       {/* Barista badge with priority styling */}
       {shouldRenderBarista && isBarista && (
-        <Badge 
-          variant="outline" 
-          className={`${badgeBaseClasses} bg-cream-300 border-cream-400 text-milk-600`}
-        >
+        <Badge variant="barista">
           Barista
         </Badge>
       )}
@@ -75,8 +72,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
       {shouldRenderProperties && propertyNames && propertyNames.map((property, index) => (
         <Badge 
           key={`property-${index}`} 
-          variant="outline" 
-          className={`${badgeBaseClasses} bg-gray-100 border-gray-200 text-gray-700`}
+          variant="category"
         >
           {formatDisplayName(property)}
         </Badge>
@@ -86,8 +82,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
       {shouldRenderFlavors && flavorNames && flavorNames.map((flavor, index) => (
         <Badge 
           key={`flavor-${index}`} 
-          variant="outline" 
-          className={`${badgeBaseClasses} bg-blue-100 border-blue-200 text-blue-700`}
+          variant="flavor"
         >
           {formatDisplayName(flavor)}
         </Badge>

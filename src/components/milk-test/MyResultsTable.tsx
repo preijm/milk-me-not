@@ -9,6 +9,8 @@ import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBad
 import { SortConfig } from "@/hooks/useUserMilkTests";
 import { NotesPopover } from "@/components/milk-test/NotesPopover";
 import { DrinkPreferenceIcon } from "@/components/milk-test/DrinkPreferenceIcon";
+import { Badge } from "@/components/ui/badge";
+import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import {
   Table,
   TableBody,
@@ -156,9 +158,9 @@ export const MyResultsTable = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className={`rounded-full h-8 w-8 flex items-center justify-center ${getRatingColorClass(Number(result.rating))}`}>
-                    <span className="font-semibold">{Number(result.rating).toFixed(1)}</span>
-                  </div>
+                  <Badge variant={getScoreBadgeVariant(Number(result.rating))}>
+                    {Number(result.rating).toFixed(1)}
+                  </Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center">

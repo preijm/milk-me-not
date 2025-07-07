@@ -11,6 +11,8 @@ import {
 import { SortableColumnHeader } from "./SortableColumnHeader";
 import { ProductPropertyBadges } from "./ProductPropertyBadges";
 import { ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 
 type SortConfig = {
   column: string;
@@ -151,9 +153,9 @@ export const AggregatedResultsTable = ({
                 </div>
               </TableCell>
               <TableCell>
-                <div className={`rounded-full h-8 w-8 flex items-center justify-center ${getRatingColorClass(result.avg_rating)}`}>
-                  <span className="font-semibold">{result.avg_rating.toFixed(1)}</span>
-                </div>
+                <Badge variant={getScoreBadgeVariant(result.avg_rating)}>
+                  {result.avg_rating.toFixed(1)}
+                </Badge>
               </TableCell>
               <TableCell className="relative">
                 <div className="flex items-center justify-between">

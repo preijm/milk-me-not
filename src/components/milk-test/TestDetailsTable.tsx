@@ -16,6 +16,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SortableColumnHeader } from "./SortableColumnHeader";
+import { Badge } from "@/components/ui/badge";
+import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 
 interface TestDetailsTableProps {
   productTests: MilkTestResult[];
@@ -140,9 +142,9 @@ export const TestDetailsTable = ({
                 <TableCell className="text-sm">{new Date(test.created_at).toLocaleDateString()}</TableCell>
                 <TableCell>{test.username || "Anonymous"}</TableCell>
                 <TableCell>
-                  <div className={`rounded-full h-8 w-8 flex items-center justify-center ${getRatingColorClass(Number(test.rating))}`}>
-                    <span className="font-semibold">{Number(test.rating).toFixed(1)}</span>
-                  </div>
+                  <Badge variant={getScoreBadgeVariant(Number(test.rating))}>
+                    {Number(test.rating).toFixed(1)}
+                  </Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center">
