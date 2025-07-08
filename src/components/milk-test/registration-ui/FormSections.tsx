@@ -67,6 +67,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
           <BaristaToggle isBarista={isBarista} onToggle={setIsBarista} />
         </div>
 
+        <hr className="my-4 border-gray-200" />
+
         <div className="space-y-2">
           <span className="block font-medium text-gray-900">Properties</span>
           <ProductOptions
