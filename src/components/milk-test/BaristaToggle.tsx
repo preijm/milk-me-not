@@ -1,25 +1,27 @@
 
 import React from "react";
-import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 
 interface BaristaToggleProps {
   isBarista: boolean;
   onToggle: (checked: boolean) => void;
-  disabled?: boolean; // Added optional disabled prop
+  disabled?: boolean;
 }
 
 export const BaristaToggle = ({ isBarista, onToggle, disabled = false }: BaristaToggleProps) => {
   return (
-    <div className="space-y-2">
-      <h3 className="text-sm font-medium">Barista</h3>
-      <div className="flex items-center">
-        <Switch 
-          id="barista-version" 
-          checked={isBarista} 
-          onCheckedChange={onToggle} 
-          disabled={disabled}
-        />
-      </div>
+    <div className="flex flex-wrap gap-2">
+      <Badge
+        variant="barista"
+        className={`cursor-pointer transition-all ${
+          isBarista
+            ? 'bg-amber-600 text-white border-amber-600'
+            : 'hover:bg-amber-50'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        onClick={() => !disabled && onToggle(!isBarista)}
+      >
+        Barista
+      </Badge>
     </div>
   );
 };

@@ -63,10 +63,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
         <hr className="my-4 border-gray-200" />
 
         <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <span className="font-medium text-gray-900">Barista</span>
-            <BaristaToggle isBarista={isBarista} onToggle={setIsBarista} />
-          </div>
+          <span className="block font-medium text-gray-900">Type</span>
+          <BaristaToggle isBarista={isBarista} onToggle={setIsBarista} />
         </div>
 
         <div className="space-y-2">
