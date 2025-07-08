@@ -152,13 +152,13 @@ export const FlavorSelector = ({
       
       {/* Add flavor section */}
       {isAddingFlavor && (
-        <div className="p-2 bg-white rounded-lg border shadow-sm mb-2 max-w-sm">
-          <div className="flex gap-2 items-center">
+        <div className="p-4 bg-white/90 backdrop-blur-sm rounded-xl border border-purple-200 shadow-lg mb-3 animate-fade-in">
+          <div className="flex gap-3 items-center">
             <Input
               value={newFlavorName}
               onChange={(e) => setNewFlavorName(e.target.value)}
-              placeholder="Add new flavor"
-              className="h-8 border-2 rounded-lg text-xs flex-1"
+              placeholder="Enter new flavor name..."
+              className="h-10 border-2 border-purple-200 rounded-lg text-sm flex-1 focus:border-purple-400 focus:ring-purple-400"
               autoFocus
               disabled={isSubmitting}
               onKeyDown={(e) => {
@@ -170,16 +170,27 @@ export const FlavorSelector = ({
                 }
               }}
             />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="bg-cream-200 hover:bg-cream-300 border-cream-200 text-gray-800 h-8 text-xs px-2"
-              onClick={handleAddFlavor}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Adding..." : "Add"}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-10 px-4 border-gray-300 text-gray-600 hover:bg-gray-50"
+                onClick={handleCancel}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                className="h-10 px-4 bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
+                onClick={handleAddFlavor}
+                disabled={isSubmitting || !newFlavorName.trim()}
+              >
+                {isSubmitting ? "Adding..." : "Add Flavor"}
+              </Button>
+            </div>
           </div>
         </div>
       )}
