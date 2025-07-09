@@ -98,11 +98,10 @@ export const MyResultsGrid = ({ results, onEdit, onDelete }: MyResultsGridProps)
                   {new Date(result.created_at).toLocaleDateString()}
                 </div>
                 
-                {/* Brand & Product */}
+                {/* Brand & Product combined */}
                 <div>
-                  <h3 className="font-medium text-sm truncate">{result.brand_name}</h3>
+                  <h3 className="font-medium text-sm truncate">{result.brand_name} - {result.product_name}</h3>
                   <div className="flex items-center flex-wrap gap-1">
-                    <p className="text-xs text-gray-700 truncate">{result.product_name}</p>
                     {result.is_barista && (
                       <ProductPropertyBadges 
                         isBarista={result.is_barista}
