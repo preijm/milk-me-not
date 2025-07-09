@@ -31,7 +31,7 @@ export const ProductResultItem = ({ product, onSelect }: ProductResultItemProps)
     >
       <div className="font-medium text-gray-900">{product.brand_name} - {product.product_name}</div>
       
-      <div className="mt-2 flex flex-wrap gap-1">
+      <div className="mt-2 flex flex-wrap gap-2.5">
         {/* Barista status */}
         {product.is_barista && (
           <ProductPropertyBadges

@@ -24,21 +24,19 @@ export const SelectedProduct = ({
   return <div className="mt-2 p-3 bg-gray-50 border rounded-md">
       <div className="font-medium">{product.brand_name} - {product.product_name}</div>
       
-      <div className="mt-2">
+      <div className="mt-2 flex flex-wrap gap-2.5">
         {/* Barista status */}
-        {product.is_barista && <ProductPropertyBadges isBarista={product.is_barista} displayType="barista" className="mb-2" />}
+        {product.is_barista && <ProductPropertyBadges isBarista={product.is_barista} displayType="barista" />}
         
         {/* Properties badges */}
-        {product.property_names && product.property_names.length > 0 && <div className="mb-2">
-            
-            <ProductPropertyBadges propertyNames={product.property_names} displayType="properties" />
-          </div>}
+        {product.property_names && product.property_names.length > 0 && (
+          <ProductPropertyBadges propertyNames={product.property_names} displayType="properties" />
+        )}
         
         {/* Flavor badges */}
-        {product.flavor_names && product.flavor_names.length > 0 && <div>
-            
-            <ProductPropertyBadges flavorNames={product.flavor_names} displayType="flavors" />
-          </div>}
+        {product.flavor_names && product.flavor_names.length > 0 && (
+          <ProductPropertyBadges flavorNames={product.flavor_names} displayType="flavors" />
+        )}
       </div>
     </div>;
 };

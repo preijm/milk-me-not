@@ -82,7 +82,7 @@ export const MyResultsGrid = ({
                   <h3 className="font-medium text-sm truncate">{result.brand_name}</h3>
                   <p className="text-sm text-gray-700 truncate mb-1">{result.product_name}</p>
                   <div className="flex items-center justify-between">
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-2.5">
                       {result.is_barista && <ProductPropertyBadges isBarista={result.is_barista} compact={true} displayType="barista" />}
                       <ProductPropertyBadges propertyNames={result.property_names} flavorNames={result.flavor_names} compact={true} />
                     </div>

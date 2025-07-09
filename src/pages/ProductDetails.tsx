@@ -163,7 +163,7 @@ const ProductDetails = () => {
                     <div className="text-xs text-gray-500">Product</div>
                     <div className="flex items-center">
                       <h3 className="text-lg font-medium">{product.product_name}</h3>
-                      <div className="flex flex-wrap ml-2">
+                      <div className="flex flex-wrap gap-2.5 ml-2">
                         {product.is_barista && (
                           <ProductPropertyBadges 
                             isBarista={product.is_barista}

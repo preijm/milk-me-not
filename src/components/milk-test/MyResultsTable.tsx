@@ -151,7 +151,7 @@ export const MyResultsTable = ({
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{result.product_name}</span>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2.5">
                       {result.is_barista && (
                         <ProductPropertyBadges 
                           isBarista={result.is_barista}
