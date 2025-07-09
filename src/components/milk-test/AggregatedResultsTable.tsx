@@ -124,7 +124,7 @@ export const AggregatedResultsTable = ({
                          {result.product_name || "Unknown Product"}
                        </span>
                        {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
-                        <div className="flex flex-wrap gap-2.5">
+                        <div className="flex flex-wrap gap-1">
                           {result.is_barista && (
                             <ProductPropertyBadges 
                               isBarista={result.is_barista}
