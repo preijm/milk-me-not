@@ -22,20 +22,22 @@ export const UserStatsOverview = ({
     return countDiff !== 0 ? countDiff : a[0].localeCompare(b[0]);
   })[0]?.[0] : "None";
 
-  // Calculate most tested product
-  const productCounts = results.reduce((acc: Record<string, { count: number, result: MilkTestResult }>, curr) => {
-    const productKey = `${curr.brand_name || 'Unknown'}_${curr.product_name || ''}`;
-    if (!acc[productKey]) {
-      acc[productKey] = { count: 0, result: curr };
+  // Calculate most tested product type (flavor)
+  const flavorCounts = results.reduce((acc: Record<string, number>, curr) => {
+    if (curr.flavor_names && curr.flavor_names.length > 0) {
+      curr.flavor_names.forEach(flavor => {
+        acc[flavor] = (acc[flavor] || 0) + 1;
+      });
+    } else {
+      // Fallback to "Unknown" if no flavors
+      acc["Unknown"] = (acc["Unknown"] || 0) + 1;
     }
-    acc[productKey].count++;
     return acc;
   }, {});
-  const mostTestedProduct = results.length ? Object.entries(productCounts).sort((a, b) => {
-    const countDiff = b[1].count - a[1].count;
+  const mostTestedProductType = results.length ? Object.entries(flavorCounts).sort((a, b) => {
+    const countDiff = b[1] - a[1];
     return countDiff !== 0 ? countDiff : a[0].localeCompare(b[0]);
-  })[0]?.[1].result : null;
-  const mostTestedProductText = mostTestedProduct ? `${mostTestedProduct.brand_name || 'Unknown'} ${mostTestedProduct.product_name || ''}`.trim() : "None";
+  })[0]?.[0] : "None";
 
   // Format date for latest test
   const formatDate = (dateString: string) => {
@@ -76,7 +78,7 @@ export const UserStatsOverview = ({
       
       <div className="bg-white border border-pink-200 rounded-lg p-2 sm:p-4 transition-all duration-200 hover:shadow-sm">
         <p className="text-xs sm:text-sm text-gray-600 mb-1">Most Tested Product</p>
-        <p className="text-sm sm:text-lg font-semibold text-gray-900 truncate">{mostTestedProductText}</p>
+        <p className="text-sm sm:text-lg font-semibold text-gray-900 truncate">{mostTestedProductType}</p>
       </div>
     </div>;
 };
