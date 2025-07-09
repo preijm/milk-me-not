@@ -163,9 +163,9 @@ export const MilkCharts = ({
   };
 
   return (
-    <Card className="bg-white rounded-lg shadow-md overflow-hidden">
+    <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden animate-fade-in">
       <CardContent className="p-0">
-        <div className="flex flex-wrap gap-2 mb-6 p-6 pb-0">
+        <div className="flex flex-wrap gap-2 mb-6 p-6 pb-0 bg-white/50 backdrop-blur-sm">
           {chartButtons.map(button => (
             <button 
               key={button.id} 
@@ -181,7 +181,7 @@ export const MilkCharts = ({
           ))}
         </div>
 
-        <div className="h-[600px] p-6 pt-0"> {/* Increased height from 400px to 600px */}
+        <div className="h-[600px] p-6 pt-0">
           <ChartContainer config={chartConfig}>
             {renderChart()}
           </ChartContainer>
