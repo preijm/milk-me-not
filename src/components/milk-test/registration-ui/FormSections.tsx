@@ -24,7 +24,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
     selectedFlavors,
     handleFlavorToggle,
     flavors = [],
-    isSubmitting
+    isSubmitting,
+    refetchFlavors
   } = useProductRegistration();
 
   // Form validation logic
@@ -79,6 +80,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
             flavors={flavors}
             selectedFlavors={selectedFlavors}
             onFlavorToggle={handleFlavorToggle}
+            refetchFlavors={refetchFlavors}
           />
         </div>
       </div>

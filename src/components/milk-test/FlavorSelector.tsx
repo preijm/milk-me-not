@@ -11,6 +11,7 @@ interface FlavorSelectorProps {
   selectedFlavors: string[];
   onFlavorToggle: (flavorKey: string) => void;
   onAddNewFlavor?: () => void;
+  refetchFlavors?: () => void;
 }
 
 // Helper function to format keys like "pumpkin_spice" to "Pumpkin Spice"
@@ -42,7 +43,8 @@ export const FlavorSelector = ({
   flavors, 
   selectedFlavors, 
   onFlavorToggle,
-  onAddNewFlavor 
+  onAddNewFlavor,
+  refetchFlavors
 }: FlavorSelectorProps) => {
   const [newFlavorName, setNewFlavorName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -102,6 +104,10 @@ export const FlavorSelector = ({
         console.log('New flavor added successfully');
         setNewFlavorName("");
         setIsPopoverOpen(false);
+        // Refetch flavors to show the new addition immediately
+        if (refetchFlavors) {
+          refetchFlavors();
+        }
         if (onAddNewFlavor) {
           onAddNewFlavor();
         }
