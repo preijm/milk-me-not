@@ -33,8 +33,10 @@ const MenuBar = () => {
               </Link>
             </div>
 
-            {/* Always visible AuthButton */}
-            <AuthButton />
+            {/* Desktop AuthButton */}
+            <div className="hidden md:block">
+              <AuthButton />
+            </div>
 
             {/* Mobile Hamburger Button */}
             <button 
@@ -44,6 +46,11 @@ const MenuBar = () => {
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
+
+            {/* Mobile AuthButton - positioned on the right */}
+            <div className="md:hidden">
+              <AuthButton />
+            </div>
           </div>
         </div>
 
