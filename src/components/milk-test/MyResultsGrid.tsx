@@ -56,7 +56,7 @@ export const MyResultsGrid = ({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Badge variant={getScoreBadgeVariant(Number(result.rating))} className="text-xs px-1.5 py-0.5">
+                        <Badge variant={getScoreBadgeVariant(Number(result.rating))}>
                           {formatScore(Number(result.rating))}
                         </Badge>
                       </TooltipTrigger>
