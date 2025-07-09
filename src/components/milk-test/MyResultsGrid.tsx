@@ -100,8 +100,10 @@ export const MyResultsGrid = ({ results, onEdit, onDelete }: MyResultsGridProps)
                 
                 {/* Brand & Product combined */}
                 <div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm text-gray-900 truncate">{result.brand_name} - {result.product_name}</p>
+                  <p className="text-sm text-gray-900 truncate">
+                    <span className="font-medium">{result.brand_name}</span> - {result.product_name}
+                  </p>
+                  <div className="flex flex-wrap gap-1 mt-1">
                     {result.is_barista && (
                       <ProductPropertyBadges 
                         isBarista={result.is_barista}
@@ -109,16 +111,12 @@ export const MyResultsGrid = ({ results, onEdit, onDelete }: MyResultsGridProps)
                         displayType="barista"
                       />
                     )}
+                    <ProductPropertyBadges 
+                      propertyNames={result.property_names}
+                      flavorNames={result.flavor_names}
+                      compact={true}
+                    />
                   </div>
-                </div>
-                
-                {/* Properties */}
-                <div className="flex flex-wrap gap-1">
-                  <ProductPropertyBadges 
-                    propertyNames={result.property_names}
-                    flavorNames={result.flavor_names}
-                    compact={true}
-                  />
                 </div>
               </div>
             </CardContent>
