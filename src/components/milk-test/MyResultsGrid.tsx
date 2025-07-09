@@ -80,7 +80,7 @@ export const MyResultsGrid = ({
                 {/* Brand & Product */}
                 <div>
                   <h3 className="font-medium text-sm truncate">{result.brand_name}</h3>
-                  <p className="text-gray-700 truncate mb-1" style={{fontSize: '12px'}}>{result.product_name}</p>
+                  <p className="text-gray-700 truncate mb-1" style={{fontSize: '14px'}}>{result.product_name}</p>
                   
                   {/* Badges */}
                   <div className="flex flex-wrap gap-1 mb-2">
