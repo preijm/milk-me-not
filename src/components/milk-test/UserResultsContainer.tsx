@@ -76,36 +76,48 @@ export const UserResultsContainer = ({
           placeholder="Search by brand or product..."
         />
         
-        <Tabs value={viewMode} onValueChange={(v: 'grid' | 'table') => setViewMode(v)} className="w-auto">
-          <TabsList className="grid w-[200px] grid-cols-2 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
-            <TabsTrigger value="grid" className="flex items-center gap-2">
-              <Grid className="w-4 h-4" />
-              <span>Grid</span>
-            </TabsTrigger>
-            <TabsTrigger value="table" className="flex items-center gap-2">
-              <Rows className="w-4 h-4" />
-              <span>Table</span>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="hidden sm:block">
+          <Tabs value={viewMode} onValueChange={(v: 'grid' | 'table') => setViewMode(v)} className="w-auto">
+            <TabsList className="grid w-[200px] grid-cols-2 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
+              <TabsTrigger value="grid" className="flex items-center gap-2">
+                <Grid className="w-4 h-4" />
+                <span>Grid</span>
+              </TabsTrigger>
+              <TabsTrigger value="table" className="flex items-center gap-2">
+                <Rows className="w-4 h-4" />
+                <span>Table</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
       
-      {viewMode === 'grid' ? (
+      <div className="block sm:hidden">
         <MyResultsGrid
           results={filteredResults}
           onEdit={onEdit}
           onDelete={handleDeleteClick}
         />
-      ) : (
-        <MyResultsTable
-          results={filteredResults}
-          sortConfig={sortConfig}
-          handleSort={handleSortWithoutViewChange}
-          onEdit={onEdit}
-          onDelete={handleDeleteClick}
-          onImageClick={onImageClick}
-        />
-      )}
+      </div>
+      
+      <div className="hidden sm:block">
+        {viewMode === 'grid' ? (
+          <MyResultsGrid
+            results={filteredResults}
+            onEdit={onEdit}
+            onDelete={handleDeleteClick}
+          />
+        ) : (
+          <MyResultsTable
+            results={filteredResults}
+            sortConfig={sortConfig}
+            handleSort={handleSortWithoutViewChange}
+            onEdit={onEdit}
+            onDelete={handleDeleteClick}
+            onImageClick={onImageClick}
+          />
+        )}
+      </div>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
