@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MilkTestResult } from "@/types/milk-test";
 export const UserStatsOverview = ({
@@ -21,11 +20,8 @@ export const UserStatsOverview = ({
   const mostTestedBrand = results.length ? Object.entries(brandCounts).sort((a, b) => b[1] - a[1])[0]?.[0] : "None";
 
   // Calculate highest rated product
-  const highestRatedProduct = results.length ? 
-    [...results].sort((a, b) => b.rating - a.rating)[0] : null;
-  const highestRatedText = highestRatedProduct ? 
-    `${highestRatedProduct.brand_name || 'Unknown'} ${highestRatedProduct.product_name || ''}`.trim() : 
-    "None";
+  const highestRatedProduct = results.length ? [...results].sort((a, b) => b.rating - a.rating)[0] : null;
+  const highestRatedText = highestRatedProduct ? `${highestRatedProduct.brand_name || 'Unknown'} ${highestRatedProduct.product_name || ''}`.trim() : "None";
 
   // Format date for latest test
   const formatDate = (dateString: string) => {
@@ -36,9 +32,7 @@ export const UserStatsOverview = ({
       year: 'numeric'
     });
   };
-  
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
+  return <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
       <div className="bg-white border border-blue-200 rounded-lg p-2 sm:p-4 transition-all duration-200 hover:shadow-sm">
         <p className="text-xs sm:text-sm text-gray-600 mb-1">Average Rating</p>
         <p className="text-lg sm:text-2xl font-semibold text-gray-900">{avgRating}/10</p>
@@ -62,7 +56,7 @@ export const UserStatsOverview = ({
       </div>
       
       <div className="bg-white border border-indigo-200 rounded-lg p-2 sm:p-4 transition-all duration-200 hover:shadow-sm">
-        <p className="text-xs sm:text-sm text-gray-600 mb-1">Most Tested</p>
+        <p className="text-xs sm:text-sm text-gray-600 mb-1">Most Tested Brand</p>
         <p className="text-sm sm:text-lg font-semibold text-gray-900 truncate">{mostTestedBrand}</p>
       </div>
       
@@ -70,6 +64,5 @@ export const UserStatsOverview = ({
         <p className="text-xs sm:text-sm text-gray-600 mb-1">Highest Rated</p>
         <p className="text-sm sm:text-lg font-semibold text-gray-900 truncate">{highestRatedText}</p>
       </div>
-    </div>
-  );
+    </div>;
 };
