@@ -38,7 +38,7 @@ export const SearchBox = ({
       <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-2`}>
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-          <Input placeholder="Search for product..." value={searchTerm} onChange={handleInputChange} onKeyDown={handleKeyDown} onFocus={!hasSelectedProduct ? onFocus : undefined} className="pl-9 w-full" />
+          <Input placeholder="Search for product..." value={searchTerm} onChange={handleInputChange} onKeyDown={handleKeyDown} onFocus={!hasSelectedProduct ? onFocus : undefined} className="pl-9 w-full text-left" />
           {searchTerm && <button onClick={onClear} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700" aria-label="Clear search">
               ×
             </button>}
