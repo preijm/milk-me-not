@@ -63,7 +63,7 @@ export const AuthButton = () => {
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40 bg-white/95 backdrop-blur-lg border-white/20 shadow-lg rounded-xl p-1">
+      <DropdownMenuContent align="end" className="w-44 bg-white/95 backdrop-blur-lg border-white/20 shadow-lg rounded-xl p-1">
         <DropdownMenuItem onClick={() => navigate('/add')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
           <Plus className="w-4 h-4 opacity-70" />
           <span>Add Test</span>
@@ -73,6 +73,26 @@ export const AuthButton = () => {
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
           <span>My Results</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/results')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
+          <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <span>Results</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/about')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
+          <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+          <span>About</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/contact')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
+          <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <span>Contact</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => navigate('/account')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
           <Settings className="w-4 h-4 opacity-70" />
