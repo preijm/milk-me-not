@@ -19,28 +19,32 @@ const MenuBar = () => {
             <span className="text-gray-800 text-2xl md:text-4xl font-bold">Milk Me Not</span>
           </Link>
           
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link to="/results" className={`transition-colors ${location.pathname === '/results' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
-              Results
-            </Link>
-            <Link to="/about" className={`transition-colors ${location.pathname === '/about' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
-              About
-            </Link>
-            <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
-              Contact
-            </Link>
-            <AuthButton />
-          </div>
+          <div className="flex items-center gap-4">
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center gap-6">
+              <Link to="/results" className={`transition-colors ${location.pathname === '/results' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+                Results
+              </Link>
+              <Link to="/about" className={`transition-colors ${location.pathname === '/about' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+                About
+              </Link>
+              <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+                Contact
+              </Link>
+            </div>
 
-          {/* Mobile Hamburger Button */}
-          <button 
-            onClick={toggleMenu}
-            className="md:hidden p-2 text-gray-700 hover:text-gray-900 transition-colors"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+            {/* Always visible AuthButton */}
+            <AuthButton />
+
+            {/* Mobile Hamburger Button */}
+            <button 
+              onClick={toggleMenu}
+              className="md:hidden p-2 text-gray-700 hover:text-gray-900 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -68,9 +72,6 @@ const MenuBar = () => {
               >
                 Contact
               </Link>
-              <div className="px-4 py-2">
-                <AuthButton />
-              </div>
             </div>
           </div>
         )}
