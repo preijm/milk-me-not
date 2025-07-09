@@ -52,7 +52,7 @@ export const MyResultsGrid = ({
                   </div>}
                 
                 {/* Rating badge */}
-                <div className="absolute top-2 right-2 shadow-md">
+                <div className="absolute top-2 right-2 shadow-md rounded-lg">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
