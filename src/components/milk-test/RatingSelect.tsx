@@ -13,7 +13,7 @@ interface RatingSelectProps {
 const getRatingColor = (rating: number) => {
   if (rating >= 8.5) return "bg-[#00bf63]";
   if (rating >= 7.5) return "bg-[#2144ff]"; 
-  if (rating >= 5.5) return "bg-[#ef9a0b]";
+  if (rating >= 5.5) return "bg-[#f59e0b]";
   return "bg-[#ff4b51]";
 };
 
