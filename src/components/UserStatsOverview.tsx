@@ -24,6 +24,13 @@ export const UserStatsOverview = ({
 
   // Calculate most tested product type (flavor)
   const flavorCounts = results.reduce((acc: Record<string, number>, curr) => {
+    console.log('Processing result:', {
+      brand_name: curr.brand_name,
+      product_name: curr.product_name,
+      flavor_names: curr.flavor_names,
+      property_names: curr.property_names
+    });
+    
     if (curr.flavor_names && curr.flavor_names.length > 0) {
       curr.flavor_names.forEach(flavor => {
         acc[flavor] = (acc[flavor] || 0) + 1;
@@ -34,6 +41,9 @@ export const UserStatsOverview = ({
     }
     return acc;
   }, {});
+  
+  console.log('Final flavor counts:', flavorCounts);
+  
   const mostTestedProductType = results.length ? Object.entries(flavorCounts).sort((a, b) => {
     const countDiff = b[1] - a[1];
     return countDiff !== 0 ? countDiff : a[0].localeCompare(b[0]);
