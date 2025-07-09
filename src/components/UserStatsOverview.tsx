@@ -65,7 +65,7 @@ export const UserStatsOverview = ({
       
       <div className="bg-white border border-pink-200 rounded-lg p-2 sm:p-4 transition-all duration-200 hover:shadow-sm">
         <p className="text-xs sm:text-sm text-gray-600 mb-1">Highest Rated</p>
-        <p className="text-xs sm:text-sm font-semibold text-gray-900 leading-tight">{highestRatedText}</p>
+        <p className="text-sm sm:text-lg font-semibold text-gray-900 truncate">{highestRatedText}</p>
       </div>
     </div>;
 };
