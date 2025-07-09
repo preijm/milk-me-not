@@ -52,7 +52,7 @@ export const PriceInput = ({
       value: "waste_of_money",
       emoji: "🚫",
       label: "Total waste of money",
-      activeClass: "bg-white text-red-500 border-red-500",
+      activeClass: "bg-white text-[#ff4b51] border-[#ff4b51]",
     },
     {
       value: "not_worth_it",
@@ -64,19 +64,19 @@ export const PriceInput = ({
       value: "fair_price",
       emoji: "✅",
       label: "Fair price",
-      activeClass: "bg-white text-green-500 border-green-500",
+      activeClass: "bg-white text-[#2144ff] border-[#2144ff]",
     },
     {
       value: "good_deal",
       emoji: "🏆",
       label: "Good deal",
-      activeClass: "bg-white text-[#92400e] border-[#92400e]",
+      activeClass: "bg-white text-[#00bf63] border-[#00bf63]",
     },
     {
       value: "great_value",
       emoji: "💎",
       label: "Great value for money",
-      activeClass: "bg-white text-[#0ea5e9] border-[#0ea5e9]",
+      activeClass: "bg-white text-[#00bf63] border-[#00bf63]",
     },
   ];
 
