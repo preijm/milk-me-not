@@ -98,48 +98,49 @@ export const MyResultsGrid = ({ results, onEdit, onDelete }: MyResultsGridProps)
                   {new Date(result.created_at).toLocaleDateString()}
                 </div>
                 
-                {/* Brand & Product combined */}
+                {/* Brand & Product */}
                 <div>
-                  <p className="text-sm text-gray-900 truncate">
-                    <span className="font-medium">{result.brand_name}</span> - {result.product_name}
-                  </p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {result.is_barista && (
+                  <h3 className="font-medium text-sm truncate">{result.brand_name}</h3>
+                  <p className="text-xs text-gray-700 truncate">{result.product_name}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex flex-wrap gap-1">
+                      {result.is_barista && (
+                        <ProductPropertyBadges 
+                          isBarista={result.is_barista}
+                          compact={true}
+                          displayType="barista"
+                        />
+                      )}
                       <ProductPropertyBadges 
-                        isBarista={result.is_barista}
+                        propertyNames={result.property_names}
+                        flavorNames={result.flavor_names}
                         compact={true}
-                        displayType="barista"
                       />
-                    )}
-                    <ProductPropertyBadges 
-                      propertyNames={result.property_names}
-                      flavorNames={result.flavor_names}
-                      compact={true}
-                    />
+                    </div>
+                    
+                    {/* Actions - Now inline with badges */}
+                    <div className="flex gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-7 w-7 p-0" 
+                        onClick={() => onEdit(result)}
+                      >
+                        <Edit2 className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-7 w-7 p-0 text-red-500 hover:text-red-700" 
+                        onClick={() => onDelete(result.id)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
             </CardContent>
-            
-            {/* Actions - Always in bottom right corner */}
-            <div className="absolute bottom-3 right-3 flex gap-1">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-7 w-7 p-0" 
-                onClick={() => onEdit(result)}
-              >
-                <Edit2 className="h-3.5 w-3.5" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-7 w-7 p-0 text-red-500 hover:text-red-700" 
-                onClick={() => onDelete(result.id)}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            </div>
           </Card>
         );
       })}
