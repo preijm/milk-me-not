@@ -56,11 +56,6 @@ export const useAuthForm = () => {
         setLoading(false);
         return;
       }
-      
-      toast({
-        title: "Welcome back!",
-        description: "You've been successfully logged in.",
-      });
 
       navigate(fromAdd ? "/add" : "/my-results");
     } catch (error: any) {
