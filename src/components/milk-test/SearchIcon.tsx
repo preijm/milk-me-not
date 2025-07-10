@@ -45,11 +45,10 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className={`${isMobile ? 'w-[calc(100vw-3rem)]' : 'w-80'} p-4`} 
+        className={`${isMobile ? 'max-w-sm w-full' : 'w-80'} p-4`} 
         align={isMobile ? "center" : "center"}
         side={isMobile ? "bottom" : "bottom"}
         sideOffset={isMobile ? 8 : 8}
-        style={isMobile ? { left: '50%', transform: 'translateX(-50%)' } : undefined}
       >
         <div className="space-y-3">
           <div className="flex items-center justify-between">
