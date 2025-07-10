@@ -60,7 +60,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
 
   // Updated to ensure consistent spacing with a fixed gap value
   return (
-    <div className={`flex flex-wrap gap-2 ${inline ? "inline-flex ml-2" : ""} ${compact ? "inline-flex" : ""} ${className}`}>
+    <div className={`flex flex-wrap gap-2 ${inline ? "inline-flex" : ""} ${compact ? "inline-flex" : ""} ${className}`}>
       {/* Barista badge with priority styling */}
       {shouldRenderBarista && isBarista && (
         <Badge variant="barista">
