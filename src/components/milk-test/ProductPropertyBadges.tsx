@@ -1,6 +1,8 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 // Helper function to format keys like "pumpkin_spice" to "Pumpkin Spice"
 // and "three_point_five_percent" to "3.5%"
@@ -56,6 +58,29 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   filters,
   onFiltersChange
 }) => {
+  // Fetch properties and flavors to create name-to-key mapping for badge clicks
+  const { data: properties = [] } = useQuery({
+    queryKey: ['properties'],
+    queryFn: async () => {
+      const { data } = await supabase.from('properties').select('*').order('ordering', { ascending: true });
+      return data || [];
+    },
+    enabled: !!(filters && onFiltersChange) // Only fetch if filtering is enabled
+  });
+
+  const { data: flavors = [] } = useQuery({
+    queryKey: ['flavors'],
+    queryFn: async () => {
+      const { data } = await supabase.from('flavors').select('*').order('ordering', { ascending: true });
+      return data || [];
+    },
+    enabled: !!(filters && onFiltersChange) // Only fetch if filtering is enabled
+  });
+
+  // Create mappings from names to keys for badge clicks
+  const propertyNameToKey = new Map(properties.map(p => [p.name, p.key]));
+  const flavorNameToKey = new Map(flavors.map(f => [f.name, f.key]));
+
   // Safety check
   if (!propertyNames && !isBarista && !flavorNames) {
     return null;
@@ -79,10 +104,11 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
     }
   };
 
-  const handlePropertyClick = (propertyKey: string) => (e: React.MouseEvent) => {
+  const handlePropertyClick = (propertyName: string) => (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent row click
-    console.log('Property badge clicked:', propertyKey, 'current filters:', filters?.properties);
-    if (filters && onFiltersChange) {
+    const propertyKey = propertyNameToKey.get(propertyName);
+    console.log('Property badge clicked:', propertyName, 'converted to key:', propertyKey, 'current filters:', filters?.properties);
+    if (filters && onFiltersChange && propertyKey) {
       const newProperties = filters.properties.includes(propertyKey)
         ? filters.properties.filter(p => p !== propertyKey)
         : [...filters.properties, propertyKey];
@@ -94,10 +120,11 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
     }
   };
 
-  const handleFlavorClick = (flavorKey: string) => (e: React.MouseEvent) => {
+  const handleFlavorClick = (flavorName: string) => (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent row click
-    console.log('Flavor badge clicked:', flavorKey, 'current filters:', filters?.flavors);
-    if (filters && onFiltersChange) {
+    const flavorKey = flavorNameToKey.get(flavorName);
+    console.log('Flavor badge clicked:', flavorName, 'converted to key:', flavorKey, 'current filters:', filters?.flavors);
+    if (filters && onFiltersChange && flavorKey) {
       const newFlavors = filters.flavors.includes(flavorKey)
         ? filters.flavors.filter(f => f !== flavorKey)
         : [...filters.flavors, flavorKey];
@@ -126,32 +153,38 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
       )}
       
       {/* Property badges */}
-      {shouldRenderProperties && propertyNames && propertyNames.map((property, index) => (
-        <Badge 
-          key={`property-${index}`} 
-          variant="category"
-          className={`${filters && onFiltersChange ? 'cursor-pointer hover:shadow-md transition-shadow' : ''} ${
-            filters?.properties.includes(property) ? 'bg-slate-600 text-white border-slate-600 shadow-md' : ''
-          }`}
-          onClick={filters && onFiltersChange ? handlePropertyClick(property) : undefined}
-        >
-          {formatDisplayName(property)}
-        </Badge>
-      ))}
+      {shouldRenderProperties && propertyNames && propertyNames.map((property, index) => {
+        const propertyKey = propertyNameToKey.get(property);
+        return (
+          <Badge 
+            key={`property-${index}`} 
+            variant="category"
+            className={`${filters && onFiltersChange ? 'cursor-pointer hover:shadow-md transition-shadow' : ''} ${
+              propertyKey && filters?.properties.includes(propertyKey) ? 'bg-slate-600 text-white border-slate-600 shadow-md' : ''
+            }`}
+            onClick={filters && onFiltersChange ? handlePropertyClick(property) : undefined}
+          >
+            {formatDisplayName(property)}
+          </Badge>
+        );
+      })}
       
       {/* Flavor badges */}
-      {shouldRenderFlavors && flavorNames && flavorNames.map((flavor, index) => (
-        <Badge 
-          key={`flavor-${index}`} 
-          variant="flavor"
-          className={`${filters && onFiltersChange ? 'cursor-pointer hover:shadow-md transition-shadow' : ''} ${
-            filters?.flavors.includes(flavor) ? 'bg-purple-600 text-white border-purple-600 shadow-md' : ''
-          }`}
-          onClick={filters && onFiltersChange ? handleFlavorClick(flavor) : undefined}
-        >
-          {formatDisplayName(flavor)}
-        </Badge>
-      ))}
+      {shouldRenderFlavors && flavorNames && flavorNames.map((flavor, index) => {
+        const flavorKey = flavorNameToKey.get(flavor);
+        return (
+          <Badge 
+            key={`flavor-${index}`} 
+            variant="flavor"
+            className={`${filters && onFiltersChange ? 'cursor-pointer hover:shadow-md transition-shadow' : ''} ${
+              flavorKey && filters?.flavors.includes(flavorKey) ? 'bg-purple-600 text-white border-purple-600 shadow-md' : ''
+            }`}
+            onClick={filters && onFiltersChange ? handleFlavorClick(flavor) : undefined}
+          >
+            {formatDisplayName(flavor)}
+          </Badge>
+        );
+      })}
     </div>
   );
 };
