@@ -138,6 +138,56 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
     }
   };
 
+  const handleDelete = async () => {
+    setIsSubmitting(true);
+
+    try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !userData.user) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to delete milk tests",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Delete the picture from storage if it exists
+      if (test.picture_path) {
+        await supabase.storage
+          .from('milk-pictures')
+          .remove([test.picture_path]);
+      }
+
+      // Delete the milk test record
+      const { error: deleteError } = await supabase
+        .from('milk_tests')
+        .delete()
+        .eq('id', test.id)
+        .eq('user_id', userData.user.id); // Extra security check
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: "Success",
+        description: "Your milk test record has been deleted.",
+      });
+
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error('Error deleting milk test:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete milk test. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     formState: {
       rating,
@@ -162,6 +212,7 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
       setPriceHasChanged,
       setDrinkPreference
     },
-    handleSubmit
+    handleSubmit,
+    handleDelete
   };
 };

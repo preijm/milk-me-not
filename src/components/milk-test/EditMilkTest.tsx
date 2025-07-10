@@ -19,7 +19,8 @@ export const EditMilkTest = ({
   const {
     formState,
     formSetters,
-    handleSubmit
+    handleSubmit,
+    handleDelete
   } = useEditMilkTest({
     test,
     onSuccess,
@@ -32,7 +33,7 @@ export const EditMilkTest = ({
         </DialogHeader>
         
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 animate-fade-in p-6">
-          <EditMilkTestForm formState={formState} formSetters={formSetters} brand={test.brand || test.brand_name || ""} productName={test.product_name} onSubmit={handleSubmit} onCancel={() => onOpenChange(false)} />
+          <EditMilkTestForm formState={formState} formSetters={formSetters} brand={test.brand || test.brand_name || ""} productName={test.product_name} onSubmit={handleSubmit} onCancel={() => onOpenChange(false)} onDelete={handleDelete} />
         </div>
       </DialogContent>
     </Dialog>;

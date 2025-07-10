@@ -1,6 +1,8 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { RatingSelect } from "../RatingSelect";
 import { ResponsiveNotesArea } from "../ResponsiveNotesArea";
@@ -35,6 +37,7 @@ interface EditMilkTestFormProps {
   productName?: string;
   onSubmit: (e: React.FormEvent) => Promise<void>;
   onCancel: () => void;
+  onDelete: () => void;
 }
 
 export const EditMilkTestForm = ({
@@ -44,6 +47,7 @@ export const EditMilkTestForm = ({
   productName,
   onSubmit,
   onCancel,
+  onDelete,
 }: EditMilkTestFormProps) => {
   return (
     <form onSubmit={onSubmit} className="space-y-8">
@@ -99,24 +103,57 @@ export const EditMilkTestForm = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end space-x-2 pt-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={formState.isSubmitting}
-          className="px-4 py-2"
-        >
-          Cancel
-        </Button>
-        <Button 
-          type="submit" 
-          variant="brand"
-          disabled={formState.isSubmitting}
-          className="px-4 py-2"
-        >
-          {formState.isSubmitting ? "Updating..." : "Update"}
-        </Button>
+      <div className="space-y-4">
+        <div className="flex justify-end space-x-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={formState.isSubmitting}
+            className="px-4 py-2"
+          >
+            Cancel
+          </Button>
+          <Button 
+            type="submit" 
+            variant="brand"
+            disabled={formState.isSubmitting}
+            className="px-4 py-2"
+          >
+            {formState.isSubmitting ? "Updating..." : "Update"}
+          </Button>
+        </div>
+        
+        {/* Delete Button with Confirmation */}
+        <div className="flex justify-center">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                variant="destructive"
+                disabled={formState.isSubmitting}
+                className="px-4 py-2"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Record
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Test Record</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete this milk test record? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
     </form>
   );
