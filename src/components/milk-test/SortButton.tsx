@@ -16,8 +16,7 @@ export const SortButton = ({ sortConfig, onSort }: SortButtonProps) => {
     { key: 'brand_name', label: 'Brand Name' },
     { key: 'product_name', label: 'Product Name' },
     { key: 'avg_rating', label: 'Score' },
-    { key: 'count', label: 'Number of Tests' },
-    { key: 'created_at', label: 'Date Added' }
+    { key: 'count', label: 'Number of Tests' }
   ];
 
   const currentSort = sortOptions.find(option => option.key === sortConfig.column);
