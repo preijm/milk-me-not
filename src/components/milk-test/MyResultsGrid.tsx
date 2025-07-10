@@ -95,16 +95,14 @@ export const MyResultsGrid = ({
                 
                 {/* Brand & Product */}
                 <div>
-                  <div className="mb-1">
-                    <h3 className="font-medium text-sm line-clamp-2 leading-tight">{result.brand_name}</h3>
+                  <div className="mb-1 space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-medium text-sm leading-tight">{result.brand_name}</h3>
+                      {result.is_barista && <ProductPropertyBadges isBarista={result.is_barista} compact={true} displayType="barista" />}
+                      <ProductPropertyBadges propertyNames={result.property_names} flavorNames={result.flavor_names} compact={true} />
+                    </div>
                     <p className="text-gray-700 line-clamp-2 leading-tight" style={{fontSize: '14px'}}>{result.product_name}</p>
                   </div>
-                  
-                   {/* Badges Row */}
-                   <div className="flex flex-wrap gap-1 mt-2">
-                     {result.is_barista && <ProductPropertyBadges isBarista={result.is_barista} compact={true} displayType="barista" />}
-                     <ProductPropertyBadges propertyNames={result.property_names} flavorNames={result.flavor_names} compact={true} />
-                   </div>
                 </div>
               </div>
             </CardContent>
