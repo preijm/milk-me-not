@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +48,17 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
       </PopoverTrigger>
       <PopoverContent className="w-80 p-4" align="start">
         <div className="space-y-3">
-          <h3 className="font-medium">Search</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium">Search</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearSearch}
+              className="h-6 w-6 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
           <div className="space-y-3">
             <Input
               value={localSearchTerm}
@@ -56,23 +67,6 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
               onKeyDown={handleKeyDown}
               autoFocus
             />
-            <div className="flex items-center justify-between">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClearSearch}
-                className="text-xs"
-              >
-                Clear
-              </Button>
-              <Button
-                onClick={handleApplySearch}
-                size="sm"
-                className="text-xs"
-              >
-                Apply
-              </Button>
-            </div>
           </div>
         </div>
       </PopoverContent>
