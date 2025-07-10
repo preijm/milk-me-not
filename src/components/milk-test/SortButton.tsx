@@ -38,9 +38,7 @@ export const SortButton = ({ sortConfig, onSort }: SortButtonProps) => {
           <ArrowUpDown className="h-4 w-4" />
           <span>Sort</span>
           {currentSort && (
-            <span className="ml-1 text-white rounded-full px-1.5 py-0.5 text-xs font-medium" style={{ backgroundColor: '#2144ff' }}>
-              1
-            </span>
+            <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ backgroundColor: '#2144ff' }} />
           )}
         </Button>
       </PopoverTrigger>
