@@ -2,13 +2,15 @@ import React from "react";
 import { MilkTestResult } from "@/types/milk-test";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, Edit2, Trash2 } from "lucide-react";
+import { Calendar, Edit2, Trash2, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import { formatScore } from "@/lib/scoreFormatter";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface MyResultsGridProps {
   results: MilkTestResult[];
@@ -21,6 +23,8 @@ export const MyResultsGrid = ({
   onEdit,
   onDelete
 }: MyResultsGridProps) => {
+  const isMobile = useIsMobile();
+  
   const getPictureUrl = (picturePath: string | null | undefined) => {
     if (!picturePath) return null;
     return supabase.storage.from('milk-pictures').getPublicUrl(picturePath).data.publicUrl;
@@ -103,14 +107,34 @@ export const MyResultsGrid = ({
                     </div>
                     
                     {/* Actions */}
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => onEdit(result)}>
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-red-500 hover:text-red-700" onClick={() => onDelete(result.id)}>
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
+                    {isMobile ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                            <MoreVertical className="h-3 w-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => onEdit(result)}>
+                            <Edit2 className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onDelete(result.id)} className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => onEdit(result)}>
+                          <Edit2 className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-red-500 hover:text-red-700" onClick={() => onDelete(result.id)}>
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
