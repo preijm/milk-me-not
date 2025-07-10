@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useBrandData, Brand } from "@/hooks/useBrandData";
@@ -12,12 +12,12 @@ interface BrandSelectProps {
   className?: string;
 }
 
-export const BrandSelect = ({ 
+export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({ 
   brandId, 
   setBrandId, 
   defaultBrand, 
   className
-}: BrandSelectProps) => {
+}, ref) => {
   const [inputValue, setInputValue] = useState(defaultBrand || "");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   
@@ -70,6 +70,7 @@ export const BrandSelect = ({
   return (
     <div className={cn("relative", className)}>
       <Input
+        ref={ref}
         placeholder="Enter brand name..."
         value={inputValue}
         onChange={handleInputChange}
@@ -88,4 +89,6 @@ export const BrandSelect = ({
       />
     </div>
   );
-};
+});
+
+BrandSelect.displayName = "BrandSelect";

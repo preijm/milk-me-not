@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useProductRegistration } from "./ProductRegistrationContext";
 import { BrandSelect } from "../BrandSelect";
@@ -11,7 +11,7 @@ interface ProductFormProps {
   onCancel: (e: React.MouseEvent) => void;
 }
 
-export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) => {
+export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onSubmit, onCancel }, ref) => {
   const {
     brandId,
     setBrandId,
@@ -40,6 +40,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
           </label>
           <div className="w-full">
             <BrandSelect
+              ref={ref}
               brandId={brandId}
               setBrandId={setBrandId}
             />
@@ -105,4 +106,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({ onSubmit, onCancel }) 
       </div>
     </form>
   );
-};
+});
+
+ProductForm.displayName = "ProductForm";

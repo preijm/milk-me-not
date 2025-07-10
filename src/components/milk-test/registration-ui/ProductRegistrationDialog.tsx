@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ProductRegistrationHeader } from "../ProductRegistrationHeader";
 import { DialogDescription } from "@/components/ui/dialog";
@@ -27,6 +27,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     toast
   } = useProductRegistration();
   const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  const brandInputRef = useRef<HTMLInputElement>(null);
 
   // Reset isSubmitting state when the dialog is closed
   useEffect(() => {
@@ -35,6 +36,17 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
       console.log("Dialog closed, isSubmitting reset to false");
     }
   }, [open, setIsSubmitting]);
+
+  // Focus the brand input when dialog opens
+  useEffect(() => {
+    if (open && brandInputRef.current) {
+      // Small delay to ensure the dialog is fully rendered
+      const timeoutId = setTimeout(() => {
+        brandInputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [open]);
 
   // Also reset isSubmitting when duplicate dialog opens
   useEffect(() => {
@@ -119,7 +131,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
             Register a new milk product with brand, product details, properties, and flavors
           </DialogDescription>
           
-          <ProductForm onSubmit={handleSubmit} onCancel={handleCancel} />
+          <ProductForm ref={brandInputRef} onSubmit={handleSubmit} onCancel={handleCancel} />
         </DialogContent>
       </Dialog>
       
