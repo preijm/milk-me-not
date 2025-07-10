@@ -85,7 +85,7 @@ export const ResultsFilter = ({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 p-4" align="start">
+        <PopoverContent className="w-80 p-4" align="end">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-medium">Show Me Only...</h3>
