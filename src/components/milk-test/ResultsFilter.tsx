@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -107,7 +108,7 @@ export const ResultsFilter = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent 
-          className={`${isMobile ? 'w-[calc(100vw-2rem)]' : 'w-80'} p-4`} 
+          className={`${isMobile ? 'w-[calc(100vw-3rem)]' : 'w-80'} p-4`} 
           align={isMobile ? "center" : "end"}
         >
           <div className="space-y-4">
