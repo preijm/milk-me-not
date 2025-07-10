@@ -43,7 +43,7 @@ export const MyResultsGrid = ({
       const ratingColorClass = getRatingColorClass(Number(result.rating));
       return <Card key={result.id} className="overflow-hidden hover:shadow-md transition-shadow relative group">
             <div className="relative">
-              <AspectRatio ratio={1} className="bg-gray-100">
+              <div className="bg-gray-100 aspect-square">
                 {imageUrl ? <img src={imageUrl} alt={`${result.brand_name} ${result.product_name}`} className="object-cover w-full h-full" onError={e => {
               const target = e.target as HTMLImageElement;
               target.src = '/placeholder.svg';
@@ -66,10 +66,10 @@ export const MyResultsGrid = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-              </AspectRatio>
+              </div>
             </div>
             
-            <CardContent className="p-2">
+            <CardContent className={`p-2 ${!(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) ? 'pb-3' : ''}`}>
               <div className="space-y-1.5">
                 {/* Date */}
                 <div className="flex items-center text-xs text-gray-500">
@@ -96,9 +96,9 @@ export const MyResultsGrid = ({
                     </div>
                   </div>
                   
-                  {/* Badges */}
+                  {/* Badges - only render if they exist */}
                   {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1 mt-2">
                       {result.is_barista && <ProductPropertyBadges isBarista={result.is_barista} compact={true} displayType="barista" />}
                       <ProductPropertyBadges propertyNames={result.property_names} flavorNames={result.flavor_names} compact={true} />
                     </div>
