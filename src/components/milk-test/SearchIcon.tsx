@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Search } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SearchIconProps {
   searchTerm: string;
@@ -14,6 +15,7 @@ interface SearchIconProps {
 export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search..." }: SearchIconProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
+  const isMobile = useIsMobile();
 
   const handleClearSearch = () => {
     setLocalSearchTerm("");
@@ -42,7 +44,10 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4" align="start">
+      <PopoverContent 
+        className={`${isMobile ? 'w-[calc(100vw-2rem)]' : 'w-80'} p-4`} 
+        align={isMobile ? "center" : "start"}
+      >
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-medium">Search</h3>

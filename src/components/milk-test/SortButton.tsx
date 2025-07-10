@@ -1,8 +1,10 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { SortConfig } from "@/hooks/useAggregatedResults";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SortButtonProps {
   sortConfig: SortConfig;
@@ -12,6 +14,7 @@ interface SortButtonProps {
 
 export const SortButton = ({ sortConfig, onSort, onClearSort }: SortButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const sortOptions = [
     { key: 'brand_name', label: 'Brand Name' },
@@ -43,7 +46,10 @@ export const SortButton = ({ sortConfig, onSort, onClearSort }: SortButtonProps)
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-4" align="end">
+      <PopoverContent 
+        className={`${isMobile ? 'w-[calc(100vw-2rem)]' : 'w-64'} p-4`} 
+        align={isMobile ? "center" : "end"}
+      >
         <div className="space-y-2">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-medium">Sort by</h3>
