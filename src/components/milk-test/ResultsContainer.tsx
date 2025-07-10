@@ -45,27 +45,21 @@ export const ResultsContainer = ({
       <CardHeader className="bg-white/50 backdrop-blur-sm pb-4 pt-6 px-6">
         <div className="flex items-center gap-4">
           {isMobile ? (
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <SearchIcon
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                  placeholder="Search by brand or product..."
-                />
-              </div>
-              <div className="flex-1">
-                <ResultsFilter 
-                  filters={filters}
-                  onFiltersChange={onFiltersChange}
-                />
-              </div>
-              <div className="flex-1">
-                <SortButton 
-                  sortConfig={sortConfig}
-                  onSort={handleSort}
-                  onClearSort={onClearSort}
-                />
-              </div>
+            <div className="grid grid-cols-3 gap-2 w-full">
+              <SearchIcon
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                placeholder="Search by brand or product..."
+              />
+              <ResultsFilter 
+                filters={filters}
+                onFiltersChange={onFiltersChange}
+              />
+              <SortButton 
+                sortConfig={sortConfig}
+                onSort={handleSort}
+                onClearSort={onClearSort}
+              />
             </div>
           ) : (
             <>
