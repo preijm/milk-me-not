@@ -2,7 +2,7 @@ import React from "react";
 import { MilkTestResult } from "@/types/milk-test";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, ChevronRight } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
@@ -36,54 +36,75 @@ export const MyResultsGrid = ({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
       {results.map(result => {
+        const imageUrl = getPictureUrl(result.picture_path);
+        const hasBadges = result.is_barista || 
+          (result.property_names && result.property_names.length > 0) || 
+          (result.flavor_names && result.flavor_names.length > 0);
+
         return (
           <Card 
             key={result.id} 
-            className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer bg-white"
+            className="overflow-hidden hover:shadow-md transition-shadow relative group cursor-pointer"
             onClick={() => onEdit(result)}
           >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  {/* Brand Section */}
-                  <div className="mb-3">
-                    <p className="text-xs text-gray-500 mb-1">Brand</p>
-                    <h3 className="font-semibold text-lg text-gray-900">{result.brand_name}</h3>
+            <div className="relative">
+              <div className="bg-gray-100 aspect-square">
+                {imageUrl ? (
+                  <img 
+                    src={imageUrl} 
+                    alt={`${result.brand_name} ${result.product_name}`} 
+                    className="object-cover w-full h-full" 
+                    onError={e => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder.svg';
+                    }} 
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full bg-gray-100">
+                    <span className="text-gray-400 text-xs">No image</span>
                   </div>
-                  
-                  {/* Product Section */}
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Product</p>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="font-semibold text-lg text-gray-900">{result.product_name}</h4>
-                      {result.is_barista && <ProductPropertyBadges isBarista={result.is_barista} compact={true} displayType="barista" />}
-                      <ProductPropertyBadges propertyNames={result.property_names} flavorNames={result.flavor_names} compact={true} />
-                    </div>
-                  </div>
+                )}
+                
+                {/* Rating badge */}
+                <div className="absolute top-1.5 right-1.5 shadow-md rounded-lg">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge variant={getScoreBadgeVariant(Number(result.rating))}>
+                          {formatScore(Number(result.rating))}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Score: {formatScore(Number(result.rating))}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+            </div>
+            
+            <CardContent className="p-2 relative">
+              <div className="space-y-1.5">
+                {/* Date */}
+                <div className="flex items-center text-xs text-gray-500">
+                  <Calendar className="h-3 w-3 mr-1" />
+                  {new Date(result.created_at).toLocaleDateString()}
                 </div>
                 
-                {/* Score and Tests Section */}
-                <div className="flex flex-col items-end gap-3 ml-4">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">Score</p>
-                    <Badge variant={getScoreBadgeVariant(Number(result.rating))} className="text-base px-3 py-1">
-                      {formatScore(Number(result.rating))}
-                    </Badge>
-                  </div>
-                  
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">Tests</p>
-                    <div className="border border-gray-300 rounded px-3 py-1 text-sm text-gray-700">
-                      1
+                {/* Brand & Product */}
+                <div>
+                  <div className="mb-1">
+                    <div className="flex items-start gap-2 flex-wrap mb-1">
+                      <h3 className="font-medium text-sm leading-tight">{result.brand_name}</h3>
+                      <div className="flex gap-1 flex-wrap">
+                        {result.is_barista && <ProductPropertyBadges isBarista={result.is_barista} compact={true} displayType="barista" />}
+                        <ProductPropertyBadges propertyNames={result.property_names} flavorNames={result.flavor_names} compact={true} />
+                      </div>
                     </div>
+                    <p className="text-gray-700 line-clamp-2 leading-tight" style={{fontSize: '14px'}}>{result.product_name}</p>
                   </div>
-                </div>
-                
-                {/* Arrow */}
-                <div className="ml-2">
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
                 </div>
               </div>
             </CardContent>

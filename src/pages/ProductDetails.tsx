@@ -150,61 +150,51 @@ const ProductDetails = () => {
             </Link>
           </div>
 
-          {/* Product Summary Card - Exact match to reference */}
+          {/* Redesigned compact header */}
           <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 mb-6 animate-fade-in">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  {/* Brand Section */}
-                  <div className="mb-3">
-                    <p className="text-xs text-gray-500 mb-1">Brand</p>
-                    <h2 className="font-semibold text-lg text-gray-900">{product.brand_name}</h2>
-                  </div>
-                  
-                  {/* Product Section */}
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">Product</p>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-lg text-gray-900">{product.product_name}</h3>
-                      {product.is_barista && (
+                    <div className="text-xs text-gray-500">Brand</div>
+                    <h2 className="text-xl font-bold text-gray-900">{product.brand_name}</h2>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Product</div>
+                    <div className="flex items-center">
+                      <h3 className="" style={{fontSize: '20px'}}>{product.product_name}</h3>
+                      <div className="flex flex-wrap gap-1 ml-2">
+                        {product.is_barista && (
+                          <ProductPropertyBadges 
+                            isBarista={product.is_barista}
+                            displayType="barista"
+                            inline={true}
+                            compact={true}
+                          />
+                        )}
+                        
                         <ProductPropertyBadges 
-                          isBarista={product.is_barista}
-                          displayType="barista"
+                          propertyNames={product.property_names}
+                          displayType="properties"
+                          inline={true}
                           compact={true}
                         />
-                      )}
-                      
-                      <ProductPropertyBadges 
-                        propertyNames={product.property_names}
-                        displayType="properties"
-                        compact={true}
-                      />
-                      
-                      <ProductPropertyBadges 
-                        flavorNames={product.flavor_names}
-                        displayType="flavors"
-                        compact={true}
-                      />
+                        
+                        <ProductPropertyBadges 
+                          flavorNames={product.flavor_names}
+                          displayType="flavors"
+                          inline={true}
+                          compact={true}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
                 
-                {/* Score and Tests Section */}
-                <div className="flex flex-col items-end gap-3 ml-4">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">Score</p>
-                    <div className="border-2 border-red-300 text-red-600 rounded px-3 py-1 text-base font-medium">
-                      {(product.avg_rating * 2).toFixed(1)}
-                    </div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">Tests</p>
-                    <div className="border border-gray-300 rounded px-3 py-1 text-sm text-gray-700">
-                      {product.count}
-                    </div>
-                  </div>
-                </div>
+                <CircularStats 
+                  score={product.avg_rating} 
+                  testCount={product.count} 
+                />
               </div>
             </CardContent>
           </Card>
