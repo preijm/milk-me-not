@@ -58,10 +58,17 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     }
   }, [open, brandInput, hasInitialFocus]);
 
-  // Handle brand input ready callback - only set the ref, don't auto-focus
+  // Handle brand input ready callback - focus on first time if dialog is open
   const handleBrandInputReady = (input: HTMLInputElement | null) => {
     console.log('Brand input ready:', input);
     setBrandInput(input);
+    
+    // Focus immediately if dialog is open and we haven't focused yet
+    if (open && input && !hasInitialFocus) {
+      console.log('Focusing brand input on ready since dialog is open and no initial focus yet');
+      setHasInitialFocus(true);
+      setTimeout(() => input.focus(), 0);
+    }
   };
 
   // Also reset isSubmitting when duplicate dialog opens
