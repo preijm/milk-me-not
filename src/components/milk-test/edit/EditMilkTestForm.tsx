@@ -46,72 +46,57 @@ export const EditMilkTestForm = ({
   onCancel,
 }: EditMilkTestFormProps) => {
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
-      {/* Product Information Card */}
-      <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardContent className="p-4">
-          <ProductInfo brand={brand} productName={productName} />
-        </CardContent>
-      </Card>
+    <form onSubmit={onSubmit} className="space-y-8">
+      {/* Product Information */}
+      <div className="space-y-4">
+        <ProductInfo brand={brand} productName={productName} />
+      </div>
 
-      {/* Rating and Notes Card */}
-      <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardHeader className="pb-2 pt-4">
-          <h2 className="text-base font-semibold text-gray-900">Rating & Notes</h2>
-        </CardHeader>
-        <CardContent className="pt-0 pb-4 space-y-3">
-          <RatingSelect 
-            rating={formState.rating} 
-            setRating={formSetters.setRating} 
-          />
-          <ResponsiveNotesArea
-            notes={formState.notes}
-            setNotes={formSetters.setNotes}
-            picture={formState.picture}
-            picturePreview={formState.picturePreview}
-            setPicture={formSetters.setPicture}
-            setPicturePreview={formSetters.setPicturePreview}
-          />
-        </CardContent>
-      </Card>
+      {/* Rating and Notes */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Rating</h2>
+        <RatingSelect 
+          rating={formState.rating} 
+          setRating={formSetters.setRating} 
+        />
+        <ResponsiveNotesArea
+          notes={formState.notes}
+          setNotes={formSetters.setNotes}
+          picture={formState.picture}
+          picturePreview={formState.picturePreview}
+          setPicture={formSetters.setPicture}
+          setPicturePreview={formSetters.setPicturePreview}
+        />
+      </div>
 
-      {/* Price and Shop Information Combined Card */}
-      <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardHeader className="pb-2 pt-4">
-          <h2 className="text-base font-semibold text-gray-900">Purchase Details</h2>
-        </CardHeader>
-        <CardContent className="pt-0 pb-4 space-y-3">
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Price-to-Quality Ratio</label>
-            <PriceInput 
-              price={formState.priceQualityRatio} 
-              setPrice={formSetters.setPriceQualityRatio}
-              hasChanged={formState.priceHasChanged}
-              setHasChanged={formSetters.setPriceHasChanged}
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Shop</label>
-            <ShopSelect
-              shop={formState.shop}
-              setShop={formSetters.setShop}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Price-to-Quality Ratio */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Price-to-Quality Ratio</h2>
+        <PriceInput 
+          price={formState.priceQualityRatio} 
+          setPrice={formSetters.setPriceQualityRatio}
+          hasChanged={formState.priceHasChanged}
+          setHasChanged={formSetters.setPriceHasChanged}
+        />
+      </div>
 
-      {/* Drinking Style Card */}
-      <Card className="bg-white/60 backdrop-blur-sm border border-white/20 shadow-sm">
-        <CardHeader className="pb-2 pt-4">
-          <h2 className="text-base font-semibold text-gray-900">Drinking Style</h2>
-        </CardHeader>
-        <CardContent className="pt-0 pb-4">
-          <DrinkPreference
-            preference={formState.drinkPreference}
-            setPreference={formSetters.setDrinkPreference}
-          />
-        </CardContent>
-      </Card>
+      {/* Buying Location */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
+        <ShopSelect
+          shop={formState.shop}
+          setShop={formSetters.setShop}
+        />
+      </div>
+
+      {/* Drinking Style */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold text-gray-900">Drinking Style</h2>
+        <DrinkPreference
+          preference={formState.drinkPreference}
+          setPreference={formSetters.setDrinkPreference}
+        />
+      </div>
 
       {/* Action Buttons */}
       <div className="flex justify-end space-x-2 pt-2">

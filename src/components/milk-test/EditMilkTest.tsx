@@ -29,10 +29,11 @@ export const EditMilkTest = ({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl">
         <DialogHeader className="bg-white/50 backdrop-blur-sm -m-6 px-6 py-4 mb-6 rounded-t-lg">
           <DialogTitle className="text-xl font-semibold text-gray-900">Update That Moo Record</DialogTitle>
-          
         </DialogHeader>
         
-        <EditMilkTestForm formState={formState} formSetters={formSetters} brand={test.brand || test.brand_name || ""} productName={test.product_name} onSubmit={handleSubmit} onCancel={() => onOpenChange(false)} />
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 animate-fade-in p-6">
+          <EditMilkTestForm formState={formState} formSetters={formSetters} brand={test.brand || test.brand_name || ""} productName={test.product_name} onSubmit={handleSubmit} onCancel={() => onOpenChange(false)} />
+        </div>
       </DialogContent>
     </Dialog>;
 };
