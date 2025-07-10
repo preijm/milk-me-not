@@ -80,7 +80,7 @@ export const MyResultsGrid = ({
               </div>
             </div>
             
-            <CardContent className={`p-2 ${!hasBadges ? 'pb-2' : ''}`}>
+            <CardContent className={`p-2 ${!hasBadges ? 'pb-2' : ''} relative`}>
               <div className={`space-y-1.5 ${!hasBadges ? 'space-y-1' : ''}`}>
                 {/* Date */}
                 <div className="flex items-center text-xs text-gray-500">
@@ -90,21 +90,9 @@ export const MyResultsGrid = ({
                 
                 {/* Brand & Product */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-sm truncate">{result.brand_name}</h3>
-                      <p className="text-gray-700 truncate" style={{fontSize: '14px'}}>{result.product_name}</p>
-                    </div>
-                    
-                    {/* Actions - visible on hover */}
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => onEdit(result)}>
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-red-500 hover:text-red-700" onClick={() => onDelete(result.id)}>
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
+                  <div className="mb-1">
+                    <h3 className="font-medium text-sm truncate">{result.brand_name}</h3>
+                    <p className="text-gray-700 truncate" style={{fontSize: '14px'}}>{result.product_name}</p>
                   </div>
                   
                   {/* Badges - only render if they exist */}
@@ -115,6 +103,16 @@ export const MyResultsGrid = ({
                     </div>
                   )}
                 </div>
+              </div>
+              
+              {/* Actions - positioned at bottom right */}
+              <div className="absolute bottom-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => onEdit(result)}>
+                  <Edit2 className="h-3 w-3" />
+                </Button>
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-red-500 hover:text-red-700" onClick={() => onDelete(result.id)}>
+                  <Trash2 className="h-3 w-3" />
+                </Button>
               </div>
             </CardContent>
           </Card>
