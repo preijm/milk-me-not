@@ -1,7 +1,6 @@
 import React from "react";
 import { MilkTestResult } from "@/types/milk-test";
 import { Card, CardContent } from "@/components/ui/card";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, Edit2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,11 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import { formatScore } from "@/lib/scoreFormatter";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 interface MyResultsGridProps {
   results: MilkTestResult[];
   onEdit: (result: MilkTestResult) => void;
   onDelete: (id: string) => void;
 }
+
 export const MyResultsGrid = ({
   results,
   onEdit,
@@ -24,32 +25,42 @@ export const MyResultsGrid = ({
     if (!picturePath) return null;
     return supabase.storage.from('milk-pictures').getPublicUrl(picturePath).data.publicUrl;
   };
-  const getRatingColorClass = (rating: number) => {
-    if (rating >= 8.5) return "bg-green-500 text-white";
-    if (rating >= 7.5) return "bg-green-400 text-white";
-    if (rating >= 6.5) return "bg-blue-400 text-white";
-    if (rating >= 5.5) return "bg-yellow-400 text-gray-800";
-    if (rating >= 4.5) return "bg-orange-400 text-white";
-    return "bg-red-400 text-white";
-  };
+
   if (results.length === 0) {
-    return <div className="text-center py-12">
+    return (
+      <div className="text-center py-12">
         <p className="text-gray-500">No test results found</p>
-      </div>;
+      </div>
+    );
   }
-  return <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
       {results.map(result => {
-      const imageUrl = getPictureUrl(result.picture_path);
-      const ratingColorClass = getRatingColorClass(Number(result.rating));
-      return <Card key={result.id} className="overflow-hidden hover:shadow-md transition-shadow relative group">
+        const imageUrl = getPictureUrl(result.picture_path);
+        const hasBadges = result.is_barista || 
+          (result.property_names && result.property_names.length > 0) || 
+          (result.flavor_names && result.flavor_names.length > 0);
+
+        return (
+          <Card key={result.id} className="overflow-hidden hover:shadow-md transition-shadow relative group">
             <div className="relative">
               <div className="bg-gray-100 aspect-square">
-                {imageUrl ? <img src={imageUrl} alt={`${result.brand_name} ${result.product_name}`} className="object-cover w-full h-full" onError={e => {
-              const target = e.target as HTMLImageElement;
-              target.src = '/placeholder.svg';
-            }} /> : <div className="flex items-center justify-center w-full h-full bg-gray-100">
+                {imageUrl ? (
+                  <img 
+                    src={imageUrl} 
+                    alt={`${result.brand_name} ${result.product_name}`} 
+                    className="object-cover w-full h-full" 
+                    onError={e => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder.svg';
+                    }} 
+                  />
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full bg-gray-100">
                     <span className="text-gray-400 text-xs">No image</span>
-                  </div>}
+                  </div>
+                )}
                 
                 {/* Rating badge */}
                 <div className="absolute top-1.5 right-1.5 shadow-md rounded-lg">
@@ -69,8 +80,8 @@ export const MyResultsGrid = ({
               </div>
             </div>
             
-            <CardContent className={`p-2 ${!(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) ? 'pb-3' : ''}`}>
-              <div className="space-y-1.5">
+            <CardContent className={`p-2 ${!hasBadges ? 'pb-3' : ''}`}>
+              <div className={`space-y-1.5 ${!hasBadges ? 'space-y-1' : ''}`}>
                 {/* Date */}
                 <div className="flex items-center text-xs text-gray-500">
                   <Calendar className="h-3 w-3 mr-1" />
@@ -97,7 +108,7 @@ export const MyResultsGrid = ({
                   </div>
                   
                   {/* Badges - only render if they exist */}
-                  {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
+                  {hasBadges && (
                     <div className="flex flex-wrap gap-1 mt-2">
                       {result.is_barista && <ProductPropertyBadges isBarista={result.is_barista} compact={true} displayType="barista" />}
                       <ProductPropertyBadges propertyNames={result.property_names} flavorNames={result.flavor_names} compact={true} />
@@ -106,7 +117,9 @@ export const MyResultsGrid = ({
                 </div>
               </div>
             </CardContent>
-          </Card>;
-    })}
-    </div>;
+          </Card>
+        );
+      })}
+    </div>
+  );
 };
