@@ -127,27 +127,13 @@ export const AggregatedResultsTable = ({
                              {result.product_name || "Unknown Product"}
                            </span>
                            {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
-                            <div className="flex flex-wrap gap-1">
-                              {result.is_barista && (
-                                <ProductPropertyBadges 
-                                  isBarista={result.is_barista}
-                                  compact={true}
-                                  displayType="barista"
-                                />
-                              )}
-                              
-                              <ProductPropertyBadges 
-                                propertyNames={result.property_names}
-                                compact={true}
-                                displayType="properties"
-                              />
-                              
-                              <ProductPropertyBadges 
-                                flavorNames={result.flavor_names}
-                                compact={true}
-                                displayType="flavors"
-                              />
-                            </div>
+                             <ProductPropertyBadges 
+                               isBarista={result.is_barista}
+                               propertyNames={result.property_names}
+                               flavorNames={result.flavor_names}
+                               compact={true}
+                               displayType="all"
+                             />
                           )}
                         </div>
                       </div>
@@ -199,32 +185,16 @@ export const AggregatedResultsTable = ({
                     <div className="text-xs text-gray-500">Product</div>
                     <div className="flex items-center">
                       <h3 className="" style={{fontSize: '20px'}}>{result.product_name || "Unknown Product"}</h3>
-                      {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
-                        <div className="flex flex-wrap gap-1 ml-2">
-                          {result.is_barista && (
-                            <ProductPropertyBadges 
-                              isBarista={result.is_barista}
-                              displayType="barista"
-                              inline={true}
-                              compact={true}
-                            />
-                          )}
-                          
-                          <ProductPropertyBadges 
-                            propertyNames={result.property_names}
-                            displayType="properties"
-                            inline={true}
-                            compact={true}
-                          />
-                          
-                          <ProductPropertyBadges 
-                            flavorNames={result.flavor_names}
-                            displayType="flavors"
-                            inline={true}
-                            compact={true}
-                          />
-                        </div>
-                      )}
+                       {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
+                         <ProductPropertyBadges 
+                           isBarista={result.is_barista}
+                           propertyNames={result.property_names}
+                           flavorNames={result.flavor_names}
+                           compact={true}
+                           displayType="all"
+                           inline={true}
+                         />
+                       )}
                     </div>
                   </div>
                 </div>
