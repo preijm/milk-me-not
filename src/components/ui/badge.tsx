@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center border font-medium transition-all duration-200 hover:transform hover:-translate-y-0.5 hover:shadow-sm",
+  "inline-flex items-center border font-medium",
   {
     variants: {
       variant: {
@@ -20,17 +20,17 @@ const badgeVariants = cva(
         barista: "bg-white/80 backdrop-blur-sm text-amber-600 border border-amber-600 rounded-md px-2 py-1 text-xs font-medium hover:shadow-lg",
         category: "bg-white/80 backdrop-blur-sm text-slate-600 border border-slate-600 rounded-md px-2 py-1 text-xs font-medium hover:shadow-lg",
         flavor: "bg-white/80 backdrop-blur-sm text-purple-600 border border-purple-600 rounded-md px-2 py-1 text-xs font-medium hover:shadow-lg",
-        scoreExcellent: "bg-transparent text-[#00bf63] border-[#00bf63] rounded px-2 py-1 text-[11px] font-medium hover:shadow-md",
-        scoreGood: "bg-transparent text-[#2144ff] border-[#2144ff] rounded px-2 py-1 text-[11px] font-medium hover:shadow-md",
-        scoreFair: "bg-transparent text-[#f59e0b] border-[#f59e0b] rounded px-2 py-1 text-[11px] font-medium hover:shadow-md",
-        scorePoor: "bg-transparent text-[#ff4b51] border-[#ff4b51] rounded px-2 py-1 text-[11px] font-medium hover:shadow-md",
+        scoreExcellent: "bg-transparent text-[#00bf63] border-[#00bf63] rounded px-2 py-1 text-[11px] font-medium",
+        scoreGood: "bg-transparent text-[#2144ff] border-[#2144ff] rounded px-2 py-1 text-[11px] font-medium",
+        scoreFair: "bg-transparent text-[#f59e0b] border-[#f59e0b] rounded px-2 py-1 text-[11px] font-medium",
+        scorePoor: "bg-transparent text-[#ff4b51] border-[#ff4b51] rounded px-2 py-1 text-[11px] font-medium",
         // Score badge variants
-        scoreBadgeExcellent: "bg-white/80 backdrop-blur-sm text-[#00bf63] border border-[#00bf63] rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center hover:shadow-lg",
-        scoreBadgeGood: "bg-white/80 backdrop-blur-sm text-[#2144ff] border border-[#2144ff] rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center hover:shadow-lg",
-        scoreBadgeFair: "bg-white/80 backdrop-blur-sm text-[#f59e0b] border border-[#f59e0b] rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center hover:shadow-lg",
-        scoreBadgePoor: "bg-white/80 backdrop-blur-sm text-[#ff4b51] border border-[#ff4b51] rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center hover:shadow-lg",
+        scoreBadgeExcellent: "bg-white/80 backdrop-blur-sm text-[#00bf63] border border-[#00bf63] rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
+        scoreBadgeGood: "bg-white/80 backdrop-blur-sm text-[#2144ff] border border-[#2144ff] rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
+        scoreBadgeFair: "bg-white/80 backdrop-blur-sm text-[#f59e0b] border border-[#f59e0b] rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
+        scoreBadgePoor: "bg-white/80 backdrop-blur-sm text-[#ff4b51] border border-[#ff4b51] rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
         // Test count badge
-        testCount: "bg-transparent text-slate-600 border-slate-600 rounded-md px-2.5 py-1.5 text-sm font-medium min-w-[40px] justify-center hover:shadow-md",
+        testCount: "bg-transparent text-slate-600 border-slate-600 rounded-md px-2.5 py-1.5 text-sm font-medium min-w-[40px] justify-center",
         // Circular score badges
         circularScoreExcellent: "bg-[#00bf63] text-white rounded-full h-12 w-12 text-sm font-bold flex items-center justify-center shadow-lg",
         circularScoreGood: "bg-[#2144ff] text-white rounded-full h-12 w-12 text-sm font-bold flex items-center justify-center shadow-lg", 
