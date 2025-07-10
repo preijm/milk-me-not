@@ -74,7 +74,16 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
                 autoFocus
                 className="pr-10"
               />
-              <CornerDownLeft className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <button
+                onClick={() => {
+                  setSearchTerm(localSearchTerm);
+                  setIsOpen(false);
+                }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded transition-colors"
+                type="button"
+              >
+                <CornerDownLeft className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+              </button>
             </div>
           </div>
         </div>
