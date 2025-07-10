@@ -229,7 +229,7 @@ export const AggregatedResultsTable = ({
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
                   <div className="flex flex-col items-center">
                     <div className="text-xs text-gray-500 mb-2 font-medium">Score</div>
                     <Badge variant={getScoreBadgeVariant(result.avg_rating)} className="px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center">
