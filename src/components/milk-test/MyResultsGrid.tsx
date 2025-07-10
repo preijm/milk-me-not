@@ -80,7 +80,7 @@ export const MyResultsGrid = ({
               </div>
             </div>
             
-            <CardContent className={`p-2 ${!hasBadges ? 'pb-3' : ''}`}>
+            <CardContent className={`p-2 ${!hasBadges ? 'pb-2' : ''}`}>
               <div className={`space-y-1.5 ${!hasBadges ? 'space-y-1' : ''}`}>
                 {/* Date */}
                 <div className="flex items-center text-xs text-gray-500">
