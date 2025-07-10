@@ -10,13 +10,15 @@ interface BrandSelectProps {
   setBrandId: (id: string) => void;
   defaultBrand?: string;
   className?: string;
+  onInputReady?: (input: HTMLInputElement | null) => void;
 }
 
 export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({ 
   brandId, 
   setBrandId, 
   defaultBrand, 
-  className
+  className,
+  onInputReady
 }, ref) => {
   const [inputValue, setInputValue] = useState(defaultBrand || "");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -71,6 +73,7 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
     <div className={cn("relative", className)}>
       <Input
         ref={(el) => {
+          // Handle forwarded ref
           if (ref) {
             if (typeof ref === 'function') {
               ref(el);
@@ -78,6 +81,8 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
               ref.current = el;
             }
           }
+          // Notify parent when input is ready
+          onInputReady?.(el);
           console.log('BrandSelect Input ref set:', el);
         }}
         placeholder="Enter brand name..."

@@ -9,9 +9,10 @@ import { ProductOptions } from "../ProductOptions";
 interface ProductFormProps {
   onSubmit: (e: React.FormEvent) => Promise<void>;
   onCancel: (e: React.MouseEvent) => void;
+  onBrandInputReady?: (input: HTMLInputElement | null) => void;
 }
 
-export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onSubmit, onCancel }, ref) => {
+export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onSubmit, onCancel, onBrandInputReady }, ref) => {
   const {
     brandId,
     setBrandId,
@@ -43,6 +44,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
               ref={ref}
               brandId={brandId}
               setBrandId={setBrandId}
+              onInputReady={onBrandInputReady}
             />
           </div>
         </div>
