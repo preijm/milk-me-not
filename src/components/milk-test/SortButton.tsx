@@ -42,7 +42,7 @@ export const SortButton = ({ sortConfig, onSort }: SortButtonProps) => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-4" align="start">
+      <PopoverContent className="w-64 p-4" align="end">
         <div className="space-y-2">
           <h3 className="font-medium mb-3">Sort by</h3>
           {sortOptions.map((option) => (
