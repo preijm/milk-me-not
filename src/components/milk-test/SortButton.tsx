@@ -33,7 +33,7 @@ export const SortButton = ({ sortConfig, onSort }: SortButtonProps) => {
       <PopoverTrigger asChild>
         <Button 
           variant="outline" 
-          className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg"
+          className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg h-10"
         >
           <ArrowUpDown className="h-4 w-4" />
           <span>Sort</span>

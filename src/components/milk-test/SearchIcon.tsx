@@ -36,7 +36,7 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
       <PopoverTrigger asChild>
         <Button 
           variant="outline" 
-          className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg relative"
+          className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg relative h-10"
         >
           <Search className="h-4 w-4" />
           <span>Search</span>
