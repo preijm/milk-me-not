@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Search } from "lucide-react";
+import { Search, CornerDownLeft } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SearchIconProps {
@@ -45,7 +45,7 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className={`${isMobile ? 'max-w-sm w-full' : 'w-80'} p-4`} 
+        className={`${isMobile ? 'w-[calc(100vw-3rem)]' : 'w-80'} p-4`} 
         align={isMobile ? "center" : "center"}
         side={isMobile ? "bottom" : "bottom"}
         sideOffset={isMobile ? 8 : 8}
@@ -65,13 +65,17 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
             )}
           </div>
           <div className="space-y-3">
-            <Input
-              value={localSearchTerm}
-              onChange={(e) => setLocalSearchTerm(e.target.value)}
-              placeholder={placeholder}
-              onKeyDown={handleKeyDown}
-              autoFocus
-            />
+            <div className="relative">
+              <Input
+                value={localSearchTerm}
+                onChange={(e) => setLocalSearchTerm(e.target.value)}
+                placeholder={placeholder}
+                onKeyDown={handleKeyDown}
+                autoFocus
+                className="pr-10"
+              />
+              <CornerDownLeft className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            </div>
           </div>
         </div>
       </PopoverContent>
