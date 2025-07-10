@@ -43,7 +43,7 @@ export const ResultsContainer = ({
       <CardHeader className="bg-white/50 backdrop-blur-sm pb-4 pt-6 px-6">
         <div className="flex items-center gap-4">
           {isMobile ? (
-            <div className="flex items-center gap-2 flex-1 justify-end">
+            <div className="flex items-center flex-1 justify-between">
               <SearchIcon
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
