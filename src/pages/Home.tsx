@@ -4,6 +4,7 @@ import { Milk } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
+import MobileFooter from "@/components/MobileFooter";
 import { supabase } from "@/integrations/supabase/client";
 
 const Home = () => {
@@ -38,7 +39,7 @@ const Home = () => {
               onClick={handleStartJourney}
               size="lg" 
               variant="brand"
-              className="text-lg px-8 animate-fade-in"
+              className="text-lg px-8 animate-fade-in mb-20 sm:mb-0"
             >
               <Milk className="mr-2 h-6 w-6" />
               Start Your Taste Journey
@@ -46,6 +47,8 @@ const Home = () => {
           </div>
         </div>
       </BackgroundPattern>
+      
+      <MobileFooter />
     </div>
   );
 };
