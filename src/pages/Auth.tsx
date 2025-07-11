@@ -5,6 +5,7 @@ import AuthForm from "@/components/auth/AuthForm";
 import ResetPasswordDialog from "@/components/auth/ResetPasswordDialog";
 import EmailConfirmationPending from "@/components/auth/EmailConfirmationPending";
 import PasswordResetForm from "@/components/auth/PasswordResetForm";
+import AuthFooter from "@/components/auth/AuthFooter";
 import { useAuthFlow } from "@/hooks/useAuthFlow";
 
 const Auth = () => {
@@ -26,7 +27,7 @@ const Auth = () => {
   const pendingEmail = emailPending || userEmail;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
       <MenuBar />
       <BackgroundPatternWithOverlay>
         <div className="flex items-center justify-center min-h-screen">
@@ -56,6 +57,7 @@ const Auth = () => {
             </div>
           </div>
         </div>
+        <AuthFooter />
       </BackgroundPatternWithOverlay>
       <ResetPasswordDialog open={showResetDialog} onOpenChange={setShowResetDialog} />
     </div>
