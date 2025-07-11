@@ -66,17 +66,10 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
           </div>
           <div className="space-y-3">
             <div className="relative">
-              {!localSearchTerm && (
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none text-muted-foreground overflow-hidden whitespace-nowrap z-10">
-                  <div className="animate-[scroll_8s_linear_infinite]">
-                    {placeholder}
-                  </div>
-                </div>
-              )}
               <Input
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}
-                placeholder=""
+                placeholder="Search anything"
                 onKeyDown={handleKeyDown}
                 autoFocus
                 className="pr-10"
