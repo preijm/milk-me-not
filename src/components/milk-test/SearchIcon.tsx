@@ -45,7 +45,7 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className={`${isMobile ? 'w-80' : 'w-80'} p-4`} 
+        className={`${isMobile ? 'w-48' : 'w-48'} p-4`} 
         align="start"
         side="bottom"
         sideOffset={8}
