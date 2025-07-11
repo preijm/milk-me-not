@@ -7,7 +7,7 @@ import { UserResultsContainer } from "@/components/milk-test/UserResultsContaine
 import { supabase } from "@/integrations/supabase/client";
 import { useUserMilkTests, SortConfig } from "@/hooks/useUserMilkTests";
 import MenuBar from "@/components/MenuBar";
-
+import MobileFooter from "@/components/MobileFooter";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ImageModal } from "@/components/milk-test/ImageModal";
@@ -121,6 +121,8 @@ const MyResults = () => {
           {selectedImagePath && <ImageModal imageUrl={supabase.storage.from('milk-pictures').getPublicUrl(selectedImagePath).data.publicUrl} isOpen={!!selectedImagePath} onClose={() => setSelectedImagePath(null)} />}
         </div>
       </BackgroundPattern>
+      
+      <MobileFooter />
     </div>;
 };
 export default MyResults;
