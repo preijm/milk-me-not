@@ -17,9 +17,9 @@ export const SortButton = ({ sortConfig, onSort, onClearSort }: SortButtonProps)
   const isMobile = useIsMobile();
 
   const sortOptions = [
+    { key: 'avg_rating', label: 'Score' },
     { key: 'brand_name', label: 'Brand Name' },
     { key: 'product_name', label: 'Product Name' },
-    { key: 'avg_rating', label: 'Score' },
     { key: 'count', label: 'Number of Tests' }
   ];
 
@@ -79,7 +79,7 @@ export const SortButton = ({ sortConfig, onSort, onClearSort }: SortButtonProps)
               }}
               className={`w-full text-left px-3 py-2 rounded-md transition-colors flex items-center justify-between ${
                 sortConfig.column === option.key 
-                  ? 'bg-primary/10 text-primary font-medium' 
+                  ? 'bg-[#2144ff]/10 text-[#2144ff] font-medium' 
                   : 'hover:bg-gray-100'
               }`}
             >
