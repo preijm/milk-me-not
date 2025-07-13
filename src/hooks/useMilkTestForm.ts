@@ -58,6 +58,34 @@ export const useMilkTestForm = () => {
 
       console.log("Authenticated user:", userData.user.id);
 
+      // Ensure user profile exists
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userData.user.id)
+        .maybeSingle();
+
+      if (!existingProfile) {
+        console.log("Creating user profile...");
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: userData.user.id,
+            username: userData.user.email?.split('@')[0] || 'User'
+          });
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+          toast({
+            title: "Profile Error",
+            description: "Failed to create user profile. Please try again.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       // Get shop data if provided
       const { data: shopData } = await supabase
         .from('shops')
