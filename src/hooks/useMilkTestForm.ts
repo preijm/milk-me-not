@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeFileName } from "@/lib/fileValidation";
 
@@ -20,6 +21,7 @@ export const useMilkTestForm = () => {
 
   const { toast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,6 +156,10 @@ export const useMilkTestForm = () => {
         title: "Test added!",
         description: "Your milk taste test has been recorded.",
       });
+
+      // Invalidate relevant queries to refresh data on results pages
+      await queryClient.invalidateQueries({ queryKey: ['milk-tests-aggregated'] });
+      await queryClient.invalidateQueries({ queryKey: ['my-milk-tests'] });
 
       navigate("/dashboard");
     } catch (error) {
