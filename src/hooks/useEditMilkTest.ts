@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { MilkTestResult } from "@/types/milk-test";
+import { sanitizeFileName } from "@/lib/fileValidation";
 
 interface UseEditMilkTestProps {
   test: MilkTestResult;
@@ -30,7 +31,7 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
       if (test.picture_path) {
         try {
           const { data } = await supabase.storage
-            .from('milk-pictures')
+            .from('Milk Product Pictures')
             .getPublicUrl(test.picture_path);
             
           if (data) {
@@ -80,10 +81,11 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
       let picturePath = test.picture_path;
       if (picture) {
         const fileExt = picture.name.split('.').pop();
-        const filePath = `${userData.user.id}/${Date.now()}.${fileExt}`;
+        const sanitizedName = sanitizeFileName(picture.name.replace(/\.[^/.]+$/, ""));
+        const filePath = `${userData.user.id}/${Date.now()}_${sanitizedName}.${fileExt}`;
         
         const { error: uploadError } = await supabase.storage
-          .from('milk-pictures')
+          .from('Milk Product Pictures')
           .upload(filePath, picture);
           
         if (uploadError) {
@@ -156,7 +158,7 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
       // Delete the picture from storage if it exists
       if (test.picture_path) {
         await supabase.storage
-          .from('milk-pictures')
+          .from('Milk Product Pictures')
           .remove([test.picture_path]);
       }
 

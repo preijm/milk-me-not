@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeFileName } from "@/lib/fileValidation";
 
 export const useMilkTestForm = () => {
   const [rating, setRating] = useState(0);
@@ -69,10 +70,11 @@ export const useMilkTestForm = () => {
       if (picture) {
         console.log("Uploading picture to Supabase storage...");
         const fileExt = picture.name.split('.').pop();
-        const filePath = `${userData.user.id}/${Date.now()}.${fileExt}`;
+        const sanitizedName = sanitizeFileName(picture.name.replace(/\.[^/.]+$/, ""));
+        const filePath = `${userData.user.id}/${Date.now()}_${sanitizedName}.${fileExt}`;
         
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('milk-pictures')
+          .from('Milk Product Pictures')
           .upload(filePath, picture);
           
         if (uploadError) {

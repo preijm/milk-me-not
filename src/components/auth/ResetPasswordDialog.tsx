@@ -58,8 +58,8 @@ const ResetPasswordDialog = ({
     setResetInProgress(true);
     console.log("Starting password reset for email:", sanitizedEmail);
     try {
-      // Use the production domain for password reset emails
-      const redirectUrl = "https://milkmenot.com/auth/reset-password";
+      // Use dynamic URL for password reset emails
+      const redirectUrl = `${window.location.origin}/auth/reset-password`;
       console.log("Redirect URL:", redirectUrl);
       const {
         data,

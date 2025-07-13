@@ -7,6 +7,8 @@ import {
   DialogContent,
   DialogClose,
 } from "@/components/ui/dialog";
+import { validateFile } from "@/lib/fileValidation";
+import { useToast } from "@/hooks/use-toast";
 
 interface PictureCaptureProps {
   picture: File | null;
@@ -23,6 +25,7 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
 }) => {
   const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const handleCameraClick = () => {
     // Trigger the file input click
@@ -31,11 +34,24 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
+      // Validate the file
+      const validationResult = await validateFile(file);
+      
+      if (!validationResult.isValid) {
+        toast({
+          title: "Invalid File",
+          description: validationResult.error,
+          variant: "destructive",
+        });
+        e.target.value = ''; // Reset input
+        return;
+      }
+
       // Create a preview URL
       const previewUrl = URL.createObjectURL(file);
       setPicture(file);
@@ -45,6 +61,11 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
       e.target.value = '';
     } catch (err) {
       console.error("Error handling selected picture:", err);
+      toast({
+        title: "File Error",
+        description: "Failed to process the selected file",
+        variant: "destructive",
+      });
     }
   };
 
