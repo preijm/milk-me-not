@@ -5,13 +5,19 @@ import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { Card, CardContent } from "@/components/ui/card";
 import { MilkTestResult } from "@/types/milk-test";
 
-const COLORS = ["#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6"];
+const COLORS = [
+  "hsl(var(--primary))", 
+  "hsl(var(--brand-blue))", 
+  "hsl(40 100% 70%)", // warm yellow
+  "hsl(120 60% 50%)", // green
+  "hsl(280 60% 60%)"  // purple
+];
 const chartConfig = {
   rating: {
-    color: "#8b5cf6"
+    color: "hsl(var(--primary))"
   },
   count: {
-    color: "#ec4899"
+    color: "hsl(var(--brand-blue))"
   }
 };
 
@@ -20,7 +26,7 @@ export const MilkCharts = ({
 }: {
   results: MilkTestResult[];
 }) => {
-  const [selectedChart, setSelectedChart] = useState<'ratings' | 'types' | 'trends' | 'distribution'>('ratings');
+  const [selectedChart, setSelectedChart] = useState<'ratings' | 'types' | 'trends' | 'distribution' | 'brands'>('brands');
 
   // Prepare data for bar chart - average rating by milk type
   const typeData = results.reduce((acc: {
@@ -64,6 +70,33 @@ export const MilkCharts = ({
     count: data.count
   }));
 
+  // Prepare data for brand average ratings chart
+  const brandData = results.reduce((acc: {
+    [key: string]: {
+      count: number;
+      total: number;
+    };
+  }, curr) => {
+    const brandName = curr.brand_name || 'Unknown';
+    if (!acc[brandName]) {
+      acc[brandName] = {
+        count: 0,
+        total: 0
+      };
+    }
+    acc[brandName].count += 1;
+    acc[brandName].total += curr.rating;
+    return acc;
+  }, {});
+  const brandChartData = Object.entries(brandData)
+    .map(([brand, data]) => ({
+      brand,
+      avgRating: Number((data.total / data.count).toFixed(1)),
+      count: data.count
+    }))
+    .sort((a, b) => b.avgRating - a.avgRating)
+    .slice(0, 30); // Show top 30 brands
+
   // Prepare data for pie chart - rating distribution
   const ratingDistribution = results.reduce((acc: {
     [key: number]: number;
@@ -93,6 +126,9 @@ export const MilkCharts = ({
     };
   });
   const chartButtons = [{
+    id: 'brands' as const,
+    label: 'Avg Rating per Brand'
+  }, {
     id: 'ratings' as const,
     label: 'Ratings by Type'
   }, {
@@ -107,6 +143,28 @@ export const MilkCharts = ({
   }];
   const renderChart = () => {
     switch (selectedChart) {
+      case 'brands':
+        return <BarChart 
+          data={brandChartData} 
+          layout="horizontal"
+          margin={{
+            top: 20,
+            right: 30,
+            left: 100,
+            bottom: 20
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" domain={[0, 10]} />
+          <YAxis 
+            type="category" 
+            dataKey="brand" 
+            width={90}
+            tick={{ fontSize: 12 }}
+          />
+          <Tooltip />
+          <Bar dataKey="avgRating" name="Average Rating" fill="hsl(var(--primary))" />
+        </BarChart>;
       case 'ratings':
         return <BarChart data={barChartData} margin={{
           top: 20,
@@ -119,8 +177,8 @@ export const MilkCharts = ({
             <YAxis domain={[0, 5]} />
             <Tooltip />
             <Legend />
-            <Bar dataKey="avgRating" name="Average Rating" fill="#8b5cf6" />
-            <Bar dataKey="count" name="Number of Tests" fill="#ec4899" />
+            <Bar dataKey="avgRating" name="Average Rating" fill="hsl(var(--primary))" />
+            <Bar dataKey="count" name="Number of Tests" fill="hsl(var(--brand-blue))" />
           </BarChart>;
       case 'types':
         return <PieChart>
@@ -142,8 +200,8 @@ export const MilkCharts = ({
             <YAxis domain={[0, 5]} />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="rating" stroke="#8b5cf6" dot={true} name="Rating" />
-            <Line type="monotone" dataKey="movingAverage" stroke="#ec4899" dot={false} name="Moving Average" />
+            <Line type="monotone" dataKey="rating" stroke="hsl(var(--primary))" dot={true} name="Rating" />
+            <Line type="monotone" dataKey="movingAverage" stroke="hsl(var(--brand-blue))" dot={false} name="Moving Average" />
           </LineChart>;
       case 'distribution':
         return <AreaChart data={pieChartData} margin={{
@@ -157,7 +215,7 @@ export const MilkCharts = ({
             <YAxis />
             <Tooltip />
             <Legend />
-            <Area type="monotone" dataKey="value" stroke="#8b5cf6" fill="#8b5cf6" name="Number of Ratings" />
+            <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" name="Number of Ratings" />
           </AreaChart>;
     }
   };
@@ -172,7 +230,7 @@ export const MilkCharts = ({
               onClick={() => setSelectedChart(button.id)} 
               className={`px-4 py-2 rounded-full transition-colors ${
                 selectedChart === button.id 
-                  ? 'bg-purple-600 text-white' 
+                  ? 'bg-[hsl(var(--primary))] text-white' 
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
