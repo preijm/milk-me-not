@@ -205,22 +205,22 @@ export const MilkCharts = ({
       case 'products':
         return <BarChart 
           data={topProductsData} 
-          layout="horizontal"
           margin={{
             top: 20,
             right: 30,
-            left: 150,
-            bottom: 20
+            left: 20,
+            bottom: 100
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" domain={[0, 10]} />
-          <YAxis 
-            type="category" 
+          <XAxis 
             dataKey="productName" 
-            width={140}
-            tick={{ fontSize: 11 }}
+            angle={-45} 
+            textAnchor="end" 
+            height={100}
+            tick={{ fontSize: 10 }}
           />
+          <YAxis domain={[0, 10]} />
           <Tooltip />
           <Bar dataKey="avgRating" name="Average Rating" fill="hsl(var(--primary))" />
         </BarChart>;
