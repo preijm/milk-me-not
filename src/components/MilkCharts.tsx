@@ -26,7 +26,7 @@ export const MilkCharts = ({
 }: {
   results: MilkTestResult[];
 }) => {
-  const [selectedChart, setSelectedChart] = useState<'ratings' | 'types' | 'trends' | 'distribution' | 'brands'>('brands');
+  const [selectedChart, setSelectedChart] = useState<'ratings' | 'types' | 'trends' | 'distribution' | 'brands' | 'products'>('brands');
 
   // Prepare data for bar chart - average rating by milk type
   const typeData = results.reduce((acc: {
@@ -97,6 +97,40 @@ export const MilkCharts = ({
     .sort((a, b) => b.avgRating - a.avgRating)
     .slice(0, 30); // Show top 30 brands
 
+  // Prepare data for top 10 products chart
+  const productData = results.reduce((acc: {
+    [key: string]: {
+      count: number;
+      total: number;
+      brandName: string;
+      productName: string;
+    };
+  }, curr) => {
+    if (!curr.product_id) return acc;
+    
+    const key = curr.product_id;
+    if (!acc[key]) {
+      acc[key] = {
+        count: 0,
+        total: 0,
+        brandName: curr.brand_name || 'Unknown',
+        productName: curr.product_name || 'Unknown Product'
+      };
+    }
+    acc[key].count += 1;
+    acc[key].total += curr.rating;
+    return acc;
+  }, {});
+  const topProductsData = Object.entries(productData)
+    .map(([productId, data]) => ({
+      productId,
+      productName: `${data.brandName} - ${data.productName}`,
+      avgRating: Number((data.total / data.count).toFixed(1)),
+      count: data.count
+    }))
+    .sort((a, b) => b.avgRating - a.avgRating)
+    .slice(0, 10); // Show top 10 products
+
   // Prepare data for pie chart - rating distribution
   const ratingDistribution = results.reduce((acc: {
     [key: number]: number;
@@ -128,6 +162,9 @@ export const MilkCharts = ({
   const chartButtons = [{
     id: 'brands' as const,
     label: 'Avg Rating per Brand'
+  }, {
+    id: 'products' as const,
+    label: 'Top 10 Best Products'
   }, {
     id: 'ratings' as const,
     label: 'Ratings by Type'
@@ -161,6 +198,28 @@ export const MilkCharts = ({
             dataKey="brand" 
             width={90}
             tick={{ fontSize: 12 }}
+          />
+          <Tooltip />
+          <Bar dataKey="avgRating" name="Average Rating" fill="hsl(var(--primary))" />
+        </BarChart>;
+      case 'products':
+        return <BarChart 
+          data={topProductsData} 
+          layout="horizontal"
+          margin={{
+            top: 20,
+            right: 30,
+            left: 150,
+            bottom: 20
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis type="number" domain={[0, 10]} />
+          <YAxis 
+            type="category" 
+            dataKey="productName" 
+            width={140}
+            tick={{ fontSize: 11 }}
           />
           <Tooltip />
           <Bar dataKey="avgRating" name="Average Rating" fill="hsl(var(--primary))" />
