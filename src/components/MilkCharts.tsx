@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, Area, AreaChart } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, Area, AreaChart, Brush } from "recharts";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { Card, CardContent } from "@/components/ui/card";
 import { MilkTestResult } from "@/types/milk-test";
@@ -22,19 +22,29 @@ const chartConfig = {
   }
 };
 
-// Custom tooltip component for products chart
-const ProductChartTooltip = ({ active, payload, label }: any) => {
+// Custom tooltip component for individual test results
+const TestResultTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
       <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-        <p className="font-semibold text-gray-800">{label}</p>
+        <p className="font-semibold text-gray-800">{data.productName}</p>
         <p className="text-sm text-gray-600">
-          Average Rating: <span className="font-medium">{data.avgRating}/10</span>
+          Rating: <span className="font-medium">{data.rating}/10</span>
         </p>
-        <p className="text-sm text-gray-600 mb-2">
-          Tests: <span className="font-medium">{data.count}</span>
+        <p className="text-sm text-gray-600">
+          Date: <span className="font-medium">{data.date}</span>
         </p>
+        {data.username && (
+          <p className="text-sm text-gray-600">
+            By: <span className="font-medium">{data.username}</span>
+          </p>
+        )}
+        {data.shopName && (
+          <p className="text-sm text-gray-600 mb-2">
+            Shop: <span className="font-medium">{data.shopName}</span>
+          </p>
+        )}
         <ProductPropertyBadges 
           propertyNames={data.propertyNames}
           flavorNames={data.flavorNames}
@@ -123,48 +133,22 @@ export const MilkCharts = ({
     .sort((a, b) => b.avgRating - a.avgRating)
     .slice(0, 30); // Show top 30 brands
 
-  // Prepare data for top 10 products chart
-  const productData = results.reduce((acc: {
-    [key: string]: {
-      count: number;
-      total: number;
-      brandName: string;
-      productName: string;
-      propertyNames?: string[];
-      flavorNames?: string[];
-      isBarista?: boolean;
-    };
-  }, curr) => {
-    if (!curr.product_id) return acc;
-    
-    const key = curr.product_id;
-    if (!acc[key]) {
-      acc[key] = {
-        count: 0,
-        total: 0,
-        brandName: curr.brand_name || 'Unknown',
-        productName: curr.product_name || 'Unknown Product',
-        propertyNames: curr.property_names || [],
-        flavorNames: curr.flavor_names || [],
-        isBarista: curr.is_barista || false
-      };
-    }
-    acc[key].count += 1;
-    acc[key].total += curr.rating;
-    return acc;
-  }, {});
-  const topProductsData = Object.entries(productData)
-    .map(([productId, data]) => ({
-      productId,
-      productName: `${data.brandName} - ${data.productName}`,
-      avgRating: Number((data.total / data.count).toFixed(1)),
-      count: data.count,
-      propertyNames: data.propertyNames,
-      flavorNames: data.flavorNames,
-      isBarista: data.isBarista
-    }))
-    .sort((a, b) => b.avgRating - a.avgRating)
-    .slice(0, 10); // Show top 10 products
+  // Prepare data for individual test results chart
+  const testResultsData = results
+    .filter(result => result.product_id) // Only include tests with valid products
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+    .map((result, index) => ({
+      id: result.id,
+      index: index + 1,
+      rating: result.rating,
+      productName: `${result.brand_name || 'Unknown'} - ${result.product_name || 'Unknown Product'}`,
+      date: new Date(result.created_at).toLocaleDateString(),
+      username: result.username,
+      shopName: result.shop_name,
+      propertyNames: result.property_names || [],
+      flavorNames: result.flavor_names || [],
+      isBarista: result.is_barista || false
+    }));
 
   // Prepare data for pie chart - rating distribution
   const ratingDistribution = results.reduce((acc: {
@@ -199,7 +183,7 @@ export const MilkCharts = ({
     label: 'Avg Rating per Brand'
   }, {
     id: 'products' as const,
-    label: 'Top 10 Best Products'
+    label: 'All Test Results'
   }, {
     id: 'ratings' as const,
     label: 'Ratings by Type'
@@ -239,25 +223,25 @@ export const MilkCharts = ({
         </BarChart>;
       case 'products':
         return <BarChart 
-          data={topProductsData} 
+          data={testResultsData} 
           margin={{
             top: 20,
             right: 30,
             left: 20,
-            bottom: 100
+            bottom: 80
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
-            dataKey="productName" 
-            angle={-45} 
-            textAnchor="end" 
-            height={100}
+            dataKey="index" 
+            type="number"
+            domain={[0, testResultsData.length]}
             tick={{ fontSize: 10 }}
           />
           <YAxis domain={[0, 10]} />
-          <Tooltip content={<ProductChartTooltip />} />
-          <Bar dataKey="avgRating" name="Average Rating" fill="#07c167" />
+          <Tooltip content={<TestResultTooltip />} />
+          <Bar dataKey="rating" name="Rating" fill="#07c167" />
+          <Brush dataKey="index" height={30} stroke="#07c167" />
         </BarChart>;
       case 'ratings':
         return <BarChart data={barChartData} margin={{
