@@ -104,7 +104,7 @@ export const useMilkTestForm = () => {
         const filePath = `${userData.user.id}/${Date.now()}_${sanitizedName}.${fileExt}`;
         
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('Milk Product Pictures')
+          .from('milk-pictures')
           .upload(filePath, picture);
           
         if (uploadError) {
