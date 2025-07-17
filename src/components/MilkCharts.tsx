@@ -1,9 +1,12 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, Area, AreaChart, Brush, LabelList } from "recharts";
-import { Search, ChevronLeft, ChevronRight, Filter, Star, TestTube, Package, Building2 } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Filter, Star, TestTube, Package, Building2, X, Eye } from "lucide-react";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { MilkTestResult } from "@/types/milk-test";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 
@@ -116,6 +119,8 @@ export const MilkCharts = ({
     const [filterBy, setFilterBy] = useState('all');
     const [hoveredBar, setHoveredBar] = useState<number | null>(null);
     const [itemsPerPage, setItemsPerPage] = useState(15);
+    const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
     // Process brand data from results
     const processedBrandData = useMemo(() => {
@@ -229,6 +234,46 @@ export const MilkCharts = ({
       return hoveredBar === index ? 1 : 0.3;
     };
 
+    // Get product data for selected brand
+    const getProductDataForBrand = (brandName: string) => {
+      const brandResults = results.filter(result => result.brand_name === brandName);
+      const productGroups = brandResults.reduce((acc: {
+        [key: string]: {
+          ratings: number[];
+          tests: MilkTestResult[];
+        };
+      }, curr) => {
+        const productName = curr.product_name || 'Unknown Product';
+        if (!acc[productName]) {
+          acc[productName] = {
+            ratings: [],
+            tests: []
+          };
+        }
+        acc[productName].ratings.push(curr.rating);
+        acc[productName].tests.push(curr);
+        return acc;
+      }, {});
+
+      return Object.entries(productGroups).map(([product, data]) => ({
+        product,
+        avgRating: data.ratings.reduce((sum, r) => sum + r, 0) / data.ratings.length,
+        testCount: data.tests.length,
+        tests: data.tests
+      }));
+    };
+
+    // Get individual test results for selected product
+    const getTestResultsForProduct = (productName: string) => {
+      return results
+        .filter(result => result.product_name === productName)
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    };
+
+    const handleBarClick = (data: any) => {
+      setSelectedBrand(data.name);
+    };
+
     const CustomTooltip = ({ active, payload }: any) => {
       if (active && payload && payload.length) {
         const data = payload[0].payload;
@@ -256,6 +301,7 @@ export const MilkCharts = ({
                  data.tests >= 3 ? 'Some tests' : 'Limited tests'}
               </span>
             </div>
+            <p className="text-xs text-muted-foreground mt-2 italic">Click bar to view products</p>
           </div>
         );
       }
@@ -413,6 +459,8 @@ export const MilkCharts = ({
                 radius={[4, 4, 0, 0]}
                 onMouseEnter={(_, index) => setHoveredBar(index)}
                 onMouseLeave={() => setHoveredBar(null)}
+                onClick={handleBarClick}
+                style={{ cursor: 'pointer' }}
               >
                 {currentData.map((entry, index) => (
                   <Cell 
@@ -470,6 +518,119 @@ export const MilkCharts = ({
             </button>
           </div>
         )}
+
+        {/* Brand Products Dialog */}
+        <Dialog open={!!selectedBrand} onOpenChange={() => setSelectedBrand(null)}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Package className="w-5 h-5" />
+                {selectedBrand} - Product Performance
+              </DialogTitle>
+            </DialogHeader>
+            {selectedBrand && (
+              <div className="space-y-4">
+                <div className="rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Product Name</TableHead>
+                        <TableHead>Average Rating</TableHead>
+                        <TableHead>Test Count</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {getProductDataForBrand(selectedBrand)
+                        .sort((a, b) => b.avgRating - a.avgRating)
+                        .map((product, index) => (
+                        <TableRow key={index}>
+                          <TableCell className="font-medium">{product.product}</TableCell>
+                          <TableCell>
+                            <span className="font-semibold text-primary">
+                              {product.avgRating.toFixed(1)}/10
+                            </span>
+                          </TableCell>
+                          <TableCell>{product.testCount} tests</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setSelectedProduct(product.product)}
+                              className="flex items-center gap-1"
+                            >
+                              <Eye className="w-4 h-4" />
+                              View Tests
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Individual Test Results Dialog */}
+        <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+          <DialogContent className="max-w-6xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <TestTube className="w-5 h-5" />
+                {selectedProduct} - Individual Test Results
+              </DialogTitle>
+            </DialogHeader>
+            {selectedProduct && (
+              <div className="space-y-4">
+                <div className="rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Rating</TableHead>
+                        <TableHead>User</TableHead>
+                        <TableHead>Shop</TableHead>
+                        <TableHead>Properties</TableHead>
+                        <TableHead>Notes</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {getTestResultsForProduct(selectedProduct).map((test, index) => (
+                        <TableRow key={index}>
+                          <TableCell>
+                            {new Date(test.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <span className="font-semibold text-primary">
+                              {test.rating}/10
+                            </span>
+                          </TableCell>
+                          <TableCell>{test.username || 'Anonymous'}</TableCell>
+                          <TableCell>{test.shop_name || 'N/A'}</TableCell>
+                          <TableCell>
+                            <ProductPropertyBadges 
+                              propertyNames={test.property_names}
+                              flavorNames={test.flavor_names}
+                              isBarista={test.is_barista}
+                              compact={true}
+                            />
+                          </TableCell>
+                          <TableCell className="max-w-xs">
+                            <div className="truncate" title={test.notes || ''}>
+                              {test.notes || 'No notes'}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   };
