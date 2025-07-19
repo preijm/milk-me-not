@@ -103,10 +103,14 @@ export const HomeStatsOverview = () => {
           .from('profiles')
           .select('*', { count: 'exact', head: true });
 
-        // Get products reviewed count
-        const { count: reviewsCount } = await supabase
+        // Get unique products reviewed count
+        const { data: uniqueProducts } = await supabase
           .from('milk_tests')
-          .select('*', { count: 'exact', head: true });
+          .select('product_id')
+          .not('product_id', 'is', null);
+        
+        const uniqueProductCount = uniqueProducts ? 
+          new Set(uniqueProducts.map(item => item.product_id)).size : 0;
 
         // Get brands covered count
         const { count: brandsCount } = await supabase
@@ -115,7 +119,7 @@ export const HomeStatsOverview = () => {
 
         setStats({
           activeMembers: membersCount || 0,
-          productsReviewed: reviewsCount || 0,
+          productsReviewed: uniqueProductCount,
           brandsCovered: brandsCount || 0
         });
       } catch (error) {
