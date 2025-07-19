@@ -35,6 +35,16 @@ const Home = () => {
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl animate-fade-in">
               Tired of tasteless plant milks? Rate, discover, and share your faves with a community that's just as obsessed. Whether it's for coffee, cereal, or cooking—find the dairy-free match that actually delivers.
             </p>
+            
+            <Button 
+              onClick={handleStartJourney}
+              size="lg" 
+              variant="brand"
+              className="text-lg px-8 animate-fade-in"
+            >
+              <Milk className="mr-2 h-6 w-6" />
+              Start Your Taste Journey
+            </Button>
           </div>
         </div>
       </BackgroundPattern>
@@ -42,20 +52,6 @@ const Home = () => {
       {/* Statistics Section */}
       <HomeStatsOverview />
       
-      {/* CTA Section */}
-      <div className="bg-gray-50 py-20">
-        <div className="container max-w-6xl mx-auto px-4 text-center">
-          <Button 
-            onClick={handleStartJourney}
-            size="lg" 
-            variant="brand"
-            className="text-lg px-8 animate-fade-in"
-          >
-            <Milk className="mr-2 h-6 w-6" />
-            Start Your Taste Journey
-          </Button>
-        </div>
-      </div>
       
       <MobileFooter />
     </div>
