@@ -149,7 +149,7 @@ export const FlavorSelector = ({
             <Button
               variant="outline"
               size="sm"
-              className="rounded bg-white text-purple-600 hover:bg-purple-50 border-purple-600 h-7 px-2"
+              className="bg-white/80 backdrop-blur-sm text-purple-600 border border-purple-600 rounded-md px-1 h-5 text-xs font-medium hover:shadow-lg"
               aria-label="Add new flavor"
             >
               <Plus size={16} />
