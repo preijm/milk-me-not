@@ -14,9 +14,10 @@ import { ShopSearchInput } from "./shop/ShopSearchInput";
 interface ShopSelectProps {
   shop: string | null;
   setShop: (shop: string) => void;
+  selectedCountry?: string;
 }
 
-export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
+export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) => {
   const [suggestions, setSuggestions] = useState<{ name: string; country_code: string }[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [newShopName, setNewShopName] = useState("");
@@ -62,17 +63,20 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
       return;
     }
 
-    // Filter shops using case-insensitive matching
+    // Filter shops using case-insensitive matching and country filter
     const searchTerm = inputValue.toLowerCase();
-    const filteredShops = shops.filter(shop => 
-      shop.name.toLowerCase().includes(searchTerm)
-    );
+    const filteredShops = shops.filter(shop => {
+      const matchesSearch = shop.name.toLowerCase().includes(searchTerm);
+      const matchesCountry = !selectedCountry || shop.country_code === selectedCountry;
+      return matchesSearch && matchesCountry;
+    });
 
     console.log('Search term:', searchTerm);
+    console.log('Selected country:', selectedCountry);
     console.log('Filtered shops:', filteredShops);
     
     setSuggestions(filteredShops);
-  }, [inputValue, shops]);
+  }, [inputValue, shops, selectedCountry]);
 
   const handleSelectShop = (selectedShop: { name: string; country_code: string }) => {
     const displayValue = `${selectedShop.name} (${selectedShop.country_code})`;
@@ -82,7 +86,8 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
   };
 
   const handleAddNewShop = async () => {
-    if (!newShopName.trim() || !selectedCountryCode) {
+    const countryToUse = selectedCountryCode || selectedCountry;
+    if (!newShopName.trim() || !countryToUse) {
       toast({
         title: "Missing information",
         description: "Please provide both shop name and country",
@@ -96,7 +101,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
         .from('shops')
         .insert({
           name: newShopName.trim(),
-          country_code: selectedCountryCode,
+          country_code: countryToUse,
         });
 
       if (error) throw error;
@@ -109,7 +114,7 @@ export const ShopSelect = ({ shop, setShop }: ShopSelectProps) => {
       setNewShopName("");
       setSelectedCountryCode("");
       
-      const displayValue = `${newShopName.trim()} (${selectedCountryCode})`;
+      const displayValue = `${newShopName.trim()} (${countryToUse})`;
       setInputValue(displayValue);
       setShop(newShopName.trim());
       setSuggestions([]);

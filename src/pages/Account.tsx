@@ -9,9 +9,11 @@ import { Save, Lock } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
 import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import { CountrySelect } from "@/components/milk-test/CountrySelect";
 
 const Account = () => {
   const [username, setUsername] = useState("");
+  const [defaultCountry, setDefaultCountry] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -32,12 +34,13 @@ const Account = () => {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('username')
+        .select('username, default_country_code')
         .eq('id', user.id)
         .maybeSingle();
 
       if (profile) {
         setUsername(profile.username);
+        setDefaultCountry(profile.default_country_code);
       }
     };
 
@@ -68,14 +71,17 @@ const Account = () => {
 
       const { error } = await supabase
         .from('profiles')
-        .update({ username })
+        .update({ 
+          username,
+          default_country_code: defaultCountry 
+        })
         .eq('id', userId);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Username updated successfully.",
+        description: "Profile updated successfully.",
       });
     } catch (error: any) {
       toast({
@@ -152,6 +158,19 @@ const Account = () => {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Default Country (optional)
+                  </label>
+                  <CountrySelect
+                    country={defaultCountry}
+                    setCountry={setDefaultCountry}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    This will be pre-selected when adding new milk tests
+                  </p>
+                </div>
+
                 <Button 
                   type="submit" 
                   variant="brand"
@@ -159,7 +178,7 @@ const Account = () => {
                   disabled={loading}
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {loading ? "Saving..." : "Save Username"}
+                  {loading ? "Saving..." : "Save Profile"}
                 </Button>
               </form>
 

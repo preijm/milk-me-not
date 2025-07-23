@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ShopSelect } from "./milk-test/ShopSelect";
+import { CountrySelect } from "./milk-test/CountrySelect";
 import { RatingSelect } from "./milk-test/RatingSelect";
 import { ProductInformation } from "./milk-test/ProductInformation";
 import { DrinkPreference } from "./milk-test/DrinkPreference";
@@ -15,7 +16,7 @@ export const AddMilkTest = () => {
     formSetters,
     handleSubmit
   } = useMilkTestForm();
-  const isFormValid = formState.productId && formState.rating > 0;
+  const isFormValid = formState.productId && formState.rating > 0 && formState.country;
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 animate-fade-in">
@@ -58,7 +59,27 @@ export const AddMilkTest = () => {
 
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
-            <ShopSelect shop={formState.shop} setShop={formSetters.setShop} />
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Country <span className="text-red-500">*</span>
+                </label>
+                <CountrySelect 
+                  country={formState.country} 
+                  setCountry={formSetters.setCountry} 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Shop (optional)
+                </label>
+                <ShopSelect 
+                  shop={formState.shop} 
+                  setShop={formSetters.setShop}
+                  selectedCountry={formState.country}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="space-y-4">

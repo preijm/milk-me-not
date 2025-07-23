@@ -1,10 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeFileName } from "@/lib/fileValidation";
+import { useUserProfile } from "./useUserProfile";
 
 export const useMilkTestForm = () => {
   const [rating, setRating] = useState(0);
@@ -12,6 +13,7 @@ export const useMilkTestForm = () => {
   const [brandId, setBrandId] = useState("");
   const [notes, setNotes] = useState("");
   const [shop, setShop] = useState<string>("");
+  const [country, setCountry] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [drinkPreference, setDrinkPreference] = useState("cold");
   const [price, setPrice] = useState(""); // Empty string for no default selection
@@ -22,6 +24,14 @@ export const useMilkTestForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { profile } = useUserProfile();
+
+  // Set default country when profile loads
+  useEffect(() => {
+    if (profile?.default_country_code && !country) {
+      setCountry(profile.default_country_code);
+    }
+  }, [profile, country]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +43,7 @@ export const useMilkTestForm = () => {
       rating,
       notes,
       shop,
+      country,
       drinkPreference,
       price, // Log the actual price value
       priceHasChanged, // Log whether price has changed
@@ -89,11 +100,16 @@ export const useMilkTestForm = () => {
       }
 
       // Get shop data if provided
-      const { data: shopData } = await supabase
-        .from('shops')
-        .select('id')
-        .eq('name', shop)
-        .maybeSingle();
+      let shopData = null;
+      if (shop && country) {
+        const { data } = await supabase
+          .from('shops')
+          .select('id')
+          .eq('name', shop)
+          .eq('country_code', country)
+          .maybeSingle();
+        shopData = data;
+      }
 
       // Upload picture if available
       let picturePath = null;
@@ -181,6 +197,7 @@ export const useMilkTestForm = () => {
       productId,
       notes,
       shop,
+      country,
       isSubmitting,
       drinkPreference,
       price,
@@ -194,6 +211,7 @@ export const useMilkTestForm = () => {
       setProductId,
       setNotes,
       setShop,
+      setCountry,
       setDrinkPreference,
       setPrice,
       setPriceHasChanged,
