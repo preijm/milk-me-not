@@ -63,24 +63,21 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
       return;
     }
 
-    // Filter shops using case-insensitive matching and country filter
+    // Filter shops using case-insensitive matching
     const searchTerm = inputValue.toLowerCase();
     const filteredShops = shops.filter(shop => {
       const matchesSearch = shop.name.toLowerCase().includes(searchTerm);
-      const matchesCountry = !selectedCountry || shop.country_code === selectedCountry;
-      return matchesSearch && matchesCountry;
+      return matchesSearch;
     });
 
     console.log('Search term:', searchTerm);
-    console.log('Selected country:', selectedCountry);
     console.log('Filtered shops:', filteredShops);
     
     setSuggestions(filteredShops);
-  }, [inputValue, shops, selectedCountry]);
+  }, [inputValue, shops]);
 
   const handleSelectShop = (selectedShop: { name: string; country_code: string }) => {
-    const displayValue = `${selectedShop.name} (${selectedShop.country_code})`;
-    setInputValue(displayValue);
+    setInputValue(selectedShop.name);
     setShop(selectedShop.name);
     setSuggestions([]);
   };
@@ -131,14 +128,9 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
 
   useEffect(() => {
     if (shop) {
-      const selectedShop = shops.find(s => s.name === shop);
-      if (selectedShop) {
-        setInputValue(`${selectedShop.name} (${selectedShop.country_code})`);
-      } else {
-        setInputValue(shop);
-      }
+      setInputValue(shop);
     }
-  }, [shop, shops]);
+  }, [shop]);
 
   return (
     <div className="space-y-4">

@@ -13,12 +13,12 @@ export const ShopSuggestions = ({ suggestions, onSelect }: ShopSuggestionsProps)
     <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto">
       {suggestions.map((suggestion, index) => (
         <div
-          key={`${suggestion.name}-${suggestion.country_code}-${index}`}
+          key={`${suggestion.name}-${index}`}
           className="px-4 py-2 cursor-pointer hover:bg-gray-100"
           onClick={() => onSelect(suggestion)}
           onMouseDown={(e) => e.preventDefault()}
         >
-          {suggestion.name} ({suggestion.country_code})
+          {suggestion.name}
         </div>
       ))}
     </div>
