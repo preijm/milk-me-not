@@ -22,18 +22,13 @@ const Contact = () => {
                 </div>
               </div>
               
-              <a 
-                href="mailto:info@milkmenot.com" 
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow block"
-              >
+              <a href="mailto:info@milkmenot.com" className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow block">
                 <div className="flex flex-col items-center text-center gap-4">
                   <div className="h-16 w-16 rounded-full flex items-center justify-center bg-[#00bf62]">
                     <Mail className="w-8 h-8 text-[#FFFFFF] animate-none" />
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800">Email</h2>
-                  <p className="text-gray-700">
-                    We're available via email! Click here to send us a message at info@milkmenot.com
-                  </p>
+                  <p className="text-gray-700">Our inbox is always open. Unlike our fridge, it never runs out of oat milk or judgment.</p>
                 </div>
               </a>
               
