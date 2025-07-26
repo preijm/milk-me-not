@@ -160,37 +160,37 @@ export const HomeStatsOverview = () => {
     <div className="py-8">
       <div className="container max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-8">
-          <div className="animate-fade-in">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 animate-fade-in">
             <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.activeMembers)}
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-lg text-white">
               Active Members
             </div>
           </div>
-          <div className="animate-fade-in">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 animate-fade-in">
             <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.productsReviewed)}
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-lg text-white">
               Products Reviewed
             </div>
           </div>
-          <div className="animate-fade-in">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-8 animate-fade-in">
             <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.brandsCovered)}
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-lg text-white">
               Brands Covered
             </div>
           </div>
         </div>
         
-        {/* Blue button to go to results */}
+        {/* View All Results button */}
         <div className="text-center animate-fade-in">
           <a 
             href="/results" 
-            className="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200"
+            className="inline-flex items-center px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/30 text-white font-semibold rounded-full hover:bg-white/20 transition-all duration-200"
           >
             View All Results
           </a>
