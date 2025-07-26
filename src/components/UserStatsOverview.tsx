@@ -134,7 +134,7 @@ export const HomeStatsOverview = () => {
 
   if (loading) {
     return (
-      <div className="bg-white py-16">
+      <div className="py-16">
         <div className="container max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             {[1, 2, 3].map((i) => (
@@ -157,9 +157,9 @@ export const HomeStatsOverview = () => {
   };
 
   return (
-    <div className="bg-white py-8">
+    <div className="py-8">
       <div className="container max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-8">
           <div className="animate-fade-in">
             <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.activeMembers)}
@@ -184,6 +184,16 @@ export const HomeStatsOverview = () => {
               Brands Covered
             </div>
           </div>
+        </div>
+        
+        {/* Blue button to go to results */}
+        <div className="text-center animate-fade-in">
+          <a 
+            href="/results" 
+            className="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200"
+          >
+            View All Results
+          </a>
         </div>
       </div>
     </div>
