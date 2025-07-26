@@ -47,10 +47,12 @@ const Home = () => {
             </Button>
           </div>
         </div>
+        
+        {/* Statistics Section - now overlayed on background */}
+        <div className="relative z-10">
+          <HomeStatsOverview />
+        </div>
       </BackgroundPattern>
-      
-      {/* Statistics Section */}
-      <HomeStatsOverview />
       
       
       <MobileFooter />
