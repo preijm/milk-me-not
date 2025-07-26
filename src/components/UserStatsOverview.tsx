@@ -165,9 +165,9 @@ export const HomeStatsOverview = () => {
   };
 
   return (
-    <div className="py-8">
+    <div className="py-12">
       <div className="container max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mb-8 mt-8">
           <div className="animate-fade-in">
             <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.activeMembers)}
@@ -202,11 +202,10 @@ export const HomeStatsOverview = () => {
           </div>
         </div>
         
-        {/* Blue button to go to results */}
         <div className="text-center animate-fade-in">
           <a 
             href="/results" 
-            className="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200"
+            className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold rounded-lg transition-colors duration-200"
           >
             View All Results
           </a>
