@@ -204,10 +204,7 @@ export const MyResultsTable = ({
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {result.country_code ? (
-                    <div className="flex items-center gap-1">
-                      <span className="text-lg">{getCountryFlag(result.country_code.split(' ')[0])}</span>
-                      <span className="text-xs text-gray-600">{result.country_code.split(' ')[0]}</span>
-                    </div>
+                    <span className="text-sm font-medium">{result.country_code.split(' ')[0]}</span>
                   ) : (
                     "-"
                   )}

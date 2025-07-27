@@ -102,10 +102,7 @@ export const MyResultsGrid = ({
                     {new Date(result.created_at).toLocaleDateString()}
                   </div>
                   {result.country_code && (
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm">{getCountryFlag(result.country_code)}</span>
-                      <span className="text-xs">{result.country_code}</span>
-                    </div>
+                    <span className="text-xs font-medium">{result.country_code}</span>
                   )}
                 </div>
                 

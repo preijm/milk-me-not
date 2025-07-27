@@ -178,10 +178,7 @@ export const TestDetailsTable = ({
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {test.country_code ? (
-                    <div className="flex items-center gap-1">
-                      <span className="text-lg">{getCountryFlag(test.country_code)}</span>
-                      <span className="text-xs text-gray-600">{test.country_code}</span>
-                    </div>
+                    <span className="text-sm font-medium">{test.country_code}</span>
                   ) : (
                     "-"
                   )}
