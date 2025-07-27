@@ -77,7 +77,6 @@ const Home = () => {
             
             {/* Enhanced hero title with green color */}
             <div className="mb-6 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent rounded-full blur-3xl transform -rotate-6"></div>
               <h1 className="text-4xl md:text-7xl lg:text-8xl font-bold mb-4 max-w-4xl animate-fade-in relative" style={{ color: '#00BF63' }}>
                 Ditch the Moo.
                 <br />
@@ -98,7 +97,7 @@ const Home = () => {
               <Button 
                 onClick={handleStartJourney}
                 size="lg" 
-                className="text-lg px-8 py-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+                className="text-lg px-8 py-4 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group" style={{ backgroundColor: '#2144ff' }}
               >
                 <Milk className="mr-2 h-6 w-6 group-hover:rotate-12 transition-transform duration-300" />
                 Start Your Taste Journey
