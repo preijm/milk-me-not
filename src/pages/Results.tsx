@@ -9,7 +9,7 @@ import { ResultsContainer } from "@/components/milk-test/ResultsContainer";
 import { MilkCharts } from "@/components/MilkCharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartBar, Table2, MapPin } from "lucide-react";
-import MilkTestsMap from "@/components/MilkTestsMap";
+import CountryStatsMap from "@/components/CountryStatsMap";
 import { MilkTestResult } from "@/types/milk-test";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
@@ -181,7 +181,7 @@ const Results = () => {
           ) : view === 'charts' ? (
             <MilkCharts results={chartsData} />
           ) : (
-            <MilkTestsMap />
+            <CountryStatsMap />
           )}
         </div>
       </BackgroundPattern>
