@@ -8,7 +8,8 @@ import MobileFooter from "@/components/MobileFooter";
 import { ResultsContainer } from "@/components/milk-test/ResultsContainer";
 import { MilkCharts } from "@/components/MilkCharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChartBar, Table2 } from "lucide-react";
+import { ChartBar, Table2, MapPin } from "lucide-react";
+import MilkTestsMap from "@/components/MilkTestsMap";
 import { MilkTestResult } from "@/types/milk-test";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,7 +24,7 @@ const Results = () => {
     column: 'created_at',
     direction: 'desc'
   });
-  const [view, setView] = useState<'table' | 'charts'>('table');
+  const [view, setView] = useState<'table' | 'charts' | 'map'>('table');
   const [filters, setFilters] = useState<FilterOptions>({
     barista: false,
     properties: [],
@@ -146,8 +147,8 @@ const Results = () => {
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
           {/* Desktop only: View switcher */}
           {!isMobile && <div className="flex justify-end mb-8">
-              <Tabs value={view} onValueChange={(v: 'table' | 'charts') => setView(v)} className="w-auto">
-                <TabsList className="grid w-[200px] grid-cols-2 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
+              <Tabs value={view} onValueChange={(v: 'table' | 'charts' | 'map') => setView(v)} className="w-auto">
+                <TabsList className="grid w-[300px] grid-cols-3 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
                   <TabsTrigger value="table" className="flex items-center gap-2">
                     <Table2 className="w-4 h-4" />
                     <span>Table</span>
@@ -156,12 +157,32 @@ const Results = () => {
                     <ChartBar className="w-4 h-4" />
                     <span>Chart</span>
                   </TabsTrigger>
+                  <TabsTrigger value="map" className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    <span>Map</span>
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>}
 
           {/* Mobile: Always table view, Desktop: conditional view */}
-          {isMobile || view === 'table' ? <ResultsContainer filteredResults={filteredResults} sortConfig={sortConfig} handleSort={handleSort} onClearSort={handleClearSort} onProductClick={navigateToProduct} searchTerm={searchTerm} setSearchTerm={setSearchTerm} filters={filters} onFiltersChange={setFilters} /> : <MilkCharts results={chartsData} />}
+          {isMobile || view === 'table' ? (
+            <ResultsContainer 
+              filteredResults={filteredResults} 
+              sortConfig={sortConfig} 
+              handleSort={handleSort} 
+              onClearSort={handleClearSort} 
+              onProductClick={navigateToProduct} 
+              searchTerm={searchTerm} 
+              setSearchTerm={setSearchTerm} 
+              filters={filters} 
+              onFiltersChange={setFilters} 
+            />
+          ) : view === 'charts' ? (
+            <MilkCharts results={chartsData} />
+          ) : (
+            <MilkTestsMap />
+          )}
         </div>
       </BackgroundPattern>
       
