@@ -25,15 +25,15 @@ const Home = () => {
       <MenuBar />
       
       <BackgroundPattern>
-        <div className="container max-w-6xl mx-auto px-4 pt-24">
-          <div className="flex flex-col items-center justify-center text-center relative z-10">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4 max-w-4xl animate-fade-in" style={{ color: '#00BF63' }}>
+        <div className="container max-w-6xl mx-auto px-4 pt-32 md:pt-40">
+          <div className="flex flex-col items-center justify-center text-center relative z-10 mt-8 md:mt-16">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-6 max-w-4xl animate-fade-in" style={{ color: '#00BF63' }}>
               Ditch the Moo. <br />
               <span style={{ color: '#00BF63' }}>Find Your New!</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 mb-6 max-w-2xl animate-fade-in">
-              Tired of tasteless plant milks? Rate, discover, and share your faves with a community that's just as obsessed. Whether it's for coffee, cereal, or cooking—find the dairy-free match that actually delivers.
+            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl animate-fade-in">
+              Tired of tasteless plant milks? Rate, discover, and share your faves with a community that{"'"}s just as obsessed. Whether it{"'"}s for coffee, cereal, or cooking—find the dairy-free match that actually delivers.
             </p>
             
             <Button 
