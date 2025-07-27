@@ -16,6 +16,7 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
   const [rating, setRating] = useState(test.rating);
   const [notes, setNotes] = useState(test.notes || "");
   const [shop, setShop] = useState(test.shop_name || "");
+  const [country, setCountry] = useState(test.shop_country_code || "");
   const [isBarista, setIsBarista] = useState(test.is_barista || false);
   const [priceQualityRatio, setPriceQualityRatio] = useState(test.price_quality_ratio || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -140,6 +141,7 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
       // Create the base update data with sanitized inputs
       const updateData: any = {
         shop_name: shop ? sanitizeInput(shop) : null,
+        country_code: country || null,
         rating: Number(rating),
         notes: notes ? sanitizeInput(notes) : null,
         picture_path: picturePath,
@@ -242,6 +244,7 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
       rating,
       notes,
       shop,
+      country,
       isBarista,
       priceQualityRatio,
       isSubmitting,
@@ -254,6 +257,7 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
       setRating,
       setNotes,
       setShop,
+      setCountry,
       setIsBarista,
       setPriceQualityRatio,
       setPicture,

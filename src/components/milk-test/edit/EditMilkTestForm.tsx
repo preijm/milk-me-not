@@ -8,6 +8,7 @@ import { RatingSelect } from "../RatingSelect";
 import { ResponsiveNotesArea } from "../ResponsiveNotesArea";
 import { PriceInput } from "../PriceInput";
 import { ShopSelect } from "../ShopSelect";
+import { CountrySelect } from "../CountrySelect";
 import { DrinkPreference } from "../DrinkPreference";
 import { ProductInfo } from "./ProductInfo";
 
@@ -16,6 +17,7 @@ interface EditMilkTestFormProps {
     rating: number;
     notes: string;
     shop: string;
+    country: string;
     priceQualityRatio: string;
     isSubmitting: boolean;
     picture: File | null;
@@ -27,6 +29,7 @@ interface EditMilkTestFormProps {
     setRating: (rating: number) => void;
     setNotes: (notes: string) => void;
     setShop: (shop: string) => void;
+    setCountry: (country: string) => void;
     setPriceQualityRatio: (price: string) => void;
     setPicture: (file: File | null) => void;
     setPicturePreview: (url: string | null) => void;
@@ -87,10 +90,27 @@ export const EditMilkTestForm = ({
       {/* Buying Location */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
-        <ShopSelect
-          shop={formState.shop}
-          setShop={formSetters.setShop}
-        />
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Country
+            </label>
+            <CountrySelect 
+              country={formState.country} 
+              setCountry={formSetters.setCountry} 
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Shop (optional)
+            </label>
+            <ShopSelect 
+              shop={formState.shop} 
+              setShop={formSetters.setShop}
+              selectedCountry={formState.country}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Drinking Style */}
