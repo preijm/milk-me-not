@@ -21,6 +21,14 @@ export const MyResultsGrid = ({
   onDelete
 }: MyResultsGridProps) => {
   
+  const getCountryFlag = (code: string) => {
+    if (!code) return '';
+    const codePoints = code
+      .toUpperCase()
+      .split('')
+      .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  };
   
   const getPictureUrl = (picturePath: string | null | undefined) => {
     if (!picturePath) return null;
@@ -87,10 +95,18 @@ export const MyResultsGrid = ({
             
             <CardContent className="p-2 relative">
               <div className="space-y-1.5">
-                {/* Date */}
-                <div className="flex items-center text-xs text-gray-500">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {new Date(result.created_at).toLocaleDateString()}
+                {/* Date and Country */}
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center">
+                    <Calendar className="h-3 w-3 mr-1" />
+                    {new Date(result.created_at).toLocaleDateString()}
+                  </div>
+                  {result.country_code && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm">{getCountryFlag(result.country_code)}</span>
+                      <span className="text-xs">{result.country_code}</span>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Brand & Product */}

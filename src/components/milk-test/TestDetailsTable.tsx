@@ -36,6 +36,15 @@ export const TestDetailsTable = ({
   sortConfig,
   handleSort
 }: TestDetailsTableProps) => {
+  const getCountryFlag = (code: string) => {
+    if (!code) return '';
+    const codePoints = code
+      .toUpperCase()
+      .split('')
+      .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  };
+
   const getRatingColorClass = (rating: number) => {
     if (rating >= 8.5) return "bg-green-500 text-white";
     if (rating >= 7.5) return "bg-green-400 text-white";
@@ -104,6 +113,15 @@ export const TestDetailsTable = ({
                 width="100%"
               />
             </TableHead>
+            <TableHead className="hidden md:table-cell font-semibold text-gray-700 text-left pl-4 w-[8%]">
+              <SortableColumnHeader
+                column="country_code"
+                label="Country"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+                width="100%"
+              />
+            </TableHead>
             <TableHead className="w-[8%] font-semibold text-gray-700 text-left pl-4">
               <SortableColumnHeader
                 column="notes"
@@ -127,7 +145,7 @@ export const TestDetailsTable = ({
         <TableBody>
           {productTests.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+              <TableCell colSpan={9} className="text-center py-8 text-gray-500">
                 <div className="flex flex-col items-center justify-center">
                   <p className="text-lg mb-1">No test details available</p>
                   <p className="text-sm">Be the first to add a test for this product!</p>
@@ -156,15 +174,14 @@ export const TestDetailsTable = ({
                   <PriceQualityBadge priceQuality={test.price_quality_ratio} />
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {test.shop_name ? (
-                    <>
-                      {test.shop_name} 
-                      {test.shop_country_code && (
-                        <span className="text-gray-500 ml-1 text-xs">
-                          [{test.shop_country_code}]
-                        </span>
-                      )}
-                    </>
+                  {test.shop_name || "-"}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {test.country_code ? (
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg">{getCountryFlag(test.country_code)}</span>
+                      <span className="text-xs text-gray-600">{test.country_code}</span>
+                    </div>
                   ) : (
                     "-"
                   )}

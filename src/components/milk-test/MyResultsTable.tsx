@@ -47,6 +47,15 @@ export const MyResultsTable = ({
   onDelete,
   onImageClick 
 }: MyResultsTableProps) => {
+  
+  const getCountryFlag = (code: string) => {
+    if (!code) return '';
+    const codePoints = code
+      .toUpperCase()
+      .split('')
+      .map(char => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+  };
 
   return (
     <div className="overflow-x-auto">
@@ -109,6 +118,14 @@ export const MyResultsTable = ({
                 onSort={handleSort}
               />
             </TableHead>
+            <TableHead className="hidden md:table-cell font-semibold text-gray-700 text-left pl-4 w-[8%]">
+              <SortableColumnHeader
+                column="country_code"
+                label="Country"
+                sortConfig={sortConfig}
+                onSort={handleSort}
+              />
+            </TableHead>
             <TableHead className="w-[8%] font-semibold text-gray-700 text-left pl-4">
               <SortableColumnHeader
                 column="notes"
@@ -131,7 +148,7 @@ export const MyResultsTable = ({
         <TableBody>
           {results.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={10} className="text-center py-8">
+              <TableCell colSpan={11} className="text-center py-8">
                 No results found
               </TableCell>
             </TableRow>
@@ -183,11 +200,16 @@ export const MyResultsTable = ({
                   <PriceQualityBadge priceQuality={result.price_quality_ratio} />
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {result.shop_name}
-                  {result.shop_country_code && (
-                    <span className="text-gray-500 text-xs ml-1">
-                      ({result.shop_country_code})
-                    </span>
+                  {result.shop_name || "-"}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {result.country_code ? (
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg">{getCountryFlag(result.country_code)}</span>
+                      <span className="text-xs text-gray-600">{result.country_code}</span>
+                    </div>
+                  ) : (
+                    "-"
                   )}
                 </TableCell>
                 <TableCell className="text-left">
