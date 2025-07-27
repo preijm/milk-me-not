@@ -168,7 +168,7 @@ export const HomeStatsOverview = () => {
     <div className="py-12">
       <div className="container max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center mb-8 mt-8">
-          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300">
+          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-gray-300 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300 shadow-sm">
             <div className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.activeMembers)}
             </div>
@@ -176,7 +176,7 @@ export const HomeStatsOverview = () => {
               Active Members
             </div>
           </div>
-          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300">
+          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-gray-300 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300 shadow-sm">
             <div className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.totalTests)}
             </div>
@@ -184,7 +184,7 @@ export const HomeStatsOverview = () => {
               Total Tests
             </div>
           </div>
-          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300">
+          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-gray-300 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300 shadow-sm">
             <div className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.productsReviewed)}
             </div>
@@ -192,7 +192,7 @@ export const HomeStatsOverview = () => {
               Products Reviewed
             </div>
           </div>
-          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300">
+          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-gray-300 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300 shadow-sm">
             <div className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.brandsCovered)}
             </div>
@@ -205,7 +205,7 @@ export const HomeStatsOverview = () => {
         <div className="text-center animate-fade-in">
           <a 
             href="/results" 
-            className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold rounded-lg transition-colors duration-200"
+            className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold rounded-lg transition-colors duration-200 text-lg"
           >
             View All Results
           </a>
