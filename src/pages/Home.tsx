@@ -78,8 +78,8 @@ const Home = () => {
       
       {/* Enhanced Hero Section */}
       <BackgroundPattern>
-        <div className="container max-w-6xl mx-auto px-4 pt-32 md:pt-40">
-          <div className="flex flex-col items-center justify-center text-center relative z-10 mt-8 md:mt-16">
+        <div className="container max-w-6xl mx-auto px-4 min-h-[80vh] flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center text-center relative z-10">
             {/* Floating decorative elements */}
             <div className="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full blur-xl animate-pulse"></div>
             <div className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-full blur-xl animate-pulse delay-1000"></div>
