@@ -20,6 +20,7 @@ interface ShopSelectProps {
 export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) => {
   const [suggestions, setSuggestions] = useState<{ name: string; country_code: string }[]>([]);
   const [inputValue, setInputValue] = useState("");
+  const [userHasTyped, setUserHasTyped] = useState(false);
   const [newShopName, setNewShopName] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const { toast } = useToast();
@@ -58,7 +59,8 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
   });
 
   useEffect(() => {
-    if (inputValue.trim() === '') {
+    // Only show suggestions if user has actively typed and there's input
+    if (!userHasTyped || inputValue.trim() === '') {
       setSuggestions([]);
       return;
     }
@@ -74,12 +76,25 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
     console.log('Filtered shops:', filteredShops);
     
     setSuggestions(filteredShops);
-  }, [inputValue, shops]);
+  }, [inputValue, shops, userHasTyped]);
 
   const handleSelectShop = (selectedShop: { name: string; country_code: string }) => {
     setInputValue(selectedShop.name);
     setShop(selectedShop.name);
     setSuggestions([]);
+    setUserHasTyped(false); // Reset after selection
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    setUserHasTyped(true); // Mark that user has actively typed
+  };
+
+  const handleInputFocus = () => {
+    // Only show suggestions if field is empty or user has previously typed
+    if (inputValue.trim() === '' || userHasTyped) {
+      setUserHasTyped(true);
+    }
   };
 
   const handleAddNewShop = async () => {
@@ -138,7 +153,8 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
         <div className="relative flex-1">
           <ShopSearchInput
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
           />
           <ShopSuggestions
             suggestions={suggestions}
