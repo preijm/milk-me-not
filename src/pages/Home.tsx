@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Milk, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,42 @@ import { supabase } from "@/integrations/supabase/client";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    totalTests: 0,
+    brandsCovered: 0,
+    activeMembers: 0
+  });
+
+  useEffect(() => {
+    const fetchTrustIndicators = async () => {
+      try {
+        // Get total tests count
+        const { count: totalTestsCount } = await supabase
+          .from('milk_tests')
+          .select('*', { count: 'exact', head: true });
+
+        // Get brands covered count
+        const { count: brandsCount } = await supabase
+          .from('brands')
+          .select('*', { count: 'exact', head: true });
+
+        // Get active members count
+        const { count: membersCount } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true });
+
+        setStats({
+          totalTests: totalTestsCount || 0,
+          brandsCovered: brandsCount || 0,
+          activeMembers: membersCount || 0
+        });
+      } catch (error) {
+        console.error('Error fetching trust indicators:', error);
+      }
+    };
+
+    fetchTrustIndicators();
+  }, []);
 
   const handleStartJourney = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -18,6 +54,13 @@ const Home = () => {
     } else {
       navigate('/add');
     }
+  };
+
+  const formatNumber = (num: number): string => {
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K+';
+    }
+    return num.toString() + '+';
   };
 
   return (
@@ -78,15 +121,15 @@ const Home = () => {
             <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground animate-fade-in">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>1000+ Reviews</span>
+                <span>{formatNumber(stats.totalTests)} Reviews</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-300"></div>
-                <span>50+ Brands</span>
+                <span>{formatNumber(stats.brandsCovered)} Brands</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-500"></div>
-                <span>Growing Community</span>
+                <span>{formatNumber(stats.activeMembers)} Members</span>
               </div>
             </div>
           </div>
