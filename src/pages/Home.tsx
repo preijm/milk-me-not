@@ -27,7 +27,7 @@ const Home = () => {
       <BackgroundPattern>
         <div className="container max-w-6xl mx-auto px-4 pt-32 md:pt-40">
           <div className="flex flex-col items-center justify-center text-center relative z-10 mt-8 md:mt-16">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-6 max-w-4xl animate-fade-in" style={{ color: '#00BF63' }}>
+            <h1 className="text-4xl md:text-7xl lg:text-8xl font-bold text-gray-900 mb-6 max-w-4xl animate-fade-in" style={{ color: '#00BF63' }}>
               Ditch the Moo. <br />
               <span style={{ color: '#00BF63' }}>Find Your New!</span>
             </h1>

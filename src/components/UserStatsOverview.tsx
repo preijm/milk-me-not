@@ -167,36 +167,36 @@ export const HomeStatsOverview = () => {
   return (
     <div className="py-12">
       <div className="container max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center mb-8 mt-8">
-          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 hover:bg-white/20 transition-all duration-300">
-            <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center mb-8 mt-8">
+          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.activeMembers)}
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-sm md:text-lg text-gray-600">
               Active Members
             </div>
           </div>
-          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 hover:bg-white/20 transition-all duration-300">
-            <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
+          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.totalTests)}
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-sm md:text-lg text-gray-600">
               Total Tests
             </div>
           </div>
-          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 hover:bg-white/20 transition-all duration-300">
-            <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
+          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.productsReviewed)}
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-sm md:text-lg text-gray-600">
               Products Reviewed
             </div>
           </div>
-          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 hover:bg-white/20 transition-all duration-300">
-            <div className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#00BF63' }}>
+          <div className="animate-fade-in bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-lg p-4 md:p-6 hover:bg-white/20 transition-all duration-300">
+            <div className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-4" style={{ color: '#00BF63' }}>
               {formatNumber(stats.brandsCovered)}
             </div>
-            <div className="text-lg text-gray-600">
+            <div className="text-sm md:text-lg text-gray-600">
               Brands Covered
             </div>
           </div>
