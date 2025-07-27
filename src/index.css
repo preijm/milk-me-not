@@ -44,6 +44,17 @@
     
     /* Rating color */
     --rating-bg: 225 100% 91%; /* #D1DCFF */
+    
+    /* Enhanced gradient colors */
+    --gradient-primary: linear-gradient(135deg, hsl(145 100% 38%), hsl(145 100% 42%));
+    --gradient-hero: linear-gradient(135deg, hsl(145 100% 38% / 0.1), hsl(145 100% 42% / 0.05));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-stats: linear-gradient(135deg, hsl(145 100% 38% / 0.05), hsl(145 100% 42% / 0.02));
+    
+    /* Shadow colors */
+    --shadow-brand: 0 10px 30px -10px hsl(145 100% 38% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
+    --shadow-glow: 0 0 40px hsl(145 100% 42% / 0.15);
   }
 
   .dark {
