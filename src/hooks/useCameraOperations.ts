@@ -25,13 +25,8 @@ export const useCameraOperations = ({
 
   const processAndSetFile = async (file: File, previewUrl: string) => {
     try {
-      // Check if compression is needed
-      if (shouldCompress(file)) {
-        toast({
-          title: "Compressing Image",
-          description: "Optimizing image size for better performance...",
-        });
-        
+      // Check if compression is needed (only for files larger than 5MB)
+      if (shouldCompress(file, 5 * 1024 * 1024)) {
         const compressedFile = await progressiveCompress(file);
         setPicture(compressedFile);
         
@@ -43,11 +38,6 @@ export const useCameraOperations = ({
         } else {
           setPicturePreview(previewUrl);
         }
-        
-        toast({
-          title: "Image Optimized",
-          description: `File size reduced from ${(file.size / 1024 / 1024).toFixed(1)}MB to ${(compressedFile.size / 1024 / 1024).toFixed(1)}MB`,
-        });
       } else {
         setPicture(file);
         setPicturePreview(previewUrl);
