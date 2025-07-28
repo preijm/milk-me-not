@@ -132,7 +132,7 @@ export const FlavorSelector = ({
           <Badge 
             key={flavor.id} 
             variant="flavor" 
-            className={`cursor-pointer transition-all ${
+            className={`cursor-pointer transition-all min-h-[28px] flex items-center ${
               selectedFlavors.includes(flavor.key) 
                 ? 'bg-purple-600 text-white border-purple-600' 
                 : ''
@@ -149,7 +149,7 @@ export const FlavorSelector = ({
             <Button
               variant="outline"
               size="sm"
-              className="bg-white/80 backdrop-blur-sm text-purple-600 border border-purple-600 rounded-md px-2 py-1 text-xs font-medium hover:shadow-lg whitespace-nowrap"
+              className="bg-white/80 backdrop-blur-sm text-purple-600 border border-purple-600 rounded-md px-2 py-1 text-xs font-medium hover:shadow-lg whitespace-nowrap min-h-[28px] flex items-center"
               aria-label="Add new flavor"
             >
               <Plus size={16} />
