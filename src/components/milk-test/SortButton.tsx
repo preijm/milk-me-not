@@ -17,6 +17,7 @@ export const SortButton = ({ sortConfig, onSort, onClearSort }: SortButtonProps)
   const isMobile = useIsMobile();
 
   const sortOptions = [
+    { key: 'most_recent_date', label: 'Latest Test Date' },
     { key: 'avg_rating', label: 'Score' },
     { key: 'brand_name', label: 'Brand Name' },
     { key: 'product_name', label: 'Product Name' },

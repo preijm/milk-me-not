@@ -65,7 +65,7 @@ export const ResultTableRow = ({
       </TableCell>
       <TableCell className="relative">
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 whitespace-nowrap">
             {format(new Date(result.most_recent_date), 'MMM dd, yyyy')}
           </span>
           <ChevronRight className="opacity-0 group-hover:opacity-100 text-black transition-opacity" size={24} />

@@ -59,7 +59,6 @@ export const ResultCard = ({
             </Badge>
           </div>
           <div className="flex items-center gap-1">
-            <span className="text-gray-500">Latest:</span>
             <span className="text-xs text-gray-600">
               {format(new Date(result.most_recent_date), 'MMM dd, yyyy')}
             </span>
