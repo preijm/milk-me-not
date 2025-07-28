@@ -8,6 +8,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { CameraOptions } from "./camera/CameraOptions";
+import { DesktopCameraModal } from "./camera/DesktopCameraModal";
 import { useCameraCapabilities } from "@/hooks/useCameraCapabilities";
 import { useCameraOperations } from "@/hooks/useCameraOperations";
 
@@ -33,7 +34,10 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
     cameraInputRef,
     handleFileChange,
     handleTakePhoto,
-    handleChooseFromGallery
+    handleChooseFromGallery,
+    showDesktopCamera,
+    setShowDesktopCamera,
+    handleDesktopCameraCapture
   } = useCameraOperations({
     setPicture,
     setPicturePreview,
@@ -113,6 +117,12 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
           </div>
         </div>
       )}
+      
+      <DesktopCameraModal
+        open={showDesktopCamera}
+        onClose={() => setShowDesktopCamera(false)}
+        onCapture={handleDesktopCameraCapture}
+      />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { validateFile } from "@/lib/fileValidation";
@@ -20,6 +20,7 @@ export const useCameraOperations = ({
 }: UseCameraOperationsProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [showDesktopCamera, setShowDesktopCamera] = useState(false);
   const { toast } = useToast();
 
   const processAndSetFile = async (file: File, previewUrl: string) => {
@@ -126,17 +127,43 @@ export const useCameraOperations = ({
     }
   };
 
+  const handleDesktopCameraCapture = async (file: File) => {
+    try {
+      const validationResult = await validateFile(file);
+      
+      if (!validationResult.isValid) {
+        toast({
+          title: "Invalid File",
+          description: validationResult.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const previewUrl = URL.createObjectURL(file);
+      await processAndSetFile(file, previewUrl);
+    } catch (err) {
+      console.error("Error handling camera capture:", err);
+      toast({
+        title: "Capture Error",
+        description: "Failed to process the captured photo",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleTakePhoto = () => {
-    console.log('handleTakePhoto called', { isNativeApp, cameraInputExists: !!cameraInputRef.current });
     if (isNativeApp) {
       takePictureWithNativeCamera();
     } else {
-      // For web browsers, use camera input
-      if (cameraInputRef.current) {
-        console.log('Clicking camera input...');
-        cameraInputRef.current.click();
+      // Check if we have camera access available
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        setShowDesktopCamera(true);
       } else {
-        console.error('Camera input ref not found!');
+        // Fallback to file input for older browsers
+        if (cameraInputRef.current) {
+          cameraInputRef.current.click();
+        }
       }
     }
   };
@@ -195,6 +222,9 @@ export const useCameraOperations = ({
     cameraInputRef,
     handleFileChange,
     handleTakePhoto,
-    handleChooseFromGallery
+    handleChooseFromGallery,
+    showDesktopCamera,
+    setShowDesktopCamera,
+    handleDesktopCameraCapture
   };
 };
