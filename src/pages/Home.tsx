@@ -78,12 +78,12 @@ const Home = () => {
       
       {/* Enhanced Hero Section */}
       <BackgroundPattern>
-        <div className="container max-w-4xl mx-auto px-4 min-h-[80vh] flex items-center justify-center pt-20">
+        <div className="container max-w-4xl mx-auto px-4 min-h-[70vh] md:min-h-[80vh] flex items-center justify-center pt-16 md:pt-20">
           <div className="flex flex-col items-center justify-center text-center relative z-10">
             
             {/* Enhanced hero title with green color */}
-            <div className="mb-6 relative">
-              <h1 className="text-4xl md:text-7xl lg:text-8xl font-bold mb-4 max-w-4xl animate-fade-in relative" style={{
+            <div className="mb-4 md:mb-6 relative">
+              <h1 className="text-3xl md:text-7xl lg:text-8xl font-bold mb-3 md:mb-4 max-w-4xl animate-fade-in relative" style={{
               color: '#00BF63'
             }}>
                 Ditch the Moo.
@@ -96,13 +96,13 @@ const Home = () => {
             </div>
             
             {/* Enhanced description with better spacing */}
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl animate-fade-in leading-relaxed">
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl animate-fade-in leading-relaxed">
               Tired of tasteless plant milks? Rate, discover, and share your faves with a community that{"'"}s just as obsessed. Whether it{"'"}s for coffee, cereal, or cooking—find the dairy-free match that actually delivers.
             </p>
             
             {/* Enhanced CTA button with better animation */}
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in mb-12">
-              <Button onClick={handleStartJourney} size="lg" className="text-lg px-8 py-4 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group" style={{
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in mb-8 md:mb-12">
+              <Button onClick={handleStartJourney} size="lg" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group" style={{
               backgroundColor: '#2144ff'
             }}>
                 <Milk className="mr-2 h-6 w-6 group-hover:rotate-12 transition-transform duration-300" />
@@ -110,7 +110,7 @@ const Home = () => {
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
               
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-4 border-2 hover:bg-primary/5 transition-all duration-300">
+              <Button asChild variant="outline" size="lg" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 border-2 hover:bg-primary/5 transition-all duration-300">
                 <Link to="/results">
                   Explore Results
                 </Link>
@@ -136,7 +136,7 @@ const Home = () => {
         </div>
         
         {/* Enhanced Statistics Section */}
-        <div className="relative z-10 mt-20">
+        <div className="relative z-10 mt-12 md:mt-20">
           <HomeStatsOverview />
         </div>
       </BackgroundPattern>

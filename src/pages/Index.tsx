@@ -10,8 +10,8 @@ const Index = () => {
     <div className="min-h-screen">
       <MenuBar />
       <BackgroundPattern>
-        <div className="container max-w-3xl mx-auto px-4 py-8 pt-32 relative z-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center md:text-left">Moo-ment of Truth</h1>
+        <div className="container max-w-3xl mx-auto px-4 py-6 md:py-8 pt-24 md:pt-32 relative z-10">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 md:mb-8 text-center md:text-left">Moo-ment of Truth</h1>
           <AddMilkTest />
         </div>
       </BackgroundPattern>

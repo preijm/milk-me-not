@@ -20,13 +20,13 @@ export const AddMilkTest = () => {
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 animate-fade-in">
-      <CardContent className="p-6">
+      <CardContent className="p-4 md:p-6">
         <form onSubmit={e => {
           e.preventDefault();
           if (isFormValid) {
             handleSubmit(e);
           }
-        }} className="space-y-8">
+        }} className="space-y-6 md:space-y-8">
           <ProductInformation 
             brandId={formState.brandId} 
             setBrandId={formSetters.setBrandId} 
@@ -34,7 +34,7 @@ export const AddMilkTest = () => {
             setProductId={formSetters.setProductId} 
           />
 
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Rating</h2>
             <RatingSelect rating={formState.rating} setRating={formSetters.setRating} />
             <ResponsiveNotesArea 
@@ -47,7 +47,7 @@ export const AddMilkTest = () => {
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Price-to-Quality Ratio</h2>
             <PriceInput 
               price={formState.price} 
@@ -57,7 +57,7 @@ export const AddMilkTest = () => {
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
             <div className="space-y-3">
               <div>
@@ -82,7 +82,7 @@ export const AddMilkTest = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Drinking Style</h2>
             <DrinkPreference 
               preference={formState.drinkPreference} 
