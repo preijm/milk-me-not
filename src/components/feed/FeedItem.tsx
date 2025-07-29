@@ -174,16 +174,13 @@ export const FeedItem = ({ item }: FeedItemProps) => {
     commentMutation.mutate(commentText);
   };
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={cn(
-          "h-4 w-4",
-          i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-        )}
-      />
-    ));
+  const renderRating = (rating: number) => {
+    return (
+      <div className="flex items-center space-x-1">
+        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+        <span className="font-semibold">{rating}/10</span>
+      </div>
+    );
   };
 
   return (
@@ -225,11 +222,22 @@ export const FeedItem = ({ item }: FeedItemProps) => {
               </Badge>
             ))}
           </div>
-          <div className="flex items-center space-x-1">
-            {renderStars(Math.round(item.rating))}
-            <span className="ml-1 font-semibold">{item.rating}/5</span>
-          </div>
+          {renderRating(item.rating)}
         </div>
+
+        {/* Photo */}
+        {item.picture_path && (
+          <div className="rounded-lg overflow-hidden">
+            <img
+              src={`${supabase.storage.from('Milk Product Pictures').getPublicUrl(item.picture_path).data.publicUrl}`}
+              alt={`${item.brand_name} ${item.product_name}`}
+              className="w-full h-64 object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </div>
+        )}
 
         {/* Notes */}
         {item.notes && (
