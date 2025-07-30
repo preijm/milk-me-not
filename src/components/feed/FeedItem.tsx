@@ -229,26 +229,36 @@ export const FeedItem = ({ item }: FeedItemProps) => {
         {item.picture_path ? (
           <div className="rounded-lg overflow-hidden">
             <img
-              src={`https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/Milk%20Product%20Pictures/${item.picture_path}`}
+              src={`https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/Milk%20Product%20Pictures/${encodeURIComponent(item.picture_path)}`}
               alt={`${item.brand_name} ${item.product_name}`}
               className="w-full h-64 object-cover"
               onError={(e) => {
                 console.error('Failed to load image:', item.picture_path);
-                e.currentTarget.style.display = 'none';
+                const target = e.currentTarget as HTMLImageElement;
+                target.style.display = 'none';
+                // Show fallback
+                const fallback = target.parentElement?.nextElementSibling;
+                if (fallback) {
+                  (fallback as HTMLElement).style.display = 'flex';
+                }
               }}
               onLoad={() => {
                 console.log('Successfully loaded image:', item.picture_path);
               }}
             />
           </div>
-        ) : (
-          <div className="rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 h-64 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-4xl mb-2">🥛</div>
-              <p className="text-sm text-gray-600">No photo available</p>
-            </div>
+        ) : null}
+        
+        {/* Fallback placeholder - always rendered but hidden unless image fails */}
+        <div 
+          className="rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 h-64 flex items-center justify-center"
+          style={{ display: item.picture_path ? 'none' : 'flex' }}
+        >
+          <div className="text-center">
+            <div className="text-4xl mb-2">🥛</div>
+            <p className="text-sm text-gray-600">No photo available</p>
           </div>
-        )}
+        </div>
 
         {/* Notes */}
         {item.notes && (
