@@ -365,38 +365,13 @@ export const FeedItem = ({ item }: FeedItemProps) => {
             </Button>
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-200"
-              onClick={() => {
-                if (!user) {
-                  toast({
-                    title: "Sign in required",
-                    description: "Please sign in to save products",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                // Navigate to add test page with this product pre-selected
-                toast({
-                  title: "Coming soon!",
-                  description: "Quick 'Try This' feature will be available soon",
-                });
-              }}
-            >
-              <Plus className="h-4 w-4" />
-              <span className="font-medium">Try This</span>
-            </Button>
-            <WishlistButton
-              productId={item.product_id || ''}
-              variant="outline"
-              size="sm"
-              className="rounded-full"
-              showText={false}
-            />
-          </div>
+          <WishlistButton
+            productId={item.product_id || ''}
+            variant="outline"
+            size="sm"
+            className="rounded-full"
+            showText={false}
+          />
         </div>
 
         {/* Comments section */}
