@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MessageCircle, Star, Plus, MapPin, DollarSign, Clock, ThumbsUp, ThumbsDown } from "lucide-react";
+import { WishlistButton } from "@/components/WishlistButton";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -364,29 +365,38 @@ export const FeedItem = ({ item }: FeedItemProps) => {
             </Button>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-200"
-            onClick={() => {
-              if (!user) {
+          <div className="flex items-center space-x-2">
+            <WishlistButton
+              productId={item.product_id || ''}
+              variant="outline"
+              size="sm"
+              className="rounded-full"
+              showText={false}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-200"
+              onClick={() => {
+                if (!user) {
+                  toast({
+                    title: "Sign in required",
+                    description: "Please sign in to try this product",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                // Navigate to add test page with this product pre-selected
                 toast({
-                  title: "Sign in required",
-                  description: "Please sign in to try this product",
-                  variant: "destructive",
+                  title: "Coming soon!",
+                  description: "Quick 'Try This' feature will be available soon",
                 });
-                return;
-              }
-              // Navigate to add test page with this product pre-selected
-              toast({
-                title: "Coming soon!",
-                description: "Quick 'Try This' feature will be available soon",
-              });
-            }}
-          >
-            <Plus className="h-4 w-4" />
-            <span className="font-medium">Try This</span>
-          </Button>
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              <span className="font-medium">Try This</span>
+            </Button>
+          </div>
         </div>
 
         {/* Comments section */}
