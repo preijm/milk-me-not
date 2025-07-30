@@ -231,7 +231,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
             <img
               src={`https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/milk-pictures/${encodeURIComponent(item.picture_path)}`}
               alt={`${item.brand_name} ${item.product_name}`}
-              className="w-full h-64 object-cover"
+              className="w-full h-96 object-cover"
               onError={(e) => {
                 console.error('Failed to load image:', item.picture_path);
                 const target = e.currentTarget as HTMLImageElement;
@@ -251,7 +251,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
         
         {/* Fallback placeholder - always rendered but hidden unless image fails */}
         <div 
-          className="rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 h-64 flex items-center justify-center"
+          className="rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 h-96 flex items-center justify-center"
           style={{ display: item.picture_path ? 'none' : 'flex' }}
         >
           <div className="text-center">
