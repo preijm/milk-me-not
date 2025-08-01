@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { MilkTestResult } from "@/types/milk-test";
@@ -11,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MessageCircle, Star, Plus, MapPin, DollarSign, Clock, ThumbsUp, ThumbsDown, Edit3 } from "lucide-react";
 import { WishlistButton } from "@/components/WishlistButton";
+import { EditMilkTest } from "@/components/milk-test/EditMilkTest";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -37,10 +37,10 @@ interface Comment {
 export const FeedItem = ({ item }: FeedItemProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
+  const [editingTest, setEditingTest] = useState<MilkTestResult | null>(null);
 
   // Check if current user is the author of this milk test
   const isOwnPost = user?.id === item.user_id;
@@ -274,7 +274,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate(`/edit/${item.id}`)}
+                onClick={() => setEditingTest(item)}
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Edit3 className="h-4 w-4" />
@@ -453,6 +453,21 @@ export const FeedItem = ({ item }: FeedItemProps) => {
           </div>
         )}
       </CardContent>
+
+      {/* Edit Modal */}
+      {editingTest && (
+        <EditMilkTest 
+          test={editingTest} 
+          open={!!editingTest} 
+          onOpenChange={(open) => !open && setEditingTest(null)} 
+          onSuccess={() => {
+            // Invalidate queries to refresh the feed
+            queryClient.invalidateQueries({ queryKey: ['feed'] });
+            queryClient.invalidateQueries({ queryKey: ['userMilkTests'] });
+            setEditingTest(null);
+          }} 
+        />
+      )}
     </Card>
   );
 };
