@@ -251,25 +251,6 @@ export const FeedItem = ({ item }: FeedItemProps) => {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Enhanced Product Tags with Color Coding */}
-        <div className="flex flex-wrap gap-2">
-          {item.property_names?.map((property) => (
-            <Badge 
-              key={property} 
-              variant={getBadgeVariant(property)}
-              className="text-xs font-medium flex items-center"
-            >
-              {getBadgeIcon(property)}
-              {property.replace(/_/g, ' ')}
-            </Badge>
-          ))}
-          {item.flavor_names?.map((flavor) => (
-            <Badge key={flavor} variant="outline" className="text-xs font-medium">
-              {flavor}
-            </Badge>
-          ))}
-        </div>
-
         {/* Enhanced Photo Display */}
         {item.picture_path ? (
           <div className="rounded-xl overflow-hidden shadow-md">
