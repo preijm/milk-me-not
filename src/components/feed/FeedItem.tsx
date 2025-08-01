@@ -227,8 +227,13 @@ export const FeedItem = ({ item }: FeedItemProps) => {
                   {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
                 </Badge>
               </div>
-              <div className="text-base font-medium text-muted-foreground">
-                {item.brand_name} {item.product_name}
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="category" className="font-medium">
+                  {item.brand_name}
+                </Badge>
+                <span className="text-base font-medium text-muted-foreground">
+                  {item.product_name}
+                </span>
               </div>
             </div>
           </div>
@@ -239,9 +244,6 @@ export const FeedItem = ({ item }: FeedItemProps) => {
       <CardContent className="space-y-6">
         {/* Enhanced Product Tags with Color Coding */}
         <div className="flex flex-wrap gap-2">
-          <Badge variant="default" className="font-medium">
-            {item.brand_name}
-          </Badge>
           {item.property_names?.map((property) => (
             <Badge 
               key={property} 
