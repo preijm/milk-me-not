@@ -13,6 +13,8 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { getScoreBadgeVariant } from "@/lib/scoreUtils";
+import { formatScore } from "@/lib/scoreFormatter";
 
 interface FeedItemProps {
   item: MilkTestResult;
@@ -200,12 +202,10 @@ export const FeedItem = ({ item }: FeedItemProps) => {
   };
 
   const renderRating = (rating: number) => {
-    const ratingColor = rating >= 7 ? "text-green-600" : rating >= 5 ? "text-yellow-600" : "text-red-600";
     return (
-      <div className="flex items-center space-x-1">
-        <Star className={cn("h-4 w-4 fill-current", ratingColor)} />
-        <span className={cn("font-bold text-lg", ratingColor)}>{rating}/10</span>
-      </div>
+      <Badge variant={getScoreBadgeVariant(Number(rating))}>
+        {formatScore(Number(rating))}
+      </Badge>
     );
   };
 
@@ -234,10 +234,18 @@ export const FeedItem = ({ item }: FeedItemProps) => {
                 <span className="text-base font-medium text-muted-foreground">
                   {item.product_name}
                 </span>
+                {item.is_barista && (
+                  <Badge 
+                    variant="barista"
+                    className="text-xs font-medium"
+                  >
+                    Barista
+                  </Badge>
+                )}
                 {item.property_names?.map((property) => (
                   <Badge 
                     key={property} 
-                    variant={property.toLowerCase().includes('barista') ? 'barista' : 'category'}
+                    variant="category"
                     className="text-xs font-medium"
                   >
                     {property.replace(/_/g, ' ')}
