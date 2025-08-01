@@ -238,7 +238,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
                   {item.brand_name}
                 </span>
                 <span className="text-base font-medium text-muted-foreground">
-                  {item.product_name}
+                  - {item.product_name}
                 </span>
                 {item.is_barista && (
                   <Badge 
