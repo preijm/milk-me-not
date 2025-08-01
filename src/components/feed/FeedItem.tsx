@@ -214,11 +214,12 @@ export const FeedItem = ({ item }: FeedItemProps) => {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12 ring-2 ring-primary/10">
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold text-lg">
-                {item.username?.charAt(0).toUpperCase() || 'U'}
-              </AvatarFallback>
-            </Avatar>
+            <Badge 
+              variant="category" 
+              className="w-12 h-12 rounded-full flex items-center justify-center p-0 font-medium text-lg"
+            >
+              {item.username?.charAt(0).toUpperCase() || 'U'}
+            </Badge>
             <div className="flex-1">
               <div className="flex items-center space-x-2">
                 <span className="font-bold text-foreground text-lg">{item.username}</span>
