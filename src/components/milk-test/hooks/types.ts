@@ -43,6 +43,7 @@ export interface ProductSubmitParams {
   toast: any;
   onSuccess: (productId: string, brandId: string) => void;
   onOpenChange: (open: boolean) => void;
+  editProductId?: string;
 }
 
 export interface ProductSubmitResult {

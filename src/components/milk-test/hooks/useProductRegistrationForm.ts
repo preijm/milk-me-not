@@ -94,7 +94,8 @@ export const useProductRegistrationForm = ({
         selectedFlavors,
         toast,
         onSuccess: skipAutoSuccess ? () => {} : onSuccess,
-        onOpenChange: skipAutoSuccess ? () => {} : onOpenChange
+        onOpenChange: skipAutoSuccess ? () => {} : onOpenChange,
+        editProductId
       });
       
       return result;

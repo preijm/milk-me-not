@@ -2,6 +2,65 @@
 import { supabase } from "@/integrations/supabase/client";
 
 /**
+ * Updates an existing product in the database
+ */
+export const updateExistingProduct = async (
+  productId: string,
+  brandId: string, 
+  nameId: string, 
+  isBarista: boolean
+): Promise<void> => {
+  console.log('Updating existing product:', { productId, brandId, nameId, isBarista });
+  
+  const { error: productError } = await supabase
+    .from('products')
+    .update({
+      brand_id: brandId,
+      name_id: nameId,
+      is_barista: isBarista
+    })
+    .eq('id', productId);
+  
+  if (productError) {
+    console.error('Error updating product:', productError);
+    throw productError;
+  }
+  
+  console.log('Product updated successfully');
+};
+
+/**
+ * Removes existing product properties and flavors before updating
+ */
+export const clearProductAssociations = async (productId: string): Promise<void> => {
+  console.log('Clearing existing product associations for:', productId);
+  
+  // Remove existing properties
+  const { error: propsError } = await supabase
+    .from('product_properties')
+    .delete()
+    .eq('product_id', productId);
+  
+  if (propsError) {
+    console.error('Error removing existing properties:', propsError);
+    throw propsError;
+  }
+  
+  // Remove existing flavors
+  const { error: flavorsError } = await supabase
+    .from('product_flavors')
+    .delete()
+    .eq('product_id', productId);
+  
+  if (flavorsError) {
+    console.error('Error removing existing flavors:', flavorsError);
+    throw flavorsError;
+  }
+  
+  console.log('Product associations cleared successfully');
+};
+
+/**
  * Checks if a product with the same brand, name, barista status, flavors and properties already exists
  */
 export const checkDuplicateProduct = async (

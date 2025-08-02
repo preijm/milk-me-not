@@ -3,7 +3,7 @@ import { FormSetters, ProductSubmitParams, ProductSubmitResult } from "../types"
 import { addProductTypes } from "./productTypes";
 import { addProductFlavors } from "./productFlavors";
 import { resolveProductNameId } from "./nameResolver";
-import { createNewProduct, checkDuplicateProduct } from "./productCreator";
+import { createNewProduct, checkDuplicateProduct, updateExistingProduct, clearProductAssociations } from "./productCreator";
 
 /**
  * Resets all form fields to their initial state
@@ -27,8 +27,8 @@ export const resetFormState = ({
 };
 
 /**
- * Handles the submission of a new product
- * Returns a promise with the new product ID
+ * Handles the submission of a new product or update of existing product
+ * Returns a promise with the product ID
  */
 export const handleProductSubmit = async ({
   brandId,
@@ -39,10 +39,11 @@ export const handleProductSubmit = async ({
   selectedFlavors,
   toast,
   onSuccess,
-  onOpenChange
+  onOpenChange,
+  editProductId
 }: ProductSubmitParams): Promise<ProductSubmitResult> => {
   let finalNameId = nameId;
-  let newProductId = null;
+  let productId = editProductId || null;
 
   console.log('Starting product submission with:', { 
     brandId, 
@@ -50,34 +51,51 @@ export const handleProductSubmit = async ({
     nameId, 
     selectedProductTypes, 
     isBarista, 
-    selectedFlavors 
+    selectedFlavors,
+    editProductId,
+    isEditMode: !!editProductId
   });
 
   try {
     // 1. First handle the name_id resolution
     finalNameId = await resolveProductNameId(productName, finalNameId);
     
-    // 2. Check for duplicate products before creating
-    const duplicateProductId = await checkDuplicateProduct(
-      brandId, 
-      finalNameId, 
-      isBarista, 
-      selectedProductTypes, 
-      selectedFlavors
-    );
-    
-    if (duplicateProductId) {
-      console.log('Duplicate product found, ID:', duplicateProductId);
-      return { productId: duplicateProductId, isDuplicate: true };
+    if (editProductId) {
+      // EDIT MODE: Update existing product
+      console.log('Edit mode: updating existing product', editProductId);
+      
+      // Update the main product record
+      await updateExistingProduct(editProductId, brandId, finalNameId, isBarista);
+      
+      // Clear existing properties and flavors
+      await clearProductAssociations(editProductId);
+      
+      productId = editProductId;
+    } else {
+      // CREATE MODE: Check for duplicates and create new product
+      console.log('Create mode: checking for duplicates and creating new product');
+      
+      const duplicateProductId = await checkDuplicateProduct(
+        brandId, 
+        finalNameId, 
+        isBarista, 
+        selectedProductTypes, 
+        selectedFlavors
+      );
+      
+      if (duplicateProductId) {
+        console.log('Duplicate product found, ID:', duplicateProductId);
+        return { productId: duplicateProductId, isDuplicate: true };
+      }
+      
+      // Create a new product entry
+      productId = await createNewProduct(brandId, finalNameId, isBarista);
     }
     
-    // 3. Create a new product entry with is_barista flag set directly
-    newProductId = await createNewProduct(brandId, finalNameId, isBarista);
-    
-    // 4. Add product types if selected
-    if (selectedProductTypes.length > 0 && newProductId) {
+    // Add product types if selected
+    if (selectedProductTypes.length > 0 && productId) {
       try {
-        await addProductTypes(newProductId, selectedProductTypes, isBarista);
+        await addProductTypes(productId, selectedProductTypes, isBarista);
         console.log('Product types added successfully');
       } catch (error) {
         console.error('Failed to add product types:', error);
@@ -85,10 +103,10 @@ export const handleProductSubmit = async ({
       }
     }
     
-    // 5. Add flavors if selected
-    if (selectedFlavors.length > 0 && newProductId) {
+    // Add flavors if selected
+    if (selectedFlavors.length > 0 && productId) {
       try {
-        await addProductFlavors(newProductId, selectedFlavors);
+        await addProductFlavors(productId, selectedFlavors);
         console.log('Product flavors added successfully');
       } catch (error) {
         console.error('Failed to add product flavors:', error);
@@ -96,11 +114,11 @@ export const handleProductSubmit = async ({
       }
     }
     
-    console.log('Product registration complete for product ID:', newProductId);
+    console.log('Product submission complete for product ID:', productId);
     
-    // Call onSuccess directly with the new product ID
-    if (newProductId && onSuccess) {
-      onSuccess(newProductId, brandId);
+    // Call onSuccess directly with the product ID
+    if (productId && onSuccess) {
+      onSuccess(productId, brandId);
     }
     
     // Close the dialog if needed
@@ -108,13 +126,13 @@ export const handleProductSubmit = async ({
       onOpenChange(false);
     }
     
-    return { productId: newProductId, isDuplicate: false };
+    return { productId, isDuplicate: false };
     
   } catch (error) {
     console.error('Global error in product submission:', error);
     toast({
       title: "Error",
-      description: "Failed to register product. Please try again.",
+      description: editProductId ? "Failed to update product. Please try again." : "Failed to register product. Please try again.",
       variant: "destructive"
     });
     return { productId: null, isDuplicate: false };

@@ -5,8 +5,9 @@ import { DialogDescription } from "@/components/ui/dialog";
 import { ProductRegistrationProvider, useProductRegistration } from "./ProductRegistrationContext";
 import { ProductForm } from "./FormSections";
 import { useToast } from "@/hooks/use-toast";
-import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useProductTestCount } from "@/hooks/useProductTestCount";
 interface ProductRegistrationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,6 +31,10 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     toast
   } = useProductRegistration();
   const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  
+  // Get test count for delete confirmation
+  const { data: testCount = 0 } = useProductTestCount(editProductId);
 
   // Reset state when dialog is closed
   useEffect(() => {
@@ -114,8 +119,13 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     setIsSubmitting(false); // Ensure isSubmitting is reset
   };
 
-  // Handle delete button click
-  const handleDelete = async () => {
+  // Handle delete button click - show confirmation dialog
+  const handleDeleteClick = () => {
+    setDeleteConfirmOpen(true);
+  };
+
+  // Handle confirmed delete
+  const handleConfirmedDelete = async () => {
     if (!editProductId) return;
     
     try {
@@ -142,6 +152,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
         description: "Product deleted successfully.",
       });
       
+      setDeleteConfirmOpen(false);
       onOpenChange(false);
       onSuccess('', ''); // Trigger parent to refresh
     } catch (error) {
@@ -170,7 +181,7 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
             {editProductId ? 'Edit milk product details, properties, and flavors' : 'Register a new milk product with brand, product details, properties, and flavors'}
           </DialogDescription>
           
-          <ProductForm onSubmit={handleSubmit} onCancel={handleCancel} onBrandInputReady={handleBrandInputReady} onDelete={handleDelete} />
+          <ProductForm onSubmit={handleSubmit} onCancel={handleCancel} onBrandInputReady={handleBrandInputReady} onDelete={handleDeleteClick} />
         </DialogContent>
       </Dialog>
       
@@ -187,6 +198,42 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
           <AlertDialogFooter>
             <AlertDialogAction onClick={handleDuplicateDialogAction} className="bg-blue-600 hover:bg-blue-700 text-white">
               OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent className="bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this product?
+              {testCount > 0 ? (
+                <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                  <div className="text-red-800 font-medium">
+                    Warning: This product has {testCount} linked test{testCount !== 1 ? 's' : ''}.
+                  </div>
+                  <div className="text-red-600 text-sm mt-1">
+                    Deleting this product will not delete the tests, but they will lose their product association.
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-2 text-gray-600">
+                  This product has no linked tests.
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleConfirmedDelete}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Deleting..." : "Delete Product"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
