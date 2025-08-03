@@ -56,6 +56,9 @@
     --notification-comment: 225 100% 56%; /* #2144ff */
     --notification-newsletter: 145 100% 38%; /* #00bf63 */
     
+    /* Switch colors */
+    --switch-enabled: 225 100% 56%; /* #2144ff */
+    
     /* Shadow colors */
     --shadow-brand: 0 10px 30px -10px hsl(145 100% 38% / 0.2);
     --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
