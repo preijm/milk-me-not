@@ -151,7 +151,7 @@ const Account = () => {
                     </TabsTrigger>
                   </TabsList>
 
-                  <div className="flex-1 min-h-[400px]">
+                  <div className="flex-1 min-h-[250px]">
                     <TabsContent value="profile" className="space-y-6 mt-0 h-full">
                       <form onSubmit={handleUpdateProfile} className="space-y-6">
                         <div>
