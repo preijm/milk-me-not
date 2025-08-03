@@ -69,6 +69,11 @@ export default {
         "soft-peach": "#FDE1D3",
         "soft-brown": "#F5E6D3",
         "soft-gray": "#E5E7EB",
+        notification: {
+          like: "hsl(var(--notification-like))",
+          comment: "hsl(var(--notification-comment))",
+          newsletter: "hsl(var(--notification-newsletter))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

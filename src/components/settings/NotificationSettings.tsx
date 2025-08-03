@@ -23,7 +23,7 @@ export default function NotificationSettings() {
         <div className="space-y-4">
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div className="flex items-start space-x-3">
-              <Heart className="w-5 h-5 text-red-500 mt-1" />
+              <Heart className="w-5 h-5 text-notification-like mt-1" />
               <div>
                 <Label htmlFor="likes-notifications" className="font-medium">
                   Like Notifications
@@ -40,7 +40,7 @@ export default function NotificationSettings() {
           
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div className="flex items-start space-x-3">
-              <MessageCircle className="w-5 h-5 text-blue-500 mt-1" />
+              <MessageCircle className="w-5 h-5 text-notification-comment mt-1" />
               <div>
                 <Label htmlFor="comments-notifications" className="font-medium">
                   Comment Notifications
@@ -57,7 +57,7 @@ export default function NotificationSettings() {
           
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div className="flex items-start space-x-3">
-              <Mail className="w-5 h-5 text-green-500 mt-1" />
+              <Mail className="w-5 h-5 text-notification-newsletter mt-1" />
               <div>
                 <Label htmlFor="newsletter-notifications" className="font-medium">
                   Newsletter
