@@ -134,24 +134,24 @@ const Account = () => {
               <div className="p-8">
               
               <Tabs defaultValue="profile" className="w-full">
-                <div className="flex gap-8">
-                  <TabsList className="flex flex-col h-fit w-48 p-1">
-                    <TabsTrigger value="profile" className="w-full justify-start gap-2 mb-1">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+                  <TabsList className="flex flex-row md:flex-col h-fit w-full md:w-48 p-1">
+                    <TabsTrigger value="profile" className="flex-1 md:w-full justify-start gap-2 mb-0 md:mb-1">
                       <User className="w-4 h-4" />
-                      Profile
+                      <span className="hidden sm:inline">Profile</span>
                     </TabsTrigger>
-                    <TabsTrigger value="security" className="w-full justify-start gap-2 mb-1">
+                    <TabsTrigger value="security" className="flex-1 md:w-full justify-start gap-2 mb-0 md:mb-1">
                       <Shield className="w-4 h-4" />
-                      Security
+                      <span className="hidden sm:inline">Security</span>
                     </TabsTrigger>
-                    <TabsTrigger value="notifications" className="w-full justify-start gap-2">
+                    <TabsTrigger value="notifications" className="flex-1 md:w-full justify-start gap-2">
                       <Bell className="w-4 h-4" />
-                      Notifications
+                      <span className="hidden sm:inline">Notifications</span>
                     </TabsTrigger>
                   </TabsList>
 
-                  <div className="flex-1">
-                    <TabsContent value="profile" className="space-y-6 mt-0">
+                  <div className="flex-1 min-h-[400px]">
+                    <TabsContent value="profile" className="space-y-6 mt-0 h-full">
                       <form onSubmit={handleUpdateProfile} className="space-y-6">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -177,9 +177,7 @@ const Account = () => {
                       </form>
                     </TabsContent>
 
-                    <TabsContent value="security" className="space-y-6 mt-0">
-                      
-
+                    <TabsContent value="security" className="space-y-6 mt-0 h-full">
                       <form onSubmit={handleUpdatePassword} className="space-y-6">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -202,7 +200,7 @@ const Account = () => {
                       </form>
                     </TabsContent>
 
-                    <TabsContent value="notifications" className="space-y-6 mt-0">
+                    <TabsContent value="notifications" className="space-y-6 mt-0 h-full">
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                         <div className="flex items-start">
                           <Bell className="w-5 h-5 text-yellow-600 mt-0.5 mr-3" />
