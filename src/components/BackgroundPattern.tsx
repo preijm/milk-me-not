@@ -8,34 +8,28 @@ interface BackgroundPatternProps {
 const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
   return (
     <div className="h-full bg-gradient-to-br from-white via-emerald-50/5 to-white relative overflow-hidden">
-      {/* CSS-based curved backgrounds */}
+      {/* CSS-based subtle background layers */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Primary flowing gradient */}
+        {/* Subtle gradient overlays contained within viewport */}
         <div 
-          className="absolute -top-10 -left-20 w-[120%] h-[120%] opacity-20"
+          className="absolute inset-0 opacity-20"
           style={{
-            background: `linear-gradient(135deg, transparent 0%, rgba(94, 240, 230, 0.3) 25%, rgba(14, 181, 181, 0.2) 50%, transparent 75%)`,
-            transform: 'rotate(-15deg) skewY(5deg)',
-            borderRadius: '50% 20% 30% 40%'
+            background: `linear-gradient(135deg, transparent 0%, rgba(94, 240, 230, 0.3) 25%, rgba(14, 181, 181, 0.2) 50%, transparent 75%)`
           }}
         />
         
-        {/* Secondary flowing gradient */}
         <div 
-          className="absolute -bottom-10 -right-20 w-[100%] h-[100%] opacity-15"
+          className="absolute inset-0 opacity-15"
           style={{
-            background: `linear-gradient(45deg, transparent 0%, rgba(94, 240, 230, 0.2) 30%, rgba(14, 181, 181, 0.3) 60%, transparent 85%)`,
-            transform: 'rotate(25deg) skewX(-5deg)',
-            borderRadius: '30% 50% 20% 40%'
+            background: `linear-gradient(45deg, transparent 0%, rgba(94, 240, 230, 0.2) 30%, rgba(14, 181, 181, 0.3) 60%, transparent 85%)`
           }}
         />
         
-        {/* Subtle radial accent */}
+        {/* Contained radial accent */}
         <div 
-          className="absolute top-1/3 left-1/4 w-96 h-96 opacity-10"
+          className="absolute top-1/3 left-1/4 w-80 h-80 opacity-10 rounded-full"
           style={{
-            background: `radial-gradient(circle, rgba(94, 240, 230, 0.4) 0%, transparent 70%)`,
-            transform: 'scale(1.5)'
+            background: `radial-gradient(circle, rgba(94, 240, 230, 0.4) 0%, transparent 70%)`
           }}
         />
       </div>
