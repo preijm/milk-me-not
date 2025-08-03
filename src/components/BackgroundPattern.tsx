@@ -7,7 +7,7 @@ interface BackgroundPatternProps {
 
 const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
   return (
-    <div className="h-full bg-gradient-to-br from-white via-emerald-50/5 to-white relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50/5 to-white relative overflow-hidden">
       {/* CSS-based subtle background layers */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Subtle gradient overlays contained within viewport */}
