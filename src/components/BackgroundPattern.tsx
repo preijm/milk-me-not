@@ -8,20 +8,37 @@ interface BackgroundPatternProps {
 const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
   return (
     <div className="h-full bg-gradient-to-br from-white via-emerald-50/5 to-white relative overflow-hidden">
-      {/* Primary curved line */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMzAwMCAyMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0tNTAwIC0yMDBDMCAtMTAwIDUwMCAyMDAgMTAwMCA1MDBDMTUwMCA4MDAgMjAwMCAxMDAwIDI1MDAgMTIwMEMzMDAwIDE0MDAgMzUwMCAxNjAwIDQwMDAgMTgwMCIgc3Ryb2tlPSJ1cmwoI2dyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVFRjBFNiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzBFQjVCNSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==')] opacity-25" />
-      
-      {/* Secondary curved line */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMzAwMCAyMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0tMjAwIC0xMDBDMzAwIDAgODAwIDMwMCAxMzAwIDYwMEMxODAwIDkwMCAyMzAwIDExMDAgMjgwMCAxMzAwQzMzMDAgMTUwMCAzODAwIDE3MDAgNDMwMCAxOTAwIiBzdHJva2U9InVybCgjZ3JhZGllbnQpIiBzdHJva2Utd2lkdGg9IjIiLz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50IiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjNUVGMEU2Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMEVCNUI1Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PC9zdmc+')] opacity-15" />
-      
-      {/* Third curved line */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMzAwMCAyMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0tODAwIDEwMEMtMzAwIDIwMCAyMDAgNTAwIDcwMCA4MDBDMTI1MCAxMTAwIDE3MDAgMTMwMCAyMjAwIDE1MDBDMzswMCAxNzAwIDMyMDAgMTkwMCAzNzAwIDIxMDAiIHN0cm9rZT0idXJsKCNncmFkaWVudCkiIHN0cm9rZS13aWR0aD0iMiIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM1RUYwRTYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwRUI1QjUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4=')] opacity-10" />
-      
-      {/* Fourth curved line in bottom-left */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMzAwMCAyMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0tMTAwMCAyMDBDLTUwMCAzMDAgMCA0MDAgNTAwIDUwMEMxMDUwIDYwMCAxNTAwIDcwMCAyMDAwIDYwMEMyNTAwIDUwMCAzMDAwIDQwMCAzNTAwIDMwMCIgc3Ryb2tlPSJ1cmwoI2dyYWRpZW50KSIgc3Ryb2tlLXdpZHRoPSIyIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVFRjBFNiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzBFQjVCNSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==')] opacity-20" />
-      
-      {/* Fifth curved line going in opposite direction */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwMCIgaGVpZ2h0PSIxMDAwIiB2aWV3Qm94PSIwIDAgMzAwMCAxMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00NTAwIDE1MEM0MDAwIDEwMCAzNTAwIDAgMzAwMCAtMTAwQzI1MDAgLTIwMCAyMDAwIC0zMDAgMTUwMCAtNDAwQzEwMDAgLTUwMCA1MDAgLTYwMCAwIC03MDAiIHN0cm9rZT0idXJsKCNncmFkaWVudCkiIHN0cm9rZS13aWR0aD0iMiIvPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM1RUYwRTYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwRUI1QjUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4=')] opacity-45" />
+      {/* CSS-based curved backgrounds */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Primary flowing gradient */}
+        <div 
+          className="absolute -top-10 -left-20 w-[120%] h-[120%] opacity-20"
+          style={{
+            background: `linear-gradient(135deg, transparent 0%, rgba(94, 240, 230, 0.3) 25%, rgba(14, 181, 181, 0.2) 50%, transparent 75%)`,
+            transform: 'rotate(-15deg) skewY(5deg)',
+            borderRadius: '50% 20% 30% 40%'
+          }}
+        />
+        
+        {/* Secondary flowing gradient */}
+        <div 
+          className="absolute -bottom-10 -right-20 w-[100%] h-[100%] opacity-15"
+          style={{
+            background: `linear-gradient(45deg, transparent 0%, rgba(94, 240, 230, 0.2) 30%, rgba(14, 181, 181, 0.3) 60%, transparent 85%)`,
+            transform: 'rotate(25deg) skewX(-5deg)',
+            borderRadius: '30% 50% 20% 40%'
+          }}
+        />
+        
+        {/* Subtle radial accent */}
+        <div 
+          className="absolute top-1/3 left-1/4 w-96 h-96 opacity-10"
+          style={{
+            background: `radial-gradient(circle, rgba(94, 240, 230, 0.4) 0%, transparent 70%)`,
+            transform: 'scale(1.5)'
+          }}
+        />
+      </div>
 
       {/* Subtle geometric patterns */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
