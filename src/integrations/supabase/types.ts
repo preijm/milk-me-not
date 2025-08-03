@@ -207,6 +207,72 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          comments_enabled: boolean
+          created_at: string
+          id: string
+          likes_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comments_enabled?: boolean
+          created_at?: string
+          id?: string
+          likes_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comments_enabled?: boolean
+          created_at?: string
+          id?: string
+          likes_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          milk_test_id: string | null
+          title: string
+          triggered_by_user_id: string | null
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          milk_test_id?: string | null
+          title: string
+          triggered_by_user_id?: string | null
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          milk_test_id?: string | null
+          title?: string
+          triggered_by_user_id?: string | null
+          type?: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       product_flavors: {
         Row: {
           created_at: string
@@ -613,6 +679,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      notification_type: "like" | "comment"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -741,6 +808,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      notification_type: ["like", "comment"],
     },
   },
 } as const
