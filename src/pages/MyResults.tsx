@@ -36,24 +36,24 @@ const MyResults = () => {
   const handleDelete = async (id: string) => {
     try {
       // Get current user for authorization check
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      
+      const {
+        data: userData,
+        error: userError
+      } = await supabase.auth.getUser();
       if (userError || !userData.user) {
         toast({
           title: "Authentication required",
           description: "Please sign in to delete milk tests",
-          variant: "destructive",
+          variant: "destructive"
         });
         return;
       }
 
       // Delete with user_id check for additional security
-      const { error } = await supabase
-        .from('milk_tests')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', userData.user.id); // Ensure user can only delete their own tests
-        
+      const {
+        error
+      } = await supabase.from('milk_tests').delete().eq('id', id).eq('user_id', userData.user.id); // Ensure user can only delete their own tests
+
       if (error) {
         toast({
           title: "Error",
@@ -115,7 +115,7 @@ const MyResults = () => {
       <BackgroundPattern>
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-24 pb-20 sm:pb-8 relative z-10">
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">My Results</h1>
+            <h1 className="text-3xl font-bold text-[#00bf63]">My Results</h1>
             <Button onClick={() => navigate('/add')} className="flex items-center gap-2" variant="brand">
               <Plus className="h-4 w-4" />
               Add Test
