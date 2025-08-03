@@ -159,7 +159,7 @@ export const TestDetailsTable = ({
                 className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
               >
                 <TableCell className="text-sm">{new Date(test.created_at).toLocaleDateString()}</TableCell>
-                <TableCell>{test.username || "Anonymous"}</TableCell>
+                <TableCell translate="no">{test.username || "Anonymous"}</TableCell>
                 <TableCell>
                   <Badge variant={getScoreBadgeVariant(Number(test.rating))}>
                     {formatScore(Number(test.rating))}
@@ -174,7 +174,7 @@ export const TestDetailsTable = ({
                   <PriceQualityBadge priceQuality={test.price_quality_ratio} />
                 </TableCell>
                 <TableCell>
-                  {test.shop_name || "-"}
+                  <span translate="no">{test.shop_name || "-"}</span>
                 </TableCell>
                 <TableCell>
                   {test.country_code ? (

@@ -29,7 +29,7 @@ export const SelectedProduct = ({
   });
   return <div className="mt-2 p-3 bg-gray-50 border rounded-md">
       <div className="flex justify-between items-start">
-        <div className="font-medium">{product.brand_name} - {product.product_name}</div>
+        <div className="font-medium"><span translate="no">{product.brand_name}</span> - {product.product_name}</div>
         {isAdmin && onEdit && (
           <Button
             variant="ghost"

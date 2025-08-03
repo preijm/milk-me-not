@@ -29,7 +29,7 @@ export const ProductResultItem = ({ product, onSelect }: ProductResultItemProps)
       className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex flex-col border-b last:border-b-0"
       onClick={handleItemClick}
     >
-      <div className="font-medium text-gray-900">{product.brand_name} - {product.product_name}</div>
+      <div className="font-medium text-gray-900"><span translate="no">{product.brand_name}</span> - {product.product_name}</div>
       
       <div className="mt-2 flex flex-wrap gap-2.5">
         {/* Barista status */}

@@ -46,7 +46,7 @@ export const WishlistGrid = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-semibold text-foreground">
-                    {productDetails.brand_name} {productDetails.product_name}
+                    <span translate="no">{productDetails.brand_name}</span> {productDetails.product_name}
                   </h4>
                   <div className="flex flex-wrap gap-1 mt-2">
                     {productDetails.property_names?.slice(0, 2).map((property) => (

@@ -48,7 +48,7 @@ const TestResultTooltip = ({ active, payload, label }: any) => {
         </p>
         {data.username && (
           <p className="text-sm text-gray-600">
-            By: <span className="font-medium">{data.username}</span>
+            By: <span className="font-medium" translate="no">{data.username}</span>
           </p>
         )}
         {data.shopName && (
@@ -607,8 +607,8 @@ export const MilkCharts = ({
                               {test.rating}/10
                             </span>
                           </TableCell>
-                          <TableCell>{test.username || 'Anonymous'}</TableCell>
-                          <TableCell>{test.shop_name || 'N/A'}</TableCell>
+                          <TableCell translate="no">{test.username || 'Anonymous'}</TableCell>
+                          <TableCell translate="no">{test.shop_name || 'N/A'}</TableCell>
                           <TableCell>
                             <ProductPropertyBadges 
                               propertyNames={test.property_names}

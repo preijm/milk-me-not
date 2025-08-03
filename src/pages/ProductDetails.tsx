@@ -158,7 +158,7 @@ const ProductDetails = () => {
                 <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
                   <div>
                     <div className="text-xs text-gray-500">Brand</div>
-                    <h2 className="text-xl font-bold text-gray-900">{product.brand_name}</h2>
+                    <h2 className="text-xl font-bold text-gray-900" translate="no">{product.brand_name}</h2>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">Product</div>

@@ -227,7 +227,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
             </Badge>
             <div className="flex-1">
               <div className="flex items-center space-x-2">
-                <span className="font-bold text-foreground text-lg">{item.username}</span>
+                <span className="font-bold text-foreground text-lg" translate="no">{item.username}</span>
                 <Badge variant="outline" className="text-xs">
                   <Clock className="h-3 w-3 mr-1" />
                   {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
@@ -235,7 +235,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
               </div>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
                 <span className="text-base font-medium text-foreground">
-                  {item.brand_name}
+                  <span translate="no">{item.brand_name}</span>
                 </span>
                 <span className="text-base font-medium text-muted-foreground">
                   • {item.product_name}
@@ -345,7 +345,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
               <MapPin className="h-5 w-5 text-primary" />
               <div>
                 <div className="font-medium text-foreground">Available at</div>
-                <div className="text-muted-foreground">{item.shop_name}</div>
+                <div className="text-muted-foreground" translate="no">{item.shop_name}</div>
               </div>
             </div>
           )}
@@ -413,7 +413,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center space-x-2">
-                    <span className="font-semibold text-foreground">{comment.username}</span>
+                    <span className="font-semibold text-foreground" translate="no">{comment.username}</span>
                     <span className="text-xs text-muted-foreground flex items-center">
                       <Clock className="h-3 w-3 mr-1" />
                       {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}

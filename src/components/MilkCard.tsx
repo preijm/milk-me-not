@@ -32,7 +32,7 @@ export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Milk className="w-6 h-6 text-milk-400" />
-          <h3 className="text-lg font-semibold text-gray-900">{brandName}</h3>
+          <h3 className="text-lg font-semibold text-gray-900" translate="no">{brandName}</h3>
         </div>
         <span className="text-sm text-milk-500">
           {new Date(result.created_at).toLocaleDateString()}
@@ -72,7 +72,7 @@ export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
         )}
         
         {showUsername && result.username && (
-          <span className="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm">
+          <span className="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm" translate="no">
             {result.username}
           </span>
         )}

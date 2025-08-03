@@ -78,7 +78,7 @@ export const ProductInfo = ({ brand, productName }: ProductInfoProps) => {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-900">Product Information</h2>
       <div className="mt-2 p-3 bg-gray-50 border rounded-md">
-        <div className="font-medium">{productDetails.brand_name} - {productDetails.product_name}</div>
+        <div className="font-medium"><span translate="no">{productDetails.brand_name}</span> - {productDetails.product_name}</div>
         
         <div className="mt-2 flex flex-wrap gap-2.5">
           {/* Barista status */}

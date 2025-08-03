@@ -156,7 +156,7 @@ export const MyResultsTable = ({
             results.map((result) => (
               <TableRow key={result.id} className="group">
                 <TableCell>{new Date(result.created_at).toLocaleDateString()}</TableCell>
-                <TableCell className="font-medium">{result.brand_name}</TableCell>
+                <TableCell className="font-medium" translate="no">{result.brand_name}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <span>{result.product_name}</span>
@@ -200,7 +200,7 @@ export const MyResultsTable = ({
                   <PriceQualityBadge priceQuality={result.price_quality_ratio} />
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
-                  {result.shop_name || "-"}
+                  <span translate="no">{result.shop_name || "-"}</span>
                 </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {result.country_code ? (

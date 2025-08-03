@@ -27,7 +27,7 @@ export const ResultTableRow = ({
       onClick={() => onProductClick(result.product_id)}
     >
       <TableCell className="font-medium text-gray-900">
-        {result.brand_name || "Unknown Brand"}
+        <span translate="no">{result.brand_name || "Unknown Brand"}</span>
       </TableCell>
       <TableCell className="pr-0">
         <div className="flex items-center">
