@@ -218,18 +218,8 @@ export function useNotificationPreferences() {
       } else {
         setPreferences(updateData);
       }
-
-      toast({
-        title: "Success",
-        description: "Notification preferences updated"
-      });
     } catch (error: any) {
       console.error('Error updating notification preferences:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update notification preferences",
-        variant: "destructive"
-      });
     }
   };
 
