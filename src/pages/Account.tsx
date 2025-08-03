@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -142,137 +141,141 @@ const Account = () => {
               </h1>
               
               <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="profile" className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    Profile
-                  </TabsTrigger>
-                  <TabsTrigger value="security" className="flex items-center gap-2">
-                    <Shield className="w-4 h-4" />
-                    Security
-                  </TabsTrigger>
-                  <TabsTrigger value="notifications" className="flex items-center gap-2">
-                    <Bell className="w-4 h-4" />
-                    Notifications
-                  </TabsTrigger>
-                </TabsList>
+                <div className="flex gap-8">
+                  <TabsList className="flex flex-col h-fit w-48 p-1">
+                    <TabsTrigger value="profile" className="w-full justify-start gap-2 mb-1">
+                      <User className="w-4 h-4" />
+                      Profile
+                    </TabsTrigger>
+                    <TabsTrigger value="security" className="w-full justify-start gap-2 mb-1">
+                      <Shield className="w-4 h-4" />
+                      Security
+                    </TabsTrigger>
+                    <TabsTrigger value="notifications" className="w-full justify-start gap-2">
+                      <Bell className="w-4 h-4" />
+                      Notifications
+                    </TabsTrigger>
+                  </TabsList>
 
-                <TabsContent value="profile" className="space-y-6 mt-6">
-                  <form onSubmit={handleUpdateProfile} className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Username
-                      </label>
-                      <Input
-                        type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        minLength={3}
-                        maxLength={30}
-                        pattern="^[a-zA-Z0-9_-]+$"
-                        title="Username can only contain letters, numbers, underscores, and hyphens"
-                        className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
-                      />
-                    </div>
+                  <div className="flex-1">
+                    <TabsContent value="profile" className="space-y-6 mt-0">
+                      <form onSubmit={handleUpdateProfile} className="space-y-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Username
+                          </label>
+                          <Input
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            minLength={3}
+                            maxLength={30}
+                            pattern="^[a-zA-Z0-9_-]+$"
+                            title="Username can only contain letters, numbers, underscores, and hyphens"
+                            className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+                          />
+                        </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Default Country (optional)
-                      </label>
-                      <CountrySelect
-                        country={defaultCountry}
-                        setCountry={setDefaultCountry}
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        This will be pre-selected when adding new milk tests
-                      </p>
-                    </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Default Country (optional)
+                          </label>
+                          <CountrySelect
+                            country={defaultCountry}
+                            setCountry={setDefaultCountry}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            This will be pre-selected when adding new milk tests
+                          </p>
+                        </div>
 
-                    <Button 
-                      type="submit" 
-                      variant="brand"
-                      className="w-full" 
-                      disabled={loading}
-                    >
-                      <Save className="w-4 h-4 mr-2" />
-                      {loading ? "Saving..." : "Save Profile"}
-                    </Button>
-                  </form>
-                </TabsContent>
+                        <Button 
+                          type="submit" 
+                          variant="brand"
+                          className="w-full" 
+                          disabled={loading}
+                        >
+                          <Save className="w-4 h-4 mr-2" />
+                          {loading ? "Saving..." : "Save Profile"}
+                        </Button>
+                      </form>
+                    </TabsContent>
 
-                <TabsContent value="security" className="space-y-6 mt-6">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-start">
-                      <Shield className="w-5 h-5 text-blue-600 mt-0.5 mr-3" />
-                      <div>
-                        <h3 className="font-semibold text-blue-800">Account Security</h3>
-                        <p className="text-blue-700 text-sm mt-1">
-                          Your account is secured with email authentication. Keep your password strong and unique.
-                        </p>
+                    <TabsContent value="security" className="space-y-6 mt-0">
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-start">
+                          <Shield className="w-5 h-5 text-blue-600 mt-0.5 mr-3" />
+                          <div>
+                            <h3 className="font-semibold text-blue-800">Account Security</h3>
+                            <p className="text-blue-700 text-sm mt-1">
+                              Your account is secured with email authentication. Keep your password strong and unique.
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <form onSubmit={handleUpdatePassword} className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        New Password
-                      </label>
-                      <Input
-                        type="password"
-                        placeholder="Enter new password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
-                        minLength={6}
-                        showPasswordToggle
-                        className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Confirm New Password
-                      </label>
-                      <Input
-                        type="password"
-                        placeholder="Confirm new password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        minLength={6}
-                        showPasswordToggle
-                        className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
-                      />
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      variant="brand"
-                      className="w-full" 
-                      disabled={isChangingPassword || !newPassword || !confirmPassword}
-                    >
-                      <Lock className="w-4 h-4 mr-2" />
-                      {isChangingPassword ? "Updating..." : "Update Password"}
-                    </Button>
-                  </form>
-                </TabsContent>
+                      <form onSubmit={handleUpdatePassword} className="space-y-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            New Password
+                          </label>
+                          <Input
+                            type="password"
+                            placeholder="Enter new password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            required
+                            minLength={6}
+                            showPasswordToggle
+                            className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Confirm New Password
+                          </label>
+                          <Input
+                            type="password"
+                            placeholder="Confirm new password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                            minLength={6}
+                            showPasswordToggle
+                            className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+                          />
+                        </div>
+                        
+                        <Button 
+                          type="submit" 
+                          variant="brand"
+                          className="w-full" 
+                          disabled={isChangingPassword || !newPassword || !confirmPassword}
+                        >
+                          <Lock className="w-4 h-4 mr-2" />
+                          {isChangingPassword ? "Updating..." : "Update Password"}
+                        </Button>
+                      </form>
+                    </TabsContent>
 
-                <TabsContent value="notifications" className="space-y-6 mt-6">
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div className="flex items-start">
-                      <Bell className="w-5 h-5 text-yellow-600 mt-0.5 mr-3" />
-                      <div>
-                        <h3 className="font-semibold text-yellow-800">Coming Soon</h3>
-                        <p className="text-yellow-700 text-sm mt-1">
-                          Notification preferences will be available in a future update.
-                        </p>
+                    <TabsContent value="notifications" className="space-y-6 mt-0">
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div className="flex items-start">
+                          <Bell className="w-5 h-5 text-yellow-600 mt-0.5 mr-3" />
+                          <div>
+                            <h3 className="font-semibold text-yellow-800">Coming Soon</h3>
+                            <p className="text-yellow-700 text-sm mt-1">
+                              Notification preferences will be available in a future update.
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    </TabsContent>
                   </div>
-                </TabsContent>
+                </div>
               </Tabs>
             </div>
           </div>
@@ -284,4 +287,3 @@ const Account = () => {
 };
 
 export default Account;
-
