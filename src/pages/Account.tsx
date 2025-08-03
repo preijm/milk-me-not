@@ -135,10 +135,18 @@ const Account = () => {
       <BackgroundPatternWithOverlay>
         <div className="flex items-center justify-center min-h-screen py-8 pt-20 pb-24 md:pb-8">
           <div className="container max-w-4xl mx-auto px-4 relative z-10">
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 animate-fade-up">
-              <h1 className="text-3xl font-bold text-center mb-8 text-primary">
-                Account Settings
-              </h1>
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden border border-white/20 animate-fade-up">
+              {/* Header Section */}
+              <div className="bg-gradient-to-r from-primary to-primary/90 px-8 py-6 text-white">
+                <h1 className="text-3xl font-bold mb-2">
+                  Account Settings
+                </h1>
+                <p className="text-white/90">
+                  Manage your account preferences and security
+                </p>
+              </div>
+              
+              <div className="p-8">
               
               <Tabs defaultValue="profile" className="w-full">
                 <div className="flex gap-8">
@@ -277,6 +285,7 @@ const Account = () => {
                   </div>
                 </div>
               </Tabs>
+              </div>
             </div>
           </div>
         </div>
