@@ -1,6 +1,6 @@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Bell, Heart, MessageCircle } from "lucide-react";
+import { Bell, Heart, MessageCircle, Mail } from "lucide-react";
 import { useNotificationPreferences } from "@/hooks/useNotifications";
 export default function NotificationSettings() {
   const {
@@ -53,6 +53,27 @@ export default function NotificationSettings() {
             <Switch id="comments-notifications" checked={preferences?.comments_enabled ?? true} onCheckedChange={checked => updatePreferences({
             comments_enabled: checked
           })} />
+          </div>
+          
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div className="flex items-start space-x-3">
+              <Mail className="w-5 h-5 text-green-500 mt-1" />
+              <div>
+                <Label htmlFor="newsletter-notifications" className="font-medium">
+                  Newsletter
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Receive updates about new features and product announcements
+                </p>
+              </div>
+            </div>
+            <Switch 
+              id="newsletter-notifications" 
+              checked={preferences?.newsletter_enabled ?? true} 
+              onCheckedChange={checked => updatePreferences({
+                newsletter_enabled: checked
+              })} 
+            />
           </div>
         </div>
         

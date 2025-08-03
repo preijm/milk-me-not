@@ -20,6 +20,7 @@ export interface NotificationPreferences {
   user_id: string;
   likes_enabled: boolean;
   comments_enabled: boolean;
+  newsletter_enabled: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -183,7 +184,7 @@ export function useNotificationPreferences() {
     }
   };
 
-  const updatePreferences = async (updates: Partial<Pick<NotificationPreferences, 'likes_enabled' | 'comments_enabled'>>) => {
+  const updatePreferences = async (updates: Partial<Pick<NotificationPreferences, 'likes_enabled' | 'comments_enabled' | 'newsletter_enabled'>>) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;

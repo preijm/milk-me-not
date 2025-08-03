@@ -213,6 +213,7 @@ export type Database = {
           created_at: string
           id: string
           likes_enabled: boolean
+          newsletter_enabled: boolean
           updated_at: string
           user_id: string
         }
@@ -221,6 +222,7 @@ export type Database = {
           created_at?: string
           id?: string
           likes_enabled?: boolean
+          newsletter_enabled?: boolean
           updated_at?: string
           user_id: string
         }
@@ -229,6 +231,7 @@ export type Database = {
           created_at?: string
           id?: string
           likes_enabled?: boolean
+          newsletter_enabled?: boolean
           updated_at?: string
           user_id?: string
         }
