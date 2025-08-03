@@ -189,18 +189,36 @@ export function useNotificationPreferences() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      // First try to update existing record
+      const { data: updateData, error: updateError } = await supabase
         .from('notification_preferences')
-        .upsert({
-          user_id: user.id,
-          ...updates
-        })
+        .update(updates)
+        .eq('user_id', user.id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (updateError && updateError.code === 'PGRST116') {
+        // No existing record found, create a new one
+        const { data: insertData, error: insertError } = await supabase
+          .from('notification_preferences')
+          .insert({
+            user_id: user.id,
+            likes_enabled: true,
+            comments_enabled: true,
+            newsletter_enabled: true,
+            ...updates
+          })
+          .select()
+          .single();
 
-      setPreferences(data);
+        if (insertError) throw insertError;
+        setPreferences(insertData);
+      } else if (updateError) {
+        throw updateError;
+      } else {
+        setPreferences(updateData);
+      }
+
       toast({
         title: "Success",
         description: "Notification preferences updated"
