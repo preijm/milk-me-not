@@ -6,12 +6,22 @@ import { Heart, MessageCircle, MoreHorizontal, Bell } from "lucide-react";
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 function NotificationItem({ notification, onMarkAsRead }: { 
   notification: Notification; 
   onMarkAsRead: (id: string) => void;
 }) {
   const IconComponent = notification.type === 'like' ? Heart : MessageCircle;
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    onMarkAsRead(notification.id);
+    // Navigate to the feed page where the specific test can be found
+    if (notification.milk_test_id) {
+      navigate(`/feed`);
+    }
+  };
   
   return (
     <div 
@@ -19,7 +29,7 @@ function NotificationItem({ notification, onMarkAsRead }: {
         "p-3 border-b border-border/50 hover:bg-muted/50 cursor-pointer transition-colors",
         !notification.is_read && "bg-primary/5"
       )}
-      onClick={() => onMarkAsRead(notification.id)}
+      onClick={handleClick}
     >
       <div className="flex items-start gap-3">
         <div className={cn(
@@ -30,14 +40,11 @@ function NotificationItem({ notification, onMarkAsRead }: {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-foreground">
-              {notification.title}
-            </h4>
             {!notification.is_read && (
-              <Badge variant="secondary" className="h-2 w-2 p-0 rounded-full" />
+              <Badge variant="secondary" className="h-2 w-2 p-0 rounded-full ml-auto" />
             )}
           </div>
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+          <p className="text-sm text-foreground font-medium">
             {notification.message}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
