@@ -21,7 +21,7 @@ export const ProductRegistrationHeader = ({ isEditMode = false }: ProductRegistr
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+              <HelpCircle className="h-4 w-4 text-gray-400 cursor-help flex-shrink-0" />
             </TooltipTrigger>
             <TooltipContent side="bottom" align="center" className="max-w-sm">
               <p className="font-normal">Enter product details to add a product to the database. Brand and product name are required, with the product name based on its main ingredients.
