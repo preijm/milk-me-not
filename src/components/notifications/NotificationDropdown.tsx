@@ -39,7 +39,7 @@ export function NotificationDropdown({ trigger, className }: NotificationDropdow
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 rounded-lg px-3 py-2.5 hover:bg-emerald-50 transition-colors cursor-pointer">
           {trigger || defaultTrigger}
         </div>
       </DialogTrigger>
