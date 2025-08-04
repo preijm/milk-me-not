@@ -44,9 +44,9 @@ export function NotificationDropdown({ trigger, className }: NotificationDropdow
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] p-0">
-        <DialogHeader className="sr-only">
-          <DialogTitle>Notifications</DialogTitle>
-        </DialogHeader>
+        <div className="flex items-center justify-between p-4 border-b border-border/50 bg-background">
+          <h3 className="font-semibold">Notifications</h3>
+        </div>
         <NotificationList />
       </DialogContent>
     </Dialog>

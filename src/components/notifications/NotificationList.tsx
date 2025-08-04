@@ -44,7 +44,7 @@ function NotificationItem({ notification, onMarkAsRead }: {
               <Badge variant="secondary" className="h-2 w-2 p-0 rounded-full ml-auto" />
             )}
           </div>
-          <p className="text-sm text-foreground font-medium">
+          <p className="text-sm text-foreground">
             {notification.message}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -70,8 +70,7 @@ export function NotificationList() {
   return (
     <div className="w-full">
       <div className="p-4 border-b border-border/50 bg-background">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Notifications</h3>
+        <div className="flex items-center justify-end">
           {unreadCount > 0 && (
             <Button 
               variant="ghost" 
