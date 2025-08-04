@@ -158,7 +158,5 @@ export const HomeStatsOverview = () => {
     }
     return num.toString() + '+';
   };
-  return <div className="py-12">
-      
-    </div>;
+  return;
 };
