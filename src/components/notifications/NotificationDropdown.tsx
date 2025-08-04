@@ -43,7 +43,7 @@ export function NotificationDropdown({ trigger, className }: NotificationDropdow
           {trigger || defaultTrigger}
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] p-0">
+      <DialogContent className="sm:max-w-[425px] p-0 backdrop-blur-sm border border-white/20 shadow-xl bg-white">
         <div className="flex items-center justify-between p-4 border-b border-border/50 bg-background">
           <h3 className="font-semibold">Notifications</h3>
         </div>
