@@ -18,15 +18,21 @@ const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
           }}
         />
         
-        {/* Cross-hatch pattern */}
+        {/* Horizontal lines */}
         <div 
           className="absolute inset-0 opacity-25"
           style={{
-            backgroundImage: `
-              linear-gradient(90deg, transparent 49%, rgba(94, 240, 230, 0.4) 50%, transparent 51%),
-              linear-gradient(0deg, transparent 49%, rgba(94, 240, 230, 0.3) 50%, transparent 51%)
-            `,
+            backgroundImage: `linear-gradient(90deg, transparent 49%, rgba(94, 240, 230, 0.4) 50%, transparent 51%)`,
             backgroundSize: '120px 120px'
+          }}
+        />
+        
+        {/* Vertical lines - reduced density */}
+        <div 
+          className="absolute inset-0 opacity-25"
+          style={{
+            backgroundImage: `linear-gradient(0deg, transparent 49%, rgba(94, 240, 230, 0.3) 50%, transparent 51%)`,
+            backgroundSize: '200px 200px'
           }}
         />
         
