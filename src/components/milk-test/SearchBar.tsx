@@ -17,13 +17,14 @@ export const SearchBar = ({
   placeholder = "Search by brand or product..." 
 }: SearchBarProps) => {
   const handleSearchChange = (value: string) => {
-    // Sanitize input to prevent XSS
-    const sanitized = sanitizeInput(value);
-    
-    // Validate input length and content
-    const validation = validateSearchInput(sanitized);
-    
-    if (validation.isValid || sanitized === "") {
+    // Sanitize dangerous characters without trimming so spaces are preserved
+    const sanitized = value
+      .replace(/[<>]/g, '')
+      .replace(/javascript:/gi, '')
+      .replace(/on\w+=/gi, '');
+
+    // Basic length guard only
+    if (sanitized.length <= 100) {
       setSearchTerm(sanitized);
     }
   };
