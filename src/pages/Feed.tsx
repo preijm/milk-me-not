@@ -28,8 +28,7 @@ const Feed = () => {
         error
       } = await supabase.from('milk_tests_view')
         .select('*')
-        .not('created_at', 'gte', '1970-01-01')
-        .not('created_at', 'lt', '1970-01-02')
+        .or('created_at.lt.1970-01-01,created_at.gte.1970-01-02')
         .order('created_at', {
           ascending: false
         })
