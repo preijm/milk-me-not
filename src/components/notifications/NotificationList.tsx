@@ -1,7 +1,6 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Heart, MessageCircle, MoreHorizontal, Bell } from "lucide-react";
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import { formatDistanceToNow } from "date-fns";
@@ -26,8 +25,8 @@ function NotificationItem({ notification, onMarkAsRead }: {
   return (
     <div 
       className={cn(
-        "p-3 border-b border-border/50 hover:bg-muted/50 cursor-pointer transition-colors",
-        !notification.is_read && "bg-primary/5"
+        "relative p-3 border-b border-border/50 hover:bg-muted/50 cursor-pointer transition-colors",
+        !notification.is_read && "bg-primary/5 border-l-2 border-primary pl-2"
       )}
       onClick={handleClick}
     >
@@ -39,12 +38,13 @@ function NotificationItem({ notification, onMarkAsRead }: {
           <IconComponent className="h-4 w-4" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between">
-            {!notification.is_read && (
-              <Badge variant="secondary" className="h-2 w-2 p-0 rounded-full ml-auto" />
-            )}
-          </div>
-          <p className="text-sm text-foreground">
+          {!notification.is_read && (
+            <span
+              className="absolute top-3 right-3 h-2.5 w-2.5 rounded-full bg-primary"
+              aria-hidden="true"
+            />
+          )}
+          <p className={cn("text-sm text-foreground", !notification.is_read && "font-semibold")}> 
             {notification.message}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
