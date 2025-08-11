@@ -52,20 +52,18 @@ export function NotificationDropdown({ trigger, className }: NotificationDropdow
               </Badge>
             )}
           </h3>
-          <div className="flex items-center">
-            {unreadCount > 0 && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={markAllAsRead}
-                aria-label="Mark all notifications as read"
-                className="h-8 w-8"
-              >
-                <CheckCheck className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
         </div>
+        {unreadCount > 0 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={markAllAsRead}
+            aria-label="Mark all notifications as read"
+            className="h-8 w-8 absolute top-4 right-12"
+          >
+            <CheckCheck className="h-4 w-4" />
+          </Button>
+        )}
         <NotificationList />
       </DialogContent>
     </Dialog>

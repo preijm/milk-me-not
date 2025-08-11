@@ -26,7 +26,7 @@ function NotificationItem({ notification, onMarkAsRead }: {
     <div 
       className={cn(
         "relative p-3 border-b border-border/50 hover:bg-muted/50 cursor-pointer transition-colors",
-        !notification.is_read && "bg-primary/5 border-l-2 border-primary pl-2"
+        !notification.is_read && "bg-muted"
       )}
       onClick={handleClick}
     >
