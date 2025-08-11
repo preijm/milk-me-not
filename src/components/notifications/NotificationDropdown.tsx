@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck, X } from "lucide-react";
 import { NotificationList } from "./NotificationList";
 import { useNotifications } from "@/hooks/useNotifications";
 
@@ -38,7 +37,7 @@ export function NotificationDropdown({ trigger, className }: NotificationDropdow
           {trigger || defaultTrigger}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] p-0 backdrop-blur-sm border border-white/20 shadow-xl bg-white rounded-lg overflow-hidden" closeButton={true}>
+      <DialogContent className="sm:max-w-[425px] p-0 backdrop-blur-sm border border-white/20 shadow-xl bg-white rounded-lg overflow-hidden" closeButton={false}>
         <div className="flex items-center justify-between p-4 border-b border-border/50 bg-background">
           <h3 className="font-semibold flex items-center gap-2">
             Notifications
@@ -52,18 +51,25 @@ export function NotificationDropdown({ trigger, className }: NotificationDropdow
               </Badge>
             )}
           </h3>
+          <div className="flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={markAllAsRead}
+                aria-label="Mark all notifications as read"
+                className="h-8 w-8"
+              >
+                <CheckCheck className="h-4 w-4" />
+              </Button>
+            )}
+            <DialogClose asChild>
+              <Button variant="ghost" size="icon" aria-label="Close notifications" className="h-8 w-8">
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogClose>
+          </div>
         </div>
-        {unreadCount > 0 && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={markAllAsRead}
-            aria-label="Mark all notifications as read"
-            className="h-8 w-8 absolute top-4 right-12"
-          >
-            <CheckCheck className="h-4 w-4" />
-          </Button>
-        )}
         <NotificationList />
       </DialogContent>
     </Dialog>
