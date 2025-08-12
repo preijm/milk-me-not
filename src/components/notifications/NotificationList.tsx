@@ -18,6 +18,8 @@ function NotificationItem({ notification, onMarkAsRead }: {
     if (notification.milk_test_id) {
       navigate(`/feed?testId=${notification.milk_test_id}`);
     }
+    // Close the notifications dialog after navigating
+    window.dispatchEvent(new Event("lov-close-notifications"));
   };
   
   return (

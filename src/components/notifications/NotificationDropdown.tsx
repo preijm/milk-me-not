@@ -22,11 +22,14 @@ export function NotificationDropdown({ trigger, className, variant = 'button' }:
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const handler = () => setOpen(true);
-    // Allow other parts of the app to open the notifications dialog
-    window.addEventListener("lov-open-notifications", handler as EventListener);
+    const openHandler = () => setOpen(true);
+    const closeHandler = () => setOpen(false);
+    // Allow other parts of the app to open/close the notifications dialog
+    window.addEventListener("lov-open-notifications", openHandler as EventListener);
+    window.addEventListener("lov-close-notifications", closeHandler as EventListener);
     return () => {
-      window.removeEventListener("lov-open-notifications", handler as EventListener);
+      window.removeEventListener("lov-open-notifications", openHandler as EventListener);
+      window.removeEventListener("lov-close-notifications", closeHandler as EventListener);
     };
   }, []);
 
