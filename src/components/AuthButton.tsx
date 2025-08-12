@@ -8,12 +8,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from "@/hooks/use-toast";
 import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
 import { useIsMobile } from "@/hooks/use-mobile";
-
+import { useNotifications } from "@/hooks/useNotifications";
 export const AuthButton = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { unreadCount } = useNotifications();
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({
@@ -54,12 +55,20 @@ export const AuthButton = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="bg-white/10 hover:bg-white/20 text-gray-800 border-white/20 backdrop-blur-sm transition-all duration-300 pl-2 pr-3">
           <div className="flex items-center gap-1">
-            <Badge 
-              variant="category" 
-              className="w-8 h-8 rounded-full flex items-center justify-center p-0 font-medium text-sm"
-            >
-              {user.email?.[0].toUpperCase()}
-            </Badge>
+            <div className="relative">
+              <Badge 
+                variant="category" 
+                className="w-8 h-8 rounded-full flex items-center justify-center p-0 font-medium text-sm"
+              >
+                {user.email?.[0].toUpperCase()}
+              </Badge>
+              {unreadCount > 0 && (
+                <span
+                  className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-destructive ring-2 ring-background"
+                  aria-hidden="true"
+                />
+              )}
+            </div>
             <ChevronDown className="w-3 h-3 opacity-70" />
           </div>
         </Button>
