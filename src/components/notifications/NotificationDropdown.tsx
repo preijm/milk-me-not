@@ -62,7 +62,7 @@ export function NotificationDropdown({ trigger, className, variant = 'button' }:
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] p-0 backdrop-blur-sm border border-white/20 shadow-xl bg-white rounded-lg overflow-hidden" closeButton={false}>
+      <DialogContent className="sm:max-w-[350px] p-0 backdrop-blur-sm border border-white/20 shadow-xl bg-white rounded-lg overflow-hidden" closeButton={false}>
         <div className="flex items-center justify-between p-4 border-b border-border/50 bg-background">
           <h3 className="font-semibold flex items-center gap-2">
             Notifications
