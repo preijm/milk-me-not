@@ -53,7 +53,7 @@ export function NotificationDropdown({ trigger, className, variant = 'button' }:
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {variant === 'menu' ? (
-          <div className={cn("flex items-center gap-2 rounded-md p-2 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors cursor-pointer w-full", className)}>
+          <div className={cn("flex items-center gap-2 rounded-md p-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer w-full", className)}>
             {trigger || defaultTrigger}
           </div>
         ) : (
