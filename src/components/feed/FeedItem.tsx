@@ -425,6 +425,15 @@ export const FeedItem = ({ item }: FeedItemProps) => {
               <span className="font-semibold text-lg">{comments.length}</span>
               <span className="text-sm">Comments</span>
             </Button>
+            
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={() => window.location.href = '/results'}
+              className="flex items-center space-x-2 px-4 py-2 rounded-full hover:bg-gray-50 transition-all duration-200"
+            >
+              <span className="text-sm">View All Results</span>
+            </Button>
           </div>
 
           <WishlistButton
