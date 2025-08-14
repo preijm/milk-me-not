@@ -38,7 +38,7 @@ export function NotificationDropdown({ trigger, className, variant = 'button' }:
       <Bell className="w-4 h-4 opacity-70" aria-hidden="true" />
       <span className="text-sm">Notifications</span>
       {unreadCount > 0 && (
-        <span className="ml-auto relative flex h-2.5 w-2.5" aria-hidden="true">
+        <span className="ml-1 relative flex h-2.5 w-2.5" aria-hidden="true">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-60" />
           <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-destructive" />
         </span>
