@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, MessageCircle, Star, Plus, MapPin, DollarSign, Clock, ThumbsUp, ThumbsDown, Edit3 } from "lucide-react";
 import { WishlistButton } from "@/components/WishlistButton";
 import { EditMilkTest } from "@/components/milk-test/EditMilkTest";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +25,7 @@ interface FeedItemProps {
 interface Like {
   id: string;
   user_id: string;
+  username?: string;
 }
 
 interface Comment {
@@ -55,7 +57,24 @@ export const FeedItem = ({ item }: FeedItemProps) => {
         .eq('milk_test_id', item.id);
       
       if (error) throw error;
-      return data as Like[];
+      
+      // Fetch usernames for likes
+      const likesWithUsernames = await Promise.all(
+        (data || []).map(async (like) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('id', like.user_id)
+            .maybeSingle();
+          
+          return {
+            ...like,
+            username: profile?.username || 'Anonymous'
+          };
+        })
+      );
+      
+      return likesWithUsernames as Like[];
     }
   });
 
@@ -363,22 +382,38 @@ export const FeedItem = ({ item }: FeedItemProps) => {
         {/* Enhanced Engagement Actions */}
         <div className="flex items-center justify-between pt-4 border-t-2 border-border/50">
           <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={handleLike}
-              disabled={likeMutation.isPending}
-              className={cn(
-                "flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200",
-                isLiked 
-                  ? "text-red-500 bg-red-50 hover:bg-red-100" 
-                  : "hover:bg-gray-50"
-              )}
-            >
-              <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
-              <span className="font-semibold text-lg">{likes.length}</span>
-              <span className="text-sm">Likes</span>
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    onClick={handleLike}
+                    disabled={likeMutation.isPending}
+                    className={cn(
+                      "flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200",
+                      isLiked 
+                        ? "text-red-500 bg-red-50 hover:bg-red-100" 
+                        : "hover:bg-gray-50"
+                    )}
+                  >
+                    <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
+                    <span className="font-semibold text-lg">{likes.length}</span>
+                    <span className="text-sm">Likes</span>
+                  </Button>
+                </TooltipTrigger>
+                {likes.length > 0 && (
+                  <TooltipContent>
+                    <div className="space-y-1">
+                      <p className="font-medium">Liked by:</p>
+                      {likes.map((like) => (
+                        <p key={like.id} className="text-sm">{like.username}</p>
+                      ))}
+                    </div>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
             
             <Button
               variant="ghost"
