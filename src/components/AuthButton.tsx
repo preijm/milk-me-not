@@ -1,41 +1,21 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
 import { LogIn, Settings, ChevronDown, Plus, Bookmark, Bell } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useAuth } from "@/contexts/AuthContext";
+
 export const AuthButton = () => {
-  const [user, setUser] = useState(null);
+  const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const { unreadCount } = useNotifications();
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({
-      data: {
-        session
-      }
-    }) => {
-      setUser(session?.user ?? null);
-    });
 
-    // Listen for auth changes
-    const {
-      data: {
-        subscription
-      }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      console.log("Auth state changed:", session?.user ? "logged in" : "logged out");
-    });
-    return () => subscription.unsubscribe();
-  }, []);
   const handleAuth = () => {
     if (user) {
       navigate('/account');
@@ -43,6 +23,18 @@ export const AuthButton = () => {
       navigate("/auth");
     }
   };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+  
+  // Show loading state to prevent flash
+  if (loading) {
+    return (
+      <div className={isMobile ? "w-12 h-9" : "w-full h-9"} />
+    );
+  }
   
   if (!user) {
     return <Button onClick={handleAuth} variant="brand" className={isMobile ? "px-3" : "w-full"}>
@@ -95,10 +87,7 @@ export const AuthButton = () => {
           <Settings className="w-4 h-4 opacity-70" />
           <span>Settings</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={async () => {
-        await supabase.auth.signOut();
-        navigate('/');
-      }} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-red-600 hover:bg-red-50 transition-colors cursor-pointer mt-1">
+        <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-red-600 hover:bg-red-50 transition-colors cursor-pointer mt-1">
           <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>

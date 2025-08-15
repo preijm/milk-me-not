@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 
 export const WishlistGrid = () => {
   const { wishlistItems, isLoading, removeFromWishlist, isItemLoading } = useWishlist();
-  // Force recompilation to clear cache
 
   if (isLoading) {
     return (
