@@ -18,10 +18,10 @@ export const WishlistButton = ({
   className,
   showText = false
 }: WishlistButtonProps) => {
-  const { isInWishlist, addToWishlist, removeFromWishlist, isAddingToWishlist, isRemovingFromWishlist } = useWishlist();
+  const { isInWishlist, addToWishlist, removeFromWishlist, isItemLoading } = useWishlist();
   
   const inWishlist = isInWishlist(productId);
-  const isLoading = isAddingToWishlist || isRemovingFromWishlist;
+  const isLoading = isItemLoading(productId);
 
   const handleToggleWishlist = () => {
     if (inWishlist) {

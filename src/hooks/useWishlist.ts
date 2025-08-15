@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 export const useWishlist = () => {
   const queryClient = useQueryClient();
+  const [loadingItems, setLoadingItems] = useState<Set<string>>(new Set());
 
   const { data: wishlistItems = [], isLoading } = useQuery({
     queryKey: ['wishlist'],
@@ -56,6 +57,8 @@ export const useWishlist = () => {
 
   const addToWishlistMutation = useMutation({
     mutationFn: async (productId: string) => {
+      setLoadingItems(prev => new Set(prev).add(productId));
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
@@ -64,12 +67,23 @@ export const useWishlist = () => {
         .insert({ user_id: user.id, product_id: productId });
 
       if (error) throw error;
+      return productId;
     },
-    onSuccess: () => {
+    onSuccess: (productId) => {
+      setLoadingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
       queryClient.invalidateQueries({ queryKey: ['wishlist'] });
       toast.success("Added to wishlist!");
     },
-    onError: (error: any) => {
+    onError: (error: any, productId) => {
+      setLoadingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
       if (error.code === '23505') {
         toast.error("Already in your wishlist!");
       } else {
@@ -93,28 +107,36 @@ export const useWishlist = () => {
       return productId;
     },
     onMutate: async (productId: string) => {
-      console.log('Starting optimistic update for product:', productId);
+      setLoadingItems(prev => new Set(prev).add(productId));
       
       // Cancel any outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['wishlist'] });
 
       // Snapshot the previous value
       const previousWishlist = queryClient.getQueryData(['wishlist']);
-      console.log('Previous wishlist:', previousWishlist);
 
       // Optimistically update to remove the item
       const newWishlist = (previousWishlist as any)?.filter((item: any) => item.product_id !== productId) || [];
-      console.log('New wishlist after filter:', newWishlist);
       
       queryClient.setQueryData(['wishlist'], newWishlist);
 
       // Return a context object with the snapshotted value
       return { previousWishlist };
     },
-    onSuccess: () => {
+    onSuccess: (productId) => {
+      setLoadingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
       toast.success("Removed from wishlist");
     },
     onError: (err, productId, context: any) => {
+      setLoadingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(productId);
+        return newSet;
+      });
       // Rollback on error
       queryClient.setQueryData(['wishlist'], context?.previousWishlist);
       // Refetch to ensure consistency after error
@@ -127,13 +149,16 @@ export const useWishlist = () => {
     return wishlistItems.some(item => item.product_id === productId);
   };
 
+  const isItemLoading = (productId: string) => {
+    return loadingItems.has(productId);
+  };
+
   return {
     wishlistItems,
     isLoading,
     addToWishlist: addToWishlistMutation.mutate,
     removeFromWishlist: removeFromWishlistMutation.mutate,
     isInWishlist,
-    isAddingToWishlist: addToWishlistMutation.isPending,
-    isRemovingFromWishlist: removeFromWishlistMutation.isPending,
+    isItemLoading,
   };
 };

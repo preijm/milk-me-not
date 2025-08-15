@@ -6,7 +6,7 @@ import { Bookmark, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const WishlistGrid = () => {
-  const { wishlistItems, isLoading, removeFromWishlist, isRemovingFromWishlist } = useWishlist();
+  const { wishlistItems, isLoading, removeFromWishlist, isItemLoading } = useWishlist();
 
   if (isLoading) {
     return (
@@ -68,7 +68,7 @@ export const WishlistGrid = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => removeFromWishlist(item.product_id)}
-                  disabled={isRemovingFromWishlist}
+                  disabled={isItemLoading(item.product_id)}
                   className="text-red-500 hover:text-red-600 transition-colors duration-200"
                 >
                   <Bookmark className="h-4 w-4 fill-current transition-transform duration-200 hover:scale-110" />
