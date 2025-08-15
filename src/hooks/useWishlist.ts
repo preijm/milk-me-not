@@ -90,13 +90,34 @@ export const useWishlist = () => {
         .eq('product_id', productId);
 
       if (error) throw error;
+      return productId;
+    },
+    onMutate: async (productId: string) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['wishlist'] });
+
+      // Snapshot the previous value
+      const previousWishlist = queryClient.getQueryData(['wishlist']);
+
+      // Optimistically update to remove the item
+      queryClient.setQueryData(['wishlist'], (old: any) => 
+        old?.filter((item: any) => item.product_id !== productId) || []
+      );
+
+      // Return a context object with the snapshotted value
+      return { previousWishlist };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
       toast.success("Removed from wishlist");
     },
-    onError: () => {
+    onError: (err, productId, context: any) => {
+      // Rollback on error
+      queryClient.setQueryData(['wishlist'], context?.previousWishlist);
       toast.error("Failed to remove from wishlist");
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure consistency
+      queryClient.invalidateQueries({ queryKey: ['wishlist'] });
     },
   });
 

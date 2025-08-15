@@ -41,7 +41,10 @@ export const WishlistGrid = () => {
         if (!productDetails) return null;
 
         return (
-          <Card key={item.id} className="hover:shadow-lg transition-shadow">
+          <Card 
+            key={`wishlist-${item.id}-${item.product_id}`} 
+            className="hover:shadow-lg transition-all duration-200 animate-fade-in"
+          >
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -66,9 +69,9 @@ export const WishlistGrid = () => {
                   size="sm"
                   onClick={() => removeFromWishlist(item.product_id)}
                   disabled={isRemovingFromWishlist}
-                  className="text-red-500 hover:text-red-600"
+                  className="text-red-500 hover:text-red-600 transition-colors duration-200"
                 >
-                  <Bookmark className="h-4 w-4 fill-current" />
+                  <Bookmark className="h-4 w-4 fill-current transition-transform duration-200 hover:scale-110" />
                 </Button>
               </div>
             </CardHeader>
