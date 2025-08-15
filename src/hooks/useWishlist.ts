@@ -29,7 +29,8 @@ export const useWishlist = () => {
       // Get product details for each wishlist item
       const wishlistWithProducts = await Promise.all(
         data.map(async (wishlistItem) => {
-          const { data: productData } = await supabase
+          // Get all milk tests for this product to collect all pictures
+          const { data: allProductTests } = await supabase
             .from('milk_tests_view')
             .select(`
               product_id,
@@ -41,12 +42,30 @@ export const useWishlist = () => {
               picture_path
             `)
             .eq('product_id', wishlistItem.product_id)
-            .limit(1)
-            .maybeSingle();
+            .not('picture_path', 'is', null);
+
+          if (!allProductTests || allProductTests.length === 0) {
+            return {
+              ...wishlistItem,
+              product_details: null
+            };
+          }
+
+          // Get unique pictures and use the first test's details as base
+          const uniquePictures = [...new Set(
+            allProductTests
+              .filter(test => test.picture_path)
+              .map(test => test.picture_path)
+          )];
+
+          const baseProductData = allProductTests[0];
 
           return {
             ...wishlistItem,
-            product_details: productData
+            product_details: {
+              ...baseProductData,
+              all_pictures: uniquePictures
+            }
           };
         })
       );

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bookmark, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ImageCarousel } from "@/components/wishlist/ImageCarousel";
 
 export const WishlistGrid = () => {
   const { wishlistItems, isLoading, removeFromWishlist, isItemLoading } = useWishlist();
@@ -77,22 +78,13 @@ export const WishlistGrid = () => {
             </CardHeader>
             
             <CardContent>
-              {productDetails.picture_path ? (
-                <div className="aspect-square rounded-lg overflow-hidden mb-3">
-                  <img
-                    src={`https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/milk-pictures/${encodeURIComponent(productDetails.picture_path)}`}
-                    alt={`${productDetails.brand_name} ${productDetails.product_name}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="aspect-square rounded-lg bg-muted flex items-center justify-center mb-3">
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">🥛</div>
-                    <p className="text-sm text-muted-foreground">No photo</p>
-                  </div>
-                </div>
-              )}
+              <div className="mb-3">
+                <ImageCarousel
+                  images={productDetails.all_pictures || (productDetails.picture_path ? [productDetails.picture_path] : [])}
+                  brandName={productDetails.brand_name}
+                  productName={productDetails.product_name}
+                />
+              </div>
               
               {productDetails.flavor_names && productDetails.flavor_names.length > 0 && (
                 <div className="flex flex-wrap gap-1">
