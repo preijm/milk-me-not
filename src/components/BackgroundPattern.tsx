@@ -42,7 +42,7 @@ const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
         }}
       />
       
-      {/* Plant stem - the green stripe */}
+      {/* Plant stem */}
       <div 
         style={{
           position: 'absolute',
@@ -52,19 +52,6 @@ const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
           height: '50px',
           background: 'linear-gradient(to top, rgba(0, 191, 99, 0.3), rgba(0, 191, 99, 0.1))',
           borderRadius: '2px'
-        }}
-      />
-
-      {/* Additional green accent stripe for Feed page visibility */}
-      <div 
-        style={{
-          position: 'absolute',
-          top: '30%',
-          right: '15%',
-          width: '2px',
-          height: '120px',
-          background: 'linear-gradient(to bottom, transparent, rgba(0, 191, 99, 0.4), transparent)',
-          borderRadius: '1px'
         }}
       />
 
