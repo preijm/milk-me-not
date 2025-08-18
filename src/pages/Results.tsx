@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAggregatedResults, SortConfig } from "@/hooks/useAggregatedResults";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
@@ -19,8 +19,7 @@ interface FilterOptions {
   flavors: string[];
 }
 const Results = () => {
-  const [searchParams] = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || "");
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'most_recent_date',
     direction: 'desc'

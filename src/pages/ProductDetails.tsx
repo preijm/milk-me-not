@@ -8,7 +8,7 @@ import { SortConfig, useProductTests } from "@/hooks/useProductTests";
 import { TestDetailsTable } from "@/components/milk-test/TestDetailsTable";
 import { ImageModal } from "@/components/milk-test/ImageModal";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Eye } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -143,15 +143,10 @@ const ProductDetails = () => {
       <MenuBar />
       <BackgroundPattern>
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center mb-6">
             <Link to="/results">
               <Button variant="outline" size="sm" className="gap-1">
                 <ArrowLeft className="h-4 w-4" /> Back to results
-              </Button>
-            </Link>
-            <Link to={`/results?search=${encodeURIComponent(`${product.brand_name} ${product.product_name}`)}`}>
-              <Button variant="default" size="sm" className="gap-1">
-                <Eye className="h-4 w-4" /> View All Test Results
               </Button>
             </Link>
           </div>
