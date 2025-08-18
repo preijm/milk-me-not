@@ -204,7 +204,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
   };
 
   const handleViewAllResults = () => {
-    navigate(`/results?search=${encodeURIComponent(`${item.brand_name} ${item.product_name}`)}`);
+    navigate(`/product/${item.product_id}`);
   };
 
   // Helper function to get badge color based on sentiment
