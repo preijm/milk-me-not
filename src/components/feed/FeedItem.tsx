@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { MilkTestResult } from "@/types/milk-test";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, Star, Plus, MapPin, DollarSign, Clock, ThumbsUp, ThumbsDown, Edit3 } from "lucide-react";
+import { Heart, MessageCircle, Star, Plus, MapPin, DollarSign, Clock, ThumbsUp, ThumbsDown, Edit3, BarChart3 } from "lucide-react";
 import { WishlistButton } from "@/components/WishlistButton";
 import { EditMilkTest } from "@/components/milk-test/EditMilkTest";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -39,6 +40,7 @@ interface Comment {
 export const FeedItem = ({ item }: FeedItemProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(false);
@@ -199,6 +201,10 @@ export const FeedItem = ({ item }: FeedItemProps) => {
     }
     if (!commentText.trim()) return;
     commentMutation.mutate(commentText);
+  };
+
+  const handleViewAllResults = () => {
+    navigate(`/results?search=${encodeURIComponent(`${item.brand_name} ${item.product_name}`)}`);
   };
 
   // Helper function to get badge color based on sentiment
@@ -426,6 +432,16 @@ export const FeedItem = ({ item }: FeedItemProps) => {
               <MessageCircle className="h-4 w-4" />
               <span className="font-semibold text-sm">{comments.length}</span>
               <span className="text-xs hidden sm:inline">Comments</span>
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleViewAllResults}
+              className="flex items-center space-x-1 px-2 py-1.5 rounded-full hover:bg-gray-50 transition-all duration-200"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span className="text-xs hidden sm:inline">View All</span>
             </Button>
           </div>
 
