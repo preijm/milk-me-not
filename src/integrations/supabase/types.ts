@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -644,8 +644,8 @@ export type Database = {
     Functions: {
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }
@@ -654,28 +654,28 @@ export type Database = {
         Returns: boolean
       }
       log_security_event: {
-        Args: { event_type_val: string; event_data_val?: Json }
+        Args: { event_data_val?: Json; event_type_val: string }
         Returns: undefined
       }
       search_product_types: {
         Args: Record<PropertyKey, never> | { search_term: string }
         Returns: {
-          id: string
           brand_id: string
           brand_name: string
-          product_name: string
-          property_names: string[]
           flavor_names: string[]
-          product_name_id: string
+          id: string
           is_barista: boolean
+          product_name: string
+          product_name_id: string
+          property_names: string[]
         }[]
       }
       validate_milk_test_input: {
         Args: {
-          rating_val: number
-          notes_val: string
-          shop_name_val: string
           country_code_val: string
+          notes_val: string
+          rating_val: number
+          shop_name_val: string
         }
         Returns: boolean
       }
