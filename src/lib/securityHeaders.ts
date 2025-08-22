@@ -51,13 +51,8 @@ export const setSecurityHeaders = () => {
     document.head.appendChild(xssMeta);
   }
 
-  // Prevent framing
-  if (!document.querySelector('meta[http-equiv="X-Frame-Options"]')) {
-    const frameMeta = document.createElement('meta');
-    frameMeta.setAttribute('http-equiv', 'X-Frame-Options');
-    frameMeta.setAttribute('content', 'DENY');
-    document.head.appendChild(frameMeta);
-  }
+  // X-Frame-Options removed to allow embedding in Lovable iframe
+  // In production, configure this at the server level based on your requirements
 };
 
 /**
