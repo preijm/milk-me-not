@@ -36,7 +36,7 @@ export const LoginPrompt = ({
         <DialogHeader>
           <DialogTitle className="text-center">Login Required</DialogTitle>
           <DialogDescription className="text-center">
-            {productName ? `To view individual test results for ${productName}, please log in or create an account.` : "To view individual test results, please log in or create an account."}
+            Unlock the test results — just log in or sign up!
           </DialogDescription>
         </DialogHeader>
         
