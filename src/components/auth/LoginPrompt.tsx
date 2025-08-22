@@ -41,7 +41,7 @@ export const LoginPrompt = ({
         </DialogHeader>
         
         <div className="flex flex-col gap-3 mt-6">
-          <Button onClick={handleLogin} className="w-full" size="lg" style={{backgroundColor: '#2144ff', color: 'white'}}>
+          <Button onClick={handleLogin} className="w-full" size="lg" style={{backgroundColor: '#2144ff', color: 'white', border: 'none'}}>
             <LogIn className="mr-2 h-4 w-4" />
             Log In
           </Button>
