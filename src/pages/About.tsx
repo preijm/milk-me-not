@@ -10,7 +10,7 @@ const About = () => {
         <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
           <div className="container max-w-7xl mx-auto px-4 py-8 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow min-h-[280px] flex">
                 <div className="flex flex-col items-center text-center gap-4">
                   <div className="h-16 w-16 rounded-full flex items-center justify-center bg-[#00bf62]">
                     <Rocket className="w-8 h-8 text-[#FFFFFF] animate-ping" />
@@ -24,7 +24,7 @@ const About = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow min-h-[280px] flex">
                 <div className="flex flex-col items-center text-center gap-4">
                   <div className="h-16 w-16 rounded-full flex items-center justify-center bg-[#00bf62]">
                     <Smile className="w-8 h-8 text-[#FFFFFF] animate-spin" />
@@ -38,7 +38,7 @@ const About = () => {
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow min-h-[280px] flex">
                 <div className="flex flex-col items-center text-center gap-4">
                   <div className="h-16 w-16 rounded-full flex items-center justify-center bg-[#00bf62]">
                     <Heart className="w-8 h-8 text-[#FFFFFF] animate-pulse" />
