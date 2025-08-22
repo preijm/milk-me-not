@@ -35,7 +35,7 @@ export const LoginPrompt = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center">Login Required</DialogTitle>
-          <DialogDescription className="text-center">
+          <DialogDescription className="text-center mt-4">
             Unlock the test results — just log in or sign up!
           </DialogDescription>
         </DialogHeader>
