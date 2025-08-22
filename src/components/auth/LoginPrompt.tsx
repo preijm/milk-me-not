@@ -35,12 +35,12 @@ export const LoginPrompt = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center">Login Required</DialogTitle>
-          <DialogDescription className="text-center mt-4">
+          <DialogDescription className="text-center mt-6">
             Unlock the test results — just log in or sign up!
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex flex-col gap-3 mt-6">
+        <div className="flex flex-col gap-4 mt-8">
           <Button onClick={handleLogin} variant="brand" className="w-full border-0" size="lg" style={{backgroundColor: '#2144ff', color: 'white'}}>
             <LogIn className="mr-2 h-4 w-4" />
             Log In
@@ -52,7 +52,7 @@ export const LoginPrompt = ({
           </Button>
         </div>
         
-        <p className="text-xs text-muted-foreground text-center mt-4">Join the community, read reviews, and show off your own taste tests!</p>
+        <p className="text-xs text-muted-foreground text-center mt-6">Join the community, read reviews, and show off your own taste tests!</p>
       </DialogContent>
     </Dialog>;
 };
