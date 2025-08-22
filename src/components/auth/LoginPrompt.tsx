@@ -64,7 +64,7 @@ export const LoginPrompt = ({ isOpen, onClose, productName }: LoginPromptProps) 
         </div>
         
         <p className="text-xs text-muted-foreground text-center mt-4">
-          Join our community to access detailed reviews and share your own taste tests!
+          Unlock the test results — just log in or sign up!
         </p>
       </DialogContent>
     </Dialog>
