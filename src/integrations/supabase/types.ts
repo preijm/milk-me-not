@@ -568,6 +568,37 @@ export type Database = {
       }
     }
     Views: {
+      milk_tests_aggregated_view: {
+        Row: {
+          brand_name: string | null
+          country_code: string | null
+          created_at: string | null
+          drink_preference: string | null
+          flavor_names: string[] | null
+          is_barista: boolean | null
+          price_quality_ratio: string | null
+          product_id: string | null
+          product_name: string | null
+          property_names: string[] | null
+          rating: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milk_tests_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_search_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "milk_tests_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       milk_tests_view: {
         Row: {
           brand_id: string | null

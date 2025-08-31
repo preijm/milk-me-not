@@ -27,10 +27,10 @@ export const useAggregatedResults = (sortConfig: SortConfig) => {
     queryFn: async () => {
       console.log("Fetching with sort config:", sortConfig);
       
-      // Get all milk test data first - no auth check needed for public data
+      // Get anonymized aggregated data - safe for public access
       const { data, error } = await supabase
-        .from('milk_tests_view')
-        .select('brand_id, brand_name, product_id, product_name, property_names, is_barista, flavor_names, rating, price_quality_ratio, created_at');
+        .from('milk_tests_aggregated_view')
+        .select('product_id, brand_name, product_name, property_names, is_barista, flavor_names, rating, price_quality_ratio, created_at');
       
       if (error) {
         console.error("Supabase query error:", error);
@@ -55,7 +55,7 @@ export const useAggregatedResults = (sortConfig: SortConfig) => {
           console.log(`Creating product entry: ${brandName} - ${productName}`);
           
           productMap.set(key, {
-            brand_id: item.brand_id || '',
+            brand_id: '', // No longer exposing brand_id for security
             brand_name: brandName,
             product_id: item.product_id,
             product_name: productName,
