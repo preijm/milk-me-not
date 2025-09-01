@@ -18,40 +18,54 @@ export const useProductTests = (productId: string | null, sortConfig: SortConfig
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        // Authenticated users can see their own tests for this product
-        let query = supabase
-          .from('milk_tests_view')
-          .select('id, created_at, brand_name, product_name, rating, username, notes, shop_name, picture_path, drink_preference, property_names, is_barista, flavor_names, price_quality_ratio, country_code')
-          .eq('product_id', productId)
-          .eq('user_id', user.id); // Only show user's own tests
+        // Authenticated users can see all community tests for this product
+        const { data: allTests, error } = await supabase.rpc('get_all_milk_tests');
+        
+        if (error) {
+          console.error("Error fetching all product tests:", error);
+          throw error;
+        }
+        
+        // Filter for this specific product
+        const productTests = (allTests || []).filter(test => test.product_id === productId);
       
-        // Add sorting based on sortConfig for all possible columns in the detail view
+        // Apply sorting to the filtered tests
         const detailSortableColumns = [
           'created_at', 'username', 'rating', 'drink_preference', 'price_quality_ratio', 
           'shop_name', 'notes', 'picture_path'
         ];
         
+        let sortedTests = [...productTests];
+        
         if (detailSortableColumns.includes(sortConfig.column)) {
-          query = query.order(sortConfig.column, { ascending: sortConfig.direction === 'asc' });
+          sortedTests.sort((a, b) => {
+            const aValue = a[sortConfig.column as keyof typeof a];
+            const bValue = b[sortConfig.column as keyof typeof b];
+            
+            if (aValue == null && bValue == null) return 0;
+            if (aValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (bValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
+            
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+          });
         } else {
-          // Default ordering if the current sort column doesn't apply to details
-          query = query.order('created_at', { ascending: false });
+          // Default ordering by created_at descending
+          sortedTests.sort((a, b) => {
+            const aDate = new Date(a.created_at || 0);
+            const bDate = new Date(b.created_at || 0);
+            return bDate.getTime() - aDate.getTime();
+          });
         }
         
-        const { data, error } = await query;
-        
-        if (error) {
-          console.error("Error fetching user's product tests:", error);
-          throw error;
+        console.log(`Retrieved ${sortedTests.length} community test results for product`);
+        if (sortedTests.length > 0) {
+          console.log("Sample community test data:", sortedTests[0]);
         }
         
-        console.log(`Retrieved ${data?.length || 0} user test results`);
-        if (data && data.length > 0) {
-          console.log("Sample user test data:", data[0]);
-        }
-        
-        // Process user's own results
-        const processedData = (data || []).map(item => {
+        // Process all community results with full details
+        const processedData = sortedTests.map(item => {
           const brandName = item.brand_name || "Unknown Brand";
           const productName = item.product_name || "Unknown Product";
           

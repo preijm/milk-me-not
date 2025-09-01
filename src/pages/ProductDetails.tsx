@@ -7,6 +7,7 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import { SortConfig, useProductTests } from "@/hooks/useProductTests";
 import { TestDetailsTable } from "@/components/milk-test/TestDetailsTable";
 import { ImageModal } from "@/components/milk-test/ImageModal";
+import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
@@ -15,6 +16,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 import { CircularStats } from "@/components/CircularStats";
+import { useAuth } from "@/contexts/AuthContext";
 
 type ProductDetails = {
   product_id: string;
@@ -29,9 +31,18 @@ type ProductDetails = {
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
+  const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   // Set default sort to created_at in descending order to show latest tests first
   const [sortConfig, setSortConfig] = useState<SortConfig>({ column: 'created_at', direction: 'desc' });
+
+  // Show login prompt if user is not authenticated
+  React.useEffect(() => {
+    if (!user) {
+      setShowLoginPrompt(true);
+    }
+  }, [user]);
   
   // Fetch product details using milk_tests_view to aggregate the data
   const { data: product, isLoading: isLoadingProduct } = useQuery({
@@ -69,8 +80,8 @@ const ProductDetails = () => {
     enabled: !!productId
   });
 
-  // Fetch individual tests for the product
-  const { data: productTests = [], isLoading: isLoadingTests } = useProductTests(productId, sortConfig);
+  // Fetch individual tests for the product (only if user is authenticated)
+  const { data: productTests = [], isLoading: isLoadingTests } = useProductTests(user ? productId : null, sortConfig);
 
   const handleSort = (column: string) => {
     setSortConfig(current => {
@@ -141,6 +152,11 @@ const ProductDetails = () => {
   return (
     <div className="min-h-screen">
       <MenuBar />
+      <LoginPrompt 
+        isOpen={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
+        productName={product?.product_name}
+      />
       <BackgroundPattern>
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
           <div className="flex items-center mb-6">
