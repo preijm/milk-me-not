@@ -7,6 +7,7 @@ export const setSecurityHeaders = () => {
   // These are client-side implementations - in production you should set these at server level
   
   // Content Security Policy for XSS protection
+  // Note: frame-ancestors directive removed as it cannot be set via meta tag
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
@@ -14,7 +15,6 @@ export const setSecurityHeaders = () => {
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: blob: https:",
     "connect-src 'self' https://jtabjndnietpewvknjrm.supabase.co wss://jtabjndnietpewvknjrm.supabase.co",
-    "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'"
   ].join('; ');
