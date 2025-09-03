@@ -13,26 +13,58 @@
     <!-- Critical CSS loading optimization -->
     <script>
       // Optimize CSS loading to prevent render blocking
-      document.addEventListener('DOMContentLoaded', function() {
-        // Find the main CSS file injected by Vite
-        const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-        cssLinks.forEach(function(link) {
-          if (link.href.includes('assets/index-') && link.href.includes('.css')) {
-            // Create a new link element with optimized loading
-            const optimizedLink = document.createElement('link');
-            optimizedLink.rel = 'preload';
-            optimizedLink.as = 'style';
-            optimizedLink.href = link.href;
-            optimizedLink.onload = function() {
-              this.rel = 'stylesheet';
-            };
-            
-            // Replace the original link
-            link.parentNode.insertBefore(optimizedLink, link);
-            link.remove();
-          }
+      (function() {
+        // Immediately observe for CSS links being added by Vite
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+              if (node.tagName === 'LINK' && 
+                  node.rel === 'stylesheet' && 
+                  node.href && 
+                  node.href.includes('assets/index-') && 
+                  node.href.includes('.css')) {
+                
+                // Convert blocking CSS to non-blocking preload
+                node.rel = 'preload';
+                node.as = 'style';
+                node.onload = function() {
+                  this.rel = 'stylesheet';
+                  this.onload = null;
+                };
+                
+                // Fallback for browsers without JS
+                const noscript = document.createElement('noscript');
+                const fallbackLink = document.createElement('link');
+                fallbackLink.rel = 'stylesheet';
+                fallbackLink.href = node.href;
+                noscript.appendChild(fallbackLink);
+                node.parentNode.insertBefore(noscript, node.nextSibling);
+              }
+            });
+          });
         });
-      });
+        
+        // Start observing
+        observer.observe(document.head, { childList: true });
+        
+        // Also check existing links immediately
+        document.addEventListener('DOMContentLoaded', function() {
+          const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+          cssLinks.forEach(function(link) {
+            if (link.href.includes('assets/index-') && link.href.includes('.css')) {
+              link.rel = 'preload';
+              link.as = 'style';
+              link.onload = function() {
+                this.rel = 'stylesheet';
+                this.onload = null;
+              };
+            }
+          });
+          
+          // Stop observing once DOM is ready
+          observer.disconnect();
+        });
+      })();
     </script>
     
     <!-- Preload hint for faster CSS discovery -->
