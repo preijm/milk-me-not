@@ -68,15 +68,6 @@ export const FlavorSelector = ({
     const key = createFlavorKey(newFlavorName);
     
     try {
-      // Get the current user's session
-      const { data: sessionData } = await supabase.auth.getSession();
-      
-      if (!sessionData.session) {
-        console.error('Authentication required to add flavors');
-        setIsSubmitting(false);
-        return;
-      }
-      
       // Check if flavor with this key already exists
       const { data: existingFlavors } = await supabase
         .from('flavors')
@@ -89,7 +80,7 @@ export const FlavorSelector = ({
         return;
       }
       
-      // Add new flavor to database with RLS compliance
+      // Add new flavor to database - now available to all users
       const { error } = await supabase
         .from('flavors')
         .insert({
