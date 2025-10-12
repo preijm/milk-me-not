@@ -101,7 +101,7 @@ export function MobileNotificationList() {
   const sevenDaysAgo = subDays(now, 7);
   const recentNotifications = notifications.filter(n => new Date(n.created_at) > sevenDaysAgo);
   const earlierNotifications = notifications.filter(n => new Date(n.created_at) <= sevenDaysAgo);
-  return <div className="w-full pt-4">
+  return <div className="w-full">
       {recentNotifications.length > 0 && (
         <Collapsible open={recentOpen} onOpenChange={setRecentOpen}>
           <CollapsibleTrigger className="w-full">
