@@ -27,9 +27,7 @@ const Notifications = () => {
         <MenuBar />
         <div className="pt-16 pb-20 min-h-screen">
           <div className="bg-white">
-            <div className="px-0">
-              <MobileNotificationList />
-            </div>
+            <MobileNotificationList />
           </div>
         </div>
         <MobileFooter />
