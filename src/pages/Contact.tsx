@@ -15,7 +15,7 @@ const Contact = () => {
               {/* Phone Card */}
               <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all">
                 <div className="flex flex-row items-start gap-4">
-                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-green-400 to-green-500 flex-shrink-0">
+                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center bg-green-500 flex-shrink-0">
                     <Phone className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
@@ -35,7 +35,7 @@ const Contact = () => {
               {/* Email Card */}
               <a href="mailto:info@milkmenot.com" className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all block">
                 <div className="flex flex-row items-start gap-4">
-                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-500 flex-shrink-0">
+                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center bg-blue-500 flex-shrink-0">
                     <Mail className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
@@ -55,7 +55,7 @@ const Contact = () => {
               {/* Chat Card */}
               <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all">
                 <div className="flex flex-row items-start gap-4">
-                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-purple-400 to-purple-500 flex-shrink-0">
+                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center bg-purple-500 flex-shrink-0">
                     <MessageSquare className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
