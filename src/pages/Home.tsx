@@ -60,7 +60,7 @@ const Home = () => {
       
       {/* Enhanced Hero Section */}
       <BackgroundPattern>
-        <div className="container max-w-4xl mx-auto px-4 pt-16 flex items-center justify-center min-h-dvh">
+        <div className="container max-w-4xl mx-auto px-4 pt-16 flex items-center justify-center min-h-[calc(100dvh-180px)]">
           <div className="flex flex-col items-center justify-center text-center relative z-10">
             
             {/* Enhanced hero title with green color */}
@@ -118,7 +118,7 @@ const Home = () => {
         </div>
         
         {/* Mobile App Banner - Only visible on desktop */}
-        <div className="hidden md:block pb-12">
+        <div className="hidden md:block pb-8">
           <div className="container max-w-3xl mx-auto px-4">
             <Link to="/mobile-app" className="block">
               <div className="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-lg shadow-md p-4 hover:shadow-lg transition-all duration-300 hover:border-[#00bf63]/30">
