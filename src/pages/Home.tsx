@@ -87,9 +87,9 @@ const Home = () => {
               <Button onClick={handleStartJourney} size="lg" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 text-white shadow-lg hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300 group" style={{
               backgroundColor: '#2144ff'
             }}>
-                <Milk className="mr-2 h-6 w-6 group-hover:rotate-12 transition-transform duration-300" />
+                <Milk className="mr-2 h-6 w-6" />
                 Start Your Taste Journey
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               
               <Button asChild variant="outline" size="lg" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 border-2 hover:bg-primary/5 transition-all duration-300">

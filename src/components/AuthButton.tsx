@@ -42,7 +42,7 @@ export const AuthButton = () => {
       className={`text-white shadow-lg hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300 group ${isMobile ? "px-3" : "w-full"}`}
       style={{backgroundColor: '#2144ff'}}
     >
-      <LogIn className={`${isMobile ? "w-4 h-4" : "w-6 h-6 mr-2"} group-hover:rotate-12 transition-transform duration-300`} />
+      <LogIn className={`${isMobile ? "w-4 h-4" : "w-6 h-6 mr-2"}`} />
       {isMobile ? "Login" : "Login here"}
     </Button>;
   }
