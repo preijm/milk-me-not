@@ -1,5 +1,6 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import AuthFormInputs from "./AuthFormInputs";
 import AuthFormButtons from "./AuthFormButtons";
@@ -19,6 +20,7 @@ const AuthForm = ({
   onEmailConfirmedDismiss,
   onEmailPending 
 }: AuthFormProps) => {
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -29,6 +31,14 @@ const AuthForm = ({
   
   const { loading, signIn, signUp } = useAuthOperations();
   const { toast } = useToast();
+
+  // Check if we should start in signup mode based on location state
+  useEffect(() => {
+    const state = location.state as { mode?: string } | null;
+    if (state?.mode === 'signup') {
+      setIsLogin(false);
+    }
+  }, [location]);
 
   const clearErrors = () => {
     setEmailError("");
