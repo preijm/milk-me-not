@@ -21,7 +21,7 @@ const AuthFormButtons = ({
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
 
   return <>
-      {isLogin && <button type="button" onClick={onForgotPassword} className="text-sm text-[#9F9EA1] hover:text-[#8E9196] transition-colors text-right w-full">
+      {isLogin && <button type="button" onClick={onForgotPassword} className="text-sm text-[#9F9EA1] md:hover:text-[#8E9196] transition-colors text-right w-full">
           Forgot password?
         </button>}
 
@@ -30,7 +30,7 @@ const AuthFormButtons = ({
         variant={isMobileOrTablet ? undefined : "brand"}
         className={`w-full h-12 text-base font-medium rounded-lg ${
           isMobileOrTablet 
-            ? "text-white shadow-lg hover:shadow-xl transition-all duration-300" 
+            ? "text-white shadow-lg md:hover:shadow-xl transition-all duration-300" 
             : ""
         }`}
         style={isMobileOrTablet ? { backgroundColor: '#2144ff' } : {}}
@@ -46,7 +46,7 @@ const AuthFormButtons = ({
       </Button>
 
       <div className="text-center mt-6">
-        <button type="button" onClick={onToggleMode} className="text-[#00BF63] hover:text-emerald-700 transition-colors font-medium">
+        <button type="button" onClick={onToggleMode} className="text-[#00BF63] md:hover:text-emerald-700 transition-colors font-medium">
           {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
         </button>
       </div>

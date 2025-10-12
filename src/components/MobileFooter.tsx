@@ -13,7 +13,7 @@ const MobileFooter = () => {
   const getLinkClass = (path: string) => {
     return isActive(path) 
       ? "font-medium transition-colors" 
-      : "text-gray-600 hover:text-gray-900 transition-colors font-medium";
+      : "text-gray-600 md:hover:text-gray-900 transition-colors font-medium";
   };
 
   const getLinkStyle = (path: string) => {

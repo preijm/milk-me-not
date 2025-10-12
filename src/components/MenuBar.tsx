@@ -17,19 +17,19 @@ const MenuBar = () => {
           <div className="flex items-center gap-4">
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center gap-6">
-              <Link to="/" className={`transition-colors ${location.pathname === '/' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+              <Link to="/" className={`transition-colors ${location.pathname === '/' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 Home
               </Link>
-              <Link to="/feed" className={`transition-colors ${location.pathname === '/feed' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+              <Link to="/feed" className={`transition-colors ${location.pathname === '/feed' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 Feed
               </Link>
-              <Link to="/results" className={`transition-colors ${location.pathname === '/results' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+              <Link to="/results" className={`transition-colors ${location.pathname === '/results' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 Results
               </Link>
-              <Link to="/about" className={`transition-colors ${location.pathname === '/about' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+              <Link to="/about" className={`transition-colors ${location.pathname === '/about' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 About
               </Link>
-              <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+              <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 Contact
               </Link>
             </div>
