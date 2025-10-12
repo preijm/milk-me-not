@@ -102,15 +102,15 @@ const Home = () => {
             {/* Trust indicators */}
             <div className="flex items-center justify-center gap-4 md:gap-8 text-sm text-muted-foreground animate-fade-in">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#00bf63' }}></div>
                 <span>{formatNumber(stats.totalTests)} Reviews</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-300"></div>
+                <div className="w-2 h-2 rounded-full animate-pulse delay-300" style={{ backgroundColor: '#0d44e7' }}></div>
                 <span>{formatNumber(stats.brandsCovered)} Brands</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-500"></div>
+                <div className="w-2 h-2 rounded-full animate-pulse delay-500" style={{ backgroundColor: '#9333ea' }}></div>
                 <span>{formatNumber(stats.activeMembers)} Members</span>
               </div>
             </div>
