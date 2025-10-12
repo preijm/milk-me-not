@@ -53,7 +53,7 @@ const MobileApp = () => {
                     <Button 
                       asChild 
                       variant="outline" 
-                      className="w-full border-2 border-[#00bf63] text-[#00bf63] hover:bg-[#00bf63]/5" 
+                      className="w-full border-2 border-[#00bf63] text-[#00bf63] hover:bg-[#00bf63]/5 hover:text-[#00bf63]" 
                       size="lg"
                     >
                       <a href={androidStoreUrl} target="_blank" rel="noopener noreferrer">
@@ -90,7 +90,7 @@ const MobileApp = () => {
                     <Button 
                       asChild 
                       variant="outline" 
-                      className="w-full border-2 border-[#00bf63] text-[#00bf63] hover:bg-[#00bf63]/5" 
+                      className="w-full border-2 border-[#00bf63] text-[#00bf63] hover:bg-[#00bf63]/5 hover:text-[#00bf63]" 
                       size="lg"
                     >
                       <a href={iosStoreUrl} target="_blank" rel="noopener noreferrer">
