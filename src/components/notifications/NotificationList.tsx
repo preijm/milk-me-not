@@ -84,12 +84,17 @@ function NotificationItem({ notification, onMarkAsRead }: {
         </div>
       </div>
       
-      {/* Heart icon */}
-      {notification.type === 'like' && (
-        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center">
-          <Heart className="h-5 w-5 text-pink-600 fill-pink-600" />
-        </div>
-      )}
+      {/* Icon based on notification type */}
+      <div className={cn(
+        "flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center",
+        notification.type === 'like' ? 'bg-pink-100' : 'bg-blue-100'
+      )}>
+        {notification.type === 'like' ? (
+          <Heart className="h-6 w-6 text-pink-600" />
+        ) : (
+          <MessageCircle className="h-6 w-6 text-blue-600" />
+        )}
+      </div>
       
       {/* Menu button */}
       <Button 
