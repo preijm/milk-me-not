@@ -53,11 +53,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       
       setSession(null);
       setUser(null);
-      
-      toast({
-        title: "Signed out successfully",
-        description: "You have been logged out of your account.",
-      });
     } catch (error: any) {
       console.error('Sign out error:', error);
       toast({
