@@ -10,7 +10,7 @@ import { FeedItem } from "@/components/feed/FeedItem";
 import { MilkTestResult } from "@/types/milk-test";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader, LogIn, UserPlus } from "lucide-react";
+import { Loader, LogIn, UserPlus, Rss } from "lucide-react";
 const Feed = () => {
   const {
     user
@@ -57,6 +57,93 @@ const Feed = () => {
       return () => clearTimeout(timer);
     }
   }, [highlightTestId, feedItems]);
+  // Check if device is mobile or tablet (up to 1024px)
+  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
+
+  // Mobile/Tablet layout with white background
+  if (isMobileOrTablet) {
+    return <div className="min-h-screen bg-white">
+        <MenuBar />
+        <div className="pt-16 pb-20 min-h-screen">
+          {/* Header */}
+          <div className="bg-white border-b px-4 py-4">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full flex items-center justify-center" style={{
+                backgroundColor: '#00bf63'
+              }}>
+                <Rss className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-800">Feed</h1>
+              </div>
+            </div>
+          </div>
+          
+          <div className="container max-w-7xl mx-auto px-4 py-6">
+            {isLoading ? <div className="flex items-center justify-center py-8">
+                <Loader className="h-8 w-8 animate-spin text-primary" />
+              </div> : <div className="grid grid-cols-1 gap-6">
+                {feedItems.map(item => <FeedItem key={item.id} item={item} blurred={!user} disabled={!user} />)}
+                
+                {/* Login prompt for non-authenticated users after preview items */}
+                {!user && feedItems.length > 0 && <Card className="w-full shadow-lg border-2 border-primary/20">
+                    <CardContent className="p-8 text-center space-y-6">
+                      <div className="text-2xl">🔓</div>
+                      <div className="space-y-4">
+                        <h3 className="text-xl font-semibold text-foreground">Ready to see more?</h3>
+                        <p className="text-muted-foreground leading-relaxed">
+                          Join our community to unlock all reviews, leave comments, and share your own taste tests!
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                          <Button onClick={() => navigate('/auth', {
+                      state: {
+                        from: '/feed'
+                      }
+                    })} variant="brand" className="border-0" size="lg" style={{
+                      backgroundColor: '#2144ff',
+                      color: 'white'
+                    }}>
+                            <LogIn className="mr-2 h-4 w-4" />
+                            Log In
+                          </Button>
+                          <Button onClick={() => navigate('/auth', {
+                      state: {
+                        from: '/feed',
+                        mode: 'signup'
+                      }
+                    })} variant="outline" size="lg">
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            Sign Up
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>}
+                
+                {feedItems.length === 0 && <div className="text-center py-8">
+                    {user ? <p className="text-muted-foreground">No milk tests to show yet. Be the first to share your tasting!</p> : <div className="max-w-md mx-auto space-y-4">
+                        <div className="text-lg">🥛✨</div>
+                        <h3 className="text-xl font-semibold text-foreground">The community is buzzing with amazing milk alternative discoveries!</h3>
+                        <p className="text-muted-foreground leading-relaxed">
+                          Members are sharing detailed reviews, uploading mouth-watering photos, rating products out of 10, and having lively discussions in the comments. 
+                        </p>
+                        <p className="text-foreground font-medium">
+                          Join our community to see what everyone's raving about, discover your next favorite alternative, and share your own tastings!
+                        </p>
+                        <div className="text-lg">🚀</div>
+                        <p className="text-sm text-muted-foreground font-medium">
+                          Sign in now to unlock the full Moo'd Board experience
+                        </p>
+                      </div>}
+                  </div>}
+              </div>}
+          </div>
+        </div>
+        <MobileFooter />
+      </div>;
+  }
+
+  // Desktop layout with BackgroundPattern
   return <div className="min-h-screen relative">
       <MenuBar />
       <BackgroundPattern>
@@ -67,7 +154,7 @@ const Feed = () => {
           {isLoading ? <div className="flex items-center justify-center py-8">
               <Loader className="h-8 w-8 animate-spin text-primary" />
             </div> : <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {feedItems.map(item => {})}
+              {feedItems.map(item => <FeedItem key={item.id} item={item} blurred={!user} disabled={!user} />)}
               
               {/* Login prompt for non-authenticated users after preview items */}
               {!user && feedItems.length > 0 && <Card className="w-full shadow-lg border-2 border-primary/20 lg:col-span-2">
