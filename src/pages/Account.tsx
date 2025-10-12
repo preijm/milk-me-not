@@ -8,7 +8,7 @@ import { Save, Lock, User, Shield, Bell } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import BackgroundPattern from "@/components/BackgroundPattern";
 import { CountrySelect } from "@/components/milk-test/CountrySelect";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 const Account = () => {
@@ -118,7 +118,7 @@ const Account = () => {
   };
   return <div className="min-h-screen">
       <MenuBar />
-      <BackgroundPatternWithOverlay>
+      <BackgroundPattern>
         <div className="flex items-center justify-center min-h-screen py-8 pt-20 pb-24 md:pb-8">
           <div className="container max-w-4xl mx-auto px-4 relative z-10">
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden border border-white/20 animate-fade-up">
@@ -211,7 +211,7 @@ const Account = () => {
             </div>
           </div>
         </div>
-      </BackgroundPatternWithOverlay>
+      </BackgroundPattern>
       <MobileFooter />
     </div>;
 };

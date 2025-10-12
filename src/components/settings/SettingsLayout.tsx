@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import BackgroundPattern from "@/components/BackgroundPattern";
 
 const settingsItems = [
   { title: "Profile", url: "/account", icon: User },
@@ -80,13 +80,13 @@ export default function SettingsLayout({ children, title }: SettingsLayoutProps)
           <SettingsSidebar />
           
           <main className="flex-1 pt-16 pb-20 md:pb-8">
-            <BackgroundPatternWithOverlay>
+            <BackgroundPattern>
               <div className="container max-w-4xl mx-auto px-4 py-8">
                 <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 animate-fade-up">
                   {children}
                 </div>
               </div>
-            </BackgroundPatternWithOverlay>
+            </BackgroundPattern>
           </main>
         </div>
       </SidebarProvider>

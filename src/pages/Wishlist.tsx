@@ -1,13 +1,13 @@
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import BackgroundPattern from "@/components/BackgroundPattern";
 import { WishlistGrid } from "@/components/WishlistGrid";
 
 const Wishlist = () => {
   return (
     <div className="min-h-screen">
       <MenuBar />
-      <BackgroundPatternWithOverlay>
+      <BackgroundPattern>
         <div className="pt-24 pb-8 min-h-screen">
           <div className="container max-w-6xl mx-auto px-4 relative z-10">
             <h1 className="text-3xl font-bold text-[#00bf63] mb-8">My Wishlist</h1>
@@ -16,7 +16,7 @@ const Wishlist = () => {
             </div>
           </div>
         </div>
-      </BackgroundPatternWithOverlay>
+      </BackgroundPattern>
       <MobileFooter />
     </div>
   );

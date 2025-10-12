@@ -2,11 +2,11 @@ import React from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
 import { Smile, Rocket, Heart } from "lucide-react";
-import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import BackgroundPattern from "@/components/BackgroundPattern";
 const About = () => {
   return <div className="min-h-screen">
       <MenuBar />
-      <BackgroundPatternWithOverlay>
+      <BackgroundPattern>
         <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
           <div className="container max-w-7xl mx-auto px-4 py-8 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -54,7 +54,7 @@ const About = () => {
             </div>
           </div>
         </div>
-      </BackgroundPatternWithOverlay>
+      </BackgroundPattern>
       
       <MobileFooter />
     </div>;

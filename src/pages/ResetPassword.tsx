@@ -1,6 +1,6 @@
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import BackgroundPattern from "@/components/BackgroundPattern";
 import PasswordResetForm from "@/components/auth/PasswordResetForm";
 import { useAuthFlow } from "@/hooks/useAuthFlow";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ const ResetPassword = () => {
   return (
     <div className="min-h-screen">
       <MenuBar />
-      <BackgroundPatternWithOverlay>
+      <BackgroundPattern>
         <div className="flex items-center justify-center min-h-screen">
           <div className="container max-w-md mx-auto px-4 relative z-10">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 animate-fade-up">
@@ -45,7 +45,7 @@ const ResetPassword = () => {
             </div>
           </div>
         </div>
-      </BackgroundPatternWithOverlay>
+      </BackgroundPattern>
       <MobileFooter />
     </div>
   );

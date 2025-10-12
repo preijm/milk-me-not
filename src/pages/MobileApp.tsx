@@ -1,6 +1,6 @@
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import BackgroundPattern from "@/components/BackgroundPattern";
 import { Download, ExternalLink } from "lucide-react";
 import { FaAndroid, FaApple } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ const MobileApp = () => {
   return (
     <div className="min-h-screen">
       <MenuBar />
-      <BackgroundPatternWithOverlay>
+      <BackgroundPattern>
         <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
           <div className="container max-w-5xl mx-auto px-4 py-8 relative z-10">
             {/* Header */}
@@ -116,7 +116,7 @@ const MobileApp = () => {
             </p>
           </div>
         </div>
-      </BackgroundPatternWithOverlay>
+      </BackgroundPattern>
       <MobileFooter />
     </div>
   );
