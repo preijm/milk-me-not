@@ -55,7 +55,8 @@ const MobileFooter = () => {
               style={getLinkStyle("/notifications")}
             >
               <Bell className="w-5 h-5" />
-              <span className="text-xs">Notifs</span>
+              <span className="text-xs sm:hidden">Notifs</span>
+              <span className="text-xs hidden sm:inline">Notifications</span>
             </Link>
             <Link 
               to="/profile" 
