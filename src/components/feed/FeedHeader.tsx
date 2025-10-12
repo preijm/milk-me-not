@@ -16,8 +16,8 @@ export const FeedHeader = ({ username, createdAt, rating, blurred }: FeedHeaderP
   const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true }).replace('about ', '');
   
   return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="flex items-start gap-2 flex-1 min-w-0">
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2 flex-1 min-w-0">
         <Badge variant="category" className="w-8 h-8 rounded-full flex items-center justify-center p-0 font-semibold text-sm flex-shrink-0">
           {username?.charAt(0).toUpperCase() || 'U'}
         </Badge>
