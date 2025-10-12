@@ -124,7 +124,7 @@ export const MobileFilterBar = ({
   };
 
   return (
-    <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-sm -mx-6 px-6 py-3 space-y-3 border-b border-gray-100">
+    <div className="space-y-3">
       {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
