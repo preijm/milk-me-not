@@ -49,7 +49,7 @@ export const LoginPrompt = ({
             Log In
           </Button>
           
-          <Button onClick={handleSignUp} variant="outline" className="w-full" size="lg">
+          <Button onClick={handleSignUp} variant="outline" className="w-full border-2 hover:bg-primary/5" size="lg">
             <UserPlus className="mr-2 h-4 w-4" />
             Sign Up
           </Button>
