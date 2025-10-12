@@ -20,6 +20,7 @@ import ProductDetails from "./pages/ProductDetails";
 import ResetPassword from "./pages/ResetPassword";
 import Feed from "./pages/Feed";
 import Wishlist from "./pages/Wishlist";
+import MobileApp from "./pages/MobileApp";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,6 +77,7 @@ const App = () => {
                   <Wishlist />
                 </ProtectedRoute>
               } />
+              <Route path="/mobile-app" element={<MobileApp />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Toaster />

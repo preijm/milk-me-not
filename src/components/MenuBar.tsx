@@ -32,6 +32,9 @@ const MenuBar = () => {
               <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
                 Contact
               </Link>
+              <Link to="/mobile-app" className={`transition-colors ${location.pathname === '/mobile-app' ? 'text-[#00bf63] font-medium' : 'text-gray-700 hover:text-gray-900'}`}>
+                Mobile App
+              </Link>
             </div>
 
             {/* AuthButton for all screen sizes */}
