@@ -39,6 +39,7 @@ const MenuBar = () => {
   const isNotificationsPage = location.pathname === '/notifications';
   const isFeedPage = location.pathname === '/feed';
   const isProductDetailsPage = location.pathname.startsWith('/product/');
+  const isResultsPage = location.pathname === '/results';
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
 
 
@@ -76,6 +77,13 @@ const MenuBar = () => {
                   <BarChart3 className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Individual Tests</h1>
+              </div>
+            ) : isResultsPage ? (
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#00bf63' }}>
+                  <BarChart3 className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-lg font-semibold text-gray-900">Results</h1>
               </div>
             ) : (
               <h1 className="text-gray-800 text-xl font-semibold">{pageTitle}</h1>
