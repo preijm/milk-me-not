@@ -33,6 +33,9 @@ const MenuBar = () => {
   
   const pageTitle = getPageTitle();
   const isHomePage = location.pathname === '/';
+  const isProfilePage = location.pathname === '/profile';
+  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
+
 
   return (
     <nav className="bg-white/5 backdrop-blur-[2px] fixed w-full z-50 border-b lg:border-white/10 border-gray-200/60 shadow-sm lg:shadow-none">
@@ -76,8 +79,8 @@ const MenuBar = () => {
               </Link>
             </div>
 
-            {/* AuthButton for all screen sizes */}
-            <AuthButton />
+            {/* AuthButton - Hidden on mobile/tablet except profile page, always shown on desktop */}
+            {(!isMobileOrTablet || isProfilePage) && <AuthButton />}
           </div>
         </div>
       </div>
