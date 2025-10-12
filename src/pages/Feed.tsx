@@ -139,11 +139,18 @@ const Feed = () => {
           
           {isLoading ? <div className="flex items-center justify-center py-8">
               <Loader className="h-8 w-8 animate-spin text-primary" />
-            </div> : <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {feedItems.map(item => <FeedItem key={item.id} item={item} blurred={!user} disabled={!user} />)}
+            </div> : <>
+              <div className="columns-1 md:columns-2 xl:columns-3 gap-6 space-y-6">
+                {feedItems.map(item => (
+                  <div key={item.id} className="break-inside-avoid mb-6">
+                    <FeedItem item={item} blurred={!user} disabled={!user} />
+                  </div>
+                ))}
+              </div>
               
               {/* Login prompt for non-authenticated users after preview items */}
-              {!user && feedItems.length > 0 && <Card className="w-full shadow-lg border-2 border-primary/20 md:col-span-2 xl:col-span-3">
+              {!user && feedItems.length > 0 && (
+                <Card className="w-full shadow-lg border-2 border-primary/20 mt-6">
                   <CardContent className="p-8 text-center space-y-6">
                     <div className="text-2xl">🔓</div>
                     <div className="space-y-4">
@@ -175,9 +182,11 @@ const Feed = () => {
                       </div>
                     </div>
                   </CardContent>
-                </Card>}
+                </Card>
+              )}
               
-              {feedItems.length === 0 && <div className="text-center py-8 md:col-span-2 xl:col-span-3">
+              {feedItems.length === 0 && (
+                <div className="text-center py-8">
                   {user ? <p className="text-muted-foreground">No milk tests to show yet. Be the first to share your tasting!</p> : <div className="max-w-md mx-auto space-y-4">
                       <div className="text-lg">🥛✨</div>
                       <h3 className="text-xl font-semibold text-foreground">The community is buzzing with amazing milk alternative discoveries!</h3>
@@ -192,8 +201,9 @@ const Feed = () => {
                         Sign in now to unlock the full Moo'd Board experience
                       </p>
                     </div>}
-                </div>}
-            </div>}
+                </div>
+              )}
+            </>}
         </div>
 
       </BackgroundPattern>
