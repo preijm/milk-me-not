@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { AuthButton } from "@/components/AuthButton";
-import { Bell, Radio } from "lucide-react";
+import { Bell, Radio, BarChart3 } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const MenuBar = () => {
@@ -38,6 +38,7 @@ const MenuBar = () => {
   const isProfilePage = location.pathname === '/profile';
   const isNotificationsPage = location.pathname === '/notifications';
   const isFeedPage = location.pathname === '/feed';
+  const isProductDetailsPage = location.pathname.startsWith('/product/');
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
 
 
@@ -68,6 +69,13 @@ const MenuBar = () => {
                   <Radio className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Feed</h1>
+              </div>
+            ) : isProductDetailsPage ? (
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#00bf63' }}>
+                  <BarChart3 className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-lg font-semibold text-gray-900">Individual Tests</h1>
               </div>
             ) : (
               <h1 className="text-gray-800 text-xl font-semibold">{pageTitle}</h1>
