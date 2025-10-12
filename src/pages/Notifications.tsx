@@ -5,6 +5,7 @@ import { ArrowLeft, Bell } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { useNotifications } from "@/hooks/useNotifications";
 import { NotificationList } from "@/components/notifications/NotificationList";
+import { MobileNotificationList } from "@/components/notifications/MobileNotificationList";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,7 @@ const Notifications = () => {
             </div>
             
             <div className="px-0">
-              <NotificationList />
+              <MobileNotificationList />
             </div>
           </div>
         </div>
