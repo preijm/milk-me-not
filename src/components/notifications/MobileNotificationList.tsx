@@ -5,13 +5,14 @@ import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-
-function NotificationItem({ notification, onMarkAsRead }: { 
-  notification: Notification; 
+function NotificationItem({
+  notification,
+  onMarkAsRead
+}: {
+  notification: Notification;
   onMarkAsRead: (id: string) => void;
 }) {
   const navigate = useNavigate();
-  
   const handleClick = () => {
     onMarkAsRead(notification.id);
     if (notification.milk_test_id) {
@@ -19,45 +20,29 @@ function NotificationItem({ notification, onMarkAsRead }: {
     }
     window.dispatchEvent(new Event("lov-close-notifications"));
   };
-  
+
   // Extract username from message (e.g., "Ilva liked your test" -> "Ilva")
   const getUsername = (message: string) => {
     const match = message.match(/^(\w+)/);
     return match ? match[1] : "U";
   };
-  
   const getInitials = (message: string) => {
     const username = getUsername(message);
     return username.charAt(0).toUpperCase();
   };
-  
+
   // Generate consistent color based on username
   const getAvatarColor = (message: string) => {
     const username = getUsername(message);
-    const colors = [
-      'bg-pink-500',
-      'bg-blue-500',
-      'bg-purple-500',
-      'bg-green-500',
-      'bg-orange-500',
-      'bg-red-500'
-    ];
+    const colors = ['bg-pink-500', 'bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500', 'bg-red-500'];
     const index = username.charCodeAt(0) % colors.length;
     return colors[index];
   };
-  
-  return (
-    <div 
-      className={cn(
-        "relative flex items-start gap-3 p-4 border-b cursor-pointer transition-colors",
-        !notification.is_read && "bg-blue-50/50"
-      )}
-      onClick={handleClick}
-    >
+  return <div className={cn("relative flex items-start gap-3 p-4 border-b cursor-pointer transition-colors", !notification.is_read && "bg-blue-50/50")} onClick={handleClick}>
       {/* Blue indicator for unread */}
-      {!notification.is_read && (
-        <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: '#2144ff' }} />
-      )}
+      {!notification.is_read && <div className="absolute left-0 top-0 bottom-0 w-1" style={{
+      backgroundColor: '#2144ff'
+    }} />}
       
       {/* Avatar */}
       <Avatar className={cn("h-12 w-12 flex-shrink-0", getAvatarColor(notification.message))}>
@@ -75,106 +60,59 @@ function NotificationItem({ notification, onMarkAsRead }: {
         </p>
         <div className="flex items-center gap-2 mt-1">
           <p className="text-xs text-gray-500">
-            {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true }).replace('about ', '')}
+            {formatDistanceToNow(new Date(notification.created_at), {
+            addSuffix: true
+          }).replace('about ', '')}
           </p>
-          {!notification.is_read && (
-            <div className="w-2 h-2 rounded-full bg-blue-600" />
-          )}
+          {!notification.is_read && <div className="w-2 h-2 rounded-full bg-blue-600" />}
         </div>
       </div>
       
       {/* Icon based on notification type */}
-      <div className={cn(
-        "flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center",
-        notification.type === 'like' ? 'bg-pink-100' : 'bg-blue-100'
-      )}>
-        {notification.type === 'like' ? (
-          <Heart className="h-6 w-6 text-pink-600" />
-        ) : (
-          <MessageCircle className="h-6 w-6 text-blue-600" />
-        )}
+      <div className={cn("flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center", notification.type === 'like' ? 'bg-pink-100' : 'bg-blue-100')}>
+        {notification.type === 'like' ? <Heart className="h-6 w-6 text-pink-600" /> : <MessageCircle className="h-6 w-6 text-blue-600" />}
       </div>
       
       {/* Menu button */}
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="flex-shrink-0 h-8 w-8 text-gray-400"
-        onClick={(e) => {
-          e.stopPropagation();
-          // Handle menu action
-        }}
-      >
-        <MoreVertical className="h-4 w-4" />
-      </Button>
-    </div>
-  );
+      
+    </div>;
 }
-
 export function MobileNotificationList() {
-  const { notifications, loading } = useNotifications();
-
+  const {
+    notifications,
+    loading
+  } = useNotifications();
   if (loading) {
-    return (
-      <div className="p-4 text-center text-muted-foreground">
+    return <div className="p-4 text-center text-muted-foreground">
         Loading notifications...
-      </div>
-    );
+      </div>;
   }
-
   if (notifications.length === 0) {
-    return (
-      <div className="p-8 text-center text-muted-foreground">
+    return <div className="p-8 text-center text-muted-foreground">
         <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
         <p>No notifications yet</p>
         <p className="text-xs mt-1">You'll see likes and comments here</p>
-      </div>
-    );
+      </div>;
   }
 
   // Group notifications by recency
   const now = new Date();
   const sevenDaysAgo = subDays(now, 7);
-  
-  const recentNotifications = notifications.filter(n => 
-    new Date(n.created_at) > sevenDaysAgo
-  );
-  
-  const earlierNotifications = notifications.filter(n => 
-    new Date(n.created_at) <= sevenDaysAgo
-  );
-
-  return (
-    <div className="w-full">
-      {recentNotifications.length > 0 && (
-        <>
+  const recentNotifications = notifications.filter(n => new Date(n.created_at) > sevenDaysAgo);
+  const earlierNotifications = notifications.filter(n => new Date(n.created_at) <= sevenDaysAgo);
+  return <div className="w-full">
+      {recentNotifications.length > 0 && <>
           <div className="px-4 py-3 bg-gray-100">
             <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Recent</h3>
           </div>
-          {recentNotifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              notification={notification}
-              onMarkAsRead={() => {}}
-            />
-          ))}
-        </>
-      )}
+          {recentNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={() => {}} />)}
+        </>}
       
-      {earlierNotifications.length > 0 && (
-        <>
+      {earlierNotifications.length > 0 && <>
           <div className="px-4 py-3 bg-gray-100">
             <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Earlier</h3>
           </div>
-          {earlierNotifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              notification={notification}
-              onMarkAsRead={() => {}}
-            />
-          ))}
-        </>
-      )}
-    </div>
-  );
+          {earlierNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={() => {}} />)}
+        </>}
+    </div>;
 }
