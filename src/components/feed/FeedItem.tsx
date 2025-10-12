@@ -247,25 +247,6 @@ export const FeedItem = ({
                   })}
                 </Badge>
               </div>
-              <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                <span className="text-sm font-medium text-foreground">
-                  <span translate="no">{item.brand_name}</span>
-                </span>
-                <span className="text-sm font-medium text-muted-foreground">
-                  • {item.product_name}
-                </span>
-              </div>
-              <div className="flex items-center gap-1 mt-1 flex-wrap">
-                {item.is_barista && <Badge variant="barista" className="text-xs font-medium px-1.5 py-0.5">
-                    Barista
-                  </Badge>}
-                {item.property_names?.slice(0, 2).map(property => <Badge key={property} variant="category" className="text-xs font-medium px-1.5 py-0.5">
-                    {property.replace(/_/g, ' ')}
-                  </Badge>)}
-                {item.flavor_names?.slice(0, 1).map(flavor => <Badge key={flavor} variant="flavor" className="text-xs font-medium px-1.5 py-0.5">
-                    {flavor}
-                  </Badge>)}
-              </div>
             </div>
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
@@ -278,6 +259,28 @@ export const FeedItem = ({
       </CardHeader>
 
       <CardContent className="space-y-3 pt-0">
+        {/* Brand, Product Name and Badges - Above Picture */}
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-sm font-medium text-foreground">
+              <span translate="no">{item.brand_name}</span>
+            </span>
+            <span className="text-sm font-medium text-muted-foreground">
+              • {item.product_name}
+            </span>
+          </div>
+          <div className="flex items-center gap-1 flex-wrap">
+            {item.is_barista && <Badge variant="barista" className="text-xs font-medium px-1.5 py-0.5">
+                Barista
+              </Badge>}
+            {item.property_names?.slice(0, 2).map(property => <Badge key={property} variant="category" className="text-xs font-medium px-1.5 py-0.5">
+                {property.replace(/_/g, ' ')}
+              </Badge>)}
+            {item.flavor_names?.slice(0, 1).map(flavor => <Badge key={flavor} variant="flavor" className="text-xs font-medium px-1.5 py-0.5">
+                {flavor}
+              </Badge>)}
+          </div>
+        </div>
         {/* Enhanced Photo Display */}
         {item.picture_path ? <div className="rounded-lg overflow-hidden shadow-sm">
             <img src={`https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/milk-pictures/${encodeURIComponent(item.picture_path)}`} alt={`${item.brand_name} ${item.product_name}`} className={cn("w-full h-64 sm:h-80 object-cover transition-transform duration-300 hover:scale-105", blurred && "blur-md")} onError={e => {
