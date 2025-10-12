@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Radio, BarChart3, Info, Mail } from "lucide-react";
+import { Home, Radio, BarChart3, Bell, User } from "lucide-react";
 
 const MobileFooter = () => {
   const location = useLocation();
@@ -50,20 +50,20 @@ const MobileFooter = () => {
               <span className="text-xs">Results</span>
             </Link>
             <Link 
-              to="/about" 
-              className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors ${getLinkClass("/about")}`}
-              style={getLinkStyle("/about")}
+              to="/notifications" 
+              className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors ${getLinkClass("/notifications")}`}
+              style={getLinkStyle("/notifications")}
             >
-              <Info className="w-5 h-5" />
-              <span className="text-xs">About</span>
+              <Bell className="w-5 h-5" />
+              <span className="text-xs">Notifications</span>
             </Link>
             <Link 
-              to="/contact" 
-              className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors ${getLinkClass("/contact")}`}
-              style={getLinkStyle("/contact")}
+              to="/profile" 
+              className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors ${getLinkClass("/profile")}`}
+              style={getLinkStyle("/profile")}
             >
-              <Mail className="w-5 h-5" />
-              <span className="text-xs">Contact</span>
+              <User className="w-5 h-5" />
+              <span className="text-xs">Profile</span>
             </Link>
           </div>
         </div>

@@ -21,6 +21,8 @@ import ResetPassword from "./pages/ResetPassword";
 import Feed from "./pages/Feed";
 import Wishlist from "./pages/Wishlist";
 import MobileApp from "./pages/MobileApp";
+import Notifications from "./pages/Notifications";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,6 +80,16 @@ const App = () => {
                 </ProtectedRoute>
               } />
               <Route path="/mobile-app" element={<MobileApp />} />
+              <Route path="/notifications" element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Toaster />
