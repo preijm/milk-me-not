@@ -29,31 +29,28 @@ const MobileFooter = () => {
           <div className="grid grid-cols-5 gap-1">
             <Link 
               to="/" 
-              className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-lg transition-colors ${getLinkClass("/")}`}
+              className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/")}`}
               style={getLinkStyle("/")}
             >
               <Home className="w-5 h-5" />
-              <span className="text-xs">Home</span>
             </Link>
             <Link 
               to="/feed" 
-              className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-lg transition-colors ${getLinkClass("/feed")}`}
+              className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/feed")}`}
               style={getLinkStyle("/feed")}
             >
               <Radio className="w-5 h-5" />
-              <span className="text-xs">Feed</span>
             </Link>
             <Link 
               to="/results" 
-              className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-lg transition-colors ${getLinkClass("/results")}`}
+              className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/results")}`}
               style={getLinkStyle("/results")}
             >
               <BarChart3 className="w-5 h-5" />
-              <span className="text-xs">Results</span>
             </Link>
             <Link 
               to="/notifications" 
-              className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-lg transition-colors ${getLinkClass("/notifications")}`}
+              className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/notifications")}`}
               style={getLinkStyle("/notifications")}
             >
               <div className="relative">
@@ -65,16 +62,13 @@ const MobileFooter = () => {
                   />
                 )}
               </div>
-              <span className="text-xs sm:hidden">Notifs</span>
-              <span className="text-xs hidden sm:inline">Notifications</span>
             </Link>
             <Link 
               to="/profile" 
-              className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-lg transition-colors ${getLinkClass("/profile")}`}
+              className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/profile")}`}
               style={getLinkStyle("/profile")}
             >
               <User className="w-5 h-5" />
-              <span className="text-xs">Profile</span>
             </Link>
           </div>
         </div>
