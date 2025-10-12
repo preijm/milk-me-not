@@ -250,9 +250,6 @@ export const FeedItem = ({
             </div>
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
-            {isOwnPost && <Button variant="ghost" size="sm" onClick={() => setEditingTest(item)} className="text-muted-foreground hover:text-foreground h-7 w-7 p-0">
-                <Edit3 className="h-3.5 w-3.5" />
-              </Button>}
             {renderRating(item.rating)}
           </div>
         </div>
@@ -345,7 +342,16 @@ export const FeedItem = ({
             </Button>
           </div>
 
-          <WishlistButton productId={item.product_id || ''} variant="outline" size="sm" className="rounded-full h-8 w-8 p-0" showText={false} />
+          {isOwnPost && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setEditingTest(item)} 
+              className="rounded-full h-8 w-8 p-0"
+            >
+              <Edit3 className="h-4 w-4" />
+            </Button>
+          )}
         </div>
 
         {/* Comments section */}
