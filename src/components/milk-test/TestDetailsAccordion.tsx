@@ -27,21 +27,41 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
     <Accordion type="single" collapsible className="w-full">
       {productTests.map((test) => (
         <AccordionItem key={test.id} value={test.id} className="border-b border-gray-200">
-          <AccordionTrigger className="hover:no-underline py-4 px-4">
-            <div className="flex items-center justify-between w-full pr-4">
-              <div className="flex items-center gap-3">
-                {/* Icon placeholder */}
-                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl">🥛</span>
-                </div>
-                
-                {/* User info */}
-                <div className="text-left">
-                  <div className="font-semibold text-gray-900" translate="no">
-                    {test.username || "Anonymous"}
+          <AccordionTrigger className="hover:no-underline py-3 px-4">
+            <div className="flex items-center justify-between w-full pr-4 gap-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                {/* Thumbnail */}
+                {test.picture_path ? (
+                  <div 
+                    className="h-12 w-12 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleImageClick(test.picture_path!);
+                    }}
+                  >
+                    <img 
+                      src={`${supabase.storage.from('milk-pictures').getPublicUrl(test.picture_path).data.publicUrl}`}
+                      alt="Product"
+                      className="object-cover w-full h-full"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
+                    />
                   </div>
+                ) : (
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center flex-shrink-0">
+                    <ImageIcon className="h-6 w-6 text-gray-400" />
+                  </div>
+                )}
+                
+                {/* Date and Tester */}
+                <div className="text-left flex-1 min-w-0">
                   <div className="text-sm text-gray-500">
-                    {new Date(test.created_at).toLocaleDateString()} • {test.shop_name || "Unknown shop"}
+                    {new Date(test.created_at).toLocaleDateString()}
+                  </div>
+                  <div className="font-medium text-gray-900 truncate" translate="no">
+                    {test.username || "Anonymous"}
                   </div>
                 </div>
               </div>
@@ -58,6 +78,14 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
           
           <AccordionContent className="px-4 pb-4">
             <div className="grid grid-cols-2 gap-4 mt-2">
+              {/* Shop */}
+              <div>
+                <div className="text-xs text-gray-500 mb-1">Shop</div>
+                <div className="font-medium text-gray-900" translate="no">
+                  {test.shop_name || "-"}
+                </div>
+              </div>
+
               {/* Style */}
               <div>
                 <div className="text-xs text-gray-500 mb-1">Style</div>
@@ -79,14 +107,6 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
                   {test.country_code || "-"}
                 </div>
               </div>
-
-              {/* Note */}
-              <div>
-                <div className="text-xs text-gray-500 mb-1">Note</div>
-                <div className="font-medium text-gray-900">
-                  {test.notes ? "Yes" : "-"}
-                </div>
-              </div>
             </div>
 
             {/* Notes text (if exists) */}
@@ -94,27 +114,6 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                 <div className="text-xs text-gray-500 mb-1">Notes</div>
                 <p className="text-sm text-gray-700">{test.notes}</p>
-              </div>
-            )}
-
-            {/* Image (if exists) */}
-            {test.picture_path && (
-              <div className="mt-4">
-                <div className="text-xs text-gray-500 mb-2">Product Image</div>
-                <div 
-                  className="w-full aspect-video relative overflow-hidden rounded-lg cursor-pointer border border-gray-200"
-                  onClick={() => handleImageClick(test.picture_path!)}
-                >
-                  <img 
-                    src={`${supabase.storage.from('milk-pictures').getPublicUrl(test.picture_path).data.publicUrl}`}
-                    alt="Product"
-                    className="object-cover w-full h-full"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                </div>
               </div>
             )}
           </AccordionContent>
