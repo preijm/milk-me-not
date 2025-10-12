@@ -16,19 +16,19 @@ export const FeedHeader = ({ username, createdAt, rating, blurred }: FeedHeaderP
   const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true }).replace('about ', '');
   
   return (
-    <div className="flex items-center justify-between gap-3">
-      <div className="flex items-center gap-2 flex-1 min-w-0">
+    <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start gap-3 flex-1 min-w-0">
         <Badge variant="category" className="w-9 h-9 rounded-full flex items-center justify-center p-0 font-semibold flex-shrink-0">
           {username?.charAt(0).toUpperCase() || 'U'}
         </Badge>
-        <div className="flex items-center gap-2 flex-wrap min-w-0">
+        <div className="flex flex-col gap-1 min-w-0">
           <span className={cn("font-semibold text-foreground", blurred && "blur-sm")} translate="no">
             {username}
           </span>
-          <Badge variant="outline" className="text-xs px-2 py-0.5 whitespace-nowrap">
-            <Clock className="h-3 w-3 mr-1" />
-            {timeAgo}
-          </Badge>
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Clock className="h-3.5 w-3.5" />
+            <span className="text-sm">{timeAgo}</span>
+          </div>
         </div>
       </div>
       <Badge variant={getScoreBadgeVariant(Number(rating))} className="flex-shrink-0">
