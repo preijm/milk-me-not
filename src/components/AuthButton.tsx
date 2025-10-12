@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LogIn, Settings, ChevronDown, Plus, Bookmark, Bell } from "lucide-react";
+import { LogIn, Settings, ChevronDown, Plus, Bookmark, Bell, ArrowRight } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
@@ -37,9 +37,14 @@ export const AuthButton = () => {
   }
   
   if (!user) {
-    return <Button onClick={handleAuth} variant="brand" className={isMobile ? "px-3" : "w-full"}>
-      <LogIn className="w-4 h-4 mr-2" />
+    return <Button 
+      onClick={handleAuth} 
+      className={`text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group ${isMobile ? "px-3" : "w-full"}`}
+      style={{backgroundColor: '#2144ff'}}
+    >
+      <LogIn className={`${isMobile ? "w-4 h-4" : "w-6 h-6 mr-2"} group-hover:rotate-12 transition-transform duration-300`} />
       {isMobile ? "Login" : "Login here"}
+      {!isMobile && <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />}
     </Button>;
   }
   
