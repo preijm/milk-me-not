@@ -27,26 +27,6 @@ const Notifications = () => {
         <MenuBar />
         <div className="pt-16 pb-20 min-h-screen">
           <div className="bg-white">
-            {/* Header with notifications info */}
-            <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white z-10">
-              <div className="flex items-center gap-3">
-                <div className="h-14 w-14 rounded-full flex items-center justify-center flex-shrink-0" style={{
-                  backgroundColor: '#00bf63'
-                }}>
-                  <Bell className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-semibold text-gray-900">Notifications</h1>
-                  {unreadCount > 0 && <p className="text-sm text-gray-500">{unreadCount} unread</p>}
-                </div>
-              </div>
-              {notifications.length > 0 && unreadCount > 0 && <button onClick={markAllAsRead} className="text-sm font-medium" style={{
-              color: '#00bf63'
-            }}>
-                  Mark all read
-                </button>}
-            </div>
-            
             <div className="px-0">
               <MobileNotificationList />
             </div>
