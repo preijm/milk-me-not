@@ -1,8 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Radio, BarChart3, Bell, User } from "lucide-react";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const MobileFooter = () => {
   const location = useLocation();
+  const { unreadCount } = useNotifications();
   
   const isActive = (path: string) => {
     if (path === "/" && location.pathname === "/") return true;
@@ -54,7 +56,15 @@ const MobileFooter = () => {
               className={`flex flex-col items-center justify-center gap-1 py-1.5 rounded-lg transition-colors ${getLinkClass("/notifications")}`}
               style={getLinkStyle("/notifications")}
             >
-              <Bell className="w-5 h-5" />
+              <div className="relative">
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <div 
+                    className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-red-500 rounded-full border border-white"
+                    aria-label={`${unreadCount} unread notifications`}
+                  />
+                )}
+              </div>
               <span className="text-xs sm:hidden">Notifs</span>
               <span className="text-xs hidden sm:inline">Notifications</span>
             </Link>
