@@ -4,14 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Filter, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface FilterOptions {
   barista: boolean;
   properties: string[];
   flavors: string[];
+  myResultsOnly: boolean;
 }
 
 interface ResultsFilterProps {
@@ -25,6 +28,7 @@ export const ResultsFilter = ({
 }: ResultsFilterProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { user } = useAuth();
 
   const {
     data: properties = []
@@ -82,15 +86,23 @@ export const ResultsFilter = ({
     });
   };
 
+  const handleMyResultsToggle = () => {
+    onFiltersChange({
+      ...filters,
+      myResultsOnly: !filters.myResultsOnly
+    });
+  };
+
   const clearAllFilters = () => {
     onFiltersChange({
       barista: false,
       properties: [],
-      flavors: []
+      flavors: [],
+      myResultsOnly: false
     });
   };
 
-  const hasActiveFilters = filters.barista || filters.properties.length > 0 || filters.flavors.length > 0;
+  const hasActiveFilters = filters.barista || filters.properties.length > 0 || filters.flavors.length > 0 || filters.myResultsOnly;
 
   return (
     <div className="flex items-center gap-2">
@@ -125,6 +137,23 @@ export const ResultsFilter = ({
                 </Button>
               )}
             </div>
+
+            {/* My Results Only - Only visible when logged in */}
+            {user && (
+              <div className="flex items-center space-x-2 pb-3 border-b">
+                <Checkbox
+                  id="myResults"
+                  checked={filters.myResultsOnly}
+                  onCheckedChange={handleMyResultsToggle}
+                />
+                <label
+                  htmlFor="myResults"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                >
+                  My results only
+                </label>
+              </div>
+            )}
 
             {/* Barista Filter */}
             <div>

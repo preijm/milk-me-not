@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useAggregatedResults, SortConfig } from "@/hooks/useAggregatedResults";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -14,10 +14,12 @@ import { MilkTestResult } from "@/types/milk-test";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
+import { useAuth } from "@/contexts/AuthContext";
 interface FilterOptions {
   barista: boolean;
   properties: string[];
   flavors: string[];
+  myResultsOnly: boolean;
 }
 const Results = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,7 +31,8 @@ const Results = () => {
   const [filters, setFilters] = useState<FilterOptions>({
     barista: false,
     properties: [],
-    flavors: []
+    flavors: [],
+    myResultsOnly: false
   });
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [selectedProductName, setSelectedProductName] = useState<string>("");
@@ -40,6 +43,21 @@ const Results = () => {
   } = useAggregatedResults(sortConfig);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { user } = useAuth();
+
+  // Fetch user's own tests to filter products
+  const { data: userTests = [] } = useQuery({
+    queryKey: ['user-tests-for-filter'],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data } = await supabase
+        .from('milk_tests_view')
+        .select('product_id')
+        .eq('user_id', user.id);
+      return data || [];
+    },
+    enabled: !!user && filters.myResultsOnly
+  });
 
   // Fetch properties and flavors to create key-to-name mapping
   const {
@@ -102,34 +120,44 @@ const Results = () => {
     
     navigate(`/product/${productId}`);
   };
-  const filteredResults = aggregatedResults.filter(result => {
-    const searchString = searchTerm.toLowerCase();
-    const matchesSearch = (result.brand_name || "").toLowerCase().includes(searchString) || (result.product_name || "").toLowerCase().includes(searchString);
+  const filteredResults = useMemo(() => {
+    return aggregatedResults.filter(result => {
+      const searchString = searchTerm.toLowerCase();
+      const matchesSearch = (result.brand_name || "").toLowerCase().includes(searchString) || (result.product_name || "").toLowerCase().includes(searchString);
 
-    // Filter by Barista
-    if (filters.barista && !result.is_barista) {
-      return false;
-    }
+      // Filter by My Results Only
+      if (filters.myResultsOnly && user) {
+        const userProductIds = new Set(userTests.map(t => t.product_id));
+        if (!userProductIds.has(result.product_id)) {
+          return false;
+        }
+      }
 
-    // Filter by Properties - convert keys to names for comparison
-    if (filters.properties.length > 0) {
-      const filterPropertyNames = filters.properties.map(key => propertyKeyToName.get(key)).filter(Boolean);
-      const hasMatchingProperty = filterPropertyNames.some(filterPropName => result.property_names?.includes(filterPropName));
-      if (!hasMatchingProperty) {
+      // Filter by Barista
+      if (filters.barista && !result.is_barista) {
         return false;
       }
-    }
 
-    // Filter by Flavors - convert keys to names for comparison
-    if (filters.flavors.length > 0) {
-      const filterFlavorNames = filters.flavors.map(key => flavorKeyToName.get(key)).filter(Boolean);
-      const hasMatchingFlavor = filterFlavorNames.some(filterFlavorName => result.flavor_names?.includes(filterFlavorName));
-      if (!hasMatchingFlavor) {
-        return false;
+      // Filter by Properties - convert keys to names for comparison
+      if (filters.properties.length > 0) {
+        const filterPropertyNames = filters.properties.map(key => propertyKeyToName.get(key)).filter(Boolean);
+        const hasMatchingProperty = filterPropertyNames.some(filterPropName => result.property_names?.includes(filterPropName));
+        if (!hasMatchingProperty) {
+          return false;
+        }
       }
-    }
-    return matchesSearch;
-  });
+
+      // Filter by Flavors - convert keys to names for comparison
+      if (filters.flavors.length > 0) {
+        const filterFlavorNames = filters.flavors.map(key => flavorKeyToName.get(key)).filter(Boolean);
+        const hasMatchingFlavor = filterFlavorNames.some(filterFlavorName => result.flavor_names?.includes(filterFlavorName));
+        if (!hasMatchingFlavor) {
+          return false;
+        }
+      }
+      return matchesSearch;
+    });
+  }, [aggregatedResults, searchTerm, filters, user, userTests, propertyKeyToName, flavorKeyToName]);
 
   // Convert AggregatedResult[] to MilkTestResult[] for MilkCharts component
   const chartsData: MilkTestResult[] = filteredResults.map(result => ({

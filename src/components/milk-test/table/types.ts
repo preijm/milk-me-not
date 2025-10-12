@@ -20,6 +20,7 @@ export interface FilterOptions {
   barista: boolean;
   properties: string[];
   flavors: string[];
+  myResultsOnly: boolean;
 }
 
 export interface BaseResultsProps {

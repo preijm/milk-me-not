@@ -14,6 +14,7 @@ interface FilterOptions {
   barista: boolean;
   properties: string[];
   flavors: string[];
+  myResultsOnly: boolean;
 }
 
 interface ResultsContainerProps {

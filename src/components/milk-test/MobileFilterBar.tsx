@@ -13,6 +13,7 @@ interface FilterOptions {
   barista: boolean;
   properties: string[];
   flavors: string[];
+  myResultsOnly: boolean;
 }
 
 interface MobileFilterBarProps {
@@ -97,7 +98,8 @@ export const MobileFilterBar = ({
     onFiltersChange({
       barista: false,
       properties: [],
-      flavors: []
+      flavors: [],
+      myResultsOnly: false
     });
     setIsFiltersOpen(false);
   };
