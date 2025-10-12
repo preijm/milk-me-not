@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 const MobileApp = () => {
   // Placeholder URLs - to be updated later
-  const androidDownloadUrl = "#";
+  const androidDownloadUrl = "https://median.co/share/nmxqdbd#apk";
   const iosDownloadUrl = "#";
   const androidStoreUrl = "#";
   const iosStoreUrl = "#";
