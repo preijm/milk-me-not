@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { AuthButton } from "@/components/AuthButton";
-import { Bell } from "lucide-react";
+import { Bell, Rss } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const MenuBar = () => {
@@ -13,7 +13,7 @@ const MenuBar = () => {
       case '/notifications':
         return null; // Handled separately for notifications
       case '/feed':
-        return 'Feed';
+        return null; // Handled separately for feed
       case '/results':
         return 'Results';
       case '/profile':
@@ -37,6 +37,7 @@ const MenuBar = () => {
   const isHomePage = location.pathname === '/';
   const isProfilePage = location.pathname === '/profile';
   const isNotificationsPage = location.pathname === '/notifications';
+  const isFeedPage = location.pathname === '/feed';
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
 
 
@@ -60,6 +61,13 @@ const MenuBar = () => {
                   <h1 className="text-lg font-semibold text-gray-900">Notifications</h1>
                   {unreadCount > 0 && <p className="text-xs text-gray-500">{unreadCount} unread</p>}
                 </div>
+              </div>
+            ) : isFeedPage ? (
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#00bf63' }}>
+                  <Rss className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-lg font-semibold text-gray-900">Feed</h1>
               </div>
             ) : (
               <h1 className="text-gray-800 text-xl font-semibold">{pageTitle}</h1>
