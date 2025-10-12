@@ -257,7 +257,7 @@ export const FeedItem = ({
 
       <CardContent className="space-y-3 pt-0">
         {/* Brand, Product Name and Badges - Above Picture */}
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1.5 flex-wrap pt-3 border-t border-border/50">
           <span className="text-sm font-medium text-foreground">
             <span translate="no">{item.brand_name}</span>
           </span>
