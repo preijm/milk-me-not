@@ -1,109 +1,138 @@
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import BackgroundPattern from "@/components/BackgroundPattern";
-import { Smartphone, Download, Copy, ExternalLink } from "lucide-react";
+import BackgroundPatternWithOverlay from "@/components/BackgroundPatternWithOverlay";
+import { Smartphone, Download, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 const MobileApp = () => {
-  const copyToClipboard = () => {
-    const repoUrl = "https://github.com/yourusername/mondriaan-goose";
-    navigator.clipboard.writeText(repoUrl);
-    toast.success("Repository link copied to clipboard!");
-  };
+  // Placeholder URLs - to be updated later
+  const androidDownloadUrl = "#";
+  const iosDownloadUrl = "#";
+  const androidStoreUrl = "#";
+  const iosStoreUrl = "#";
 
   return (
     <div className="min-h-screen">
       <MenuBar />
-      <BackgroundPattern>
-        <div className="container max-w-2xl mx-auto px-4 pt-24 pb-20">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 relative z-10">
-            {/* App Icon and Title */}
-            <div className="flex flex-col items-center mb-8">
-              <img 
-                src="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png" 
-                alt="Milk Me Not Logo" 
-                className="h-24 w-24 mb-4 rounded-2xl shadow-lg"
-              />
-              <h1 className="text-3xl font-bold text-gray-900">Milk Me Not</h1>
-            </div>
-
-            {/* Instructions */}
-            <div className="text-center mb-8">
-              <p className="text-gray-700 text-lg leading-relaxed">
-                Get the native mobile app experience on your Android or iOS device
+      <BackgroundPatternWithOverlay>
+        <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
+          <div className="container max-w-5xl mx-auto px-4 py-8 relative z-10">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-bold text-[#00bf63] mb-4">
+                Get the Mobile App
+              </h1>
+              <p className="text-lg text-gray-700">
+                Download Milk Me Not on your device for the best experience
               </p>
             </div>
 
-            {/* Installation Steps */}
-            <div className="space-y-4 mb-8">
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 bg-[#00bf63] text-white rounded-full text-sm">1</span>
-                  Export to GitHub
-                </h3>
-                <p className="text-gray-600 text-sm ml-8">
-                  Export this project to your GitHub repository using the export button
-                </p>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 bg-[#00bf63] text-white rounded-full text-sm">2</span>
-                  Clone and Setup
-                </h3>
-                <div className="text-gray-600 text-sm ml-8 space-y-2">
-                  <p>Clone your repository and run:</p>
-                  <code className="block bg-white px-3 py-2 rounded border border-gray-200 text-xs">
-                    npm install<br/>
-                    npx cap add android<br/>
-                    npm run build<br/>
-                    npx cap sync
-                  </code>
+            {/* Platform Tiles */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              {/* Android Tile */}
+              <div className="bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow">
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="h-20 w-20 rounded-full flex items-center justify-center bg-[#00bf62]">
+                    <Smartphone className="w-10 h-10 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-semibold text-gray-800">Android</h2>
+                  <p className="text-gray-700">
+                    Get the full native experience on your Android device. 
+                    Download the APK directly or get it from the Google Play Store.
+                  </p>
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 bg-[#00bf63] text-white rounded-full text-sm">3</span>
-                  Build and Run
-                </h3>
-                <p className="text-gray-600 text-sm ml-8">
-                  Open the project in Android Studio or Xcode and build the app
-                </p>
+              {/* iOS Tile */}
+              <div className="bg-white rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow">
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="h-20 w-20 rounded-full flex items-center justify-center bg-[#00bf62]">
+                    <Smartphone className="w-10 h-10 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-semibold text-gray-800">iOS</h2>
+                  <p className="text-gray-700">
+                    Experience Milk Me Not on your iPhone or iPad. 
+                    Download directly or visit the App Store for seamless installation.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-3">
-              <Button 
-                onClick={copyToClipboard}
-                variant="outline" 
-                className="w-full py-6 text-base"
-              >
-                <Copy className="mr-2 h-5 w-5" />
-                Copy repository link to clipboard
-              </Button>
-            </div>
+            {/* Download Buttons */}
+            <div className="bg-white rounded-lg shadow-md p-8">
+              <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+                Choose Your Download Method
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Direct Download Section */}
+                <div className="space-y-4">
+                  <h4 className="font-medium text-gray-700 text-center mb-4">Direct Download</h4>
+                  <Button 
+                    asChild
+                    className="w-full bg-[#00bf63] hover:bg-[#00bf63]/90 text-white"
+                    size="lg"
+                  >
+                    <a href={androidDownloadUrl} download>
+                      <Download className="mr-2 h-5 w-5" />
+                      Download Android APK
+                    </a>
+                  </Button>
+                  <Button 
+                    asChild
+                    className="w-full bg-[#00bf63] hover:bg-[#00bf63]/90 text-white"
+                    size="lg"
+                  >
+                    <a href={iosDownloadUrl} download>
+                      <Download className="mr-2 h-5 w-5" />
+                      Download iOS App
+                    </a>
+                  </Button>
+                </div>
 
-            {/* Footer Note */}
-            <div className="mt-8 text-center">
-              <p className="text-sm text-gray-600">
-                Need help? Learn more in our{" "}
+                {/* App Store Section */}
+                <div className="space-y-4">
+                  <h4 className="font-medium text-gray-700 text-center mb-4">Visit App Stores</h4>
+                  <Button 
+                    asChild
+                    variant="outline"
+                    className="w-full border-2 border-[#00bf63] text-[#00bf63] hover:bg-[#00bf63]/5"
+                    size="lg"
+                  >
+                    <a href={androidStoreUrl} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="mr-2 h-5 w-5" />
+                      Google Play Store
+                    </a>
+                  </Button>
+                  <Button 
+                    asChild
+                    variant="outline"
+                    className="w-full border-2 border-[#00bf63] text-[#00bf63] hover:bg-[#00bf63]/5"
+                    size="lg"
+                  >
+                    <a href={iosStoreUrl} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="mr-2 h-5 w-5" />
+                      Apple App Store
+                    </a>
+                  </Button>
+                </div>
+              </div>
+
+              <p className="text-sm text-gray-600 text-center mt-6">
+                Need help? Check our{" "}
                 <a 
                   href="https://docs.lovable.dev/features/mobile" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-[#2144ff] hover:underline inline-flex items-center gap-1"
+                  className="text-[#2144ff] hover:underline"
                 >
-                  documentation
-                  <ExternalLink className="h-3 w-3" />
+                  installation guide
                 </a>
               </p>
             </div>
           </div>
         </div>
-      </BackgroundPattern>
+      </BackgroundPatternWithOverlay>
       <MobileFooter />
     </div>
   );
