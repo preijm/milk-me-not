@@ -10,7 +10,7 @@ import { FeedItem } from "@/components/feed/FeedItem";
 import { MilkTestResult } from "@/types/milk-test";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader, LogIn, UserPlus } from "lucide-react";
+import { Loader, LogIn, UserPlus, Rss } from "lucide-react";
 const Feed = () => {
   const {
     user
@@ -65,6 +65,20 @@ const Feed = () => {
     return <div className="min-h-screen bg-white">
         <MenuBar />
         <div className="pt-16 pb-20 min-h-screen">
+          {/* Header */}
+          <div className="bg-white border-b px-4 py-4">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full flex items-center justify-center" style={{
+                backgroundColor: '#00bf63'
+              }}>
+                <Rss className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-800">Feed</h1>
+              </div>
+            </div>
+          </div>
+          
           <div className="container max-w-7xl mx-auto px-4 py-6">
             {isLoading ? <div className="flex items-center justify-center py-8">
                 <Loader className="h-8 w-8 animate-spin text-primary" />
