@@ -6,7 +6,7 @@ import { formatScore } from "@/lib/scoreFormatter";
 import { DrinkPreferenceIcon } from "./DrinkPreferenceIcon";
 import { PriceQualityBadge } from "./PriceQualityBadge";
 import { supabase } from "@/integrations/supabase/client";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, MapPin, DollarSign, Globe } from "lucide-react";
 
 interface TestDetailsAccordionProps {
   productTests: MilkTestResult[];
@@ -79,32 +79,48 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
           <AccordionContent className="px-4 pb-4">
             <div className="grid grid-cols-2 gap-4 mt-2">
               {/* Shop */}
-              <div>
-                <div className="text-xs text-gray-500 mb-1">Shop</div>
-                <div className="font-medium text-gray-900" translate="no">
-                  {test.shop_name || "-"}
+              <div className="flex items-start gap-2">
+                <MapPin className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="text-xs text-gray-500 mb-0.5">Shop</div>
+                  <div className="font-semibold text-gray-900" translate="no">
+                    {test.shop_name || "-"}
+                  </div>
                 </div>
               </div>
 
               {/* Style */}
-              <div>
-                <div className="text-xs text-gray-500 mb-1">Style</div>
-                <div className="flex items-center">
+              <div className="flex items-start gap-2">
+                <div className="mt-0.5 flex-shrink-0">
                   <DrinkPreferenceIcon preference={test.drink_preference} />
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500 mb-0.5">Style</div>
+                  <div className="font-semibold text-gray-900 capitalize">
+                    {test.drink_preference?.replace(/_/g, ' ') || "-"}
+                  </div>
                 </div>
               </div>
 
               {/* Price */}
-              <div>
-                <div className="text-xs text-gray-500 mb-1">Price</div>
-                <PriceQualityBadge priceQuality={test.price_quality_ratio} />
+              <div className="flex items-start gap-2">
+                <DollarSign className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="text-xs text-gray-500 mb-0.5">Price</div>
+                  <div className="font-semibold text-gray-900 capitalize">
+                    {test.price_quality_ratio?.replace(/_/g, ' ') || "-"}
+                  </div>
+                </div>
               </div>
 
               {/* Country */}
-              <div>
-                <div className="text-xs text-gray-500 mb-1">Country</div>
-                <div className="font-medium text-gray-900">
-                  {test.country_code || "-"}
+              <div className="flex items-start gap-2">
+                <Globe className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="text-xs text-gray-500 mb-0.5">Country</div>
+                  <div className="font-semibold text-gray-900">
+                    {test.country_code || "-"}
+                  </div>
                 </div>
               </div>
             </div>
