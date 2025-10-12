@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Milk, Sparkles, ArrowRight } from "lucide-react";
+import { Milk, Sparkles, ArrowRight, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
@@ -57,6 +57,24 @@ const Home = () => {
   };
   return <div className="min-h-dvh overflow-hidden">
       <MenuBar />
+      
+      {/* Mobile App Banner - Only visible on desktop */}
+      <div className="hidden md:block fixed top-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-2xl px-4">
+        <Link to="/mobile-app" className="block">
+          <div className="bg-gradient-to-r from-[#00bf63] to-[#2144ff] text-white rounded-lg shadow-lg p-4 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <Smartphone className="h-6 w-6 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold">Mobile App Available!</p>
+                  <p className="text-sm text-white/90">Get the native experience on Android & iOS</p>
+                </div>
+              </div>
+              <ArrowRight className="h-5 w-5 flex-shrink-0" />
+            </div>
+          </div>
+        </Link>
+      </div>
       
       {/* Enhanced Hero Section */}
       <BackgroundPattern>
