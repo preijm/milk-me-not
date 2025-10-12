@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { User, Shield, Bell, Database, HelpCircle } from "lucide-react";
+import { User, Shield, Bell, Database, HelpCircle, Menu } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -67,13 +67,25 @@ interface SettingsLayoutProps {
 }
 
 export default function SettingsLayout({ children, title }: SettingsLayoutProps) {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  
+  // Find the current section's icon
+  const currentItem = settingsItems.find(item => item.url === currentPath);
+  const CurrentIcon = currentItem?.icon || User;
+  
   return (
     <div className="min-h-screen">
       <MenuBar />
       <SidebarProvider>
-        <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <SidebarTrigger className="ml-2" />
-          <h1 className="text-lg font-semibold ml-4">{title}</h1>
+        <header className="h-16 md:h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
+          <SidebarTrigger className="md:ml-0">
+            <Menu className="h-6 w-6 md:h-4 md:w-4" />
+          </SidebarTrigger>
+          <div className="flex items-center gap-3 ml-3">
+            <CurrentIcon className="h-5 w-5 text-primary md:hidden" />
+            <h1 className="text-lg md:text-base font-semibold">{title}</h1>
+          </div>
         </header>
         
         <div className="flex min-h-screen w-full">
