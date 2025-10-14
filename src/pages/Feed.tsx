@@ -31,8 +31,15 @@ const Feed = () => {
       } = await supabase.rpc('get_all_milk_tests');
       if (error) throw error;
 
+      // Sort by created_at descending (newest first)
+      const sortedData = (data || []).sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return dateB - dateA;
+      });
+
       // Limit the results based on authentication status
-      const limitedData = (data || []).slice(0, user ? 50 : 4);
+      const limitedData = sortedData.slice(0, user ? 50 : 4);
       return limitedData as MilkTestResult[];
     }
   });
