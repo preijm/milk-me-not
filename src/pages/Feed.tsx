@@ -85,7 +85,7 @@ const Feed = () => {
                 <Loader className="h-8 w-8 animate-spin text-primary" />
               </div> : <>
                 <Masonry
-                  breakpointCols={1}
+                  breakpointCols={{ default: 2, 768: 2, 640: 1 }}
                   className="flex gap-6"
                   columnClassName="space-y-6"
                 >
