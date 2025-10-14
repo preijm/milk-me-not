@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 
 function NotificationItem({ notification, onMarkAsRead }: { 
   notification: Notification; 
@@ -23,6 +24,17 @@ function NotificationItem({ notification, onMarkAsRead }: {
     // Close the notifications dialog after navigating
     window.dispatchEvent(new Event("lov-close-notifications"));
   };
+
+  // Extract username from message (e.g., "Ilva liked your test" -> "Ilva")
+  const getUsername = (message: string) => {
+    const match = message.match(/^(\w+)/);
+    return match ? match[1] : "U";
+  };
+
+  const getInitials = (message: string) => {
+    const username = getUsername(message);
+    return username.charAt(0).toUpperCase();
+  };
   
   return (
     <div 
@@ -33,12 +45,9 @@ function NotificationItem({ notification, onMarkAsRead }: {
       onClick={handleClick}
     >
       <div className="flex items-start gap-3">
-        <div className={cn(
-          "rounded-full p-2 flex-shrink-0",
-          notification.type === 'like' ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600"
-        )}>
-          <IconComponent className="h-4 w-4" />
-        </div>
+        <Badge variant="category" className="w-8 h-8 rounded-full flex items-center justify-center p-0 font-semibold text-sm flex-shrink-0">
+          {getInitials(notification.message)}
+        </Badge>
         <div className="flex-1 min-w-0">
           <p className={cn("text-sm text-foreground", !notification.is_read && "font-semibold")}> 
             {notification.message}
@@ -46,6 +55,12 @@ function NotificationItem({ notification, onMarkAsRead }: {
           <p className="text-xs text-muted-foreground mt-1">
             {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
           </p>
+        </div>
+        <div className={cn(
+          "rounded-full p-2 flex-shrink-0",
+          notification.type === 'like' ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600"
+        )}>
+          <IconComponent className="h-4 w-4" />
         </div>
       </div>
     </div>

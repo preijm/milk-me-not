@@ -3,8 +3,7 @@ import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import { formatDistanceToNow, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
 function NotificationItem({
@@ -28,18 +27,12 @@ function NotificationItem({
     const match = message.match(/^(\w+)/);
     return match ? match[1] : "U";
   };
+
   const getInitials = (message: string) => {
     const username = getUsername(message);
     return username.charAt(0).toUpperCase();
   };
 
-  // Generate consistent color based on username
-  const getAvatarColor = (message: string) => {
-    const username = getUsername(message);
-    const colors = ['bg-pink-500', 'bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500', 'bg-red-500'];
-    const index = username.charCodeAt(0) % colors.length;
-    return colors[index];
-  };
   return <div className={cn("relative flex items-start gap-3 p-4 border-b cursor-pointer transition-colors", !notification.is_read && "bg-blue-50/50")} onClick={handleClick}>
       {/* Blue indicator for unread */}
       {!notification.is_read && <div className="absolute left-0 top-0 bottom-0 w-1" style={{
@@ -47,11 +40,9 @@ function NotificationItem({
     }} />}
       
       {/* Avatar */}
-      <Avatar className={cn("h-12 w-12 flex-shrink-0", getAvatarColor(notification.message))}>
-        <AvatarFallback className="text-white font-semibold">
-          {getInitials(notification.message)}
-        </AvatarFallback>
-      </Avatar>
+      <Badge variant="category" className="w-12 h-12 rounded-full flex items-center justify-center p-0 font-semibold text-base flex-shrink-0">
+        {getInitials(notification.message)}
+      </Badge>
       
       {/* Content */}
       <div className="flex-1 min-w-0">
