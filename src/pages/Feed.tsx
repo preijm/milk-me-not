@@ -82,7 +82,7 @@ const Feed = () => {
           <div className="container max-w-7xl mx-auto px-4 py-6">
             {isLoading ? <div className="flex items-center justify-center py-8">
                 <Loader className="h-8 w-8 animate-spin text-primary" />
-              </div> : <div className="columns-1 gap-6 space-y-6">
+              </div> : <div className="columns-1 gap-6">
                 {feedItems.map(item => <FeedItem key={item.id} item={item} blurred={!user} disabled={!user} />)}
                 
                 {/* Login prompt for non-authenticated users after preview items */}
@@ -153,7 +153,7 @@ const Feed = () => {
           {isLoading ? <div className="flex items-center justify-center py-8">
               <Loader className="h-8 w-8 animate-spin text-primary" />
             </div> : <>
-              <div className="columns-1 md:columns-2 xl:columns-3 gap-6 space-y-6">
+              <div className="columns-1 md:columns-2 xl:columns-3 gap-6">
                 {feedItems.map(item => (
                   <FeedItem key={item.id} item={item} blurred={!user} disabled={!user} />
                 ))}
