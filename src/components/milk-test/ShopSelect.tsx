@@ -2,13 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Plus } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { ShopSuggestions } from "./shop/ShopSuggestions";
-import { AddShopForm } from "./shop/AddShopForm";
 import { ShopSearchInput } from "./shop/ShopSearchInput";
 
 interface ShopSelectProps {
@@ -18,12 +13,11 @@ interface ShopSelectProps {
 }
 
 export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) => {
-  const [suggestions, setSuggestions] = useState<{ name: string; country_code: string }[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [userHasTyped, setUserHasTyped] = useState(false);
-  const [newShopName, setNewShopName] = useState("");
+  const [suggestions, setSuggestions] = useState<{ name: string; country_code: string }[]>([]);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [showAddNew, setShowAddNew] = useState(false);
   const { toast } = useToast();
-  const isMobile = useIsMobile();
 
   const { data: shops = [], refetch: refetchShops } = useQuery({
     queryKey: ['shops'],
@@ -44,47 +38,51 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
     },
   });
 
+  // Initialize input value from prop
   useEffect(() => {
-    // Only show suggestions if user has actively typed and there's input
-    if (!userHasTyped || inputValue.trim() === '') {
+    if (shop) {
+      setInputValue(shop);
+    }
+  }, [shop]);
+
+  // Update suggestions when input changes
+  useEffect(() => {
+    if (inputValue.trim() === '') {
       setSuggestions([]);
+      setShowAddNew(false);
       return;
     }
 
-    // Filter shops using case-insensitive matching
     const searchTerm = inputValue.toLowerCase();
-    const filteredShops = shops.filter(shop => {
-      const matchesSearch = shop.name.toLowerCase().includes(searchTerm);
-      return matchesSearch;
-    });
+    const filteredShops = shops.filter(s => 
+      s.name.toLowerCase().includes(searchTerm)
+    );
 
-    console.log('Search term:', searchTerm);
-    console.log('Filtered shops:', filteredShops);
-    
     setSuggestions(filteredShops);
-  }, [inputValue, shops, userHasTyped]);
+    
+    // Show "Add new" option if there's no exact match
+    const exactMatch = shops.some(s => 
+      s.name.toLowerCase() === searchTerm
+    );
+    setShowAddNew(!exactMatch && inputValue.trim().length > 0);
+  }, [inputValue, shops]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    // Clear the selected shop when typing
+    if (shop) {
+      setShop("");
+    }
+  };
 
   const handleSelectShop = (selectedShop: { name: string; country_code: string }) => {
     setInputValue(selectedShop.name);
     setShop(selectedShop.name);
-    setSuggestions([]);
-    setUserHasTyped(false); // Reset after selection
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    setUserHasTyped(true); // Mark that user has actively typed
-  };
-
-  const handleInputFocus = () => {
-    // Only show suggestions if field is empty or user has previously typed
-    if (inputValue.trim() === '' || userHasTyped) {
-      setUserHasTyped(true);
-    }
+    setIsDropdownVisible(false);
   };
 
   const handleAddNewShop = async () => {
-    if (!newShopName.trim()) {
+    if (!inputValue.trim()) {
       toast({
         title: "Missing information",
         description: "Please provide shop name",
@@ -97,7 +95,7 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
       const { error } = await supabase
         .from('shops')
         .insert({
-          name: newShopName.trim(),
+          name: inputValue.trim(),
           country_code: selectedCountry || null,
         });
 
@@ -108,11 +106,8 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
         description: "New shop has been added successfully",
       });
 
-      setNewShopName("");
-      
-      setInputValue(newShopName.trim());
-      setShop(newShopName.trim());
-      setSuggestions([]);
+      setShop(inputValue.trim());
+      setIsDropdownVisible(false);
       refetchShops();
     } catch (error) {
       console.error('Error adding shop:', error);
@@ -124,53 +119,22 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
     }
   };
 
-  useEffect(() => {
-    if (shop) {
-      setInputValue(shop);
-    }
-  }, [shop]);
-
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <ShopSearchInput
-            value={inputValue}
-            onChange={handleInputChange}
-            onFocus={handleInputFocus}
-          />
-          <ShopSuggestions
-            suggestions={suggestions}
-            onSelect={handleSelectShop}
-          />
-        </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button 
-              variant="outline"
-              size="icon"
-              className="shrink-0"
-              aria-label="Add new shop"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent 
-            className="p-0 w-[90vw] sm:w-64 bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl" 
-            align="end"
-            side="bottom"
-            sideOffset={8}
-          >
-            <div className="p-4">
-              <AddShopForm
-                newShopName={newShopName}
-                setNewShopName={setNewShopName}
-                onAdd={handleAddNewShop}
-              />
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
+    <div className="relative">
+      <ShopSearchInput
+        value={inputValue}
+        onChange={handleInputChange}
+        onFocus={() => setIsDropdownVisible(true)}
+        onBlur={() => setTimeout(() => setIsDropdownVisible(false), 200)}
+      />
+      <ShopSuggestions
+        suggestions={suggestions}
+        showAddNew={showAddNew}
+        inputValue={inputValue}
+        onSelect={handleSelectShop}
+        onAddNew={handleAddNewShop}
+        isVisible={isDropdownVisible}
+      />
     </div>
   );
 };
