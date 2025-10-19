@@ -137,15 +137,15 @@ export const FlavorSelector = ({
         
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
-            <Badge
-              variant="flavor"
-              role="button"
-              tabIndex={0}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 px-2 rounded-full border-purple-200 hover:bg-purple-50 hover:border-purple-300"
               aria-label="Add new flavor"
-              className="cursor-pointer"
             >
-              <Plus size={16} />
-            </Badge>
+              <Plus size={16} className="text-purple-600" />
+            </Button>
           </PopoverTrigger>
           <PopoverContent 
             className="p-0 w-64 bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl z-50" 
