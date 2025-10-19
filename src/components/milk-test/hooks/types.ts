@@ -48,5 +48,6 @@ export interface ProductSubmitParams {
 
 export interface ProductSubmitResult {
   productId: string | null;
+  brandId?: string;
   isDuplicate: boolean;
 }

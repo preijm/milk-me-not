@@ -23,6 +23,7 @@ import Wishlist from "./pages/Wishlist";
 import MobileApp from "./pages/MobileApp";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
+import AddProduct from "./pages/AddProduct";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +52,11 @@ const App = () => {
               <Route path="/add" element={
                 <ProtectedRoute>
                   <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/add-product" element={
+                <ProtectedRoute>
+                  <AddProduct />
                 </ProtectedRoute>
               } />
               <Route path="/my-results" element={

@@ -126,7 +126,7 @@ export const handleProductSubmit = async ({
       onOpenChange(false);
     }
     
-    return { productId, isDuplicate: false };
+    return { productId, brandId, isDuplicate: false };
     
   } catch (error) {
     console.error('Global error in product submission:', error);

@@ -1,7 +1,9 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ProductSearch } from "./ProductSearch";
 import { ProductRegistrationDialog } from "./registration-ui/ProductRegistrationDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProductInformationProps {
   brandId: string;
@@ -17,7 +19,19 @@ export const ProductInformation = ({
   setProductId,
 }: ProductInformationProps) => {
   const [isRegistrationDialogOpen, setIsRegistrationDialogOpen] = useState(false);
-  const [registrationKey, setRegistrationKey] = useState(0); // Add a key to force re-render
+  const [registrationKey, setRegistrationKey] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isMobile = useIsMobile();
+
+  // Check if we're returning from add-product page with a selected product
+  useEffect(() => {
+    if (location.state?.selectedProductId && location.state?.selectedBrandId) {
+      handleSelectProduct(location.state.selectedProductId, location.state.selectedBrandId);
+      // Clear the state
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
 
   const handleSelectProduct = (productId: string, brandId: string) => {
     console.log("ProductInformation: handleSelectProduct called with", { productId, brandId });
@@ -28,9 +42,13 @@ export const ProductInformation = ({
   };
 
   const handleAddNewProduct = () => {
-    // Increment the key to force the dialog to re-render with fresh state
-    setRegistrationKey(prevKey => prevKey + 1);
-    setIsRegistrationDialogOpen(true);
+    // On mobile/tablet, navigate to full page; on desktop, show dialog
+    if (isMobile) {
+      navigate('/add-product');
+    } else {
+      setRegistrationKey(prevKey => prevKey + 1);
+      setIsRegistrationDialogOpen(true);
+    }
   };
 
   const handleProductAdded = (productId: string, brandId: string) => {
@@ -52,12 +70,14 @@ export const ProductInformation = ({
         selectedProductId={productId}
       />
       
-      <ProductRegistrationDialog 
-        key={registrationKey} // Add a key to ensure fresh state on each open
-        open={isRegistrationDialogOpen}
-        onOpenChange={setIsRegistrationDialogOpen}
-        onSuccess={handleProductAdded}
-      />
+      {!isMobile && (
+        <ProductRegistrationDialog 
+          key={registrationKey}
+          open={isRegistrationDialogOpen}
+          onOpenChange={setIsRegistrationDialogOpen}
+          onSuccess={handleProductAdded}
+        />
+      )}
     </div>
   );
 };
