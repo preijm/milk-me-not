@@ -27,39 +27,60 @@ export const AddMilkTest = () => {
             handleSubmit(e);
           }
         }} className="space-y-6 md:space-y-8">
-          <ProductInformation 
-            brandId={formState.brandId} 
-            setBrandId={formSetters.setBrandId} 
-            productId={formState.productId} 
-            setProductId={formSetters.setProductId} 
-          />
+          {/* Product Information Section */}
+          <div className="bg-gradient-to-br from-emerald-50/30 to-blue-50/30 p-4 rounded-lg">
+            <ProductInformation 
+              brandId={formState.brandId} 
+              setBrandId={formSetters.setBrandId} 
+              productId={formState.productId} 
+              setProductId={formSetters.setProductId} 
+            />
+          </div>
 
+          {/* Separator */}
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+
+          {/* Rating Section */}
           <div className="space-y-3 md:space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Rating</h2>
-            <RatingSelect rating={formState.rating} setRating={formSetters.setRating} />
-            <ResponsiveNotesArea 
-              notes={formState.notes} 
-              setNotes={formSetters.setNotes} 
-              picture={formState.picture} 
-              picturePreview={formState.picturePreview} 
-              setPicture={formSetters.setPicture} 
-              setPicturePreview={formSetters.setPicturePreview} 
-            />
+            <div className="bg-gradient-to-br from-blue-50/30 to-purple-50/30 p-4 rounded-lg">
+              <RatingSelect rating={formState.rating} setRating={formSetters.setRating} />
+              <div className="mt-4">
+                <ResponsiveNotesArea 
+                  notes={formState.notes} 
+                  setNotes={formSetters.setNotes} 
+                  picture={formState.picture} 
+                  picturePreview={formState.picturePreview} 
+                  setPicture={formSetters.setPicture} 
+                  setPicturePreview={formSetters.setPicturePreview} 
+                />
+              </div>
+            </div>
           </div>
 
+          {/* Separator */}
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+
+          {/* Price Section */}
           <div className="space-y-3 md:space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Price-to-Quality Ratio</h2>
-            <PriceInput 
-              price={formState.price} 
-              setPrice={formSetters.setPrice} 
-              hasChanged={formState.priceHasChanged} 
-              setHasChanged={formSetters.setPriceHasChanged} 
-            />
+            <div className="bg-gradient-to-br from-amber-50/30 to-orange-50/30 p-4 rounded-lg">
+              <PriceInput 
+                price={formState.price} 
+                setPrice={formSetters.setPrice} 
+                hasChanged={formState.priceHasChanged} 
+                setHasChanged={formSetters.setPriceHasChanged} 
+              />
+            </div>
           </div>
 
+          {/* Separator */}
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+
+          {/* Location Section */}
           <div className="space-y-3 md:space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Buying Location</h2>
-            <div className="space-y-3">
+            <div className="bg-gradient-to-br from-green-50/30 to-emerald-50/30 p-4 rounded-lg space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Country <span className="text-red-500">*</span>
@@ -82,12 +103,18 @@ export const AddMilkTest = () => {
             </div>
           </div>
 
+          {/* Separator */}
+          <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+
+          {/* Drinking Style Section */}
           <div className="space-y-3 md:space-y-4">
             <h2 className="text-xl font-semibold text-gray-900">Drinking Style</h2>
-            <DrinkPreference 
-              preference={formState.drinkPreference} 
-              setPreference={formSetters.setDrinkPreference} 
-            />
+            <div className="bg-gradient-to-br from-purple-50/30 to-pink-50/30 p-4 rounded-lg">
+              <DrinkPreference 
+                preference={formState.drinkPreference} 
+                setPreference={formSetters.setDrinkPreference} 
+              />
+            </div>
           </div>
 
           <Button 
