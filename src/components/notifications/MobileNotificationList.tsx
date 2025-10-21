@@ -23,7 +23,7 @@ function NotificationItem({
   };
 
   // Parse the message: supports two formats:
-  // New format: "Username|ProductInfo|BARISTA|FLAVORS:flavor1,flavor2"
+  // New format: "Username|ProductInfo|BARISTA|PROPERTIES:prop1,prop2|FLAVORS:flavor1,flavor2"
   // Old format: "Username liked your test of ProductName"
   const parseMessage = (message: string) => {
     if (message.includes('|')) {
@@ -33,10 +33,13 @@ function NotificationItem({
       const productInfo = parts[1] || '';
       const isBarista = parts.includes('BARISTA');
       
+      const propertiesPart = parts.find(p => p.startsWith('PROPERTIES:'));
+      const properties = propertiesPart ? propertiesPart.replace('PROPERTIES:', '').split(',').filter(Boolean) : [];
+      
       const flavorsPart = parts.find(p => p.startsWith('FLAVORS:'));
       const flavors = flavorsPart ? flavorsPart.replace('FLAVORS:', '').split(',').filter(Boolean) : [];
       
-      return { username, productInfo, isBarista, flavors };
+      return { username, productInfo, isBarista, properties, flavors };
     } else {
       // Old format - extract username and product from text
       const match = message.match(/^(.+?)\s+liked your test(?:\s+of\s+(.+))?$/);
@@ -45,15 +48,16 @@ function NotificationItem({
           username: match[1] || '',
           productInfo: match[2] || '',
           isBarista: false,
+          properties: [],
           flavors: []
         };
       }
       // Fallback
-      return { username: '', productInfo: message, isBarista: false, flavors: [] };
+      return { username: '', productInfo: message, isBarista: false, properties: [], flavors: [] };
     }
   };
 
-  const { username, productInfo, isBarista, flavors } = parseMessage(notification.message);
+  const { username, productInfo, isBarista, properties, flavors } = parseMessage(notification.message);
 
   return <div className={cn("relative flex items-start gap-3 p-4 border-b cursor-pointer transition-colors", !notification.is_read && "bg-blue-50/50")} onClick={handleClick}>
       {/* Blue indicator for unread */}
@@ -80,6 +84,11 @@ function NotificationItem({
             {isBarista && (
               <Badge variant="barista" className="text-xs">Barista</Badge>
             )}
+            {properties.map((property) => (
+              <Badge key={property} variant="category" className="text-xs">
+                {property.replace(/_/g, ' ')}
+              </Badge>
+            ))}
             {flavors.map((flavor) => (
               <Badge key={flavor} variant="flavor" className="text-xs capitalize">
                 {flavor}
