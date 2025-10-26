@@ -65,6 +65,7 @@ export const ResultsContainer = ({
               sortConfig={sortConfig}
               onSort={handleSort}
               onClearSort={onClearSort}
+              resultsCount={filteredResults.length}
             />
           </div>
           <div className="pt-[150px] px-4">

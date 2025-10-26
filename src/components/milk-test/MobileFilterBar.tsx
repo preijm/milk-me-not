@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, SlidersHorizontal, User, Star, ArrowDown, ArrowUp } from "lucide-react";
+import { Search, SlidersHorizontal, User, Star, ArrowDown, ArrowUp, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -24,6 +24,7 @@ interface MobileFilterBarProps {
   sortConfig: SortConfig;
   onSort: (column: string) => void;
   onClearSort?: () => void;
+  resultsCount: number;
 }
 
 export const MobileFilterBar = ({
@@ -33,7 +34,8 @@ export const MobileFilterBar = ({
   onFiltersChange,
   sortConfig,
   onSort,
-  onClearSort
+  onClearSort,
+  resultsCount
 }: MobileFilterBarProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
@@ -109,7 +111,43 @@ export const MobileFilterBar = ({
       flavors: [],
       myResultsOnly: false
     });
-    setIsFiltersOpen(false);
+  };
+
+  const clearTypeFilters = () => {
+    onFiltersChange({
+      ...filters,
+      barista: false
+    });
+  };
+
+  const clearPropertyFilters = () => {
+    onFiltersChange({
+      ...filters,
+      properties: []
+    });
+  };
+
+  const clearFlavorFilters = () => {
+    onFiltersChange({
+      ...filters,
+      flavors: []
+    });
+  };
+
+  const handleRemoveFilter = (type: 'barista' | 'property' | 'flavor', value?: string) => {
+    if (type === 'barista') {
+      onFiltersChange({ ...filters, barista: false });
+    } else if (type === 'property' && value) {
+      onFiltersChange({
+        ...filters,
+        properties: filters.properties.filter(p => p !== value)
+      });
+    } else if (type === 'flavor' && value) {
+      onFiltersChange({
+        ...filters,
+        flavors: filters.flavors.filter(f => f !== value)
+      });
+    }
   };
 
   const activeFilterCount = 
@@ -131,6 +169,14 @@ export const MobileFilterBar = ({
       return <ArrowUp className="h-4 w-4" />;
     }
     return <ArrowDown className="h-4 w-4" />;
+  };
+
+  const getPropertyName = (key: string) => {
+    return properties.find(p => p.key === key)?.name || key;
+  };
+
+  const getFlavorName = (key: string) => {
+    return flavors.find(f => f.key === key)?.name || key;
   };
 
   return (
@@ -204,25 +250,35 @@ export const MobileFilterBar = ({
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-72 p-4" align="end">
-            <div className="space-y-4">
+          <PopoverContent className="w-72 p-0 max-h-[80vh] overflow-y-auto" align="end">
+            <div className="p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-medium">Filters</h3>
-                {activeFilterCount > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearAllFilters}
-                    className="text-xs"
-                  >
-                    Clear all
-                  </Button>
-                )}
+                <h3 className="font-semibold text-lg">Filters</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsFiltersOpen(false)}
+                  className="h-6 w-6"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
 
               {/* Barista Filter */}
               <div>
-                <h4 className="text-sm font-medium mb-2">Type</h4>
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-sm font-medium">Type</h4>
+                  {filters.barista && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearTypeFilters}
+                      className="text-xs h-auto py-1 text-primary"
+                    >
+                      Clear
+                    </Button>
+                  )}
+                </div>
                 <Badge
                   variant="barista"
                   className={`cursor-pointer transition-all ${
@@ -239,18 +295,30 @@ export const MobileFilterBar = ({
               {/* Properties Filter */}
               {properties.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium mb-2">Properties</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium">Properties</h4>
+                    {filters.properties.length > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearPropertyFilters}
+                        className="text-xs h-auto py-1 text-primary"
+                      >
+                        Clear
+                      </Button>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {properties.map(property => (
                       <Badge
-                        key={property.id}
-                        variant="category"
-                        className={`cursor-pointer transition-all ${
-                          filters.properties.includes(property.key)
-                            ? 'bg-slate-600 text-white border-slate-600 shadow-md'
-                            : 'hover:bg-slate-50'
-                        }`}
-                        onClick={() => handlePropertyToggle(property.key)}
+                      key={property.id}
+                      variant="category"
+                      className={`cursor-pointer transition-all ${
+                        filters.properties.includes(property.key)
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'bg-background text-foreground border-border hover:bg-muted'
+                      }`}
+                      onClick={() => handlePropertyToggle(property.key)}
                       >
                         {property.name}
                       </Badge>
@@ -262,18 +330,30 @@ export const MobileFilterBar = ({
               {/* Flavors Filter */}
               {flavors.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium mb-2">Flavors</h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium">Flavors</h4>
+                    {filters.flavors.length > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearFlavorFilters}
+                        className="text-xs h-auto py-1 text-primary"
+                      >
+                        Clear
+                      </Button>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {flavors.map(flavor => (
                       <Badge
-                        key={flavor.id}
-                        variant="flavor"
-                        className={`cursor-pointer transition-all ${
-                          filters.flavors.includes(flavor.key)
-                            ? 'bg-purple-600 text-white border-purple-600 shadow-md'
-                            : 'hover:bg-purple-50'
-                        }`}
-                        onClick={() => handleFlavorToggle(flavor.key)}
+                      key={flavor.id}
+                      variant="flavor"
+                      className={`cursor-pointer transition-all ${
+                        filters.flavors.includes(flavor.key)
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'bg-background text-foreground border-border hover:bg-muted'
+                      }`}
+                      onClick={() => handleFlavorToggle(flavor.key)}
                       >
                         {flavor.name}
                       </Badge>
@@ -282,8 +362,74 @@ export const MobileFilterBar = ({
                 </div>
               )}
             </div>
+
+            {/* Footer */}
+            <div className="border-t p-4 flex gap-2 bg-background sticky bottom-0">
+              <Button
+                variant="outline"
+                onClick={clearAllFilters}
+                className="flex-1"
+              >
+                Clear All
+              </Button>
+              <Button
+                onClick={() => setIsFiltersOpen(false)}
+                className="flex-1"
+              >
+                Show Results ({resultsCount})
+              </Button>
+            </div>
           </PopoverContent>
         </Popover>
+      </div>
+
+      {/* Active Filter Chips */}
+      {activeFilterCount > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {filters.barista && (
+            <Badge
+              variant="barista"
+              className="bg-primary text-primary-foreground px-3 py-1.5 flex items-center gap-1"
+            >
+              Barista
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => handleRemoveFilter('barista')}
+              />
+            </Badge>
+          )}
+          {filters.properties.map(propKey => (
+            <Badge
+              key={propKey}
+              variant="category"
+              className="bg-primary text-primary-foreground px-3 py-1.5 flex items-center gap-1"
+            >
+              {getPropertyName(propKey)}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => handleRemoveFilter('property', propKey)}
+              />
+            </Badge>
+          ))}
+          {filters.flavors.map(flavorKey => (
+            <Badge
+              key={flavorKey}
+              variant="flavor"
+              className="bg-primary text-primary-foreground px-3 py-1.5 flex items-center gap-1"
+            >
+              {getFlavorName(flavorKey)}
+              <X
+                className="h-3 w-3 cursor-pointer"
+                onClick={() => handleRemoveFilter('flavor', flavorKey)}
+              />
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {/* Results Count */}
+      <div className="text-sm text-foreground">
+        <span className="font-semibold">{resultsCount} products</span> match your filters
       </div>
     </div>
   );
