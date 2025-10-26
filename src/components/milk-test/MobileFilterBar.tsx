@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import { Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { Search, SlidersHorizontal, User, Star, ArrowDown, ArrowUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SortConfig } from "@/hooks/useAggregatedResults";
-import { ArrowUp, ArrowDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface FilterOptions {
@@ -130,66 +128,83 @@ export const MobileFilterBar = ({
   const currentSort = sortOptions.find(option => option.key === sortConfig.column);
   const getSortIcon = () => {
     if (sortConfig.direction === 'asc') {
-      return <ArrowUp className="h-3 w-3" />;
+      return <ArrowUp className="h-4 w-4" />;
     }
-    return <ArrowDown className="h-3 w-3" />;
+    return <ArrowDown className="h-4 w-4" />;
   };
 
   return (
     <div className="space-y-3">
       {/* Search Bar */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         <Input
-          placeholder="Search"
+          placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => handleSearchChange(e.target.value)}
-          className="pl-10 h-11 bg-white border-gray-200"
+          className="pl-11 h-12 bg-background border-border text-base"
           maxLength={100}
         />
       </div>
 
-      {/* My Results Only Checkbox - Visible when logged in */}
-      {user && (
-        <div className="flex items-center space-x-2 bg-white rounded-lg p-3 border border-gray-200">
-          <Checkbox
-            id="myResultsMobile"
-            checked={filters.myResultsOnly}
-            onCheckedChange={handleMyResultsToggle}
-          />
-          <label
-            htmlFor="myResultsMobile"
-            className="text-sm font-medium leading-none cursor-pointer select-none"
+      {/* Three Button Row */}
+      <div className="grid grid-cols-3 gap-2">
+        {/* My Results Button */}
+        {user && (
+          <Button
+            variant="outline"
+            onClick={handleMyResultsToggle}
+            className={`h-12 flex items-center justify-center gap-2 transition-colors ${
+              filters.myResultsOnly
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-background border-border'
+            }`}
           >
-            Show only my results
-          </label>
-        </div>
-      )}
+            <User className="h-5 w-5" />
+            <span className="text-sm font-medium">My Results</span>
+          </Button>
+        )}
 
-      {/* Filter Buttons Row */}
-      <div className="grid grid-cols-2 gap-2">
+        {/* Score Sort Button */}
+        <Button
+          variant="outline"
+          onClick={() => onSort('avg_rating')}
+          className={`h-12 flex items-center justify-center gap-2 ${
+            sortConfig.column === 'avg_rating'
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'bg-background border-border'
+          }`}
+        >
+          <Star className="h-5 w-5" />
+          <span className="text-sm font-medium">Score</span>
+          {sortConfig.column === 'avg_rating' && (
+            <span className="ml-1">
+              {getSortIcon()}
+            </span>
+          )}
+        </Button>
+
         {/* Filters Button */}
         <Popover open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
           <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="w-full h-10 px-4 bg-white border-gray-200 relative"
-              style={activeFilterCount > 0 ? {
-                backgroundColor: '#2144ff',
-                color: 'white',
-                borderColor: '#2144ff'
-              } : {}}
+            <Button
+              variant="outline"
+              className={`h-12 flex items-center justify-center gap-2 relative ${
+                activeFilterCount > 0
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-background border-border'
+              }`}
             >
-              <SlidersHorizontal className="h-4 w-4 mr-2" />
-              Filters
+              <SlidersHorizontal className="h-5 w-5" />
+              <span className="text-sm font-medium">Filters</span>
               {activeFilterCount > 0 && (
-                <span className="ml-2 bg-white text-[#2144ff] rounded-full px-2 py-0.5 text-xs font-semibold">
+                <span className="ml-1 bg-background text-primary rounded-full px-1.5 py-0.5 text-xs font-semibold min-w-[20px] text-center">
                   {activeFilterCount}
                 </span>
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-72 p-4" align="start">
+          <PopoverContent className="w-72 p-4" align="end">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">Filters</h3>
@@ -211,8 +226,8 @@ export const MobileFilterBar = ({
                 <Badge
                   variant="barista"
                   className={`cursor-pointer transition-all ${
-                    filters.barista 
-                      ? 'bg-amber-600 text-white border-amber-600 shadow-md' 
+                    filters.barista
+                      ? 'bg-amber-600 text-white border-amber-600 shadow-md'
                       : 'hover:bg-amber-50'
                   }`}
                   onClick={handleBaristaToggle}
@@ -266,61 +281,6 @@ export const MobileFilterBar = ({
                   </div>
                 </div>
               )}
-            </div>
-          </PopoverContent>
-        </Popover>
-
-        {/* Sort Button */}
-        <Popover open={isSortOpen} onOpenChange={setIsSortOpen}>
-          <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
-              className="w-full h-10 px-4 bg-white border-gray-200"
-            >
-              <ArrowUpDown className="h-4 w-4 mr-2" />
-              {currentSort?.label || 'Newest'}
-              {sortConfig.column && (
-                <span className="ml-1">
-                  {getSortIcon()}
-                </span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-48 p-4" align="start">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-medium">Sort by</h3>
-                {currentSort && onClearSort && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      onClearSort();
-                      setIsSortOpen(false);
-                    }}
-                    className="text-xs"
-                  >
-                    Clear
-                  </Button>
-                )}
-              </div>
-              {sortOptions.map((option) => (
-                <button
-                  key={option.key}
-                  onClick={() => {
-                    onSort(option.key);
-                    setIsSortOpen(false);
-                  }}
-                  className={`w-full text-left px-3 py-2 rounded-md transition-colors flex items-center justify-between ${
-                    sortConfig.column === option.key 
-                      ? 'bg-[#2144ff]/10 text-[#2144ff] font-medium' 
-                      : 'hover:bg-gray-100'
-                  }`}
-                >
-                  <span>{option.label}</span>
-                  {sortConfig.column === option.key && getSortIcon()}
-                </button>
-              ))}
             </div>
           </PopoverContent>
         </Popover>
