@@ -24,7 +24,7 @@ interface FilterOptions {
 const Results = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'most_recent_date',
+    column: 'avg_rating',
     direction: 'desc'
   });
   const [view, setView] = useState<'table' | 'charts' | 'map'>('table');
@@ -98,7 +98,7 @@ const Results = () => {
   };
   const handleClearSort = () => {
     setSortConfig({
-      column: 'most_recent_date',
+      column: 'avg_rating',
       direction: 'desc'
     });
   };
