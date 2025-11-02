@@ -115,8 +115,10 @@ function NotificationItem({
 }
 export function MobileNotificationList() {
   const { notifications, loading, markAsRead } = useNotifications();
-  const [recentOpen, setRecentOpen] = useState(true);
+  const [lastWeekOpen, setLastWeekOpen] = useState(true);
+  const [lastMonthOpen, setLastMonthOpen] = useState(true);
   const [earlierOpen, setEarlierOpen] = useState(true);
+  
   if (loading) {
     return <div className="p-4 text-center text-muted-foreground">
         Loading notifications...
@@ -130,22 +132,42 @@ export function MobileNotificationList() {
       </div>;
   }
 
-  // Group notifications by recency
+  // Group notifications by time period
   const now = new Date();
   const sevenDaysAgo = subDays(now, 7);
-  const recentNotifications = notifications.filter(n => new Date(n.created_at) > sevenDaysAgo);
-  const earlierNotifications = notifications.filter(n => new Date(n.created_at) <= sevenDaysAgo);
+  const thirtyDaysAgo = subDays(now, 30);
+  
+  const lastWeekNotifications = notifications.filter(n => new Date(n.created_at) > sevenDaysAgo);
+  const lastMonthNotifications = notifications.filter(n => {
+    const date = new Date(n.created_at);
+    return date <= sevenDaysAgo && date > thirtyDaysAgo;
+  });
+  const earlierNotifications = notifications.filter(n => new Date(n.created_at) <= thirtyDaysAgo);
   return <div className="w-full pt-5">
-      {recentNotifications.length > 0 && (
-        <Collapsible open={recentOpen} onOpenChange={setRecentOpen}>
+      {lastWeekNotifications.length > 0 && (
+        <Collapsible open={lastWeekOpen} onOpenChange={setLastWeekOpen}>
           <CollapsibleTrigger className="w-full">
             <div className="px-4 py-3 bg-gray-100 flex items-center justify-between">
-              <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Recent</h3>
-              <ChevronDown className={cn("h-4 w-4 text-gray-600 transition-transform", recentOpen && "rotate-180")} />
+              <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Last Week</h3>
+              <ChevronDown className={cn("h-4 w-4 text-gray-600 transition-transform", lastWeekOpen && "rotate-180")} />
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            {recentNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={markAsRead} />)}
+            {lastWeekNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={markAsRead} />)}
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+      
+      {lastMonthNotifications.length > 0 && (
+        <Collapsible open={lastMonthOpen} onOpenChange={setLastMonthOpen}>
+          <CollapsibleTrigger className="w-full">
+            <div className="px-4 py-3 bg-gray-100 flex items-center justify-between">
+              <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Last Month</h3>
+              <ChevronDown className={cn("h-4 w-4 text-gray-600 transition-transform", lastMonthOpen && "rotate-180")} />
+            </div>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            {lastMonthNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={markAsRead} />)}
           </CollapsibleContent>
         </Collapsible>
       )}
