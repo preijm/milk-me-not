@@ -195,22 +195,6 @@ export const MobileFilterBar = ({
 
       {/* Three Button Row */}
       <div className="grid grid-cols-3 gap-2">
-        {/* My Results Button */}
-        {user && (
-          <Button
-            variant="outline"
-            onClick={handleMyResultsToggle}
-            className={`h-12 flex items-center justify-center gap-2 transition-colors ${
-              filters.myResultsOnly
-                ? 'bg-primary text-primary-foreground border-primary'
-                : 'bg-background border-border'
-            }`}
-          >
-            <User className="h-5 w-5" />
-            <span className="text-sm font-medium">My Results</span>
-          </Button>
-        )}
-
         {/* Score Sort Button */}
         <Button
           variant="outline"
@@ -381,6 +365,22 @@ export const MobileFilterBar = ({
             </div>
           </PopoverContent>
         </Popover>
+
+        {/* My Results Button */}
+        {user && (
+          <Button
+            variant="outline"
+            onClick={handleMyResultsToggle}
+            className={`h-12 flex items-center justify-center gap-2 transition-colors ${
+              filters.myResultsOnly
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-background border-border'
+            }`}
+          >
+            <User className="h-5 w-5" />
+            <span className="text-sm font-medium">My Results</span>
+          </Button>
+        )}
       </div>
 
       {/* Active Filter Chips */}
