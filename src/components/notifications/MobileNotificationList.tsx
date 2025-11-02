@@ -114,7 +114,7 @@ function NotificationItem({
     </div>;
 }
 export function MobileNotificationList() {
-  const { notifications, loading } = useNotifications();
+  const { notifications, loading, markAsRead } = useNotifications();
   const [recentOpen, setRecentOpen] = useState(true);
   const [earlierOpen, setEarlierOpen] = useState(true);
   if (loading) {
@@ -145,7 +145,7 @@ export function MobileNotificationList() {
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            {recentNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={() => {}} />)}
+            {recentNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={markAsRead} />)}
           </CollapsibleContent>
         </Collapsible>
       )}
@@ -159,7 +159,7 @@ export function MobileNotificationList() {
             </div>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            {earlierNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={() => {}} />)}
+            {earlierNotifications.map(notification => <NotificationItem key={notification.id} notification={notification} onMarkAsRead={markAsRead} />)}
           </CollapsibleContent>
         </Collapsible>
       )}
