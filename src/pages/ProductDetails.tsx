@@ -170,49 +170,51 @@ const ProductDetails = () => {
             </Link>
           </div>
 
-          {/* Product header card - matching results page style */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-2 border-gray-300 p-4 animate-fade-in max-w-sm w-full mb-6">
-            <div className="space-y-2">
-              {/* Brand - Product with inline badges */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-sm font-semibold text-gray-900">
-                  <span translate="no">{product.brand_name}</span> - {product.product_name}
-                </h2>
-                {(product.is_barista || (product.property_names && product.property_names.length > 0) || (product.flavor_names && product.flavor_names.length > 0)) && (
-                  <ProductPropertyBadges 
-                    isBarista={product.is_barista}
-                    propertyNames={product.property_names}
-                    flavorNames={product.flavor_names}
-                    compact={true}
-                    displayType="all"
-                    inline={true}
-                  />
-                )}
-              </div>
-              
-              {/* Score and Tests in horizontal layout */}
-              <div className="flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-500">Score:</span>
-                  <Badge variant={getScoreBadgeVariant(Number(product.avg_rating))} className="px-2 py-1 sm:px-2 sm:py-0.5 text-xs font-bold min-w-[2.5rem] flex items-center justify-center">
-                    {formatScore(Number(product.avg_rating))}
-                  </Badge>
+          {/* Combined comprehensive card */}
+          <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-gray-300 overflow-hidden animate-fade-in">
+            {/* Product header section */}
+            <CardHeader className="bg-white/50 backdrop-blur-sm pt-6 px-6 pb-4 border-b border-gray-200">
+              <div className="space-y-3">
+                {/* Brand - Product with inline badges */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <CardTitle className="text-xl font-semibold text-gray-900 m-0">
+                    <span translate="no">{product.brand_name}</span> - {product.product_name}
+                  </CardTitle>
+                  {(product.is_barista || (product.property_names && product.property_names.length > 0) || (product.flavor_names && product.flavor_names.length > 0)) && (
+                    <ProductPropertyBadges 
+                      isBarista={product.is_barista}
+                      propertyNames={product.property_names}
+                      flavorNames={product.flavor_names}
+                      compact={true}
+                      displayType="all"
+                      inline={true}
+                    />
+                  )}
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-500">Tests:</span>
-                  <Badge variant="testCount" className="px-1.5 py-1 sm:px-2 sm:py-0.5 text-xs font-medium min-w-[2rem] flex items-center justify-center">
-                    {product.count}
-                  </Badge>
+                
+                {/* Score and Tests in horizontal layout */}
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-500">Score:</span>
+                    <Badge variant={getScoreBadgeVariant(Number(product.avg_rating))} className="px-2 py-1 sm:px-2 sm:py-0.5 text-xs font-bold min-w-[2.5rem] flex items-center justify-center">
+                      {formatScore(Number(product.avg_rating))}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-500">Tests:</span>
+                    <Badge variant="testCount" className="px-1.5 py-1 sm:px-2 sm:py-0.5 text-xs font-medium min-w-[2rem] flex items-center justify-center">
+                      {product.count}
+                    </Badge>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden animate-fade-in">
-            <CardHeader className="bg-white/50 backdrop-blur-sm pt-6 px-6">
-              <CardTitle className="text-xl">Individual Tests</CardTitle>
             </CardHeader>
+
+            {/* Individual tests section */}
             <CardContent className="p-0">
+              <div className="px-6 pt-4 pb-2">
+                <h3 className="text-lg font-semibold text-gray-900">Individual Tests</h3>
+              </div>
               {isLoadingTests ? (
                 <div className="text-center py-8">Loading test results...</div>
               ) : (
