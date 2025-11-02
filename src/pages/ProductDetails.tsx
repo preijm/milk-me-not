@@ -212,7 +212,7 @@ const ProductDetails = () => {
 
             {/* Individual tests section */}
             <CardContent className="p-0">
-              <div className="px-6 pt-4 pb-2 hidden lg:block">
+              <div className="px-6 pt-4 pb-2">
                 <h3 className="text-lg font-semibold text-gray-900">Individual Tests</h3>
               </div>
               {isLoadingTests ? (
