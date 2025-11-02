@@ -21,7 +21,7 @@ export const ResultCard = ({
 }: ResultCardProps) => {
   return (
     <div
-      className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-4 cursor-pointer hover:shadow-xl transition-shadow animate-fade-in max-w-sm w-full"
+      className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-2 border-gray-300 p-4 cursor-pointer hover:shadow-xl transition-shadow animate-fade-in max-w-sm w-full"
       onClick={() => onProductClick(result.product_id)}
     >
       <div className="space-y-2">
