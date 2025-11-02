@@ -91,7 +91,7 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
 
               {/* Style */}
               <div className="flex items-start gap-2">
-                <div className="mt-0.5 flex-shrink-0">
+                <div className="mt-0.5 flex-shrink-0 text-gray-400">
                   <DrinkPreferenceIcon preference={test.drink_preference} />
                 </div>
                 <div>
