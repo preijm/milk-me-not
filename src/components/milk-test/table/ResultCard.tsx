@@ -39,7 +39,7 @@ export const ResultCard = ({
       } animate-fade-in`}
       onClick={handleClick}
     >
-      <div className="space-y-3">
+      <div className="space-y-2">
         {/* Top row: Product name and Score badge */}
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-base font-semibold text-gray-900 flex-1">
@@ -69,14 +69,17 @@ export const ResultCard = ({
           </div>
         )}
         
-        {/* Bottom row: Test count and Date */}
-        <div className="flex items-center justify-between text-sm pt-1">
-          <div className="flex items-center gap-1.5 text-gray-600">
-            <ClipboardList className="w-4 h-4" />
-            <span>{result.count} test{result.count !== 1 ? 's' : ''}</span>
-          </div>
-          <div className="text-gray-500">
-            {format(new Date(result.most_recent_date), 'MMM dd, yyyy')}
+        {/* Separator line */}
+        <div className="border-t border-gray-200 pt-2">
+          {/* Bottom row: Test count and Date */}
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-1.5 text-gray-600">
+              <ClipboardList className="w-4 h-4" />
+              <span>{result.count} test{result.count !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="text-gray-500">
+              {format(new Date(result.most_recent_date), 'MMM dd, yyyy')}
+            </div>
           </div>
         </div>
       </div>
