@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageIcon } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -20,7 +20,6 @@ import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import { formatScore } from "@/lib/scoreFormatter";
 import { TestDetailsAccordion } from "./TestDetailsAccordion";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TestDetailsTableProps {
   productTests: MilkTestResult[];
@@ -38,10 +37,21 @@ export const TestDetailsTable = ({
   sortConfig,
   handleSort
 }: TestDetailsTableProps) => {
-  const isMobile = useIsMobile();
+  const [isTabletOrMobile, setIsTabletOrMobile] = useState(false);
+
+  // Detect if device is tablet or mobile (< 1024px)
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsTabletOrMobile(window.innerWidth < 1024);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Use accordion on mobile/tablet (below 1024px)
-  if (isMobile || (typeof window !== 'undefined' && window.innerWidth < 1024)) {
+  if (isTabletOrMobile) {
     return <TestDetailsAccordion productTests={productTests} handleImageClick={handleImageClick} />;
   }
 
