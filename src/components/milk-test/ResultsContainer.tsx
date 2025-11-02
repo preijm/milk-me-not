@@ -68,7 +68,7 @@ export const ResultsContainer = ({
               resultsCount={filteredResults.length}
             />
           </div>
-          <div className="pt-[180px]">
+          <div className={filters.barista || filters.properties.length > 0 || filters.flavors.length > 0 ? "pt-[180px]" : "pt-[150px]"}>
             <AggregatedResultsTable
               results={filteredResults}
               sortConfig={sortConfig}
