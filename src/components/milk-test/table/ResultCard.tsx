@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 import { Badge } from "@/components/ui/badge";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
@@ -19,10 +19,24 @@ export const ResultCard = ({
   filters,
   onFiltersChange
 }: ResultCardProps) => {
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleClick = () => {
+    setIsClicked(true);
+    onProductClick(result.product_id);
+    
+    // Reset animation after it completes
+    setTimeout(() => setIsClicked(false), 600);
+  };
+
   return (
     <div
-      className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-4 cursor-pointer hover:shadow-xl transition-shadow animate-fade-in max-w-sm w-full"
-      onClick={() => onProductClick(result.product_id)}
+      className={`bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4 cursor-pointer hover:shadow-xl transition-all max-w-sm w-full ${
+        isClicked 
+          ? 'border-2 border-primary animate-pulse' 
+          : 'border border-white/20'
+      } animate-fade-in`}
+      onClick={handleClick}
     >
       <div className="space-y-2">
         {/* Brand - Product with inline badges */}
