@@ -62,12 +62,9 @@ export const ResultCard = ({
               </div>
             )}
           </div>
-          <div className="flex-shrink-0">
-            <div className="bg-green-500 text-white rounded-lg px-3 py-2 flex flex-col items-center justify-center min-w-[60px]">
-              <div className="text-xl font-bold leading-none">{formatScore(result.avg_rating)}</div>
-              <div className="text-[10px] font-medium uppercase tracking-wide mt-0.5">Score</div>
-            </div>
-          </div>
+          <Badge variant={getScoreBadgeVariant(result.avg_rating)} className="flex-shrink-0">
+            {formatScore(result.avg_rating)}
+          </Badge>
         </div>
         
         {/* Separator line */}
