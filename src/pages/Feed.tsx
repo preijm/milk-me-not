@@ -71,8 +71,8 @@ const Feed = () => {
       return () => clearTimeout(timer);
     }
   }, [highlightTestId, feedItems]);
-  // Check if device is mobile or tablet (up to 1024px)
-  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
+  // Check if device is mobile or tablet (up to 768px)
+  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 768;
 
   // Mobile/Tablet layout with white background
   if (isMobileOrTablet) {
@@ -161,7 +161,7 @@ const Feed = () => {
               <Loader className="h-8 w-8 animate-spin text-primary" />
             </div> : <>
               <Masonry
-                breakpointCols={{ default: 3, 1280: 3, 768: 2, 640: 1 }}
+                breakpointCols={{ default: 3, 1024: 2, 768: 1 }}
                 className="flex gap-6"
                 columnClassName="space-y-6"
               >
