@@ -9,7 +9,7 @@ import { TestDetailsTable } from "@/components/milk-test/TestDetailsTable";
 import { ImageModal } from "@/components/milk-test/ImageModal";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BarChart3 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -160,82 +160,70 @@ const ProductDetails = () => {
         productName={product?.product_name}
       />
       <BackgroundPattern>
-        <div className="container max-w-5xl mx-auto px-4 py-8 pt-32 relative z-10 pb-24">
-          {/* Unified Card Container */}
-          <Card className="bg-card/95 backdrop-blur-sm rounded-2xl shadow-xl border border-border overflow-hidden animate-fade-in">
-            {/* Header Section */}
-            <CardHeader className="bg-gradient-to-br from-primary/10 via-primary/5 to-background p-6 space-y-4">
-              {/* Back Button and Icon */}
-              <div className="flex items-center justify-between">
-                <Link to="/results">
-                  <Button variant="outline" size="sm" className="gap-2 bg-background/80 backdrop-blur-sm hover:bg-background">
-                    <ArrowLeft className="h-4 w-4" /> Back to results
-                  </Button>
-                </Link>
-                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/20 backdrop-blur-sm">
-                  <BarChart3 className="h-8 w-8 text-primary" />
-                </div>
-              </div>
+        <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
+          {/* Desktop: Show back button */}
+          <div className="hidden lg:flex items-center mb-6">
+            <Link to="/results">
+              <Button variant="outline" size="sm" className="gap-1">
+                <ArrowLeft className="h-4 w-4" /> Back to results
+              </Button>
+            </Link>
+          </div>
 
-              {/* Product Title Section */}
-              <div className="space-y-3">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+          {/* Product header card - matching results page style */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-2 border-gray-300 p-4 animate-fade-in max-w-sm w-full mb-6">
+            <div className="space-y-2">
+              {/* Brand - Product with inline badges */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-sm font-semibold text-gray-900">
                   <span translate="no">{product.brand_name}</span> - {product.product_name}
-                </h1>
-                
-                {/* Product Badges */}
+                </h2>
                 {(product.is_barista || (product.property_names && product.property_names.length > 0) || (product.flavor_names && product.flavor_names.length > 0)) && (
-                  <div className="flex flex-wrap gap-2">
-                    <ProductPropertyBadges 
-                      isBarista={product.is_barista}
-                      propertyNames={product.property_names}
-                      flavorNames={product.flavor_names}
-                      compact={false}
-                      displayType="all"
-                      inline={false}
-                    />
-                  </div>
-                )}
-
-                {/* Stats Bar */}
-                <div className="flex items-center gap-6 pt-2">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground">Score</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-3xl font-bold text-primary">
-                        {formatScore(Number(product.avg_rating))}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="h-12 w-px bg-border"></div>
-                  <div className="flex flex-col">
-                    <span className="text-sm text-muted-foreground">Tests</span>
-                    <span className="text-3xl font-bold text-foreground">
-                      {product.count}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardHeader>
-
-            {/* Test Results Section */}
-            <div className="bg-background/50">
-              <div className="px-6 py-4 border-b border-border bg-background/80">
-                <h2 className="text-lg font-semibold text-foreground">Test Results</h2>
-              </div>
-              <CardContent className="p-0">
-                {isLoadingTests ? (
-                  <div className="text-center py-12 text-muted-foreground">Loading test results...</div>
-                ) : (
-                  <TestDetailsTable 
-                    productTests={productTests} 
-                    handleImageClick={handleImageClick}
-                    sortConfig={sortConfig}
-                    handleSort={handleSort}
+                  <ProductPropertyBadges 
+                    isBarista={product.is_barista}
+                    propertyNames={product.property_names}
+                    flavorNames={product.flavor_names}
+                    compact={true}
+                    displayType="all"
+                    inline={true}
                   />
                 )}
-              </CardContent>
+              </div>
+              
+              {/* Score and Tests in horizontal layout */}
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-500">Score:</span>
+                  <Badge variant={getScoreBadgeVariant(Number(product.avg_rating))} className="px-2 py-1 sm:px-2 sm:py-0.5 text-xs font-bold min-w-[2.5rem] flex items-center justify-center">
+                    {formatScore(Number(product.avg_rating))}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-500">Tests:</span>
+                  <Badge variant="testCount" className="px-1.5 py-1 sm:px-2 sm:py-0.5 text-xs font-medium min-w-[2rem] flex items-center justify-center">
+                    {product.count}
+                  </Badge>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden animate-fade-in">
+            <CardHeader className="bg-white/50 backdrop-blur-sm pt-6 px-6">
+              <CardTitle className="text-xl">Individual Tests</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              {isLoadingTests ? (
+                <div className="text-center py-8">Loading test results...</div>
+              ) : (
+                <TestDetailsTable 
+                  productTests={productTests} 
+                  handleImageClick={handleImageClick}
+                  sortConfig={sortConfig}
+                  handleSort={handleSort}
+                />
+              )}
+            </CardContent>
           </Card>
         </div>
       </BackgroundPattern>
