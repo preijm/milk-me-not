@@ -97,9 +97,9 @@ export const ResultsContainer = ({
               />
             </div>
             
-            {/* My Results Only Checkbox - Visible when logged in */}
+            {/* My Results Only Checkbox - Hidden on desktop/tablet, visible on mobile only */}
             {user && (
-              <div className="flex items-center space-x-2 mt-4 pl-1">
+              <div className="flex items-center space-x-2 mt-4 pl-1 md:hidden">
                 <Checkbox
                   id="myResultsMain"
                   checked={filters.myResultsOnly}
