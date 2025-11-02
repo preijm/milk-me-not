@@ -199,15 +199,6 @@ const ProductDetails = () => {
                     {formatScore(Number(product.avg_rating))}
                   </Badge>
                 </div>
-                
-                {/* Separator line */}
-                <div className="border-t border-gray-200 pt-2">
-                  {/* Bottom row: Test count */}
-                  <div className="flex items-center gap-1.5 text-sm text-gray-600">
-                    <ClipboardList className="w-4 h-4" />
-                    <span>{product.count} test{product.count !== 1 ? 's' : ''}</span>
-                  </div>
-                </div>
               </div>
             </CardHeader>
 
