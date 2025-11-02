@@ -5,11 +5,10 @@ import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { SortConfig, useProductTests } from "@/hooks/useProductTests";
-import { TestDetailsTable } from "@/components/milk-test/TestDetailsTable";
 import { ImageModal } from "@/components/milk-test/ImageModal";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -19,6 +18,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import { formatScore } from "@/lib/scoreFormatter";
 import { Badge } from "@/components/ui/badge";
+import Masonry from 'react-masonry-css';
+import { FeedItem } from "@/components/feed/FeedItem";
 
 type ProductDetails = {
   product_id: string;
@@ -151,6 +152,90 @@ const ProductDetails = () => {
     );
   }
 
+  // Check if device is mobile or tablet (up to 1024px)
+  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
+
+  // Mobile/Tablet layout with white background
+  if (isMobileOrTablet) {
+    return (
+      <div className="min-h-screen bg-white">
+        <MenuBar />
+        <LoginPrompt 
+          isOpen={showLoginPrompt}
+          onClose={() => setShowLoginPrompt(false)}
+          productName={product?.product_name}
+        />
+        <div className="container mx-auto px-4 py-8 pt-24">
+          {/* Product header card */}
+          <Card className="mb-6 bg-white shadow-md rounded-2xl border border-gray-200">
+            <CardHeader className="pb-4">
+              <div className="space-y-3">
+                {/* Brand - Product with inline badges */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <CardTitle className="text-xl font-semibold text-gray-900 m-0">
+                    <span translate="no">{product.brand_name}</span> - {product.product_name}
+                  </CardTitle>
+                  {(product.is_barista || (product.property_names && product.property_names.length > 0) || (product.flavor_names && product.flavor_names.length > 0)) && (
+                    <ProductPropertyBadges 
+                      isBarista={product.is_barista}
+                      propertyNames={product.property_names}
+                      flavorNames={product.flavor_names}
+                      compact={true}
+                      displayType="all"
+                      inline={true}
+                    />
+                  )}
+                </div>
+                
+                {/* Score and Tests in horizontal layout */}
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-500">Score:</span>
+                    <Badge variant={getScoreBadgeVariant(Number(product.avg_rating))} className="px-2 py-1 sm:px-2 sm:py-0.5 text-xs font-bold min-w-[2.5rem] flex items-center justify-center">
+                      {formatScore(Number(product.avg_rating))}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-500">Tests:</span>
+                    <Badge variant="testCount" className="px-1.5 py-1 sm:px-2 sm:py-0.5 text-xs font-medium min-w-[2rem] flex items-center justify-center">
+                      {product.count}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+
+          {/* Individual tests header */}
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Individual Tests</h3>
+
+          {isLoadingTests ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : productTests.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <p className="text-lg mb-1">No test details available</p>
+              <p className="text-sm">Be the first to add a test for this product!</p>
+            </div>
+          ) : (
+            <Masonry
+              breakpointCols={{ default: 2, 640: 1 }}
+              className="flex gap-4"
+              columnClassName="space-y-4"
+            >
+              {productTests.map((item) => (
+                <FeedItem key={item.id} item={item} />
+              ))}
+            </Masonry>
+          )}
+        </div>
+        <MobileFooter />
+      </div>
+    );
+  }
+
+  // Desktop layout
   return (
     <div className="min-h-screen">
       <MenuBar />
@@ -162,7 +247,7 @@ const ProductDetails = () => {
       <BackgroundPattern>
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
           {/* Desktop: Show back button */}
-          <div className="hidden lg:flex items-center mb-6">
+          <div className="flex items-center mb-6">
             <Link to="/results">
               <Button variant="outline" size="sm" className="gap-1">
                 <ArrowLeft className="h-4 w-4" /> Back to results
@@ -170,9 +255,8 @@ const ProductDetails = () => {
             </Link>
           </div>
 
-          {/* Combined comprehensive card */}
-          <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-gray-300 overflow-hidden animate-fade-in">
-            {/* Product header section */}
+          {/* Product header card */}
+          <Card className="mb-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-gray-300">
             <CardHeader className="bg-white/50 backdrop-blur-sm pt-6 px-6 pb-4 border-b border-gray-200">
               <div className="space-y-3">
                 {/* Brand - Product with inline badges */}
@@ -209,24 +293,31 @@ const ProductDetails = () => {
                 </div>
               </div>
             </CardHeader>
-
-            {/* Individual tests section */}
-            <CardContent className="p-0">
-              <div className="px-6 pt-4 pb-2">
-                <h3 className="text-lg font-semibold text-gray-900">Individual Tests</h3>
-              </div>
-              {isLoadingTests ? (
-                <div className="text-center py-8">Loading test results...</div>
-              ) : (
-                <TestDetailsTable 
-                  productTests={productTests} 
-                  handleImageClick={handleImageClick}
-                  sortConfig={sortConfig}
-                  handleSort={handleSort}
-                />
-              )}
-            </CardContent>
           </Card>
+
+          {/* Individual tests header */}
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Individual Tests</h3>
+
+          {isLoadingTests ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : productTests.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <p className="text-lg mb-1">No test details available</p>
+              <p className="text-sm">Be the first to add a test for this product!</p>
+            </div>
+          ) : (
+            <Masonry
+              breakpointCols={{ default: 3, 1024: 2, 768: 1 }}
+              className="flex gap-6"
+              columnClassName="space-y-6"
+            >
+              {productTests.map((item) => (
+                <FeedItem key={item.id} item={item} />
+              ))}
+            </Masonry>
+          )}
         </div>
       </BackgroundPattern>
 
