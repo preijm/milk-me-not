@@ -20,7 +20,13 @@ const getRatingColor = (rating: number) => {
 };
 
 export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
-  const [inputValue, setInputValue] = useState(rating > 0 ? rating.toString() : "");
+  const [isEditing, setIsEditing] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleBadgeClick = () => {
+    setIsEditing(true);
+    setInputValue(rating > 0 ? rating.toString() : "");
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -28,21 +34,13 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
     // Allow empty string or valid decimal numbers
     if (value === "" || /^\d*\.?\d*$/.test(value)) {
       setInputValue(value);
-      
-      // Only update the actual rating if it's a valid number within range
-      const numValue = parseFloat(value);
-      if (!isNaN(numValue) && numValue >= 0 && numValue <= 10) {
-        setRating(numValue);
-      } else if (value === "") {
-        setRating(0);
-      }
     }
   };
 
   const handleInputBlur = () => {
-    // On blur, format the value
+    setIsEditing(false);
+    
     if (inputValue === "" || inputValue === ".") {
-      setInputValue("");
       setRating(0);
     } else {
       const numValue = parseFloat(inputValue);
@@ -50,22 +48,18 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
         const clampedValue = Math.min(Math.max(numValue, 0), 10);
         const roundedValue = Math.round(clampedValue * 10) / 10;
         setRating(roundedValue);
-        setInputValue(roundedValue.toString());
       }
     }
   };
 
-  // Sync input value when rating changes from slider
-  React.useEffect(() => {
-    if (rating === 0 && inputValue !== "") {
-      setInputValue("");
-    } else if (rating > 0 && parseFloat(inputValue) !== rating) {
-      setInputValue(rating.toString());
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
     }
-  }, [rating]);
+  };
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="space-y-2 w-full">
       <div className="flex items-center gap-2">
         <SliderPrimitive.Root
           value={[rating]}
@@ -82,24 +76,27 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
             <span className="text-lg">🥛</span>
           </SliderPrimitive.Thumb>
         </SliderPrimitive.Root>
-        <Badge variant={getScoreBadgeVariant(rating)}>
-          {formatScore(rating)}
-        </Badge>
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
-          Or enter score:
-        </label>
-        <Input
-          type="text"
-          inputMode="decimal"
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          placeholder="0.0 - 10.0"
-          className="w-24 text-center font-semibold text-[#f59e0b] border-[#f59e0b] focus:border-[#f59e0b] focus:ring-[#f59e0b]"
-        />
+        
+        {isEditing ? (
+          <Input
+            type="text"
+            inputMode="decimal"
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            className="w-16 h-8 text-center font-semibold text-[#f59e0b] border-[#f59e0b] focus:border-[#f59e0b] focus:ring-[#f59e0b] px-2"
+          />
+        ) : (
+          <Badge 
+            variant={getScoreBadgeVariant(rating)}
+            className="cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={handleBadgeClick}
+          >
+            {formatScore(rating)}
+          </Badge>
+        )}
       </div>
     </div>
   );
