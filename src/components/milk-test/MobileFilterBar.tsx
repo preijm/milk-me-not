@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, SlidersHorizontal, User, Star, ArrowDown, ArrowUp, X } from "lucide-react";
+import { Search, SlidersHorizontal, User, ArrowUpDown, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -156,20 +156,14 @@ export const MobileFilterBar = ({
     filters.flavors.length;
 
   const sortOptions = [
-    { key: 'most_recent_date', label: 'Newest' },
     { key: 'avg_rating', label: 'Score' },
+    { key: 'most_recent_date', label: 'Newest' },
     { key: 'brand_name', label: 'Brand' },
     { key: 'product_name', label: 'Product' },
     { key: 'count', label: 'Tests' }
   ];
 
   const currentSort = sortOptions.find(option => option.key === sortConfig.column);
-  const getSortIcon = () => {
-    if (sortConfig.direction === 'asc') {
-      return <ArrowUp className="h-4 w-4" />;
-    }
-    return <ArrowDown className="h-4 w-4" />;
-  };
 
   const getPropertyName = (key: string) => {
     return properties.find(p => p.key === key)?.name || key;
@@ -181,18 +175,51 @@ export const MobileFilterBar = ({
 
   return (
     <div className="space-y-3">
-      {/* Search Bar and Action Buttons */}
+      {/* Search Bar - Full Width */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          className="pl-10 h-11 bg-background border-border rounded-lg w-full"
+          maxLength={100}
+        />
+      </div>
+
+      {/* Action Buttons Row */}
       <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="pl-10 h-11 bg-background border-border rounded-lg"
-            maxLength={100}
-          />
-        </div>
+        {/* Sort Button */}
+        <Popover open={isSortOpen} onOpenChange={setIsSortOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="flex-1 h-11 flex items-center justify-center gap-2 rounded-lg bg-background border-border"
+            >
+              <ArrowUpDown className="h-4 w-4" />
+              <span className="text-sm font-medium">{currentSort?.label || 'Sort'}</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-48 p-2" align="start">
+            <div className="space-y-1">
+              {sortOptions.map((option) => (
+                <Button
+                  key={option.key}
+                  variant="ghost"
+                  className={`w-full justify-start ${
+                    sortConfig.column === option.key ? 'bg-muted' : ''
+                  }`}
+                  onClick={() => {
+                    onSort(option.key);
+                    setIsSortOpen(false);
+                  }}
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
 
         {/* Filters Button */}
         <Popover open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
