@@ -19,7 +19,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import { formatScore } from "@/lib/scoreFormatter";
 import { Badge } from "@/components/ui/badge";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 type ProductDetails = {
   product_id: string;
@@ -35,7 +34,6 @@ type ProductDetails = {
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
   const { user } = useAuth();
-  const isMobile = useIsMobile();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   // Set default sort to created_at in descending order to show latest tests first
@@ -168,15 +166,6 @@ const ProductDetails = () => {
             <Link to="/results">
               <Button variant="outline" size="sm" className="gap-1">
                 <ArrowLeft className="h-4 w-4" /> Back to results
-              </Button>
-            </Link>
-          </div>
-          
-          {/* Mobile/Tablet: Show compact back button */}
-          <div className="lg:hidden flex items-center mb-6">
-            <Link to="/results">
-              <Button variant="outline" size="sm" className="gap-1">
-                <ArrowLeft className="h-4 w-4" /> Back
               </Button>
             </Link>
           </div>
