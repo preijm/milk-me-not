@@ -389,7 +389,7 @@ export const MobileFilterBar = ({
           {filters.barista && (
             <Badge
               variant="barista"
-              className="bg-primary text-primary-foreground px-3 py-1.5 flex items-center gap-1"
+              className="px-3 py-1.5 flex items-center gap-1"
             >
               Barista
               <X
@@ -402,7 +402,7 @@ export const MobileFilterBar = ({
             <Badge
               key={propKey}
               variant="category"
-              className="bg-primary text-primary-foreground px-3 py-1.5 flex items-center gap-1"
+              className="px-3 py-1.5 flex items-center gap-1"
             >
               {getPropertyName(propKey)}
               <X
@@ -415,7 +415,7 @@ export const MobileFilterBar = ({
             <Badge
               key={flavorKey}
               variant="flavor"
-              className="bg-primary text-primary-foreground px-3 py-1.5 flex items-center gap-1"
+              className="px-3 py-1.5 flex items-center gap-1"
             >
               {getFlavorName(flavorKey)}
               <X
