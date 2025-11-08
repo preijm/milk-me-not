@@ -3,7 +3,16 @@ import { Search, SlidersHorizontal, User, ArrowUpDown, X, ArrowUp, ArrowDown } f
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -191,8 +200,8 @@ export const MobileFilterBar = ({
       {/* Action Buttons Row */}
       <div className="flex items-center gap-2">
         {/* Sort Button */}
-        <Popover open={isSortOpen} onOpenChange={setIsSortOpen}>
-          <PopoverTrigger asChild>
+        <Drawer open={isSortOpen} onOpenChange={setIsSortOpen}>
+          <DrawerTrigger asChild>
             <Button
               variant="outline"
               className="flex-1 h-11 flex items-center justify-center gap-2 rounded-lg bg-background border-border"
@@ -200,19 +209,20 @@ export const MobileFilterBar = ({
               <ArrowUpDown className="h-4 w-4" />
               <span className="text-sm font-medium">{currentSort?.label || 'Sort'}</span>
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-48 p-2" align="start">
-            <div className="space-y-1">
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Sort by</DrawerTitle>
+              <DrawerDescription>Choose how to sort the products</DrawerDescription>
+            </DrawerHeader>
+            <div className="px-4 pb-4 space-y-2">
               {sortOptions.map((option) => {
                 const isActive = sortConfig.column === option.key;
                 return (
                   <Button
                     key={option.key}
-                    variant="ghost"
-                    className={cn(
-                      "w-full justify-between",
-                      isActive && "bg-muted"
-                    )}
+                    variant={isActive ? "default" : "outline"}
+                    className="w-full justify-between h-12"
                     onClick={() => {
                       onSort(option.key);
                       setIsSortOpen(false);
@@ -228,12 +238,25 @@ export const MobileFilterBar = ({
                 );
               })}
             </div>
-          </PopoverContent>
-        </Popover>
+            {onClearSort && sortConfig.column !== 'avgRating' && (
+              <DrawerFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    onClearSort();
+                    setIsSortOpen(false);
+                  }}
+                >
+                  Clear Sort
+                </Button>
+              </DrawerFooter>
+            )}
+          </DrawerContent>
+        </Drawer>
 
         {/* Filters Button */}
-        <Popover open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-          <PopoverTrigger asChild>
+        <Drawer open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+          <DrawerTrigger asChild>
             <Button
               variant="outline"
               className={cn(
@@ -249,21 +272,13 @@ export const MobileFilterBar = ({
                 </span>
               )}
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-72 p-0 max-h-[80vh] overflow-y-auto" align="end">
-            <div className="p-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-lg">Filters</h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsFiltersOpen(false)}
-                  className="h-6 w-6"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-
+          </DrawerTrigger>
+          <DrawerContent className="max-h-[85vh]">
+            <DrawerHeader>
+              <DrawerTitle>Filters</DrawerTitle>
+              <DrawerDescription>Filter products by type, properties, and flavors</DrawerDescription>
+            </DrawerHeader>
+            <div className="px-4 pb-4 overflow-y-auto space-y-4">
               {/* Barista Filter */}
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -273,7 +288,7 @@ export const MobileFilterBar = ({
                       variant="ghost"
                       size="sm"
                       onClick={clearTypeFilters}
-                      className="text-xs h-auto py-1 text-primary"
+                      className="text-xs h-auto py-1 text-[hsl(var(--filter-active))]"
                     >
                       Clear
                     </Button>
@@ -303,7 +318,7 @@ export const MobileFilterBar = ({
                         variant="ghost"
                         size="sm"
                         onClick={clearPropertyFilters}
-                        className="text-xs h-auto py-1 text-primary"
+                        className="text-xs h-auto py-1 text-[hsl(var(--filter-active))]"
                       >
                         Clear
                       </Button>
@@ -339,7 +354,7 @@ export const MobileFilterBar = ({
                         variant="ghost"
                         size="sm"
                         onClick={clearFlavorFilters}
-                        className="text-xs h-auto py-1 text-primary"
+                        className="text-xs h-auto py-1 text-[hsl(var(--filter-active))]"
                       >
                         Clear
                       </Button>
@@ -367,23 +382,23 @@ export const MobileFilterBar = ({
             </div>
 
             {/* Footer */}
-            <div className="border-t p-4 flex gap-2 bg-background sticky bottom-0">
+            <DrawerFooter className="border-t">
+              <Button
+                onClick={() => setIsFiltersOpen(false)}
+                className="w-full"
+              >
+                Show {resultsCount} Results
+              </Button>
               <Button
                 variant="outline"
                 onClick={clearAllFilters}
-                className="flex-1"
+                className="w-full"
               >
-                Clear All
+                Clear All Filters
               </Button>
-              <Button
-                onClick={() => setIsFiltersOpen(false)}
-                className="flex-1"
-              >
-                Show Results ({resultsCount})
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
 
         {/* My Results Button */}
         {user && (
