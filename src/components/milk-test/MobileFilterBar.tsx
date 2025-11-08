@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, SlidersHorizontal, User, ArrowUpDown, X } from "lucide-react";
+import { Search, SlidersHorizontal, User, ArrowUpDown, X, ArrowUp, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -203,21 +203,30 @@ export const MobileFilterBar = ({
           </PopoverTrigger>
           <PopoverContent className="w-48 p-2" align="start">
             <div className="space-y-1">
-              {sortOptions.map((option) => (
-                <Button
-                  key={option.key}
-                  variant="ghost"
-                  className={`w-full justify-start ${
-                    sortConfig.column === option.key ? 'bg-muted' : ''
-                  }`}
-                  onClick={() => {
-                    onSort(option.key);
-                    setIsSortOpen(false);
-                  }}
-                >
-                  {option.label}
-                </Button>
-              ))}
+              {sortOptions.map((option) => {
+                const isActive = sortConfig.column === option.key;
+                return (
+                  <Button
+                    key={option.key}
+                    variant="ghost"
+                    className={cn(
+                      "w-full justify-between",
+                      isActive && "bg-muted"
+                    )}
+                    onClick={() => {
+                      onSort(option.key);
+                      setIsSortOpen(false);
+                    }}
+                  >
+                    <span>{option.label}</span>
+                    {isActive && (
+                      sortConfig.direction === 'asc' 
+                        ? <ArrowUp className="h-4 w-4" />
+                        : <ArrowDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                );
+              })}
             </div>
           </PopoverContent>
         </Popover>
