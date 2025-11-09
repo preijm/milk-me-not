@@ -333,18 +333,8 @@ export const MobileFilterBar = ({
             <div className="px-4 pb-4 overflow-y-auto space-y-4">
               {/* Barista Filter */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2">
                   <h4 className="text-sm font-medium">Type</h4>
-                  {filters.barista && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={clearTypeFilters}
-                      className="text-xs h-auto py-1 text-[hsl(var(--filter-active))]"
-                    >
-                      Clear
-                    </Button>
-                  )}
                 </div>
                 <Badge
                   variant="barista"
@@ -363,18 +353,8 @@ export const MobileFilterBar = ({
               {/* Properties Filter */}
               {properties.length > 0 && (
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2">
                     <h4 className="text-sm font-medium">Properties</h4>
-                    {filters.properties.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={clearPropertyFilters}
-                        className="text-xs h-auto py-1 text-[hsl(var(--filter-active))]"
-                      >
-                        Clear
-                      </Button>
-                    )}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {properties.map(property => (
@@ -399,18 +379,8 @@ export const MobileFilterBar = ({
               {/* Flavors Filter */}
               {flavors.length > 0 && (
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2">
                     <h4 className="text-sm font-medium">Flavors</h4>
-                    {filters.flavors.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={clearFlavorFilters}
-                        className="text-xs h-auto py-1 text-[hsl(var(--filter-active))]"
-                      >
-                        Clear
-                      </Button>
-                    )}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {flavors.map(flavor => (
