@@ -244,7 +244,7 @@ export const MobileFilterBar = ({
                     className={cn(
                       "flex items-center justify-between h-16 px-4 rounded-xl border-2 cursor-pointer transition-all",
                       isActive 
-                        ? "bg-primary/5 border-primary" 
+                        ? "bg-[#2144ff]/5 border-[#2144ff]" 
                         : "border-border hover:bg-muted"
                     )}
                     onClick={() => {
@@ -256,16 +256,16 @@ export const MobileFilterBar = ({
                     <div className="flex items-center gap-3">
                       <div className={cn(
                         "w-10 h-10 rounded-lg flex items-center justify-center",
-                        isActive ? "bg-primary/10" : "bg-muted"
+                        isActive ? "bg-[#2144ff]/10" : "bg-muted"
                       )}>
                         <Icon className={cn(
                           "h-5 w-5",
-                          isActive ? "text-primary" : "text-muted-foreground"
+                          isActive ? "text-[#2144ff]" : "text-muted-foreground"
                         )} />
                       </div>
                       <span className={cn(
                         "text-base font-medium",
-                        isActive && "text-primary"
+                        isActive && "text-[#2144ff]"
                       )}>
                         {option.label}
                       </span>
@@ -273,7 +273,7 @@ export const MobileFilterBar = ({
                     {isActive ? (
                       <Button
                         size="sm"
-                        className="h-9 px-4 gap-2 rounded-lg"
+                        className="h-9 px-4 gap-2 rounded-lg bg-[#2144ff] hover:bg-[#1a3ad9] text-white"
                         onClick={(e) => {
                           e.stopPropagation();
                           onSort(option.key);

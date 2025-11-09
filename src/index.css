@@ -53,14 +53,14 @@
     
     /* Notification icon colors */
     --notification-like: 0 65% 64%; /* #e45959 */
-    --notification-comment: 218 100% 56%; /* #2144ff */
+    --notification-comment: 225 100% 63%; /* #2144ff */
     --notification-newsletter: 145 100% 38%; /* #00bf63 */
     
     /* Filter active color */
-    --filter-active: 218 100% 56%; /* #2144ff */
+    --filter-active: 225 100% 63%; /* #2144ff */
     
     /* Switch colors */
-    --switch-enabled: 218 100% 56%; /* #2144ff */
+    --switch-enabled: 225 100% 63%; /* #2144ff */
     
     /* Shadow colors */
     --shadow-brand: 0 10px 30px -10px hsl(145 100% 38% / 0.2);
