@@ -25,7 +25,7 @@ const Notifications = () => {
   if (isMobileOrTablet) {
     return <div className="min-h-screen bg-white">
         <MenuBar />
-        <div className="pt-16 pb-20 min-h-screen">
+        <div className="pt-14 pb-20 min-h-screen">
           <div className="bg-white">
             <MobileNotificationList />
           </div>
