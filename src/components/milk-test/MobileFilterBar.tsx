@@ -296,12 +296,13 @@ export const MobileFilterBar = ({
               })}
             </div>
             <DrawerFooter>
-              <Button
-                onClick={() => setIsSortOpen(false)}
-                className="w-full h-12 text-base font-medium"
-              >
-                Apply Sort
-              </Button>
+              <DrawerClose asChild>
+                <Button
+                  className="w-full h-12 text-base font-medium"
+                >
+                  Apply Sort
+                </Button>
+              </DrawerClose>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
