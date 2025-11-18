@@ -193,7 +193,7 @@ export const useMilkTestForm = () => {
       await queryClient.invalidateQueries({ queryKey: ['milk-tests-aggregated'] });
       await queryClient.invalidateQueries({ queryKey: ['my-milk-tests'] });
 
-      navigate("/my-results");
+      navigate("/feed");
     } catch (error) {
       console.error('Error adding milk test:', error);
       toast({
