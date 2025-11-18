@@ -295,15 +295,6 @@ export const MobileFilterBar = ({
                 );
               })}
             </div>
-            <DrawerFooter>
-              <DrawerClose asChild>
-                <Button
-                  className="w-full h-12 text-base font-medium"
-                >
-                  Apply Sort
-                </Button>
-              </DrawerClose>
-            </DrawerFooter>
           </DrawerContent>
         </Drawer>
 
