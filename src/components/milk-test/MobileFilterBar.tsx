@@ -421,7 +421,7 @@ export const MobileFilterBar = ({
             onClick={handleMyResultsToggle}
             className={cn(
               "flex-1 h-11 flex items-center justify-center gap-2 rounded-lg transition-colors",
-              filters.myResultsOnly && "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))] hover:bg-[hsl(var(--filter-active))]/90"
+              filters.myResultsOnly && "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))]"
             )}
           >
             <User className="h-4 w-4" />
