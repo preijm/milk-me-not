@@ -57,7 +57,7 @@ export const useAuthForm = () => {
         return;
       }
 
-      navigate(fromAdd ? "/add" : "/my-results");
+      navigate(fromAdd ? "/add" : "/results");
     } catch (error: any) {
       toast({
         title: "Error",

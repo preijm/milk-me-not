@@ -13,7 +13,6 @@ import Contact from "./pages/Contact";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
-import MyResults from "./pages/MyResults";
 import Account from "./pages/Account";
 import AccountSecurity from "./pages/AccountSecurity";
 import AccountNotifications from "./pages/AccountNotifications";
@@ -58,11 +57,6 @@ const App = () => {
               <Route path="/add-product" element={
                 <ProtectedRoute>
                   <AddProduct />
-                </ProtectedRoute>
-              } />
-              <Route path="/my-results" element={
-                <ProtectedRoute>
-                  <MyResults />
                 </ProtectedRoute>
               } />
               <Route path="/account" element={

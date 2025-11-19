@@ -72,11 +72,11 @@ export const AuthButton = () => {
           <Plus className="w-4 h-4 opacity-70" />
           <span>Add Test</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => navigate('/my-results')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 md:hover:bg-emerald-50 transition-colors cursor-pointer">
+        <DropdownMenuItem onClick={() => navigate('/results', { state: { myResultsOnly: true } })} className="flex items-center gap-2 rounded-lg px-3 py-2.5 md:hover:bg-emerald-50 transition-colors cursor-pointer">
           <svg className="w-4 h-4 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-          <span>My Results</span>
+          <span>My Tests</span>
         </DropdownMenuItem>
         
         <NotificationDropdown variant="menu" />

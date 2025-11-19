@@ -27,7 +27,7 @@ export const useAuthOperations = () => {
   const { toast } = useToast();
   const { refreshAuth } = useAuth();
   
-  const fromPath = location.state?.from || '/my-results';
+  const fromPath = location.state?.from || '/results';
 
   const signIn = async (email: string, password: string) => {
     const sanitizedEmail = sanitizeInput(email).toLowerCase();
