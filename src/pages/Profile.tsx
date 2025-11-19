@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import { User, Settings, Shield, PlusCircle, ListPlus, ChevronRight, LogOut, TrendingUp } from "lucide-react";
+import { User, Settings, Shield, PlusCircle, ListPlus, ChevronRight, LogOut, TrendingUp, Edit2 } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -13,14 +13,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
 
 const Profile = () => {
   const { user } = useAuth();
-  const { profile } = useUserProfile();
+  const { profile, refetchProfile } = useUserProfile();
   const { data: milkTests = [] } = useUserMilkTests({ column: 'created_at', direction: 'desc' });
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -53,8 +56,21 @@ const Profile = () => {
               <Card className="overflow-hidden">
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full flex items-center justify-center bg-gradient-to-br from-primary to-primary/80 shadow-lg">
-                      <User className="w-10 h-10 sm:w-12 sm:h-12 text-primary-foreground" />
+                    <div className="relative">
+                      <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
+                        <AvatarImage src={profile?.avatar_url || undefined} />
+                        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80">
+                          <User className="w-10 h-10 sm:w-12 sm:h-12 text-primary-foreground" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full shadow-lg"
+                        onClick={() => setEditDialogOpen(true)}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
                     </div>
                     <div>
                       <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
@@ -163,8 +179,21 @@ const Profile = () => {
               <Card>
                 <CardContent className="p-8">
                   <div className="flex items-center gap-6">
-                    <div className="h-24 w-24 rounded-full flex items-center justify-center bg-gradient-to-br from-primary to-primary/80 shadow-lg flex-shrink-0">
-                      <User className="w-12 h-12 text-primary-foreground" />
+                    <div className="relative">
+                      <Avatar className="h-24 w-24">
+                        <AvatarImage src={profile?.avatar_url || undefined} />
+                        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80">
+                          <User className="w-12 h-12 text-primary-foreground" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="absolute -bottom-1 -right-1 h-9 w-9 rounded-full shadow-lg"
+                        onClick={() => setEditDialogOpen(true)}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
                     </div>
                     <div className="flex-1">
                       <h1 className="text-3xl font-bold text-foreground">
@@ -273,6 +302,18 @@ const Profile = () => {
         </div>
       </BackgroundPattern>
       <MobileFooter />
+      
+      {/* Profile Edit Dialog */}
+      {profile && user && (
+        <ProfileEditDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          currentUsername={profile.username}
+          currentAvatarUrl={profile.avatar_url}
+          userId={user.id}
+          onSuccess={refetchProfile}
+        />
+      )}
     </div>
   );
 };
