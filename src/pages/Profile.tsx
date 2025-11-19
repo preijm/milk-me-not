@@ -1,7 +1,7 @@
 import React from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import { User, Settings, Shield, Heart, PlusCircle, ListPlus, ChevronRight, LogOut, TrendingUp } from "lucide-react";
+import { User, Settings, Shield, PlusCircle, ListPlus, ChevronRight, LogOut, TrendingUp } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -77,11 +77,11 @@ const Profile = () => {
                       <p className="text-xs text-muted-foreground">Tests</p>
                     </div>
                     <div className="flex flex-col items-center p-3 rounded-lg bg-muted/50">
-                      <Heart className="w-5 h-5 text-primary mb-2" />
+                      <TrendingUp className="w-5 h-5 text-primary mb-2" />
                       <p className="text-2xl font-bold text-foreground">{avgRating}</p>
                       <p className="text-xs text-muted-foreground">Avg Rating</p>
                     </div>
-                    <div className="flex flex-col items-center p-3 rounded-lg bg-muted/50 col-span-2 sm:col-span-2">
+                    <div className="flex flex-col items-center p-3 rounded-lg bg-muted/50 col-span-2">
                       <User className="w-5 h-5 text-primary mb-2" />
                       <p className="text-sm font-bold text-foreground">Member since</p>
                       <p className="text-xs text-muted-foreground">{memberSince}</p>
@@ -94,7 +94,7 @@ const Profile = () => {
               <Card>
                 <CardContent className="p-6">
                   <h2 className="text-lg font-semibold mb-4 text-foreground">Quick Actions</h2>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <Button 
                       variant="outline" 
                       className="h-auto py-4 flex-col gap-2"
@@ -110,14 +110,6 @@ const Profile = () => {
                     >
                       <PlusCircle className="w-5 h-5 text-primary" />
                       <span className="text-xs sm:text-sm">Add Test</span>
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="h-auto py-4 flex-col gap-2 col-span-2 sm:col-span-1"
-                      onClick={() => navigate("/wishlist")}
-                    >
-                      <Heart className="w-5 h-5 text-primary" />
-                      <span className="text-xs sm:text-sm">Wishlist</span>
                     </Button>
                   </div>
                 </CardContent>
@@ -208,7 +200,7 @@ const Profile = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50">
-                        <Heart className="w-6 h-6 text-primary flex-shrink-0" />
+                        <TrendingUp className="w-6 h-6 text-primary flex-shrink-0" />
                         <div className="flex-1">
                           <p className="text-sm text-muted-foreground">Average Rating</p>
                           <p className="text-2xl font-bold text-foreground">{avgRating}</p>
@@ -238,14 +230,6 @@ const Profile = () => {
                       >
                         <PlusCircle className="w-5 h-5 text-primary mr-3" />
                         <span>Add New Test</span>
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-start h-auto py-4"
-                        onClick={() => navigate("/wishlist")}
-                      >
-                        <Heart className="w-5 h-5 text-primary mr-3" />
-                        <span>My Wishlist</span>
                       </Button>
                     </div>
                   </CardContent>

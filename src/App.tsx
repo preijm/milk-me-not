@@ -20,7 +20,6 @@ import AccountNotifications from "./pages/AccountNotifications";
 import ProductDetails from "./pages/ProductDetails";
 import ResetPassword from "./pages/ResetPassword";
 import Feed from "./pages/Feed";
-import Wishlist from "./pages/Wishlist";
 import MobileApp from "./pages/MobileApp";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
@@ -82,11 +81,6 @@ const App = () => {
                 </ProtectedRoute>
               } />
               <Route path="/feed" element={<Feed />} />
-              <Route path="/wishlist" element={
-                <ProtectedRoute>
-                  <Wishlist />
-                </ProtectedRoute>
-              } />
               <Route path="/mobile-app" element={<MobileApp />} />
               <Route path="/notifications" element={
                 <ProtectedRoute>
