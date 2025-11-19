@@ -169,7 +169,7 @@ const MenuBar = () => {
             color: '#00bf63'
           }}>
                 Mark all read
-              </button> : (!isMobileOrTablet || isProfilePage) && <AuthButton />}
+              </button> : !isMobileOrTablet && <AuthButton />}
           </div>
         </div>
       </div>
