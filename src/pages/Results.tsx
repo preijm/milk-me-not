@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useAggregatedResults, SortConfig } from "@/hooks/useAggregatedResults";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
@@ -42,8 +42,18 @@ const Results = () => {
     isLoading
   } = useAggregatedResults(sortConfig);
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
   const { user } = useAuth();
+
+  // Check if we should enable myResultsOnly filter from navigation state
+  useEffect(() => {
+    if (location.state?.myResultsOnly && user) {
+      setFilters(prev => ({ ...prev, myResultsOnly: true }));
+      // Clear the state after applying the filter
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, user]);
 
   // Fetch user's own tests to filter products
   const { data: userTests = [] } = useQuery({

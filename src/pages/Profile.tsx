@@ -114,7 +114,7 @@ const Profile = () => {
                     <Button 
                       variant="outline" 
                       className="h-auto py-4 flex-col gap-2"
-                      onClick={() => navigate("/my-results")}
+                      onClick={() => navigate("/results", { state: { myResultsOnly: true } })}
                     >
                       <ListPlus className="w-5 h-5 text-primary" />
                       <span className="text-xs sm:text-sm">My Tests</span>
@@ -247,7 +247,7 @@ const Profile = () => {
                       <Button 
                         variant="outline" 
                         className="w-full justify-start h-auto py-4"
-                        onClick={() => navigate("/my-results")}
+                        onClick={() => navigate("/results", { state: { myResultsOnly: true } })}
                       >
                         <ListPlus className="w-5 h-5 text-primary mr-3" />
                         <span>View My Tests</span>
