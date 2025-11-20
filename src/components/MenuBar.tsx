@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthButton } from "@/components/AuthButton";
-import { Bell, Radio, BarChart3, ArrowLeft, Plus, X } from "lucide-react";
+import { Bell, Radio, BarChart3, ArrowLeft, Plus, X, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useState, useEffect } from "react";
@@ -79,6 +79,7 @@ const MenuBar = () => {
   const isProductDetailsPage = location.pathname.startsWith('/product/');
   const isResultsPage = location.pathname === '/results';
   const isAddPage = location.pathname === '/add';
+  const isAccountPage = location.pathname === '/account';
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
   return <nav className="bg-white lg:bg-white/5 lg:backdrop-blur-[2px] fixed w-full z-50 border-b lg:border-white/10 border-gray-200/60 shadow-sm lg:shadow-none">
       <div className="container mx-auto px-4">
@@ -169,7 +170,9 @@ const MenuBar = () => {
             color: '#00bf63'
           }}>
                 Mark all read
-              </button> : !isMobileOrTablet && <AuthButton />}
+              </button> : isMobileOrTablet && !isAccountPage ? <Button variant="ghost" size="icon" onClick={() => navigate('/account')} className="h-10 w-10">
+                <Settings className="h-5 w-5" />
+              </Button> : !isMobileOrTablet && <AuthButton />}
           </div>
         </div>
       </div>
