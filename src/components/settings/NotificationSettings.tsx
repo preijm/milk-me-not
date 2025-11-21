@@ -13,8 +13,7 @@ export default function NotificationSettings() {
         <p className="text-muted-foreground">Loading notification preferences...</p>
       </div>;
   }
-  return <div>
-      
+  return <div className="pt-6">
       <div className="space-y-6">
         <div className="space-y-4">
           <div className="flex items-center justify-between p-4 border rounded-lg">
