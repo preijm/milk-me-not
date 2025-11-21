@@ -195,7 +195,8 @@ const ProductDetails = () => {
                       </div>
                     )}
                   </div>
-                  <Badge variant={getScoreBadgeVariant(Number(product.avg_rating))} className="flex-shrink-0">
+                  {/* Hide score badge on mobile/tablet (< 1024px) */}
+                  <Badge variant={getScoreBadgeVariant(Number(product.avg_rating))} className="flex-shrink-0 hidden lg:flex">
                     {formatScore(Number(product.avg_rating))}
                   </Badge>
                 </div>
