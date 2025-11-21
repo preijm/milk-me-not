@@ -201,7 +201,7 @@ const Account = () => {
                 </div>
                 <div className="flex-1 text-left">
                   <h4 className="font-semibold text-foreground">Contact Us  </h4>
-                  <p className="text-sm text-muted-foreground">FAQs and support</p>
+                  <p className="text-sm text-muted-foreground">​Reach out to our team      </p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
               </button>
