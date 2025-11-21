@@ -17,7 +17,19 @@ const About = () => {
             {/* Timeline */}
             <div className="relative">
               {/* Timeline line */}
-              <div className="absolute left-6 sm:left-1/2 top-0 bottom-0 w-0.5 bg-primary/30 -translate-x-1/2 hidden sm:block" />
+              <div className="absolute left-6 sm:left-1/2 top-0 bottom-0 w-0.5 bg-primary/30 -translate-x-1/2 hidden sm:block overflow-hidden">
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-b from-transparent via-primary to-transparent"
+                  animate={{
+                    y: ["-100%", "100%"],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+              </div>
               
               {/* Timeline Item 1 */}
               <motion.div 
