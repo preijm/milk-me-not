@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthButton } from "@/components/AuthButton";
-import { Bell, Radio, BarChart3, ArrowLeft, Plus, X, Settings, User, Lock } from "lucide-react";
+import { Bell, Radio, BarChart3, ArrowLeft, Plus, X, Settings, User, Lock, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useState, useEffect } from "react";
@@ -82,6 +82,7 @@ const MenuBar = () => {
   const isAccountPage = location.pathname === '/account';
   const isAccountNotificationsPage = location.pathname === '/account/notifications';
   const isAccountSecurityPage = location.pathname === '/account/security';
+  const isAccountCountryPage = location.pathname === '/account/country';
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
   return <nav className="bg-white lg:bg-white/5 lg:backdrop-blur-[2px] fixed w-full z-50 border-b lg:border-white/10 border-gray-200/60 shadow-sm lg:shadow-none">
       <div className="container mx-auto px-4">
@@ -136,6 +137,13 @@ const MenuBar = () => {
                   <Lock className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Security</h1>
+              </div> : isAccountCountryPage && isMobileOrTablet ? <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
+              backgroundColor: '#00bf63'
+            }}>
+                  <Globe className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-lg font-semibold text-gray-900">Country</h1>
               </div> : isAccountPage && isMobileOrTablet ? <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
               backgroundColor: '#00bf63'
@@ -194,6 +202,9 @@ const MenuBar = () => {
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button> : isAccountSecurityPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate('/account')} className="gap-1">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button> : isAccountCountryPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate('/account')} className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button> : isAccountPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate(-1)} className="gap-1">

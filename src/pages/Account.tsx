@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Save, Lock, User, Shield, Bell, HelpCircle, LogOut, ChevronRight } from "lucide-react";
+import { Save, Lock, User, Shield, Bell, HelpCircle, LogOut, ChevronRight, Globe } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
@@ -182,6 +182,17 @@ const Account = () => {
                 <div className="flex-1 text-left">
                   <h4 className="font-semibold text-foreground">Notifications</h4>
                   <p className="text-sm text-muted-foreground">Manage your alerts</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+              </button>
+              
+              <button onClick={() => navigate('/account/country')} className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <Globe className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="flex-1 text-left">
+                  <h4 className="font-semibold text-foreground">Country</h4>
+                  <p className="text-sm text-muted-foreground">Set your default location</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
               </button>
