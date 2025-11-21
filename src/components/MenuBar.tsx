@@ -120,6 +120,13 @@ const MenuBar = () => {
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Profile</h1>
+              </div> : isAccountPage ? <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
+              backgroundColor: '#00bf63'
+            }}>
+                  <Settings className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-lg font-semibold text-gray-900">Settings</h1>
               </div> : isProductDetailsPage ? <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
               backgroundColor: '#00bf63'
@@ -163,10 +170,13 @@ const MenuBar = () => {
               </Link>
             </div>
 
-            {/* Mobile/Tablet: Add test button on results and feed pages, Back button on product details, Close button on add page */}
+            {/* Mobile/Tablet: Add test button on results and feed pages, Back button on product details and account, Close button on add page */}
             {isProductDetailsPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate('/results')} className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 {isMobile ? "Back" : "Back to results"}
+              </Button> : isAccountPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate(-1)} className="gap-1">
+                <ArrowLeft className="h-4 w-4" />
+                Back
               </Button> : isAddPage && isMobileOrTablet ? <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-10 w-10 rounded-full">
                 <X className="h-6 w-6" />
               </Button> : (isResultsPage || isFeedPage) && isMobileOrTablet && user ? <Button variant="default" size="sm" onClick={handleAddTest} className="rounded-full h-9 w-9 p-0" style={{
@@ -177,9 +187,7 @@ const MenuBar = () => {
             color: '#00bf63'
           }}>
                 Mark all read
-              </button> : isMobileOrTablet && !isAccountPage && !isHomePage ? <Button variant="ghost" size="icon" onClick={() => navigate('/account')} className="h-10 w-10">
-                <Settings className="h-5 w-5" />
-              </Button> : !isMobileOrTablet && <AuthButton />}
+              </button> : !isMobileOrTablet && <AuthButton />}
           </div>
         </div>
       </div>

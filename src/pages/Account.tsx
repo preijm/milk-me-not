@@ -135,13 +135,8 @@ const Account = () => {
     return <div className="min-h-screen bg-background">
         <MenuBar />
         
-        {/* Header */}
-        <div className="bg-[hsl(var(--primary))] pt-16 pb-6 px-4">
-          <h1 className="text-3xl font-bold text-primary-foreground">Settings</h1>
-        </div>
-        
         {/* Settings Content */}
-        <div className="px-4 py-6 pb-24">
+        <div className="px-4 py-6 pb-24 pt-20">
           {/* Account Section */}
           <div className="mb-6">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3 px-1">
