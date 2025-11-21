@@ -340,9 +340,8 @@ export const MobileFilterBar = ({
                     variant="barista"
                     className={cn(
                       "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
-                      filters.barista
-                        ? "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
-                        : "hover:bg-amber-50"
+                      filters.barista &&
+                        "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
                     )}
                     onClick={handleBaristaToggle}
                   >
@@ -362,9 +361,8 @@ export const MobileFilterBar = ({
                         variant="category"
                         className={cn(
                           "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
-                          filters.properties.includes(property.key)
-                            ? "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
-                            : "bg-background text-foreground border-border hover:bg-muted"
+                          filters.properties.includes(property.key) &&
+                            "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
                         )}
                         onClick={() => handlePropertyToggle(property.key)}
                       >
@@ -386,9 +384,8 @@ export const MobileFilterBar = ({
                         variant="flavor"
                         className={cn(
                           "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
-                          filters.flavors.includes(flavor.key)
-                            ? "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
-                            : "bg-background text-foreground border-border hover:bg-muted"
+                          filters.flavors.includes(flavor.key) &&
+                            "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
                         )}
                         onClick={() => handleFlavorToggle(flavor.key)}
                       >
