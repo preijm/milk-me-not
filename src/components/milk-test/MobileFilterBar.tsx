@@ -341,7 +341,7 @@ export const MobileFilterBar = ({
                     className={cn(
                       "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
                       filters.barista &&
-                        "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
+                        "bg-amber-600 text-white border-amber-600"
                     )}
                     onClick={handleBaristaToggle}
                   >
@@ -362,7 +362,7 @@ export const MobileFilterBar = ({
                         className={cn(
                           "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
                           filters.properties.includes(property.key) &&
-                            "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
+                            "bg-slate-600 text-white border-slate-600"
                         )}
                         onClick={() => handlePropertyToggle(property.key)}
                       >
@@ -385,7 +385,7 @@ export const MobileFilterBar = ({
                         className={cn(
                           "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
                           filters.flavors.includes(flavor.key) &&
-                            "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
+                            "bg-purple-600 text-white border-purple-600"
                         )}
                         onClick={() => handleFlavorToggle(flavor.key)}
                       >
