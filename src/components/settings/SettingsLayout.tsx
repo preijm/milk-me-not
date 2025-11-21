@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { User, Shield, Bell, Database, HelpCircle, Menu } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Sidebar,
   SidebarContent,
@@ -69,29 +69,45 @@ interface SettingsLayoutProps {
 export default function SettingsLayout({ children, title }: SettingsLayoutProps) {
   const location = useLocation();
   const currentPath = location.pathname;
+  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
   
   // Find the current section's icon
   const currentItem = settingsItems.find(item => item.url === currentPath);
   const CurrentIcon = currentItem?.icon || User;
   
+  // Mobile/Tablet layout
+  if (isMobileOrTablet) {
+    return (
+      <div className="min-h-screen bg-white">
+        <MenuBar />
+        <div className="pt-14 pb-20 min-h-screen">
+          <div className="p-4">
+            {children}
+          </div>
+        </div>
+        <MobileFooter />
+      </div>
+    );
+  }
+  
+  // Desktop layout
   return (
     <div className="min-h-screen">
       <MenuBar />
       <SidebarProvider>
-        <header className="h-16 md:h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-          <SidebarTrigger className="md:ml-0">
-            <Menu className="h-6 w-6 md:h-4 md:w-4" />
+        <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
+          <SidebarTrigger>
+            <Menu className="h-4 w-4" />
           </SidebarTrigger>
           <div className="flex items-center gap-3 ml-3">
-            <CurrentIcon className="h-5 w-5 text-primary md:hidden" />
-            <h1 className="text-lg md:text-base font-semibold">{title}</h1>
+            <h1 className="text-base font-semibold">{title}</h1>
           </div>
         </header>
         
         <div className="flex min-h-screen w-full">
           <SettingsSidebar />
           
-          <main className="flex-1 pt-16 pb-20 md:pb-8">
+          <main className="flex-1 pt-16 pb-8">
             <BackgroundPattern>
               <div className="container max-w-4xl mx-auto px-4 py-8">
                 <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 animate-fade-up">
