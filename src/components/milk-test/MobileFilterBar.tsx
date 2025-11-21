@@ -335,26 +335,19 @@ export const MobileFilterBar = ({
               {/* Type Section */}
               <div>
                 <h4 className="text-sm font-medium mb-3">Type</h4>
-                <div
-                  className={cn(
-                    "flex items-center justify-between h-16 px-4 rounded-xl border-2 cursor-pointer transition-all",
-                    filters.barista 
-                      ? "bg-[#2144ff]/5 border-[#2144ff]" 
-                      : "border-border hover:bg-muted"
-                  )}
-                  onClick={handleBaristaToggle}
-                >
-                  <span className={cn(
-                    "text-base font-medium",
-                    filters.barista && "text-[#2144ff]"
-                  )}>
+                <div className="flex flex-wrap gap-2">
+                  <Badge
+                    variant="barista"
+                    className={cn(
+                      "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
+                      filters.barista
+                        ? "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
+                        : "hover:bg-amber-50"
+                    )}
+                    onClick={handleBaristaToggle}
+                  >
                     Barista
-                  </span>
-                  {filters.barista && (
-                    <div className="w-6 h-6 rounded-full bg-[#2144ff] flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full bg-white" />
-                    </div>
-                  )}
+                  </Badge>
                 </div>
               </div>
 
@@ -362,42 +355,22 @@ export const MobileFilterBar = ({
               {properties.length > 0 && (
                 <div>
                   <h4 className="text-sm font-medium mb-3">Properties</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {properties.map(property => {
-                      const isLongText = property.name.length > 10;
-                      return (
-                        <div
-                          key={property.id}
-                          className={cn(
-                            "flex items-center justify-between px-3 rounded-xl border-2 cursor-pointer transition-all",
-                            isLongText ? "h-16 py-2" : "h-12",
-                            filters.properties.includes(property.key)
-                              ? "bg-[#2144ff]/5 border-[#2144ff]" 
-                              : "border-border hover:bg-muted"
-                          )}
-                          onClick={() => handlePropertyToggle(property.key)}
-                        >
-                          <span className={cn(
-                            "font-medium",
-                            isLongText ? "text-xs leading-tight" : "text-sm",
-                            filters.properties.includes(property.key) && "text-[#2144ff]"
-                          )}>
-                            {property.name}
-                          </span>
-                          {filters.properties.includes(property.key) && (
-                            <div className={cn(
-                              "rounded-full bg-[#2144ff] flex items-center justify-center ml-1 flex-shrink-0",
-                              isLongText ? "w-4 h-4" : "w-5 h-5"
-                            )}>
-                              <div className={cn(
-                                "rounded-full bg-white",
-                                isLongText ? "w-1 h-1" : "w-1.5 h-1.5"
-                              )} />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <div className="flex flex-wrap gap-2">
+                    {properties.map(property => (
+                      <Badge
+                        key={property.id}
+                        variant="category"
+                        className={cn(
+                          "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
+                          filters.properties.includes(property.key)
+                            ? "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
+                            : "bg-background text-foreground border-border hover:bg-muted"
+                        )}
+                        onClick={() => handlePropertyToggle(property.key)}
+                      >
+                        {property.name}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               )}
@@ -406,42 +379,22 @@ export const MobileFilterBar = ({
               {flavors.length > 0 && (
                 <div>
                   <h4 className="text-sm font-medium mb-3">Flavors</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {flavors.map(flavor => {
-                      const isLongText = flavor.name.length > 10;
-                      return (
-                        <div
-                          key={flavor.id}
-                          className={cn(
-                            "flex items-center justify-between px-3 rounded-xl border-2 cursor-pointer transition-all",
-                            isLongText ? "h-16 py-2" : "h-12",
-                            filters.flavors.includes(flavor.key)
-                              ? "bg-[#2144ff]/5 border-[#2144ff]" 
-                              : "border-border hover:bg-muted"
-                          )}
-                          onClick={() => handleFlavorToggle(flavor.key)}
-                        >
-                          <span className={cn(
-                            "font-medium",
-                            isLongText ? "text-xs leading-tight" : "text-sm",
-                            filters.flavors.includes(flavor.key) && "text-[#2144ff]"
-                          )}>
-                            {flavor.name}
-                          </span>
-                          {filters.flavors.includes(flavor.key) && (
-                            <div className={cn(
-                              "rounded-full bg-[#2144ff] flex items-center justify-center ml-1 flex-shrink-0",
-                              isLongText ? "w-4 h-4" : "w-5 h-5"
-                            )}>
-                              <div className={cn(
-                                "rounded-full bg-white",
-                                isLongText ? "w-1 h-1" : "w-1.5 h-1.5"
-                              )} />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <div className="flex flex-wrap gap-2">
+                    {flavors.map(flavor => (
+                      <Badge
+                        key={flavor.id}
+                        variant="flavor"
+                        className={cn(
+                          "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
+                          filters.flavors.includes(flavor.key)
+                            ? "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
+                            : "bg-background text-foreground border-border hover:bg-muted"
+                        )}
+                        onClick={() => handleFlavorToggle(flavor.key)}
+                      >
+                        {flavor.name}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               )}
