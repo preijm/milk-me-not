@@ -83,6 +83,8 @@ const MenuBar = () => {
   const isAccountNotificationsPage = location.pathname === '/account/notifications';
   const isAccountSecurityPage = location.pathname === '/account/security';
   const isAccountCountryPage = location.pathname === '/account/country';
+  const isContactPage = location.pathname === '/contact';
+  const isAboutPage = location.pathname === '/about';
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
   return <nav className="bg-white lg:bg-white/5 lg:backdrop-blur-[2px] fixed w-full z-50 border-b lg:border-white/10 border-gray-200/60 shadow-sm lg:shadow-none">
       <div className="container mx-auto px-4">
@@ -205,6 +207,12 @@ const MenuBar = () => {
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button> : isAccountCountryPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate('/account')} className="gap-1">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button> : isContactPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate(-1)} className="gap-1">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button> : isAboutPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate(-1)} className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button> : isAccountPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate(-1)} className="gap-1">
