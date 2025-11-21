@@ -122,25 +122,17 @@ const Account = () => {
       setIsChangingPassword(false);
     }
   };
-  
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/auth');
   };
-  
   const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
+    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
   };
-  
+
   // Mobile view
   if (isMobile) {
-    return (
-      <div className="min-h-screen bg-background">
+    return <div className="min-h-screen bg-background">
         <MenuBar />
         
         {/* Green Header */}
@@ -175,10 +167,7 @@ const Account = () => {
             </h3>
             
             <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border shadow-sm">
-              <button 
-                onClick={() => navigate('/account/profile')}
-                className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
-              >
+              <button onClick={() => navigate('/account/profile')} className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors">
                 <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                   <User className="w-6 h-6 text-blue-600" />
                 </div>
@@ -189,10 +178,7 @@ const Account = () => {
                 <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
               </button>
               
-              <button 
-                onClick={() => navigate('/account/security')}
-                className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
-              >
+              <button onClick={() => navigate('/account/security')} className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors">
                 <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
                   <Shield className="w-6 h-6 text-purple-600" />
                 </div>
@@ -212,10 +198,7 @@ const Account = () => {
             </h3>
             
             <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border shadow-sm">
-              <button 
-                onClick={() => navigate('/account/notifications')}
-                className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
-              >
+              <button onClick={() => navigate('/account/notifications')} className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors">
                 <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
                   <Bell className="w-6 h-6 text-orange-600" />
                 </div>
@@ -235,10 +218,7 @@ const Account = () => {
             </h3>
             
             <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border shadow-sm">
-              <button 
-                onClick={() => navigate('/contact')}
-                className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
-              >
+              <button onClick={() => navigate('/contact')} className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors">
                 <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
                   <HelpCircle className="w-6 h-6 text-yellow-600" />
                 </div>
@@ -249,10 +229,7 @@ const Account = () => {
                 <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
               </button>
               
-              <button 
-                onClick={() => navigate('/about')}
-                className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
-              >
+              <button onClick={() => navigate('/about')} className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors">
                 <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <HelpCircle className="w-6 h-6 text-green-600" />
                 </div>
@@ -266,25 +243,19 @@ const Account = () => {
           </div>
           
           {/* Log Out Button */}
-          <button
-            onClick={handleLogout}
-            className="w-full py-4 flex items-center justify-center gap-2 text-destructive font-semibold"
-          >
+          <button onClick={handleLogout} className="w-full py-4 flex items-center justify-center gap-2 text-destructive font-semibold">
             <LogOut className="w-5 h-5" />
             Log Out
           </button>
           
           {/* Version */}
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Version 1.0.0
-          </p>
+          
         </div>
         
         <MobileFooter />
-      </div>
-    );
+      </div>;
   }
-  
+
   // Desktop view
   return <div className="min-h-screen">
 ...
