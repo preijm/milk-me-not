@@ -5,11 +5,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Save } from "lucide-react";
-import { CountrySelect } from "@/components/milk-test/CountrySelect";
 
 export default function ProfileSettings() {
   const [username, setUsername] = useState("");
-  const [defaultCountry, setDefaultCountry] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -26,13 +24,12 @@ export default function ProfileSettings() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('username, default_country_code')
+        .select('username')
         .eq('id', user.id)
         .maybeSingle();
 
       if (profile) {
         setUsername(profile.username);
-        setDefaultCountry(profile.default_country_code);
       }
     };
 
@@ -63,10 +60,7 @@ export default function ProfileSettings() {
 
       const { error } = await supabase
         .from('profiles')
-        .update({ 
-          username,
-          default_country_code: defaultCountry 
-        })
+        .update({ username })
         .eq('id', userId);
 
       if (error) throw error;
@@ -87,12 +81,12 @@ export default function ProfileSettings() {
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-6 text-primary">Profile Settings</h2>
+    <div className="pt-6">
+      <h2 className="text-2xl font-bold mb-6 text-foreground">Edit Profile</h2>
       
       <form onSubmit={handleUpdateProfile} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Username
           </label>
           <Input
@@ -103,31 +97,23 @@ export default function ProfileSettings() {
             required
             minLength={2}
             maxLength={30}
-            className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm"
+            pattern="^[a-zA-Z0-9_-]+$"
+            title="Username can only contain letters, numbers, underscores, and hyphens"
+            className="bg-background border-border"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Default Country (optional)
-          </label>
-          <CountrySelect
-            country={defaultCountry}
-            setCountry={setDefaultCountry}
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            This will be pre-selected when adding new milk tests
+          <p className="text-xs text-muted-foreground mt-1">
+            Only letters, numbers, underscores, and hyphens allowed
           </p>
         </div>
 
         <Button 
           type="submit" 
-          variant="brand"
-          className="w-full" 
+          className="w-full text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+          style={{backgroundColor: '#2144ff'}}
           disabled={loading}
         >
           <Save className="w-4 h-4 mr-2" />
-          {loading ? "Saving..." : "Save Profile"}
+          {loading ? "Saving..." : "Save Changes"}
         </Button>
       </form>
     </div>
