@@ -233,7 +233,8 @@ const Account = () => {
           {/* Log Out Button */}
           <Button 
             onClick={handleLogout} 
-            className="w-full text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group bg-destructive hover:bg-destructive/90"
+            className="w-full text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+            style={{backgroundColor: '#ef4444'}}
           >
             <LogOut className="w-6 h-6 mr-2 group-hover:rotate-12 transition-transform duration-300" />
             Log Out
