@@ -136,10 +136,10 @@ const Account = () => {
         <MenuBar />
         
         {/* Settings Content */}
-        <div className="px-4 py-6 pb-24 pt-20">
+        <div className="px-4 py-6 pb-24 pt-20 space-y-8">
           {/* Account Section */}
-          <div className="mb-6">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3 px-1">
+          <div>
+            <h3 className="text-sm font-bold text-foreground uppercase mb-4 px-1 tracking-wide">
               Account
             </h3>
             
@@ -169,8 +169,8 @@ const Account = () => {
           </div>
           
           {/* Preferences Section */}
-          <div className="mb-6">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3 px-1">
+          <div>
+            <h3 className="text-sm font-bold text-foreground uppercase mb-4 px-1 tracking-wide">
               Preferences
             </h3>
             
@@ -200,8 +200,8 @@ const Account = () => {
           </div>
           
           {/* Support Section */}
-          <div className="mb-6">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3 px-1">
+          <div>
+            <h3 className="text-sm font-bold text-foreground uppercase mb-4 px-1 tracking-wide">
               Support
             </h3>
             
