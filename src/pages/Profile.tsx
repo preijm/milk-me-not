@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import { User, Settings, Shield, PlusCircle, ListPlus, ChevronRight, LogOut, TrendingUp, Edit2 } from "lucide-react";
+import { User, PlusCircle, ListPlus, LogOut, TrendingUp, Edit2 } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -131,46 +131,6 @@ const Profile = () => {
                 </CardContent>
               </Card>
 
-              {/* Settings */}
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-4 text-foreground">Settings</h2>
-                  <div className="space-y-2">
-                    <Link 
-                      to="/account"
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Settings className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                        <span className="text-foreground font-medium">Account Settings</span>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </Link>
-
-                    <Link 
-                      to="/account/security"
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Shield className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                        <span className="text-foreground font-medium">Security</span>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </Link>
-
-                    <div className="pt-4 border-t mt-4">
-                      <Button 
-                        variant="destructive" 
-                        className="w-full"
-                        onClick={handleSignOut}
-                      >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Sign Out
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
 
             {/* Desktop Layout (>= lg) */}
@@ -265,37 +225,6 @@ const Profile = () => {
                 </Card>
               </div>
 
-              {/* Settings */}
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-xl font-semibold mb-6 text-foreground">Settings</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Link 
-                      to="/account"
-                      className="flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors group border border-border"
-                    >
-                      <Settings className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                      <div className="flex-1">
-                        <p className="text-foreground font-medium">Account Settings</p>
-                        <p className="text-sm text-muted-foreground">Manage your profile</p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                    </Link>
-
-                    <Link 
-                      to="/account/security"
-                      className="flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors group border border-border"
-                    >
-                      <Shield className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                      <div className="flex-1">
-                        <p className="text-foreground font-medium">Security</p>
-                        <p className="text-sm text-muted-foreground">Password & privacy</p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
 
           </div>
