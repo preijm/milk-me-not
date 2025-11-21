@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthButton } from "@/components/AuthButton";
-import { Bell, Radio, BarChart3, ArrowLeft, Plus, X, Settings } from "lucide-react";
+import { Bell, Radio, BarChart3, ArrowLeft, Plus, X, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useState, useEffect } from "react";
@@ -113,6 +113,13 @@ const MenuBar = () => {
                   <Radio className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Feed</h1>
+              </div> : isProfilePage ? <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
+              backgroundColor: '#00bf63'
+            }}>
+                  <User className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-lg font-semibold text-gray-900">Profile</h1>
               </div> : isProductDetailsPage ? <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
               backgroundColor: '#00bf63'
