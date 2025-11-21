@@ -318,77 +318,107 @@ export const MobileFilterBar = ({
             </Button>
           </DrawerTrigger>
           <DrawerContent className="max-h-[85vh]">
-            <DrawerHeader>
+            <DrawerHeader className="flex flex-row items-center justify-between">
               <DrawerTitle>Filters</DrawerTitle>
-              <DrawerDescription>Filter products by type, properties, and flavors</DrawerDescription>
+              {activeFilterCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearAllFilters}
+                  className="text-primary font-medium h-auto p-0"
+                >
+                  Clear All
+                </Button>
+              )}
             </DrawerHeader>
-            <div className="px-4 pb-4 overflow-y-auto space-y-4">
-              {/* Barista Filter */}
+            <div className="px-4 pb-4 overflow-y-auto space-y-6">
+              {/* Type Section */}
               <div>
-                <div className="mb-2">
-                  <h4 className="text-sm font-medium">Type</h4>
-                </div>
-                <Badge
-                  variant="barista"
+                <h4 className="text-sm font-medium mb-3">Type</h4>
+                <div
                   className={cn(
-                    "cursor-pointer transition-all",
-                    filters.barista
-                      ? "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))] shadow-md"
-                      : "hover:bg-amber-50"
+                    "flex items-center justify-between h-16 px-4 rounded-xl border-2 cursor-pointer transition-all",
+                    filters.barista 
+                      ? "bg-[#2144ff]/5 border-[#2144ff]" 
+                      : "border-border hover:bg-muted"
                   )}
                   onClick={handleBaristaToggle}
                 >
-                  Barista
-                </Badge>
+                  <span className={cn(
+                    "text-base font-medium",
+                    filters.barista && "text-[#2144ff]"
+                  )}>
+                    Barista
+                  </span>
+                  {filters.barista && (
+                    <div className="w-6 h-6 rounded-full bg-[#2144ff] flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-white" />
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Properties Filter */}
+              {/* Properties Section */}
               {properties.length > 0 && (
                 <div>
-                  <div className="mb-2">
-                    <h4 className="text-sm font-medium">Properties</h4>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                  <h4 className="text-sm font-medium mb-3">Properties</h4>
+                  <div className="space-y-2">
                     {properties.map(property => (
-                      <Badge
-                      key={property.id}
-                      variant="category"
-                      className={cn(
-                        "cursor-pointer transition-all",
-                        filters.properties.includes(property.key)
-                          ? "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))]"
-                          : "bg-background text-foreground border-border hover:bg-muted"
-                      )}
-                      onClick={() => handlePropertyToggle(property.key)}
+                      <div
+                        key={property.id}
+                        className={cn(
+                          "flex items-center justify-between h-14 px-4 rounded-xl border-2 cursor-pointer transition-all",
+                          filters.properties.includes(property.key)
+                            ? "bg-[#2144ff]/5 border-[#2144ff]" 
+                            : "border-border hover:bg-muted"
+                        )}
+                        onClick={() => handlePropertyToggle(property.key)}
                       >
-                        {property.name}
-                      </Badge>
+                        <span className={cn(
+                          "text-base font-medium",
+                          filters.properties.includes(property.key) && "text-[#2144ff]"
+                        )}>
+                          {property.name}
+                        </span>
+                        {filters.properties.includes(property.key) && (
+                          <div className="w-6 h-6 rounded-full bg-[#2144ff] flex items-center justify-center">
+                            <div className="w-2 h-2 rounded-full bg-white" />
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Flavors Filter */}
+              {/* Flavors Section */}
               {flavors.length > 0 && (
                 <div>
-                  <div className="mb-2">
-                    <h4 className="text-sm font-medium">Flavors</h4>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                  <h4 className="text-sm font-medium mb-3">Flavors</h4>
+                  <div className="space-y-2">
                     {flavors.map(flavor => (
-                      <Badge
-                      key={flavor.id}
-                      variant="flavor"
-                      className={cn(
-                        "cursor-pointer transition-all",
-                        filters.flavors.includes(flavor.key)
-                          ? "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))]"
-                          : "bg-background text-foreground border-border hover:bg-muted"
-                      )}
-                      onClick={() => handleFlavorToggle(flavor.key)}
+                      <div
+                        key={flavor.id}
+                        className={cn(
+                          "flex items-center justify-between h-14 px-4 rounded-xl border-2 cursor-pointer transition-all",
+                          filters.flavors.includes(flavor.key)
+                            ? "bg-[#2144ff]/5 border-[#2144ff]" 
+                            : "border-border hover:bg-muted"
+                        )}
+                        onClick={() => handleFlavorToggle(flavor.key)}
                       >
-                        {flavor.name}
-                      </Badge>
+                        <span className={cn(
+                          "text-base font-medium",
+                          filters.flavors.includes(flavor.key) && "text-[#2144ff]"
+                        )}>
+                          {flavor.name}
+                        </span>
+                        {filters.flavors.includes(flavor.key) && (
+                          <div className="w-6 h-6 rounded-full bg-[#2144ff] flex items-center justify-center">
+                            <div className="w-2 h-2 rounded-full bg-white" />
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -399,16 +429,9 @@ export const MobileFilterBar = ({
             <DrawerFooter className="border-t">
               <Button
                 onClick={() => setIsFiltersOpen(false)}
-                className="w-full"
+                className="w-full h-12 text-white bg-[#2144ff] hover:bg-[#1a3ad9]"
               >
                 Show {resultsCount} Results
-              </Button>
-              <Button
-                variant="outline"
-                onClick={clearAllFilters}
-                className="w-full"
-              >
-                Clear All Filters
               </Button>
             </DrawerFooter>
           </DrawerContent>
