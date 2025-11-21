@@ -45,9 +45,7 @@ export default function SecuritySettings() {
       setIsChangingPassword(false);
     }
   };
-  return <div>
-      
-      
+  return <div className="pt-6">
       <div className="space-y-8">
         
 
