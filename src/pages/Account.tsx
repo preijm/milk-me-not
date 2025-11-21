@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Save, Lock, User, Shield, Bell, Globe, HelpCircle, LogOut, ChevronRight, Moon } from "lucide-react";
+import { Save, Lock, User, Shield, Bell, HelpCircle, LogOut, ChevronRight } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
@@ -23,7 +23,6 @@ const Account = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const {
@@ -180,8 +179,8 @@ const Account = () => {
                 onClick={() => navigate('/account/profile')}
                 className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
               >
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                  <User className="w-6 h-6 text-accent-foreground" />
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <User className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="flex-1 text-left">
                   <h4 className="font-semibold text-foreground">Profile</h4>
@@ -194,8 +193,8 @@ const Account = () => {
                 onClick={() => navigate('/account/security')}
                 className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
               >
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-6 h-6 text-accent-foreground" />
+                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="flex-1 text-left">
                   <h4 className="font-semibold text-foreground">Security</h4>
@@ -217,38 +216,12 @@ const Account = () => {
                 onClick={() => navigate('/account/notifications')}
                 className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
               >
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                  <Bell className="w-6 h-6 text-accent-foreground" />
+                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                  <Bell className="w-6 h-6 text-orange-600" />
                 </div>
                 <div className="flex-1 text-left">
                   <h4 className="font-semibold text-foreground">Notifications</h4>
                   <p className="text-sm text-muted-foreground">Manage your alerts</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-              </button>
-              
-              <div className="w-full p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                  <Moon className="w-6 h-6 text-accent-foreground" />
-                </div>
-                <div className="flex-1 text-left">
-                  <h4 className="font-semibold text-foreground">Dark Mode</h4>
-                  <p className="text-sm text-muted-foreground">Toggle dark theme</p>
-                </div>
-                <Switch 
-                  checked={darkMode}
-                  onCheckedChange={setDarkMode}
-                  className="flex-shrink-0"
-                />
-              </div>
-              
-              <button className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors">
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                  <Globe className="w-6 h-6 text-accent-foreground" />
-                </div>
-                <div className="flex-1 text-left">
-                  <h4 className="font-semibold text-foreground">Language</h4>
-                  <p className="text-sm text-muted-foreground">English (US)</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
               </button>
@@ -261,17 +234,31 @@ const Account = () => {
               Support
             </h3>
             
-            <div className="bg-card rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border shadow-sm">
               <button 
                 onClick={() => navigate('/contact')}
                 className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
               >
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                  <HelpCircle className="w-6 h-6 text-accent-foreground" />
+                <div className="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                  <HelpCircle className="w-6 h-6 text-yellow-600" />
                 </div>
                 <div className="flex-1 text-left">
                   <h4 className="font-semibold text-foreground">Help Center</h4>
                   <p className="text-sm text-muted-foreground">FAQs and support</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+              </button>
+              
+              <button 
+                onClick={() => navigate('/about')}
+                className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
+              >
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                  <HelpCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="flex-1 text-left">
+                  <h4 className="font-semibold text-foreground">About Us</h4>
+                  <p className="text-sm text-muted-foreground">Learn about our story</p>
                 </div>
                 <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
               </button>
