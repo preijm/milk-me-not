@@ -170,7 +170,7 @@ const MenuBar = () => {
             color: '#00bf63'
           }}>
                 Mark all read
-              </button> : isMobileOrTablet && !isAccountPage ? <Button variant="ghost" size="icon" onClick={() => navigate('/account')} className="h-10 w-10">
+              </button> : isMobileOrTablet && !isAccountPage && !isHomePage ? <Button variant="ghost" size="icon" onClick={() => navigate('/account')} className="h-10 w-10">
                 <Settings className="h-5 w-5" />
               </Button> : !isMobileOrTablet && <AuthButton />}
           </div>
