@@ -231,10 +231,14 @@ const Account = () => {
           </div>
           
           {/* Log Out Button */}
-          <button onClick={handleLogout} className="w-full py-4 flex items-center justify-center gap-2 text-destructive font-semibold">
-            <LogOut className="w-5 h-5" />
+          <Button 
+            onClick={handleLogout} 
+            className="w-full text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+            style={{backgroundColor: '#2144ff'}}
+          >
+            <LogOut className="w-6 h-6 mr-2 group-hover:rotate-12 transition-transform duration-300" />
             Log Out
-          </button>
+          </Button>
           
           {/* Version */}
           
