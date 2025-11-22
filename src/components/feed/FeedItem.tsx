@@ -7,7 +7,6 @@ import { MilkTestResult } from "@/types/milk-test";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { EditMilkTest } from "@/components/milk-test/EditMilkTest";
 import { FeedHeader } from "./FeedHeader";
 import { FeedProductInfo } from "./FeedProductInfo";
 import { FeedImage } from "./FeedImage";
@@ -40,7 +39,6 @@ export const FeedItem = ({ item, blurred = false, disabled = false }: FeedItemPr
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
-  const [editingTest, setEditingTest] = useState<MilkTestResult | null>(null);
 
   const isOwnPost = user?.id === item.user_id;
 
@@ -188,6 +186,10 @@ export const FeedItem = ({ item, blurred = false, disabled = false }: FeedItemPr
     navigate(`/product/${item.product_id}`);
   };
 
+  const handleEdit = () => {
+    navigate('/add', { state: { editTest: item } });
+  };
+
   return (
     <div className={cn("w-full", disabled && "pointer-events-none")}>
       <Card id={`test-${item.id}`} className="w-full shadow-lg hover:shadow-xl transition-shadow duration-300 hover-scale">
@@ -232,7 +234,7 @@ export const FeedItem = ({ item, blurred = false, disabled = false }: FeedItemPr
             onLike={handleLike}
             onToggleComments={() => setShowComments(!showComments)}
             onViewAllResults={handleViewAllResults}
-            onEdit={() => setEditingTest(item)}
+            onEdit={handleEdit}
           />
 
           {showComments && (
@@ -244,19 +246,6 @@ export const FeedItem = ({ item, blurred = false, disabled = false }: FeedItemPr
             />
           )}
         </CardContent>
-
-        {editingTest && (
-          <EditMilkTest
-            test={editingTest}
-            open={!!editingTest}
-            onOpenChange={(open) => !open && setEditingTest(null)}
-            onSuccess={() => {
-              queryClient.invalidateQueries({ queryKey: ['feed'] });
-              queryClient.invalidateQueries({ queryKey: ['userMilkTests'] });
-              setEditingTest(null);
-            }}
-          />
-        )}
       </Card>
     </div>
   );
