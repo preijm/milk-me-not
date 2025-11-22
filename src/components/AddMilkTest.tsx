@@ -10,6 +10,7 @@ import { PriceInput } from "./milk-test/PriceInput";
 import { ResponsiveNotesArea } from "./milk-test/ResponsiveNotesArea";
 import { useMilkTestForm } from "@/hooks/useMilkTestForm";
 import { useLocation } from "react-router-dom";
+import { Trash2 } from "lucide-react";
 
 export const AddMilkTest = () => {
   const location = useLocation();
@@ -19,7 +20,8 @@ export const AddMilkTest = () => {
   const {
     formState,
     formSetters,
-    handleSubmit
+    handleSubmit,
+    handleDelete
   } = useMilkTestForm(editTest);
   const isFormValid = formState.productId && formState.rating > 0 && formState.country && formState.country.trim() !== '';
 
@@ -127,16 +129,34 @@ export const AddMilkTest = () => {
             </div>
           </div>
 
-          <Button 
-            type="submit" 
-            disabled={formState.isSubmitting || !isFormValid} 
-            variant="brand"
-            className="w-full"
-          >
-            {formState.isSubmitting 
-              ? (isEditMode ? "Updating..." : "Adding...") 
-              : (isEditMode ? "Save Results" : "Add Result")}
-          </Button>
+          <div className="flex gap-3">
+            {isEditMode && (
+              <Button 
+                type="button"
+                onClick={handleDelete}
+                disabled={formState.isSubmitting}
+                variant="destructive"
+                className="flex-1"
+              >
+                {formState.isSubmitting ? "Deleting..." : (
+                  <>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </>
+                )}
+              </Button>
+            )}
+            <Button 
+              type="submit" 
+              disabled={formState.isSubmitting || !isFormValid} 
+              variant="brand"
+              className={isEditMode ? "flex-1" : "w-full"}
+            >
+              {formState.isSubmitting 
+                ? (isEditMode ? "Updating..." : "Adding...") 
+                : (isEditMode ? "Save Results" : "Add Result")}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

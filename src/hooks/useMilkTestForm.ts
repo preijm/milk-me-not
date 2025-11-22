@@ -8,6 +8,7 @@ import { sanitizeFileName } from "@/lib/fileValidation";
 import { useUserProfile } from "./useUserProfile";
 import { validateMilkTestInput, sanitizeInput, sanitizeForDatabase } from "@/lib/security";
 import { MilkTestResult } from "@/types/milk-test";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const useMilkTestForm = (editTest?: MilkTestResult) => {
   const [testId, setTestId] = useState<string | undefined>(editTest?.id);
@@ -28,6 +29,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { profile } = useUserProfile();
+  const { user } = useAuth();
 
   // Load existing picture preview when editing
   useEffect(() => {
@@ -245,6 +247,62 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!testId || !user) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // Delete the picture from storage if it exists
+      if (editTest?.picture_path) {
+        await supabase.storage
+          .from('milk-pictures')
+          .remove([editTest.picture_path]);
+      }
+
+      // Verify user owns this test before deletion
+      if (editTest?.user_id !== user.id) {
+        toast({
+          title: "Unauthorized",
+          description: "You can only delete your own milk tests",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Delete the milk test record
+      const { error: deleteError } = await supabase
+        .from('milk_tests')
+        .delete()
+        .eq('id', testId)
+        .eq('user_id', user.id); // Extra security check
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: "Success",
+        description: "Your milk test record has been deleted.",
+      });
+
+      // Invalidate relevant queries
+      await queryClient.invalidateQueries({ queryKey: ['milk-tests-aggregated'] });
+      await queryClient.invalidateQueries({ queryKey: ['my-milk-tests'] });
+      await queryClient.invalidateQueries({ queryKey: ['feed'] });
+
+      navigate("/feed");
+    } catch (error) {
+      console.error('Error deleting milk test:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete milk test. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     formState: {
       rating,
@@ -274,5 +332,6 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
       setPicturePreview,
     },
     handleSubmit,
+    handleDelete,
   };
 };
