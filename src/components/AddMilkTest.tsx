@@ -9,17 +9,27 @@ import { DrinkPreference } from "./milk-test/DrinkPreference";
 import { PriceInput } from "./milk-test/PriceInput";
 import { ResponsiveNotesArea } from "./milk-test/ResponsiveNotesArea";
 import { useMilkTestForm } from "@/hooks/useMilkTestForm";
+import { useLocation } from "react-router-dom";
 
 export const AddMilkTest = () => {
+  const location = useLocation();
+  const editTest = location.state?.editTest;
+  const isEditMode = !!editTest;
+  
   const {
     formState,
     formSetters,
     handleSubmit
-  } = useMilkTestForm();
+  } = useMilkTestForm(editTest);
   const isFormValid = formState.productId && formState.rating > 0 && formState.country && formState.country.trim() !== '';
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm lg:rounded-2xl lg:shadow-lg lg:border lg:border-white/20 animate-fade-in rounded-none shadow-none border-0">
+      <CardHeader className="pb-2">
+        <h1 className="text-2xl font-bold text-gray-900">
+          {isEditMode ? "Update Test" : "Add Test"}
+        </h1>
+      </CardHeader>
       <CardContent className="p-4 md:p-6 pb-8">
         <form onSubmit={e => {
           e.preventDefault();
@@ -123,7 +133,9 @@ export const AddMilkTest = () => {
             variant="brand"
             className="w-full"
           >
-            {formState.isSubmitting ? "Adding..." : "Add Result"}
+            {formState.isSubmitting 
+              ? (isEditMode ? "Updating..." : "Adding...") 
+              : (isEditMode ? "Save Results" : "Add Result")}
           </Button>
         </form>
       </CardContent>

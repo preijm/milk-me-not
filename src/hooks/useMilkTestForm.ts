@@ -7,18 +7,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { sanitizeFileName } from "@/lib/fileValidation";
 import { useUserProfile } from "./useUserProfile";
 import { validateMilkTestInput, sanitizeInput, sanitizeForDatabase } from "@/lib/security";
+import { MilkTestResult } from "@/types/milk-test";
 
-export const useMilkTestForm = () => {
-  const [rating, setRating] = useState(0);
-  const [productId, setProductId] = useState("");
-  const [brandId, setBrandId] = useState("");
-  const [notes, setNotes] = useState("");
-  const [shop, setShop] = useState<string>("");
-  const [country, setCountry] = useState<string>("");
+export const useMilkTestForm = (editTest?: MilkTestResult) => {
+  const [testId, setTestId] = useState<string | undefined>(editTest?.id);
+  const [rating, setRating] = useState(editTest?.rating || 0);
+  const [productId, setProductId] = useState(editTest?.product_id || "");
+  const [brandId, setBrandId] = useState(editTest?.brand_id || "");
+  const [notes, setNotes] = useState(editTest?.notes || "");
+  const [shop, setShop] = useState<string>(editTest?.shop_name || "");
+  const [country, setCountry] = useState<string>(editTest?.country_code || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [drinkPreference, setDrinkPreference] = useState("cold");
-  const [price, setPrice] = useState(""); // Empty string for no default selection
-  const [priceHasChanged, setPriceHasChanged] = useState(false);
+  const [drinkPreference, setDrinkPreference] = useState(editTest?.drink_preference || "cold");
+  const [price, setPrice] = useState(editTest?.price_quality_ratio || "");
+  const [priceHasChanged, setPriceHasChanged] = useState(!!editTest?.price_quality_ratio);
   const [picture, setPicture] = useState<File | null>(null);
   const [picturePreview, setPicturePreview] = useState<string | null>(null);
 
@@ -27,12 +29,28 @@ export const useMilkTestForm = () => {
   const queryClient = useQueryClient();
   const { profile } = useUserProfile();
 
-  // Set default country when profile loads
+  // Load existing picture preview when editing
   useEffect(() => {
-    if (profile?.default_country_code && !country) {
+    if (editTest?.picture_path) {
+      const loadPicturePreview = async () => {
+        const { data } = supabase.storage
+          .from('milk-pictures')
+          .getPublicUrl(editTest.picture_path);
+        
+        if (data?.publicUrl) {
+          setPicturePreview(data.publicUrl);
+        }
+      };
+      loadPicturePreview();
+    }
+  }, [editTest]);
+
+  // Set default country when profile loads (only for new tests)
+  useEffect(() => {
+    if (profile?.default_country_code && !country && !editTest) {
       setCountry(profile.default_country_code);
     }
-  }, [profile, country]);
+  }, [profile, country, editTest]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,7 +169,7 @@ export const useMilkTestForm = () => {
         }
       }
 
-      console.log("Inserting milk test with user_id:", userData.user.id);
+      console.log(testId ? "Updating milk test..." : "Inserting milk test with user_id:", userData.user.id);
       
       // Base milk test data with sanitized inputs
       const milkTestData: any = {
@@ -162,7 +180,7 @@ export const useMilkTestForm = () => {
         notes: notes ? sanitizeForDatabase(notes) : null,
         drink_preference: drinkPreference,
         user_id: userData.user.id,
-        picture_path: picturePath
+        picture_path: picturePath || (editTest?.picture_path || null)
       };
       
       // Only add price_quality_ratio if the user actually changed it and selected a value
@@ -171,27 +189,48 @@ export const useMilkTestForm = () => {
         milkTestData.price_quality_ratio = price;
       }
 
-      const { data: milkTest, error: milkTestError } = await supabase
-        .from('milk_tests')
-        .insert(milkTestData)
-        .select()
-        .single();
+      let milkTest;
+      let milkTestError;
+
+      if (testId) {
+        // Update existing test
+        const result = await supabase
+          .from('milk_tests')
+          .update(milkTestData)
+          .eq('id', testId)
+          .select()
+          .single();
+        
+        milkTest = result.data;
+        milkTestError = result.error;
+      } else {
+        // Insert new test
+        const result = await supabase
+          .from('milk_tests')
+          .insert(milkTestData)
+          .select()
+          .single();
+        
+        milkTest = result.data;
+        milkTestError = result.error;
+      }
 
       if (milkTestError) {
         console.error('Milk test error:', milkTestError);
         throw milkTestError;
       }
 
-      console.log("Milk test inserted successfully:", milkTest);
+      console.log(testId ? "Milk test updated successfully:" : "Milk test inserted successfully:", milkTest);
 
       toast({
-        title: "Test added!",
-        description: "Your milk taste test has been recorded.",
+        title: testId ? "Test updated!" : "Test added!",
+        description: testId ? "Your milk taste test has been updated." : "Your milk taste test has been recorded.",
       });
 
       // Invalidate relevant queries to refresh data on results pages
       await queryClient.invalidateQueries({ queryKey: ['milk-tests-aggregated'] });
       await queryClient.invalidateQueries({ queryKey: ['my-milk-tests'] });
+      await queryClient.invalidateQueries({ queryKey: ['feed'] });
 
       navigate("/feed");
     } catch (error) {
