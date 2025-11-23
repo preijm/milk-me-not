@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import MenuBar from "@/components/MenuBar";
+import { ImageModal } from "@/components/milk-test/ImageModal";
 import MobileFooter from "@/components/MobileFooter";
 import { Coffee, TrendingUp, Users } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
@@ -7,6 +8,8 @@ import { motion } from "framer-motion";
 import spreadsheetImage from "@/assets/milk-tests-spreadsheet.png";
 import soyMilkDrawing from "@/assets/soy-milk-drawing.jpg";
 const About = () => {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
   return <div className="min-h-screen">
       <MenuBar />
       <BackgroundPattern>
@@ -55,7 +58,8 @@ const About = () => {
                     <img 
                       src={soyMilkDrawing} 
                       alt="Original post-it note drawing showing 'SOYAMELK' - a humorous sketch of soy sauce bottle, glass, and milk carton representing the origin joke" 
-                      className="rounded-lg w-full max-w-md mx-auto border border-border/50 shadow-sm"
+                      className="rounded-lg w-full max-w-md mx-auto border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => setSelectedImage(soyMilkDrawing)}
                     />
                   </div>
                 </div>
@@ -83,7 +87,8 @@ const About = () => {
                     <img 
                       src={spreadsheetImage} 
                       alt="Original milk testing spreadsheet with ratings and data" 
-                      className="rounded-lg w-full border border-border/50 shadow-sm"
+                      className="rounded-lg w-full border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => setSelectedImage(spreadsheetImage)}
                     />
                   </div>
                 </div>
@@ -117,6 +122,12 @@ const About = () => {
       </BackgroundPattern>
       
       <MobileFooter />
+
+      <ImageModal
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        imageUrl={selectedImage || ""}
+      />
     </div>;
 };
 export default About;
