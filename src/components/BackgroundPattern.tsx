@@ -1,10 +1,17 @@
 import React from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 interface BackgroundPatternProps {
   children: React.ReactNode;
 }
 
 const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
+  const { scrollY } = useScroll();
+  
+  // Create parallax transforms with different speeds for depth
+  const oatPatternY = useTransform(scrollY, [0, 1000], [0, 150]);
+  const milkSplashY = useTransform(scrollY, [0, 1000], [0, -100]);
+
   return (
     <div 
       className="min-h-screen w-full max-w-full relative overflow-hidden"
@@ -12,8 +19,8 @@ const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
         background: 'linear-gradient(135deg, #ffffff, #ffffff, rgba(0, 191, 99, 0.02), rgba(33, 68, 255, 0.015), #ffffff, #ffffff)'
       }}
     >
-      {/* Oat grains pattern */}
-      <div 
+      {/* Oat grains pattern with parallax */}
+      <motion.div 
         style={{
           position: 'absolute',
           inset: '0',
@@ -23,12 +30,13 @@ const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
             radial-gradient(ellipse 4px 7px at 80% 20%, rgba(0, 191, 99, 0.18) 70%, transparent 71%)
           `,
           backgroundSize: '180px 180px, 140px 140px, 220px 220px',
-          opacity: 0.4
+          opacity: 0.4,
+          y: oatPatternY
         }}
       />
       
-      {/* Milk splash with animation */}
-      <div 
+      {/* Milk splash with animation and parallax */}
+      <motion.div 
         style={{
           position: 'absolute',
           top: '40%',
@@ -38,7 +46,8 @@ const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(33, 68, 255, 0.1), transparent 70%)',
           opacity: 0.5,
-          animation: 'gentlePulse 4s ease-in-out infinite'
+          animation: 'gentlePulse 4s ease-in-out infinite',
+          y: milkSplashY
         }}
       />
 
