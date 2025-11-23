@@ -54,19 +54,23 @@ const About = () => {
                     <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
                       How It All Started
                     </h2>
-                    <p className="text-muted-foreground leading-relaxed mb-4">
-                      Our vegan-milk taste testing journey began, ironically enough, with cow milk and a silly joke between colleagues: Soy milk? You mean you mix soy sauce with milk? Sounds terrible. After that rather horrible incident (we cannot recommend you try this at home), we wanted to test actual cow-milk alternatives and, because one of these people is a data scientist, we had to record it.
-                    </p>
-                    <div className="space-y-2">
-                      <img 
-                        src={soyMilkDrawing} 
-                        alt="Original post-it note drawing showing 'SOYAMELK' - a humorous sketch of soy sauce bottle, glass, and milk carton representing the origin joke" 
-                        className="rounded-lg w-full max-w-md mx-auto border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
-                        onClick={() => setSelectedImage(soyMilkDrawing)}
-                      />
-                      <p className="text-sm text-muted-foreground text-center italic">
-                        The infamous "SOYAMELK" sketch that started it all
-                      </p>
+                    <div className="flex flex-col sm:flex-row gap-6 items-start">
+                      <div className="flex-1">
+                        <p className="text-muted-foreground leading-relaxed">
+                          Our vegan-milk taste testing journey began, ironically enough, with cow milk and a silly joke between colleagues: Soy milk? You mean you mix soy sauce with milk? Sounds terrible. After that rather horrible incident (we cannot recommend you try this at home), we wanted to test actual cow-milk alternatives and, because one of these people is a data scientist, we had to record it.
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0 w-full sm:w-64 space-y-2">
+                        <img 
+                          src={soyMilkDrawing} 
+                          alt="Original post-it note drawing showing 'SOYAMELK' - a humorous sketch of soy sauce bottle, glass, and milk carton representing the origin joke" 
+                          className="rounded-lg w-full border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow object-cover"
+                          onClick={() => setSelectedImage(soyMilkDrawing)}
+                        />
+                        <p className="text-sm text-muted-foreground text-center italic">
+                          The infamous "SOYAMELK" sketch that started it all
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
