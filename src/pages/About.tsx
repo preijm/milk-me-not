@@ -55,12 +55,17 @@ const About = () => {
                     <p className="text-muted-foreground leading-relaxed mb-4">
                       Our vegan-milk taste testing journey began, ironically enough, with cow milk and a silly joke between colleagues: Soy milk? You mean you mix soy sauce with milk? Sounds terrible. After that rather horrible incident (we cannot recommend you try this at home), we wanted to test actual cow-milk alternatives and, because one of these people is a data scientist, we had to record it.
                     </p>
-                    <img 
-                      src={soyMilkDrawing} 
-                      alt="Original post-it note drawing showing 'SOYAMELK' - a humorous sketch of soy sauce bottle, glass, and milk carton representing the origin joke" 
-                      className="rounded-lg w-full max-w-md mx-auto border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
-                      onClick={() => setSelectedImage(soyMilkDrawing)}
-                    />
+                    <div className="space-y-2">
+                      <img 
+                        src={soyMilkDrawing} 
+                        alt="Original post-it note drawing showing 'SOYAMELK' - a humorous sketch of soy sauce bottle, glass, and milk carton representing the origin joke" 
+                        className="rounded-lg w-full max-w-md mx-auto border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+                        onClick={() => setSelectedImage(soyMilkDrawing)}
+                      />
+                      <p className="text-sm text-muted-foreground text-center italic">
+                        The infamous "SOYAMELK" sketch that started it all
+                      </p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -84,12 +89,17 @@ const About = () => {
                     <p className="text-muted-foreground leading-relaxed mb-4">
                       After having recorded and rated more than 100 milk-alternatives, and showed our sheet to many friends, we knew what we had to do: make it public. Our data scientist got to work and created a website, available to all, and published all of our results so far and ready to receive more from the original founders but of course everyone else who is keen to test.
                     </p>
-                    <img 
-                      src={spreadsheetImage} 
-                      alt="Original milk testing spreadsheet with ratings and data" 
-                      className="rounded-lg w-full border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
-                      onClick={() => setSelectedImage(spreadsheetImage)}
-                    />
+                    <div className="space-y-2">
+                      <img 
+                        src={spreadsheetImage} 
+                        alt="Original milk testing spreadsheet with ratings and data" 
+                        className="rounded-lg w-full border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+                        onClick={() => setSelectedImage(spreadsheetImage)}
+                      />
+                      <p className="text-sm text-muted-foreground text-center italic">
+                        Our original spreadsheet tracking over 100 milk alternatives
+                      </p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
