@@ -7,6 +7,8 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import { motion } from "framer-motion";
 import spreadsheetImage from "@/assets/milk-tests-spreadsheet.png";
 import soyMilkDrawing from "@/assets/soy-milk-drawing.jpg";
+import testingSessionImage from "@/assets/milk-testing-session.jpg";
+import communityPlatformImage from "@/assets/community-platform.jpg";
 const About = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -112,7 +114,7 @@ const About = () => {
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.6, ease: "easeOut", delay: 0.4 }}
               >
-                <div className="flex items-start gap-4 sm:gap-8">
+                <div className="flex items-start gap-4 sm:gap-8 sm:flex-row-reverse">
                   <div className="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary flex items-center justify-center relative z-10">
                     <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary-foreground" />
                   </div>
@@ -120,9 +122,33 @@ const About = () => {
                     <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
                       How it will (Hopefully) Continue
                     </h2>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed mb-4">
                       Now it is on you, your friends, family and fiends to continue the deep-dive into cow milk alternatives. Help us figure out where we can find the best and price efficient milk-adjacent drinks. Help the world avoid the worst drinks and give love to the best ones.
                     </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <img 
+                          src={testingSessionImage} 
+                          alt="Group of friends testing various plant-based milk alternatives around a table" 
+                          className="rounded-lg w-full border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+                          onClick={() => setSelectedImage(testingSessionImage)}
+                        />
+                        <p className="text-sm text-muted-foreground text-center italic">
+                          Community testing sessions bringing people together
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <img 
+                          src={communityPlatformImage} 
+                          alt="People using the platform on their devices to share and discover milk alternative reviews" 
+                          className="rounded-lg w-full border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+                          onClick={() => setSelectedImage(communityPlatformImage)}
+                        />
+                        <p className="text-sm text-muted-foreground text-center italic">
+                          A growing global community sharing their discoveries
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
