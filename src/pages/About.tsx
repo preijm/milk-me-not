@@ -5,6 +5,7 @@ import { Coffee, TrendingUp, Users } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { motion } from "framer-motion";
 import spreadsheetImage from "@/assets/milk-tests-spreadsheet.png";
+import soyMilkDrawing from "@/assets/soy-milk-drawing.jpg";
 const About = () => {
   return <div className="min-h-screen">
       <MenuBar />
@@ -48,9 +49,14 @@ const About = () => {
                     <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-3">
                       How It All Started
                     </h2>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed mb-4">
                       Our vegan-milk taste testing journey began, ironically enough, with cow milk and a silly joke between colleagues: Soy milk? You mean you mix soy sauce with milk? Sounds terrible. After that rather horrible incident (we cannot recommend you try this at home), we wanted to test actual cow-milk alternatives and, because one of these people is a data scientist, we had to record it.
                     </p>
+                    <img 
+                      src={soyMilkDrawing} 
+                      alt="Original post-it note drawing showing 'SOYAMELK' - a humorous sketch of soy sauce bottle, glass, and milk carton representing the origin joke" 
+                      className="rounded-lg w-full max-w-md mx-auto border border-border/50 shadow-sm"
+                    />
                   </div>
                 </div>
               </motion.div>
