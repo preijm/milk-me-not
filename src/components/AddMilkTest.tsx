@@ -28,7 +28,7 @@ export const AddMilkTest = () => {
   return (
     <Card className="bg-white/80 backdrop-blur-sm lg:rounded-2xl lg:shadow-lg lg:border lg:border-white/20 animate-fade-in rounded-none shadow-none border-0">
       <CardHeader className="pb-2">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="hidden lg:block text-2xl font-bold text-gray-900">
           {isEditMode ? "Update Test" : "Add Test"}
         </h1>
       </CardHeader>
