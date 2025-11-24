@@ -15,7 +15,7 @@ const AnimatedBirds = () => {
     const spawnBird = () => {
       const newBird: FlyingBird = {
         id: Date.now(),
-        startY: Math.random() * 60 + 10, // Random Y position between 10% and 70%
+        startY: Math.random() * 40 + 30, // Random Y position between 30% and 70% (well below menu bar)
         duration: Math.random() * 1.5 + 2, // Duration between 2-3.5 seconds
       };
 
@@ -42,12 +42,12 @@ const AnimatedBirds = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[100] overflow-hidden">
       <AnimatePresence>
         {birds.map((bird) => (
           <motion.div
             key={bird.id}
-            className="absolute text-amber-600/40"
+            className="absolute text-amber-600"
             initial={{ 
               x: "-10%", 
               y: `${bird.startY}%`,
