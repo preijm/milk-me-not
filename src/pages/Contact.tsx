@@ -17,19 +17,19 @@ const Contact = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Get in Touch</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-12">
               {/* Phone Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
-                <div className="flex flex-row items-start gap-4 flex-1">
-                  <div className="h-16 w-16 rounded-2xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-8 h-8 text-green-600" />
+              <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-all flex flex-col">
+                <div className="flex flex-row items-start gap-3 sm:gap-4 flex-1">
+                  <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-2xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h2 className="text-xl font-bold text-gray-900">Phone</h2>
+                    <div className="flex items-center justify-between mb-1 sm:mb-2">
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-900">Phone</h2>
                       <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
                         On Vacation
                       </Badge>
                     </div>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-600 leading-snug sm:leading-relaxed">
                       Our phone is currently taking a well-deserved vacation in the Bermuda Triangle. It left no forwarding address.
                     </p>
                   </div>
@@ -40,19 +40,19 @@ const Contact = () => {
               </div>
               
               {/* Email Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
-                <div className="flex flex-row items-start gap-4 flex-1">
-                  <div className="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-8 h-8 text-blue-600" />
+              <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-all flex flex-col">
+                <div className="flex flex-row items-start gap-3 sm:gap-4 flex-1">
+                  <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h2 className="text-xl font-bold text-gray-900">Email</h2>
+                    <div className="flex items-center justify-between mb-1 sm:mb-2">
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-900">Email</h2>
                       <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                         Available
                       </Badge>
                     </div>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-600 leading-snug sm:leading-relaxed">
                       Our inbox is always open. Unlike our fridge, it never runs out of oat milk or judgment.
                     </p>
                   </div>
@@ -63,19 +63,19 @@ const Contact = () => {
               </div>
               
               {/* Chat Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
-                <div className="flex flex-row items-start gap-4 flex-1">
-                  <div className="h-16 w-16 rounded-2xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="w-8 h-8 text-purple-600" />
+              <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-all flex flex-col">
+                <div className="flex flex-row items-start gap-3 sm:gap-4 flex-1">
+                  <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-2xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                    <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h2 className="text-xl font-bold text-gray-900">Chat</h2>
+                    <div className="flex items-center justify-between mb-1 sm:mb-2">
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-900">Chat</h2>
                       <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
                         Pursuing Dreams
                       </Badge>
                     </div>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-600 leading-snug sm:leading-relaxed">
                       Our chat bot decided to pursue its dream of becoming a stand-up comedian. We wish it the best of luck in its new career.
                     </p>
                   </div>
@@ -86,19 +86,19 @@ const Contact = () => {
               </div>
               
               {/* Carrier Pigeon Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
-                <div className="flex flex-row items-start gap-4 flex-1">
-                  <div className="h-16 w-16 rounded-2xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
-                    <Bird className="w-8 h-8 text-amber-600" />
+              <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-all flex flex-col">
+                <div className="flex flex-row items-start gap-3 sm:gap-4 flex-1">
+                  <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-2xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
+                    <Bird className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h2 className="text-xl font-bold text-gray-900">Postduif</h2>
+                    <div className="flex items-center justify-between mb-1 sm:mb-2">
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-900">Postduif</h2>
                       <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
                         In Training
                       </Badge>
                     </div>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-600 leading-snug sm:leading-relaxed">
                       Our carrier pigeons are still in flight school learning the difference between your address and a bread crumb trail.
                     </p>
                   </div>
@@ -110,8 +110,8 @@ const Contact = () => {
             </div>
 
             {/* FAQ Section */}
-            <div className="bg-white rounded-2xl shadow-sm p-8 max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Frequently Asked Questions</h2>
+            <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-8 max-w-4xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Frequently Asked Questions</h2>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
                   <AccordionTrigger className="text-left">What is Milk Me Not?</AccordionTrigger>
