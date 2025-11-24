@@ -10,7 +10,7 @@ interface ImageModalProps {
 export const ImageModal = ({ imageUrl, isOpen, onClose }: ImageModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-7xl w-full p-0 overflow-hidden bg-black/95 [&>button]:text-white [&>button]:hover:text-white/80 [&>button]:bg-black/50 [&>button]:hover:bg-black/70 [&>button]:backdrop-blur-sm">
+      <DialogContent className="max-w-7xl w-full p-0 overflow-hidden bg-black/95 [&>button]:w-9 [&>button]:h-9 [&>button]:rounded-full [&>button]:bg-black/60 [&>button]:hover:bg-black/80 [&>button]:text-white [&>button]:transition-all [&>button]:flex [&>button]:items-center [&>button]:justify-center [&>button]:top-4 [&>button]:right-4">
         <div className="relative">
           <img 
             src={imageUrl}
