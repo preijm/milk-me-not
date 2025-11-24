@@ -43,7 +43,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">Product</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              <div className="flex-1 h-px bg-gray-300"></div>
             </div>
             <div className="bg-gradient-to-br from-emerald-50/30 to-blue-50/30 p-4 rounded-lg">
               <ProductInformation 
@@ -59,7 +59,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">Rating</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              <div className="flex-1 h-px bg-gray-300"></div>
             </div>
             <div className="bg-gradient-to-br from-blue-50/30 to-purple-50/30 p-4 rounded-lg">
               <RatingSelect rating={formState.rating} setRating={formSetters.setRating} />
@@ -80,7 +80,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">Price-to-Quality Ratio</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              <div className="flex-1 h-px bg-gray-300"></div>
             </div>
             <div className="bg-gradient-to-br from-amber-50/30 to-orange-50/30 p-4 rounded-lg">
               <PriceInput 
@@ -96,7 +96,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">Buying Location</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              <div className="flex-1 h-px bg-gray-300"></div>
             </div>
             <div className="bg-gradient-to-br from-green-50/30 to-emerald-50/30 p-4 rounded-lg space-y-3">
               <div>
@@ -125,7 +125,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">Drinking Style</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-gray-300 to-transparent"></div>
+              <div className="flex-1 h-px bg-gray-300"></div>
             </div>
             <div className="bg-gradient-to-br from-purple-50/30 to-pink-50/30 p-4 rounded-lg">
               <DrinkPreference 
