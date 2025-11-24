@@ -1,122 +1,93 @@
 @import './styles/colors.css';
-@import url("https://fonts.googleapis.com/css2?family=Work+Sans&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Lora&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inconsolata&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
-    --foreground: 0 0% 9%;
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 9%;
-    --popover: 0 0% 89%;
-    --popover-foreground: 0 0% 9%;
-    --primary: 151 100% 37.451%; /* #2144ff */
-    --primary-foreground: 151 80% 95%;
-    --secondary: 231 100% 56.4706%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 9.0909% 97.8431%;
-    --muted-foreground: 0 0% 9%;
-    --accent: 166 76% 96%;
-    --accent-foreground: 173 80% 40%;
-    --destructive: 0 72% 50%;
-    --destructive-foreground: 0 85% 97%;
-    --border: 0 0% 83%; /* Light grey for borders */
-    --input: 0 0% 83%; /* Light grey for input borders */
-    --ring: 161 93% 30%; /* Light grey for focus rings */
-    --radius: 0.75rem;
-
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 225 100% 63%; /* #2144ff */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 0 0% 85%; /* Light grey for borders */
+    --input: 0 0% 85%; /* Light grey for input borders */
+    --ring: 0 0% 75%; /* Light grey for focus rings */
+    --radius: 0.5rem;
+    
     /* Custom colors for milk app */
     --milk-100: 0 0% 96%; /* #F5F5F5 */
     --milk-200: 0 0% 90%; /* #E5E5E5 */
     --milk-300: 0 0% 80%; /* #CCCCCC */
     --milk-400: 0 0% 70%; /* #B3B3B3 */
     --milk-500: 0 0% 30%; /* #4D4D4D */
-
+    
     --cream-100: 40 100% 97%; /* #FFF9E5 */
     --cream-200: 40 100% 94%; /* #FFF2CC */
     --cream-300: 40 100% 91%; /* #FFEAB2 */
-
+    
     /* Brand blue colors - Updated to match user specification */
     --brand-blue: 225 94% 54%; /* #1f54f4 */
     --brand-blue-hover: 225 89% 48%; /* Slightly darker for hover */
     --brand-blue-disabled: 225 94% 82%; /* Lighter for disabled state */
-
+    
     /* Rating color */
     --rating-bg: 225 100% 91%; /* #D1DCFF */
-
+    
     /* Enhanced gradient colors */
     --gradient-primary: linear-gradient(135deg, hsl(145 100% 38%), hsl(145 100% 42%));
     --gradient-hero: linear-gradient(135deg, hsl(145 100% 38% / 0.1), hsl(145 100% 42% / 0.05));
     --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 98%));
     --gradient-stats: linear-gradient(135deg, hsl(145 100% 38% / 0.05), hsl(145 100% 42% / 0.02));
-
+    
     /* Notification icon colors */
     --notification-like: 0 65% 64%; /* #e45959 */
     --notification-comment: 225 100% 63%; /* #2144ff */
     --notification-newsletter: 145 100% 38%; /* #00bf63 */
-
+    
     /* Filter active color */
     --filter-active: 225 100% 63%; /* #2144ff */
-
+    
     /* Switch colors */
     --switch-enabled: 225 100% 63%; /* #2144ff */
-
+    
     /* Shadow colors */
     --shadow-brand: 0 10px 30px -10px hsl(145 100% 38% / 0.2);
     --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
     --shadow-glow: 0 0 40px hsl(145 100% 42% / 0.15);
-    --chart-1: 158 64% 51%;
-    --chart-2: 141 69% 58%;
-    --chart-3: 172 66% 50%;
-    --chart-4: 82 77% 55%;
-    --chart-5: 0 0% 45%;
-    --sidebar: 0 0% 98%;
-    --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 161 93% 30%;
-    --sidebar-primary-foreground: 151 80% 95%;
-    --sidebar-accent: 0 0% 32%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 83%;
-    --sidebar-ring: 161 93% 30%;
-    --font-sans: 'Work Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-    --font-serif: 'Lora', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-    --font-mono: 'Inconsolata', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-    --tracking-normal: 0em;
-    --spacing: 0.25rem;
   }
 
   .dark {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 14%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 25%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 151 100% 37.451%; /* #2144ff */
-    --primary-foreground: 210 40% 98.0392%;
-    --secondary: 231 100% 56.4706%;
-    --secondary-foreground: 210 20% 98.0392%;
-    --muted: 0 0% 45%;
-    --muted-foreground: 0 0% 98%;
-    --accent: 178 84% 10%;
-    --accent-foreground: 172 66% 50%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 85% 97%;
-    --border: 0 0% 32%; /* Light grey for dark mode borders */
-    --input: 0 0% 32%; /* Light grey for dark mode input borders */
-    --ring: 158 64% 51%; /* Light grey for dark mode focus rings */ --chart-1: 156 71% 66%; --chart-2: 141 76% 73%; --chart-3: 170 76% 64%; --chart-4: 81 84% 67%; --chart-5: 0 0% 45%; --sidebar: 0 0% 14%; --sidebar-foreground: 0 0% 98%; --sidebar-primary: 158 64% 51%; --sidebar-primary-foreground: 165 91% 9%; --sidebar-accent: 172 66% 50%; --sidebar-accent-foreground: 178 84% 10%; --sidebar-border: 0 0% 32%; --sidebar-ring: 158 64% 51%; --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05); --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05); --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1); --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1); --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1); --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1); --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1); --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 225 100% 63%; /* #2144ff */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 0 0% 25%; /* Light grey for dark mode borders */
+    --input: 0 0% 25%; /* Light grey for dark mode input borders */
+    --ring: 0 0% 35%; /* Light grey for dark mode focus rings */
   }
 }
 
@@ -137,11 +108,11 @@
   .btn-brand {
     @apply bg-[hsl(var(--brand-blue))] text-white transition-all duration-200 ease-in-out rounded-lg py-3 px-6 font-medium;
   }
-
+  
   .btn-brand:hover:not(:disabled) {
     @apply bg-[hsl(var(--brand-blue-hover))] shadow-lg;
   }
-
+  
   .btn-brand:disabled {
     @apply bg-gray-200 text-gray-500 cursor-not-allowed opacity-100 transform-none shadow-none !important;
   }
@@ -157,7 +128,7 @@
   .oat-milk {
     background: linear-gradient(135deg, #ffffff, #ffffff, rgba(0, 191, 99, 0.02), rgba(33, 68, 255, 0.015), #ffffff, #ffffff);
   }
-
+  
   .oat-grains {
     position: absolute;
     inset: 0;
@@ -168,7 +139,7 @@
     background-size: 180px 180px, 140px 140px, 220px 220px;
     opacity: 0.4;
   }
-
+  
   .milk-splash {
     position: absolute;
     top: 40%;
@@ -180,7 +151,7 @@
     opacity: 0.5;
     animation: gentle-pulse 4s ease-in-out infinite;
   }
-
+  
   .plant-stem {
     position: absolute;
     bottom: 25%;
@@ -194,14 +165,5 @@
   @keyframes gentle-pulse {
     0%, 100% { transform: scale(1); opacity: 0.9; }
     50% { transform: scale(1.1); opacity: 0.6; }
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }
