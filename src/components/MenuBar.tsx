@@ -62,7 +62,7 @@ const MenuBar = () => {
       case '/about':
         return 'About';
       case '/contact':
-        return 'Contact';
+        return 'Get in Touch';
       case '/wishlist':
         return 'Wishlist';
       case '/account':
