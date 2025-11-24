@@ -145,7 +145,7 @@ const Contact = () => {
 
             {/* FAQ Section */}
             <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-8 max-w-4xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Frequently Asked Questions</h2>
+              <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Frequently Asked Questions</h2>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
                   <AccordionTrigger className="text-left">What is Milk Me Not?</AccordionTrigger>
