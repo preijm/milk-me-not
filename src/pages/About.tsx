@@ -8,8 +8,16 @@ import { motion } from "framer-motion";
 import spreadsheetImage from "@/assets/milk-tests-spreadsheet.png";
 import soySauceMilkPhoto from "@/assets/soy-sauce-milk-photo.jpg";
 import milkSoySaucePhoto from "@/assets/milk-soy-sauce-photo.jpg";
-import testingSessionImage from "@/assets/milk-testing-session.jpg";
-import communityPlatformImage from "@/assets/community-platform.jpg";
+import erwtenDrink from "@/assets/community/erwten-drink.jpg";
+import gutBioBarista from "@/assets/community/gut-bio-barista.jpg";
+import sproudMilk from "@/assets/community/sproud-milk.jpg";
+import abbotKinneyAmandel from "@/assets/community/abbot-kinney-amandel.jpg";
+import rudeHealthPotato from "@/assets/community/rude-health-potato.jpg";
+import broseOat from "@/assets/community/brose-oat.jpg";
+import lupineDrink from "@/assets/community/lupine-drink.jpg";
+import milsaSoja from "@/assets/community/milsa-soja.jpg";
+import campinaHaver from "@/assets/community/campina-haver.jpg";
+import alproNotMilk from "@/assets/community/alpro-not-milk.jpg";
 const About = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -126,30 +134,72 @@ const About = () => {
                     <p className="text-muted-foreground leading-relaxed mb-4">
                       Now it is on you, your friends, family and fiends to continue the deep-dive into cow milk alternatives. Help us figure out where we can find the best and price efficient milk-adjacent drinks. Help the world avoid the worst drinks and give love to the best ones.
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <img 
-                          src={testingSessionImage} 
-                          alt="Group of friends testing various plant-based milk alternatives around a table" 
-                          className="rounded-lg w-full border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
-                          onClick={() => setSelectedImage(testingSessionImage)}
-                        />
-                        <p className="text-sm text-muted-foreground text-center italic">
-                          Community testing sessions bringing people together
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <img 
-                          src={communityPlatformImage} 
-                          alt="People using the platform on their devices to share and discover milk alternative reviews" 
-                          className="rounded-lg w-full border border-border/50 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
-                          onClick={() => setSelectedImage(communityPlatformImage)}
-                        />
-                        <p className="text-sm text-muted-foreground text-center italic">
-                          A growing global community sharing their discoveries
-                        </p>
-                      </div>
+                    {/* Photo Collage Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+                      <img 
+                        src={erwtenDrink} 
+                        alt="AH Erwten Drink - Pea-based milk alternative" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(erwtenDrink)}
+                      />
+                      <img 
+                        src={gutBioBarista} 
+                        alt="Gut Bio Barista Hafer Drink - Oat barista milk with latte" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(gutBioBarista)}
+                      />
+                      <img 
+                        src={sproudMilk} 
+                        alt="Sproud plant-based unsweetened pea milk" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(sproudMilk)}
+                      />
+                      <img 
+                        src={abbotKinneyAmandel} 
+                        alt="Abbot Kinney's Barista Amandel and Best of Plants milk alternatives" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(abbotKinneyAmandel)}
+                      />
+                      <img 
+                        src={rudeHealthPotato} 
+                        alt="Rude Health Tiger Nut and Potato Barista dairy-free milk" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(rudeHealthPotato)}
+                      />
+                      <img 
+                        src={broseOat} 
+                        alt="Brose Scottish Goodness Fresh Oat Drink Barista Style" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(broseOat)}
+                      />
+                      <img 
+                        src={lupineDrink} 
+                        alt="AH Lupine Drink - Lupin-based milk from Dutch soil" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(lupineDrink)}
+                      />
+                      <img 
+                        src={milsaSoja} 
+                        alt="Milsa Soja Drink - Unsweetened soy milk alternative" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(milsaSoja)}
+                      />
+                      <img 
+                        src={campinaHaver} 
+                        alt="Campina Haver Drink - Oat milk alternative" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() => setSelectedImage(campinaHaver)}
+                      />
+                      <img 
+                        src={alproNotMilk} 
+                        alt="Alpro Shhh This is NOT M*LK - Plant-based oat drink" 
+                        className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all col-span-2 sm:col-span-3"
+                        onClick={() => setSelectedImage(alproNotMilk)}
+                      />
                     </div>
+                    <p className="text-sm text-muted-foreground text-center italic mt-3">
+                      Community members testing milk alternatives from around the world
+                    </p>
                   </div>
                 </div>
               </motion.div>
