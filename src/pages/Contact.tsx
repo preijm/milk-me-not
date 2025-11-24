@@ -23,8 +23,10 @@ const Contact = () => {
       <MenuBar />
       <BackgroundPattern>
         <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
-          <div className="container max-w-4xl mx-auto px-4 py-4 sm:py-8 relative z-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Get in Touch</h2>
+          <div className="container max-w-4xl mx-auto px-4 py-8 sm:py-12 relative z-10">
+            <h1 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-foreground">
+              Get in Touch
+            </h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-12">
               {/* Phone Card */}
               <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-all flex flex-col">
