@@ -173,8 +173,8 @@ const About = () => {
                           </CarouselItem>
                         ))}
                       </CarouselContent>
-                      <CarouselPrevious className="left-2" />
-                      <CarouselNext className="right-2" />
+                      <CarouselPrevious className="-left-4" />
+                      <CarouselNext className="-right-4" />
                     </Carousel>
                     <p className="text-sm text-muted-foreground text-center italic mt-3">
                       A few of the OG fake-milk contenders
