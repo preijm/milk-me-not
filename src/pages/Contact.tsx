@@ -1,9 +1,16 @@
 import React from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import { Phone, Mail, MessageSquare } from "lucide-react";
+import { Phone, Mail, MessageSquare, ChevronDown } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Contact = () => {
   return <div className="min-h-screen">
@@ -11,10 +18,10 @@ const Contact = () => {
       <BackgroundPattern>
         <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
           <div className="container max-w-7xl mx-auto px-4 py-4 sm:py-8 relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               {/* Phone Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all">
-                <div className="flex flex-row items-start gap-4">
+              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
+                <div className="flex flex-row items-start gap-4 flex-1">
                   <div className="h-16 w-16 rounded-2xl bg-green-500/10 flex items-center justify-center flex-shrink-0">
                     <Phone className="w-8 h-8 text-green-600" />
                   </div>
@@ -30,11 +37,17 @@ const Contact = () => {
                     </p>
                   </div>
                 </div>
+                <Button 
+                  disabled 
+                  className="mt-4 w-full bg-rose-100 hover:bg-rose-100 text-rose-700 cursor-not-allowed"
+                >
+                  Currently Unreachable
+                </Button>
               </div>
               
               {/* Email Card */}
-              <a href="mailto:info@milkmenot.com" className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all block">
-                <div className="flex flex-row items-start gap-4">
+              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
+                <div className="flex flex-row items-start gap-4 flex-1">
                   <div className="h-16 w-16 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
                     <Mail className="w-8 h-8 text-blue-600" />
                   </div>
@@ -50,11 +63,17 @@ const Contact = () => {
                     </p>
                   </div>
                 </div>
-              </a>
+                <Button 
+                  asChild
+                  className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  <a href="mailto:info@milkmenot.com">Send us an Email</a>
+                </Button>
+              </div>
               
               {/* Chat Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all">
-                <div className="flex flex-row items-start gap-4">
+              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
+                <div className="flex flex-row items-start gap-4 flex-1">
                   <div className="h-16 w-16 rounded-2xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
                     <MessageSquare className="w-8 h-8 text-purple-600" />
                   </div>
@@ -70,7 +89,68 @@ const Contact = () => {
                     </p>
                   </div>
                 </div>
+                <Button 
+                  disabled 
+                  className="mt-4 w-full bg-rose-100 hover:bg-rose-100 text-rose-700 cursor-not-allowed"
+                >
+                  Currently Unreachable
+                </Button>
               </div>
+            </div>
+
+            {/* FAQ Section */}
+            <div className="bg-white rounded-2xl shadow-sm p-8 max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Frequently Asked Questions</h2>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger className="text-left">What is Milk Me Not?</AccordionTrigger>
+                  <AccordionContent className="text-gray-600">
+                    Milk Me Not is a community-driven platform for discovering and rating plant-based milk alternatives. 
+                    We help you find the perfect dairy-free milk for your coffee, cereal, or cooking needs based on real user experiences.
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-2">
+                  <AccordionTrigger className="text-left">How do I add my milk test results?</AccordionTrigger>
+                  <AccordionContent className="text-gray-600">
+                    Simply sign up for an account, then click on "Add Test" in the navigation menu. You can rate products, 
+                    add photos, notes about taste and texture, and share your experience with the community.
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-3">
+                  <AccordionTrigger className="text-left">Can I suggest a new brand or product?</AccordionTrigger>
+                  <AccordionContent className="text-gray-600">
+                    Absolutely! When adding a new test, you can create new brands and products if they don't exist in our database yet. 
+                    This helps grow our community knowledge base and helps others discover new alternatives.
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-4">
+                  <AccordionTrigger className="text-left">Is the platform free to use?</AccordionTrigger>
+                  <AccordionContent className="text-gray-600">
+                    Yes! Milk Me Not is completely free to use. You can browse all test results, add your own reviews, 
+                    and participate in our community without any cost.
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-5">
+                  <AccordionTrigger className="text-left">How are the ratings calculated?</AccordionTrigger>
+                  <AccordionContent className="text-gray-600">
+                    Ratings are aggregated from all user tests for each product. We show the average rating along with 
+                    individual test details so you can see the full range of experiences and make an informed decision 
+                    based on what matters most to you.
+                  </AccordionContent>
+                </AccordionItem>
+                
+                <AccordionItem value="item-6">
+                  <AccordionTrigger className="text-left">Can I edit or delete my test results?</AccordionTrigger>
+                  <AccordionContent className="text-gray-600">
+                    Yes! You can edit or delete your own test results at any time from your profile page. 
+                    We believe in giving you full control over your contributions to the community.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </div>
         </div>
