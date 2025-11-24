@@ -19,6 +19,8 @@ import lupineDrink from "@/assets/community/lupine-drink.jpg";
 import milsaSoja from "@/assets/community/milsa-soja.jpg";
 import campinaHaver from "@/assets/community/campina-haver.jpg";
 import alproNotMilk from "@/assets/community/alpro-not-milk.jpg";
+import sproudMilk2 from "@/assets/community/sproud-milk-2.jpg";
+import beriefBarista from "@/assets/community/berief-barista.jpg";
 const About = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -159,6 +161,8 @@ const About = () => {
                           { src: milsaSoja, alt: "Milsa Soja Drink - Unsweetened soy milk alternative" },
                           { src: campinaHaver, alt: "Campina Haver Drink - Oat milk alternative" },
                           { src: alproNotMilk, alt: "Alpro Shhh This is NOT M*LK - Plant-based oat drink" },
+                          { src: sproudMilk2, alt: "Sproud plant-based unsweetened pea milk" },
+                          { src: beriefBarista, alt: "Berief Bio Barista - Creamy plant-based barista milk" },
                         ].map((image, index) => (
                           <CarouselItem key={index} className="pl-2 sm:pl-4 basis-1/2 sm:basis-1/3">
                             <img 
