@@ -177,7 +177,7 @@ const About = () => {
                       <CarouselNext className="right-0 sm:-right-12" />
                     </Carousel>
                     <p className="text-sm text-muted-foreground text-center italic mt-3">
-                      Some of the first milk alternatives tested
+                      A few of the OG fake-milk contenders
                     </p>
                   </div>
                 </div>
