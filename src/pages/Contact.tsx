@@ -1,15 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
 import { Phone, Mail, MessageSquare, ChevronDown, Bird } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
-import AnimatedBirds from "@/components/AnimatedBirds";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { motion, AnimatePresence } from "framer-motion";
+
 const Contact = () => {
+  const [flyingBirds, setFlyingBirds] = useState<number[]>([]);
+
+  const handlePigeonClick = () => {
+    const birdId = Date.now();
+    setFlyingBirds(prev => [...prev, birdId]);
+    setTimeout(() => {
+      setFlyingBirds(prev => prev.filter(id => id !== birdId));
+    }, 2000);
+  };
+
   return <div className="min-h-screen">
-      <AnimatedBirds />
       <MenuBar />
       <BackgroundPattern>
         <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
@@ -86,7 +96,29 @@ const Contact = () => {
               </div>
               
               {/* Carrier Pigeon Card */}
-              <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-all flex flex-col">
+              <div 
+                onClick={handlePigeonClick}
+                className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-all flex flex-col cursor-pointer relative overflow-visible"
+              >
+                <AnimatePresence>
+                  {flyingBirds.map(birdId => (
+                    <motion.div
+                      key={birdId}
+                      initial={{ x: 0, y: 0, opacity: 1 }}
+                      animate={{ 
+                        x: [0, 100, 300, 600],
+                        y: [0, -50, -150, -300],
+                        opacity: [1, 1, 0.5, 0],
+                        rotate: [0, 15, 30, 45]
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 2, ease: "easeOut" }}
+                      className="absolute top-4 left-4 pointer-events-none z-50"
+                    >
+                      <Bird className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
                 <div className="flex flex-row items-start gap-3 sm:gap-4 flex-1">
                   <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-2xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
                     <Bird className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600" />
