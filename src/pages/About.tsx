@@ -174,7 +174,7 @@ const About = () => {
                       </CarouselContent>
                     </Carousel>
                     <p className="text-sm text-muted-foreground text-center italic mt-3">
-                      Community members testing milk alternatives from around the world
+                      Some of the first milk alternatives tested
                     </p>
                   </div>
                 </div>
