@@ -26,7 +26,7 @@ const Contact = () => {
                     <Phone className="w-8 h-8 text-green-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center justify-between mb-2">
                       <h2 className="text-xl font-bold text-gray-900">Phone</h2>
                       <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
                         On Vacation
@@ -52,7 +52,7 @@ const Contact = () => {
                     <Mail className="w-8 h-8 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center justify-between mb-2">
                       <h2 className="text-xl font-bold text-gray-900">Email</h2>
                       <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                         Available
@@ -78,7 +78,7 @@ const Contact = () => {
                     <MessageSquare className="w-8 h-8 text-purple-600" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center justify-between mb-2">
                       <h2 className="text-xl font-bold text-gray-900">Chat</h2>
                       <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
                         Pursuing Dreams
