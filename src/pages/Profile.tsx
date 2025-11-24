@@ -15,36 +15,40 @@ import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
-
 const Profile = () => {
-  const { user } = useAuth();
-  const { profile, refetchProfile } = useUserProfile();
-  const { data: milkTests = [] } = useUserMilkTests({ column: 'created_at', direction: 'desc' });
+  const {
+    user
+  } = useAuth();
+  const {
+    profile,
+    refetchProfile
+  } = useUserProfile();
+  const {
+    data: milkTests = []
+  } = useUserMilkTests({
+    column: 'created_at',
+    direction: 'desc'
+  });
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const isMobile = useIsMobile();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     toast({
       title: "Signed out successfully",
-      description: "See you soon!",
+      description: "See you soon!"
     });
     navigate("/");
   };
 
   // Calculate stats
   const totalTests = milkTests.length;
-  const avgRating = totalTests > 0 
-    ? (milkTests.reduce((sum, test) => sum + Number(test.rating), 0) / totalTests).toFixed(1)
-    : "0.0";
-  const memberSince = profile?.created_at 
-    ? format(new Date(profile.created_at), 'MMM yyyy')
-    : "Recently";
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+  const avgRating = totalTests > 0 ? (milkTests.reduce((sum, test) => sum + Number(test.rating), 0) / totalTests).toFixed(1) : "0.0";
+  const memberSince = profile?.created_at ? format(new Date(profile.created_at), 'MMM yyyy') : "Recently";
+  return <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <MenuBar />
       <BackgroundPattern>
         <div className="min-h-screen pt-16 pb-24 lg:pb-12">
@@ -63,12 +67,7 @@ const Profile = () => {
                           <User className="w-10 h-10 sm:w-12 sm:h-12 text-primary-foreground" />
                         </AvatarFallback>
                       </Avatar>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full shadow-lg"
-                        onClick={() => setEditDialogOpen(true)}
-                      >
+                      <Button size="icon" variant="secondary" className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full shadow-lg" onClick={() => setEditDialogOpen(true)}>
                         <Edit2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -111,19 +110,15 @@ const Profile = () => {
                 <CardContent className="p-6">
                   <h2 className="text-lg font-semibold mb-4 text-foreground">Quick Actions</h2>
                   <div className="grid grid-cols-2 gap-3">
-                    <Button 
-                      variant="outline" 
-                      className="h-auto py-4 flex-col gap-2"
-                      onClick={() => navigate("/results", { state: { myResultsOnly: true } })}
-                    >
+                    <Button variant="outline" className="h-auto py-4 flex-col gap-2" onClick={() => navigate("/results", {
+                    state: {
+                      myResultsOnly: true
+                    }
+                  })}>
                       <ListPlus className="w-5 h-5 text-primary" />
-                      <span className="text-xs sm:text-sm">My Tests</span>
+                      <span className="text-xs sm:text-sm">My Results</span>
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      className="h-auto py-4 flex-col gap-2"
-                      onClick={() => navigate("/add")}
-                    >
+                    <Button variant="outline" className="h-auto py-4 flex-col gap-2" onClick={() => navigate("/add")}>
                       <PlusCircle className="w-5 h-5 text-primary" />
                       <span className="text-xs sm:text-sm">Add Test</span>
                     </Button>
@@ -146,12 +141,7 @@ const Profile = () => {
                           <User className="w-12 h-12 text-primary-foreground" />
                         </AvatarFallback>
                       </Avatar>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        className="absolute -bottom-1 -right-1 h-9 w-9 rounded-full shadow-lg"
-                        onClick={() => setEditDialogOpen(true)}
-                      >
+                      <Button size="icon" variant="secondary" className="absolute -bottom-1 -right-1 h-9 w-9 rounded-full shadow-lg" onClick={() => setEditDialogOpen(true)}>
                         <Edit2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -162,11 +152,7 @@ const Profile = () => {
                       <p className="text-muted-foreground mt-1">{user?.email}</p>
                       <p className="text-sm text-muted-foreground mt-2">Member since {memberSince}</p>
                     </div>
-                    <Button 
-                      variant="destructive"
-                      onClick={handleSignOut}
-                      className="flex-shrink-0"
-                    >
+                    <Button variant="destructive" onClick={handleSignOut} className="flex-shrink-0">
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign Out
                     </Button>
@@ -204,19 +190,15 @@ const Profile = () => {
                   <CardContent className="p-6">
                     <h2 className="text-xl font-semibold mb-6 text-foreground">Quick Actions</h2>
                     <div className="space-y-3">
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-start h-auto py-4"
-                        onClick={() => navigate("/results", { state: { myResultsOnly: true } })}
-                      >
+                      <Button variant="outline" className="w-full justify-start h-auto py-4" onClick={() => navigate("/results", {
+                      state: {
+                        myResultsOnly: true
+                      }
+                    })}>
                         <ListPlus className="w-5 h-5 text-primary mr-3" />
                         <span>View My Tests</span>
                       </Button>
-                      <Button 
-                        variant="outline" 
-                        className="w-full justify-start h-auto py-4"
-                        onClick={() => navigate("/add")}
-                      >
+                      <Button variant="outline" className="w-full justify-start h-auto py-4" onClick={() => navigate("/add")}>
                         <PlusCircle className="w-5 h-5 text-primary mr-3" />
                         <span>Add New Test</span>
                       </Button>
@@ -233,18 +215,7 @@ const Profile = () => {
       <MobileFooter />
       
       {/* Profile Edit Dialog */}
-      {profile && user && (
-        <ProfileEditDialog
-          open={editDialogOpen}
-          onOpenChange={setEditDialogOpen}
-          currentUsername={profile.username}
-          currentAvatarUrl={profile.avatar_url}
-          userId={user.id}
-          onSuccess={refetchProfile}
-        />
-      )}
-    </div>
-  );
+      {profile && user && <ProfileEditDialog open={editDialogOpen} onOpenChange={setEditDialogOpen} currentUsername={profile.username} currentAvatarUrl={profile.avatar_url} userId={user.id} onSuccess={refetchProfile} />}
+    </div>;
 };
-
 export default Profile;
