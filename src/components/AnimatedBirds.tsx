@@ -16,7 +16,7 @@ const AnimatedBirds = () => {
       const newBird: FlyingBird = {
         id: Date.now(),
         startY: Math.random() * 60 + 10, // Random Y position between 10% and 70%
-        duration: Math.random() * 3 + 4, // Duration between 4-7 seconds
+        duration: Math.random() * 1.5 + 2, // Duration between 2-3.5 seconds
       };
 
       setBirds((prev) => [...prev, newBird]);
