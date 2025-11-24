@@ -1,7 +1,7 @@
 import React from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import { Phone, Mail, MessageSquare, ChevronDown } from "lucide-react";
+import { Phone, Mail, MessageSquare, ChevronDown, Bird } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ const Contact = () => {
       <BackgroundPattern>
         <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
           <div className="container max-w-7xl mx-auto px-4 py-4 sm:py-8 relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
               {/* Phone Card */}
               <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
                 <div className="flex flex-row items-start gap-4 flex-1">
@@ -86,6 +86,32 @@ const Contact = () => {
                     </div>
                     <p className="text-gray-600 leading-relaxed">
                       Our chat bot decided to pursue its dream of becoming a stand-up comedian. We wish it the best of luck in its new career.
+                    </p>
+                  </div>
+                </div>
+                <Button 
+                  disabled 
+                  className="mt-4 w-full bg-rose-100 hover:bg-rose-100 text-rose-700 cursor-not-allowed"
+                >
+                  Currently Unreachable
+                </Button>
+              </div>
+              
+              {/* Carrier Pigeon Card */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-all flex flex-col">
+                <div className="flex flex-row items-start gap-4 flex-1">
+                  <div className="h-16 w-16 rounded-2xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
+                    <Bird className="w-8 h-8 text-amber-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <h2 className="text-xl font-bold text-gray-900">Postduif</h2>
+                      <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                        In Training
+                      </Badge>
+                    </div>
+                    <p className="text-gray-600 leading-relaxed">
+                      Our carrier pigeons are still in flight school learning the difference between your address and a bread crumb trail.
                     </p>
                   </div>
                 </div>
