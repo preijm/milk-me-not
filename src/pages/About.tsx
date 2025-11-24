@@ -164,8 +164,7 @@ const About = () => {
                             <img 
                               src={image.src} 
                               alt={image.alt}
-                              className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm cursor-pointer hover:shadow-lg hover:scale-105 transition-all"
-                              onClick={() => setSelectedImage(image.src)}
+                              className="rounded-lg w-full h-40 sm:h-48 object-cover border border-border/50 shadow-sm hover:shadow-lg hover:scale-105 transition-all"
                             />
                           </CarouselItem>
                         ))}
