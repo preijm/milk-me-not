@@ -17,11 +17,11 @@ export const ImageModal = ({ imageUrl, isOpen, onClose }: ImageModalProps) => {
           closeButton={false}
           className="max-w-7xl w-full p-0 overflow-hidden bg-transparent border-0 shadow-none"
         >
-          <div className="relative rounded-lg overflow-hidden">
+          <div className="relative w-fit mx-auto rounded-lg overflow-hidden">
             <img 
               src={imageUrl}
               alt="Product"
-              className="w-full h-auto max-h-[90vh] object-contain rounded-lg"
+              className="max-h-[90vh] h-auto rounded-lg"
             />
             <button
               onClick={onClose}
