@@ -49,14 +49,12 @@ const Results = () => {
 
   // Update URL when search term changes
   useEffect(() => {
-    const params = new URLSearchParams(searchParams);
     if (searchTerm) {
-      params.set('search', searchTerm);
+      setSearchParams({ search: searchTerm }, { replace: true });
     } else {
-      params.delete('search');
+      setSearchParams({}, { replace: true });
     }
-    setSearchParams(params, { replace: true });
-  }, [searchTerm]);
+  }, [searchTerm, setSearchParams]);
 
   // Check if we should enable myResultsOnly filter from navigation state
   useEffect(() => {
