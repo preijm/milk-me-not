@@ -40,7 +40,7 @@ export const ProductOptions = ({
           variant="category"
           className={`cursor-pointer transition-all ${
             selectedTypes.includes(property.key)
-              ? 'bg-slate-600 text-white border-slate-600'
+              ? 'bg-primary text-primary-foreground border-primary'
               : ''
           }`}
           onClick={() => handleTypeToggle(property.key)}

@@ -15,7 +15,7 @@ export const BaristaToggle = ({ isBarista, onToggle, disabled = false }: Barista
         variant="barista"
         className={`cursor-pointer transition-all ${
           isBarista
-            ? 'bg-amber-600 text-white border-amber-600'
+            ? 'bg-primary text-primary-foreground border-primary'
             : ''
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         onClick={() => !disabled && onToggle(!isBarista)}

@@ -124,7 +124,7 @@ export const FlavorSelector = ({
             variant="flavor" 
             className={`cursor-pointer transition-all ${
               selectedFlavors.includes(flavor.key) 
-                ? 'bg-purple-600 text-white border-purple-600' 
+                ? 'bg-primary text-primary-foreground border-primary' 
                 : ''
             }`}
             onClick={() => onFlavorToggle(flavor.key)}
@@ -139,11 +139,11 @@ export const FlavorSelector = ({
             type="button"
             variant="outline"
             size="sm"
-            className="h-7 px-2 rounded-full border-purple-200 hover:bg-purple-50 hover:border-purple-300"
+            className="h-7 px-2 rounded-full"
             aria-label="Add new flavor"
             onClick={() => setShowAddInput(true)}
           >
-            <Plus size={16} className="text-purple-600" />
+            <Plus size={16} />
           </Button>
         ) : (
           <div className="flex items-center gap-2">

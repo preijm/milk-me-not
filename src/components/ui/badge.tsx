@@ -17,9 +17,9 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80 rounded-full px-2.5 py-0.5 text-xs font-semibold",
         outline: "text-foreground rounded-full px-2.5 py-0.5 text-xs font-semibold",
         // New minimal outline variants
-        barista: "bg-white/80 backdrop-blur-sm text-amber-600 border border-amber-600 rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:shadow-lg whitespace-nowrap",
-        category: "bg-white/80 backdrop-blur-sm text-slate-600 border border-slate-600 rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:shadow-lg whitespace-nowrap",
-        flavor: "bg-white/80 backdrop-blur-sm text-purple-600 border border-purple-600 rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:shadow-lg whitespace-nowrap",
+        barista: "bg-white/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:bg-accent hover:border-accent-foreground whitespace-nowrap",
+        category: "bg-white/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:bg-accent hover:border-accent-foreground whitespace-nowrap",
+        flavor: "bg-white/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:bg-accent hover:border-accent-foreground whitespace-nowrap",
         scoreExcellent: "bg-transparent text-[#00bf63] border-[#00bf63] rounded px-2 py-1 text-[11px] font-medium",
         scoreGood: "bg-transparent text-[#2144ff] border-[#2144ff] rounded px-2 py-1 text-[11px] font-medium",
         scoreFair: "bg-transparent text-[#f59e0b] border-[#f59e0b] rounded px-2 py-1 text-[11px] font-medium",
