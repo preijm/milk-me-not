@@ -25,7 +25,7 @@ export const ShopSearchInput = ({
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
-        className="text-left placeholder:text-left pl-10"
+        className="text-left placeholder:text-left pr-10"
         autoComplete="off"
       />
     </div>
