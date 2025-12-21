@@ -714,19 +714,6 @@ export type Database = {
       }
       search_product_types:
         | {
-            Args: { search_term: string }
-            Returns: {
-              brand_id: string
-              brand_name: string
-              flavor_names: string[]
-              id: string
-              is_barista: boolean
-              product_name: string
-              product_name_id: string
-              property_names: string[]
-            }[]
-          }
-        | {
             Args: never
             Returns: {
               brand_id: string
@@ -741,6 +728,19 @@ export type Database = {
               isOneToOne: false
               isSetofReturn: true
             }
+          }
+        | {
+            Args: { search_term: string }
+            Returns: {
+              brand_id: string
+              brand_name: string
+              flavor_names: string[]
+              id: string
+              is_barista: boolean
+              product_name: string
+              product_name_id: string
+              property_names: string[]
+            }[]
           }
       validate_milk_test_input: {
         Args: {
