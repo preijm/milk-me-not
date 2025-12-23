@@ -33,6 +33,23 @@
     --brand-secondary-foreground: 0 0% 100%;
     
     /* ========================================
+       HEATMAP COLORS (for map visualization)
+       ======================================== */
+    --heatmap-very-high: 0 84% 50%;     /* #dc2626 - Red */
+    --heatmap-high: 21 90% 48%;         /* #ea580c - Orange */
+    --heatmap-medium-high: 38 92% 50%;  /* #f59e0b - Amber */
+    --heatmap-medium: 48 96% 47%;       /* #eab308 - Yellow */
+    --heatmap-low-medium: 84 81% 44%;   /* #84cc16 - Lime */
+    --heatmap-low: 142 71% 45%;         /* #22c55e - Green */
+    --heatmap-none: 220 13% 91%;        /* #e5e7eb - Light gray */
+    
+    /* ========================================
+       SURFACE COLORS
+       ======================================== */
+    --surface-warm: 33 100% 97%;        /* #fff9f0 - Warm white */
+    --surface-cream: 33 100% 94%;       /* #fff3e0 - Cream */
+    
+    /* ========================================
        TYPOGRAPHY SCALE (rem based)
        ======================================== */
     --font-size-xs: 0.75rem;            /* 12px */
