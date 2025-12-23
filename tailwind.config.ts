@@ -83,6 +83,21 @@ export default {
 				secondary: 'hsl(var(--brand-secondary))',
 				'secondary-foreground': 'hsl(var(--brand-secondary-foreground))'
 			},
+			// Heatmap colors (for map visualizations)
+			heatmap: {
+				'very-high': 'hsl(var(--heatmap-very-high))',
+				'high': 'hsl(var(--heatmap-high))',
+				'medium-high': 'hsl(var(--heatmap-medium-high))',
+				'medium': 'hsl(var(--heatmap-medium))',
+				'low-medium': 'hsl(var(--heatmap-low-medium))',
+				'low': 'hsl(var(--heatmap-low))',
+				'none': 'hsl(var(--heatmap-none))'
+			},
+			// Surface colors
+			surface: {
+				warm: 'hsl(var(--surface-warm))',
+				cream: 'hsl(var(--surface-cream))'
+			},
 			// Legacy milk colors (keeping for backwards compatibility)
 			milk: {
 				'50': '#fdfcfb',

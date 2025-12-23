@@ -228,7 +228,7 @@ const MapboxWorldMap = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-lg text-gray-600">Loading map data...</div>
+        <div className="text-lg text-muted-foreground">Loading map data...</div>
       </div>
     );
   }
@@ -237,8 +237,8 @@ const MapboxWorldMap = () => {
     <div className="w-full space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Global Milk Test Activity Map</h2>
-        <p className="text-lg text-gray-600">
+        <h2 className="text-3xl font-bold text-foreground mb-2">Global Milk Test Activity Map</h2>
+        <p className="text-lg text-muted-foreground">
           {countryData.length} countries with {totalTests.toLocaleString()} total tests
         </p>
       </div>
@@ -246,31 +246,31 @@ const MapboxWorldMap = () => {
       {/* Legend */}
       <div className="flex flex-wrap justify-center gap-4 mb-6">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#dc2626' }}></div>
+          <div className="w-4 h-4 rounded bg-heatmap-very-high"></div>
           <span className="text-sm font-medium">100+ tests</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#ea580c' }}></div>
+          <div className="w-4 h-4 rounded bg-heatmap-high"></div>
           <span className="text-sm font-medium">50-99 tests</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#f59e0b' }}></div>
+          <div className="w-4 h-4 rounded bg-heatmap-medium-high"></div>
           <span className="text-sm font-medium">20-49 tests</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#eab308' }}></div>
+          <div className="w-4 h-4 rounded bg-heatmap-medium"></div>
           <span className="text-sm font-medium">10-19 tests</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#84cc16' }}></div>
+          <div className="w-4 h-4 rounded bg-heatmap-low-medium"></div>
           <span className="text-sm font-medium">5-9 tests</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded" style={{ backgroundColor: '#22c55e' }}></div>
+          <div className="w-4 h-4 rounded bg-heatmap-low"></div>
           <span className="text-sm font-medium">1-4 tests</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-gray-300"></div>
+          <div className="w-4 h-4 rounded bg-heatmap-none"></div>
           <span className="text-sm font-medium">No data</span>
         </div>
       </div>

@@ -147,9 +147,7 @@ const MenuBar = () => {
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Result Details</h1>
               </div> : isResultsPage ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <BarChart3 className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Results</h1>
@@ -209,13 +207,9 @@ const MenuBar = () => {
                 Back
               </Button> : isAddPage && isMobileOrTablet ? <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="h-10 w-10 rounded-full">
                 <X className="h-6 w-6" />
-              </Button> : (isResultsPage || isFeedPage) && isMobileOrTablet && user ? <Button variant="default" size="sm" onClick={handleAddTest} className="rounded-full h-9 w-9 p-0" style={{
-            backgroundColor: '#00bf63'
-          }}>
+              </Button> : (isResultsPage || isFeedPage) && isMobileOrTablet && user ? <Button variant="default" size="sm" onClick={handleAddTest} className="rounded-full h-9 w-9 p-0 bg-brand-primary hover:bg-brand-primary/90">
                 <Plus className="h-5 w-5 text-white" />
-              </Button> : isNotificationsPage && isMobileOrTablet && notifications.length > 0 && unreadCount > 0 ? <button onClick={markAllAsRead} className="text-sm font-medium whitespace-nowrap" style={{
-            color: '#00bf63'
-          }}>
+              </Button> : isNotificationsPage && isMobileOrTablet && notifications.length > 0 && unreadCount > 0 ? <button onClick={markAllAsRead} className="text-sm font-medium whitespace-nowrap text-brand-primary">
                 Mark all read
               </button> : isProfilePage && isMobileOrTablet ? <Button variant="ghost" size="icon" onClick={() => navigate('/account')} className="h-10 w-10">
                 <Settings className="h-5 w-5" />

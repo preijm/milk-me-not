@@ -14,12 +14,8 @@ const MobileFooter = () => {
 
   const getLinkClass = (path: string) => {
     return isActive(path) 
-      ? "font-medium transition-colors" 
+      ? "font-medium transition-colors text-brand-primary" 
       : "text-gray-600 md:hover:text-gray-900 transition-colors font-medium";
-  };
-
-  const getLinkStyle = (path: string) => {
-    return isActive(path) ? { color: '#00bf63' } : {};
   };
 
   return (
@@ -30,28 +26,24 @@ const MobileFooter = () => {
             <Link 
               to="/" 
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/")}`}
-              style={getLinkStyle("/")}
             >
               <Home className="w-6 h-6" />
             </Link>
             <Link 
               to="/feed" 
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/feed")}`}
-              style={getLinkStyle("/feed")}
             >
               <Radio className="w-6 h-6" />
             </Link>
             <Link 
               to="/results" 
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/results")}`}
-              style={getLinkStyle("/results")}
             >
               <BarChart3 className="w-6 h-6" />
             </Link>
             <Link 
               to="/notifications" 
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/notifications")}`}
-              style={getLinkStyle("/notifications")}
             >
               <div className="relative">
                 <Bell className="w-6 h-6" />
@@ -66,7 +58,6 @@ const MobileFooter = () => {
             <Link 
               to="/profile" 
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/profile")}`}
-              style={getLinkStyle("/profile")}
             >
               <User className="w-6 h-6" />
             </Link>

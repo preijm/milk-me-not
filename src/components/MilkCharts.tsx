@@ -748,8 +748,8 @@ export const MilkCharts = ({
           />
           <YAxis domain={[0, 10]} />
           <Tooltip content={<TestResultTooltip />} />
-          <Bar dataKey="rating" name="Rating" fill="#07c167" />
-          <Brush dataKey="index" height={30} stroke="#07c167" />
+          <Bar dataKey="rating" name="Rating" fill="hsl(var(--brand-primary))" />
+          <Brush dataKey="index" height={30} stroke="hsl(var(--brand-primary))" />
         </BarChart>;
       case 'ratings':
         return <BarChart data={brandChartData} margin={{

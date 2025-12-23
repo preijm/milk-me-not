@@ -31,35 +31,25 @@ export const StatsOverview = ({
       </div>
 
       <div className="grid grid-cols-5 gap-3">
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1" style={{
-        backgroundColor: '#fff3e0'
-      }}>
-          <p className="text-xs text-gray-600 mb-1 text-[#444]">Average Rating</p>
-          <p className="text-xl font-bold text-gray-900">{avgRating}/10</p>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1 bg-surface-cream">
+          <p className="text-xs text-muted-foreground mb-1">Average Rating</p>
+          <p className="text-xl font-bold text-foreground">{avgRating}/10</p>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1" style={{
-        backgroundColor: '#fff3e0'
-      }}>
-          <p className="text-xs text-gray-600 mb-1 text-[#444]">Total Tests</p>
-          <p className="text-xl font-bold text-gray-900">{results.length}</p>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1 bg-surface-cream">
+          <p className="text-xs text-muted-foreground mb-1">Total Tests</p>
+          <p className="text-xl font-bold text-foreground">{results.length}</p>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1" style={{
-        backgroundColor: '#fff3e0'
-      }}>
-          <p className="text-xs text-gray-600 mb-1 text-[#444]">Milk Types</p>
-          <p className="text-xl font-bold text-gray-900">{types.length}</p>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1 bg-surface-cream">
+          <p className="text-xs text-muted-foreground mb-1">Milk Types</p>
+          <p className="text-xl font-bold text-foreground">{types.length}</p>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1" style={{
-        backgroundColor: '#fff3e0'
-      }}>
-          <p className="text-xs text-gray-600 mb-1 text-[#444]">Most Common</p>
-          <p className="text-xl font-bold text-gray-900 truncate">{mostCommonType}</p>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1 bg-surface-cream">
+          <p className="text-xs text-muted-foreground mb-1">Most Common</p>
+          <p className="text-xl font-bold text-foreground truncate">{mostCommonType}</p>
         </div>
-        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1" style={{
-        backgroundColor: '#fff3e0'
-      }}>
-          <p className="text-xs text-gray-600 mb-1 text-[#444]">Avg. Price</p>
-          <p className="text-xl font-bold text-gray-900">{avgPrice !== "N/A" ? `$${avgPrice}` : avgPrice}</p>
+        <div className="flex flex-col rounded-lg p-3 shadow-sm transition-transform hover:shadow-md md:hover:-translate-y-1 bg-surface-cream">
+          <p className="text-xs text-muted-foreground mb-1">Avg. Price</p>
+          <p className="text-xl font-bold text-foreground">{avgPrice !== "N/A" ? `$${avgPrice}` : avgPrice}</p>
         </div>
       </div>
     </div>;

@@ -28,7 +28,7 @@ export const MilkCard = ({ result, showUsername = false }: MilkCardProps) => {
   const productName = result.product_name || "Unknown Product";
   
   return (
-    <div className="rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow relative h-[200px] flex flex-col border border-gray-100" style={{ backgroundColor: '#fff9f0' }}>
+    <div className="rounded-lg shadow-md p-6 animate-fade-up hover:shadow-lg transition-shadow relative h-[200px] flex flex-col border border-gray-100 bg-surface-warm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Milk className="w-6 h-6 text-milk-400" />
