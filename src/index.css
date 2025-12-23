@@ -1,7 +1,9 @@
-@import './styles/colors.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import './styles/colors.css';
+@import './styles/design-tokens.css';
 
 @layer base {
   :root {
