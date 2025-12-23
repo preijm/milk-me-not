@@ -13,10 +13,10 @@ interface RatingSelectProps {
 }
 
 const getRatingColor = (rating: number) => {
-  if (rating >= 8.5) return "bg-[#00bf63]";
-  if (rating >= 7.5) return "bg-[#2144ff]"; 
-  if (rating >= 5.5) return "bg-[#f59e0b]";
-  return "bg-[#ff4b51]";
+  if (rating >= 8.5) return "bg-score-excellent";
+  if (rating >= 7.5) return "bg-score-good"; 
+  if (rating >= 5.5) return "bg-score-fair";
+  return "bg-score-poor";
 };
 
 export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {

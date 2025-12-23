@@ -106,8 +106,7 @@ export default function ProfileSettings() {
 
         <Button 
           type="submit" 
-          className="w-full text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
-          style={{backgroundColor: '#2144ff'}}
+          className="w-full text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group bg-brand-secondary hover:bg-brand-secondary/90"
           disabled={loading}
         >
           <Save className="w-4 h-4 mr-2" />

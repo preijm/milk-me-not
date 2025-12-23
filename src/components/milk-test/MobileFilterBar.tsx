@@ -244,7 +244,7 @@ export const MobileFilterBar = ({
                     className={cn(
                       "flex items-center justify-between h-16 px-4 rounded-xl border-2 cursor-pointer transition-all",
                       isActive 
-                        ? "bg-[#2144ff]/5 border-[#2144ff]" 
+                        ? "bg-brand-secondary/5 border-brand-secondary" 
                         : "border-border hover:bg-muted"
                     )}
                     onClick={() => {
@@ -256,16 +256,16 @@ export const MobileFilterBar = ({
                     <div className="flex items-center gap-3">
                       <div className={cn(
                         "w-10 h-10 rounded-lg flex items-center justify-center",
-                        isActive ? "bg-[#2144ff]/10" : "bg-muted"
+                        isActive ? "bg-brand-secondary/10" : "bg-muted"
                       )}>
                         <Icon className={cn(
                           "h-5 w-5",
-                          isActive ? "text-[#2144ff]" : "text-muted-foreground"
+                          isActive ? "text-brand-secondary" : "text-muted-foreground"
                         )} />
                       </div>
                       <span className={cn(
                         "text-base font-medium",
-                        isActive && "text-[#2144ff]"
+                        isActive && "text-brand-secondary"
                       )}>
                         {option.label}
                       </span>
@@ -273,7 +273,7 @@ export const MobileFilterBar = ({
                     {isActive ? (
                       <Button
                         size="sm"
-                        className="h-9 px-4 gap-2 rounded-lg bg-[#2144ff] hover:bg-[#1a3ad9] text-white"
+                        className="h-9 px-4 gap-2 rounded-lg bg-brand-secondary hover:bg-brand-secondary/90 text-white"
                         onClick={(e) => {
                           e.stopPropagation();
                           onSort(option.key);
@@ -401,7 +401,7 @@ export const MobileFilterBar = ({
             <DrawerFooter className="border-t">
               <Button
                 onClick={() => setIsFiltersOpen(false)}
-                className="w-full h-12 text-white bg-[#2144ff] hover:bg-[#1a3ad9]"
+                className="w-full h-12 text-white bg-brand-secondary hover:bg-brand-secondary/90"
               >
                 Show {resultsCount} Results
               </Button>
@@ -416,7 +416,7 @@ export const MobileFilterBar = ({
             onClick={handleMyResultsToggle}
             className={cn(
               "flex-1 h-11 flex items-center justify-center gap-2 rounded-lg transition-colors",
-              filters.myResultsOnly && "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#1a3ad9]"
+              filters.myResultsOnly && "bg-brand-secondary text-white border-brand-secondary hover:bg-brand-secondary/90"
             )}
           >
             <User className="h-4 w-4" />

@@ -8,7 +8,7 @@ interface EmailConfirmationPendingProps {
 const EmailConfirmationPending = ({ email, onBackToLogin }: EmailConfirmationPendingProps) => {
   return (
     <>
-      <h1 className="text-3xl font-bold text-center mb-8 text-[#00BF63]">
+      <h1 className="text-3xl font-bold text-center mb-8 text-brand-primary">
         Thanks for signing up!
       </h1>
       <div className="space-y-6 text-center">

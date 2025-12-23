@@ -28,9 +28,9 @@ export const SortableColumnHeader = ({
     }
     
     return sortConfig.direction === 'asc' ? (
-      <ChevronUp className="w-4 h-4 ml-1" style={{ color: '#2144ff' }} />
+      <ChevronUp className="w-4 h-4 ml-1 text-brand-secondary" />
     ) : (
-      <ChevronDown className="w-4 h-4 ml-1" style={{ color: '#2144ff' }} />
+      <ChevronDown className="w-4 h-4 ml-1 text-brand-secondary" />
     );
   };
 
@@ -38,8 +38,8 @@ export const SortableColumnHeader = ({
     <Button
       variant="ghost"
       onClick={() => onSort(column)}
-      className={`hover:bg-gray-100 px-0 h-8 font-medium text-gray-700 justify-start w-full text-left ${sortConfig.column === column ? 'font-semibold' : ''} ${className || ''}`}
-      style={width ? { width, ...(sortConfig.column === column ? { color: '#2144ff' } : {}) } : (sortConfig.column === column ? { color: '#2144ff' } : {})}
+      className={`hover:bg-gray-100 px-0 h-8 font-medium text-gray-700 justify-start w-full text-left ${sortConfig.column === column ? 'font-semibold text-brand-secondary' : ''} ${className || ''}`}
+      style={width ? { width } : {}}
     >
       <span className="flex items-center">
         {label}

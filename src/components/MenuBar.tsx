@@ -94,16 +94,12 @@ const MenuBar = () => {
                 <img src="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png" alt="Milk Me Not Logo" className="h-12 w-12" width="48" height="48" loading="eager" fetchPriority="high" />
                 <span className="text-gray-800 text-2xl md:text-4xl font-bold whitespace-nowrap flex items-center" translate="no">Milk Me Not</span>
               </Link> : isAddPage ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <Plus className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Add Test</h1>
               </div> : isNotificationsPage ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <Bell className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -111,58 +107,42 @@ const MenuBar = () => {
                   {unreadCount > 0 && <p className="text-xs text-gray-500">{unreadCount} unread</p>}
                 </div>
               </div> : isFeedPage ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <Radio className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Feed</h1>
               </div> : isProfilePage ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Profile</h1>
               </div> : isAccountNotificationsPage && isMobileOrTablet ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <Bell className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Notifications</h1>
               </div> : isAccountSecurityPage && isMobileOrTablet ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <Lock className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Security</h1>
               </div> : isAccountCountryPage && isMobileOrTablet ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <Globe className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Country</h1>
               </div> : isAccountProfilePage && isMobileOrTablet ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <User className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Profile</h1>
               </div> : isAccountPage && isMobileOrTablet ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <Settings className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Settings</h1>
               </div> : isProductDetailsPage ? <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{
-              backgroundColor: '#00bf63'
-            }}>
+                <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 bg-brand-primary">
                   <BarChart3 className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-900">Result Details</h1>
@@ -185,19 +165,19 @@ const MenuBar = () => {
           <div className="flex items-center gap-4">
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center gap-6">
-              <Link to="/" className={`transition-colors ${location.pathname === '/' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
+              <Link to="/" className={`transition-colors ${location.pathname === '/' ? 'text-brand-primary font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 Home
               </Link>
-              <Link to="/feed" className={`transition-colors ${location.pathname === '/feed' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
+              <Link to="/feed" className={`transition-colors ${location.pathname === '/feed' ? 'text-brand-primary font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 Feed
               </Link>
-              <Link to="/results" className={`transition-colors ${location.pathname === '/results' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
+              <Link to="/results" className={`transition-colors ${location.pathname === '/results' ? 'text-brand-primary font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 Results
               </Link>
-              <Link to="/about" className={`transition-colors ${location.pathname === '/about' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
+              <Link to="/about" className={`transition-colors ${location.pathname === '/about' ? 'text-brand-primary font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 About
               </Link>
-              <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-[#00bf63] font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
+              <Link to="/contact" className={`transition-colors ${location.pathname === '/contact' ? 'text-brand-primary font-medium' : 'text-gray-700 md:hover:text-gray-900'}`}>
                 Contact
               </Link>
             </div>
@@ -248,7 +228,7 @@ const MenuBar = () => {
       <Dialog open={showAddTestDialog} onOpenChange={setShowAddTestDialog}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-[#00bf63]">Add New Test</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-brand-primary">Add New Test</DialogTitle>
           </DialogHeader>
           <AddMilkTest />
         </DialogContent>

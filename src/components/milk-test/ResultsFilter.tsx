@@ -115,7 +115,7 @@ export const ResultsFilter = ({
             <Filter className="h-4 w-4" />
             <span>Filter</span>
             {hasActiveFilters && (
-              <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ backgroundColor: '#2144ff' }} />
+              <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-secondary" />
             )}
           </Button>
         </PopoverTrigger>

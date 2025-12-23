@@ -44,9 +44,7 @@ const Notifications = () => {
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full flex items-center justify-center" style={{
-                  backgroundColor: '#00bf63'
-                }}>
+                  <div className="h-12 w-12 rounded-full flex items-center justify-center bg-brand-primary">
                     <Bell className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -54,9 +52,7 @@ const Notifications = () => {
                     {unreadCount > 0 && <p className="text-sm text-gray-500">{unreadCount} unread</p>}
                   </div>
                 </div>
-                {notifications.length > 0 && unreadCount > 0 && <button onClick={markAllAsRead} className="text-sm font-medium md:hover:opacity-80 transition-opacity" style={{
-                color: '#00bf63'
-              }}>
+                {notifications.length > 0 && unreadCount > 0 && <button onClick={markAllAsRead} className="text-sm font-medium md:hover:opacity-80 transition-opacity text-brand-primary">
                     Mark all read
                   </button>}
               </div>

@@ -65,9 +65,7 @@ const Home = () => {
             
             {/* Enhanced hero title with green color */}
             <div className="mb-4 md:mb-6 relative">
-              <h1 className="text-[2.625rem] md:text-7xl lg:text-8xl font-bold mb-3 md:mb-4 max-w-4xl animate-fade-in relative" style={{
-              color: '#00BF63'
-            }}>
+              <h1 className="text-[2.625rem] md:text-7xl lg:text-8xl font-bold mb-3 md:mb-4 max-w-4xl animate-fade-in relative text-brand-primary">
                 Ditch the Moo.
                 <br />
                 <span className="flex items-center justify-center gap-4">
@@ -84,9 +82,7 @@ const Home = () => {
             
             {/* Enhanced CTA button with better animation */}
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 animate-fade-in mb-8 md:mb-12">
-              <Button onClick={handleStartJourney} size="lg" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 text-white shadow-lg hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300 group" style={{
-              backgroundColor: '#2144ff'
-            }}>
+              <Button onClick={handleStartJourney} size="lg" className="text-base md:text-lg px-6 md:px-8 py-3 md:py-4 text-white shadow-lg hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300 group bg-brand-secondary hover:bg-brand-secondary/90">
                 <Milk className="mr-2 h-6 w-6 md:group-hover:rotate-12 transition-transform duration-300" />
                 Start Your Taste Journey
                 <ArrowRight className="ml-2 h-5 w-5 md:group-hover:translate-x-1 transition-transform duration-300" />
@@ -102,15 +98,15 @@ const Home = () => {
             {/* Trust indicators */}
             <div className="flex items-center justify-center gap-4 md:gap-8 text-sm text-muted-foreground animate-fade-in">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#00bf63' }}></div>
+                <div className="w-2 h-2 rounded-full animate-pulse bg-brand-primary"></div>
                 <span>{formatNumber(stats.totalTests)} Reviews</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full animate-pulse delay-300" style={{ backgroundColor: '#0d44e7' }}></div>
+                <div className="w-2 h-2 rounded-full animate-pulse delay-300 bg-brand-secondary"></div>
                 <span>{formatNumber(stats.brandsCovered)} Brands</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full animate-pulse delay-500" style={{ backgroundColor: '#9333ea' }}></div>
+                <div className="w-2 h-2 rounded-full animate-pulse delay-500 bg-purple-600"></div>
                 <span>{formatNumber(stats.activeMembers)} Members</span>
               </div>
             </div>
@@ -121,10 +117,10 @@ const Home = () => {
         <div className="hidden lg:block pb-8">
           <div className="container max-w-3xl mx-auto px-4">
             <Link to="/mobile-app" className="block">
-              <div className="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-lg shadow-md p-4 hover:shadow-lg transition-all duration-300 hover:border-[#00bf63]/30">
+              <div className="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-lg shadow-md p-4 hover:shadow-lg transition-all duration-300 hover:border-brand-primary/30">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <Smartphone className="h-6 w-6 flex-shrink-0 text-[#00bf63]" />
+                    <Smartphone className="h-6 w-6 flex-shrink-0 text-brand-primary" />
                     <div>
                       <p className="font-semibold text-gray-800">Mobile App Available</p>
                       <p className="text-sm text-gray-600">Get the native experience on Android & iOS</p>

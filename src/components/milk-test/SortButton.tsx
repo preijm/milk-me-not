@@ -43,7 +43,7 @@ export const SortButton = ({ sortConfig, onSort, onClearSort }: SortButtonProps)
           <ArrowUpDown className="h-4 w-4" />
           <span>Sort</span>
           {currentSort && (
-            <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ backgroundColor: '#2144ff' }} />
+            <div className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-secondary" />
           )}
         </Button>
       </PopoverTrigger>
@@ -80,7 +80,7 @@ export const SortButton = ({ sortConfig, onSort, onClearSort }: SortButtonProps)
               }}
               className={`w-full text-left px-3 py-2 rounded-md transition-colors flex items-center justify-between ${
                 sortConfig.column === option.key 
-                  ? 'bg-[#2144ff]/10 text-[#2144ff] font-medium' 
+                  ? 'bg-brand-secondary/10 text-brand-secondary font-medium' 
                   : 'hover:bg-gray-100'
               }`}
             >

@@ -90,25 +90,25 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
       value: "cold",
       icon: ColdIcon,
       label: "Cold",
-      activeClass: "bg-white text-[#2144ff] border-[#2144ff]",
+      activeClass: "bg-white text-score-good border-score-good",
     },
     {
       value: "hot",
       icon: HotIcon,
       label: "Hot",
-      activeClass: "bg-white text-[#ff4b51] border-[#ff4b51]",
+      activeClass: "bg-white text-score-poor border-score-poor",
     },
     {
       value: "coffee",
       icon: CoffeeIcon,
       label: "Coffee",
-      activeClass: "bg-white text-[#92400e] border-[#92400e]",
+      activeClass: "bg-white text-amber-800 border-amber-800",
     },
     {
       value: "tea",
       icon: TeaCup,
       label: "Tea",
-      activeClass: "bg-white text-[#f59e0b] border-[#f59e0b]",
+      activeClass: "bg-white text-score-fair border-score-fair",
     },
   ];
 

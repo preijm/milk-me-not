@@ -44,7 +44,7 @@ export const LoginPrompt = ({
         </DialogHeader>
         
         <div className="flex flex-col gap-4 mt-6">
-          <Button onClick={handleLogin} size="lg" className="w-full text-white shadow-lg hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300 group" style={{backgroundColor: '#2144ff'}}>
+          <Button onClick={handleLogin} size="lg" className="w-full text-white shadow-lg hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300 group bg-brand-secondary hover:bg-brand-secondary/90">
             <LogIn className="mr-2 h-6 w-6 md:group-hover:rotate-12 transition-transform duration-300" />
             Log In
             <ArrowRight className="ml-2 h-5 w-5 md:group-hover:translate-x-1 transition-transform duration-300" />

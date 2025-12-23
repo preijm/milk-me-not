@@ -61,9 +61,7 @@ function NotificationItem({
 
   return <div className={cn("relative flex items-start gap-3 p-4 border-b cursor-pointer transition-colors", !notification.is_read && "bg-blue-50/50")} onClick={handleClick}>
       {/* Blue indicator for unread */}
-      {!notification.is_read && <div className="absolute left-0 top-0 bottom-0 w-1" style={{
-      backgroundColor: '#2144ff'
-    }} />}
+      {!notification.is_read && <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-secondary" />}
       
       {/* Avatar */}
       <Badge variant="category" className="w-12 h-12 rounded-full flex items-center justify-center p-0 font-semibold text-base flex-shrink-0">

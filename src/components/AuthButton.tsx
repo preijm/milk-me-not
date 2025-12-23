@@ -37,8 +37,7 @@ export const AuthButton = () => {
   if (!user) {
     return <Button 
       onClick={handleAuth} 
-      className={`text-white shadow-lg md:hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300 group ${isMobile ? "px-3" : "w-full"}`}
-      style={{backgroundColor: '#2144ff'}}
+      className={`text-white shadow-lg md:hover:shadow-xl md:hover:-translate-y-1 transition-all duration-300 group bg-brand-secondary hover:bg-brand-secondary/90 ${isMobile ? "px-3" : "w-full"}`}
     >
       <LogIn className={`${isMobile ? "w-4 h-4" : "w-6 h-6 mr-2"} md:group-hover:rotate-12 transition-transform duration-300`} />
       {isMobile ? "Login" : "Login here"}

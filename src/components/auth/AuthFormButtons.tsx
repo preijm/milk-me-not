@@ -30,10 +30,9 @@ const AuthFormButtons = ({
         variant={isMobileOrTablet ? undefined : "brand"}
         className={`w-full h-12 text-base font-medium rounded-lg ${
           isMobileOrTablet 
-            ? "text-white shadow-lg md:hover:shadow-xl transition-all duration-300" 
+            ? "text-white shadow-lg md:hover:shadow-xl transition-all duration-300 bg-brand-secondary hover:bg-brand-secondary/90" 
             : ""
         }`}
-        style={isMobileOrTablet ? { backgroundColor: '#2144ff' } : {}}
         disabled={loading}
       >
         {loading ? "Loading..." : isLogin ? <div className="flex items-center justify-center gap-2">
@@ -46,7 +45,7 @@ const AuthFormButtons = ({
       </Button>
 
       <div className="text-center mt-6">
-        <button type="button" onClick={onToggleMode} className="text-[#00BF63] md:hover:text-emerald-700 transition-colors font-medium">
+        <button type="button" onClick={onToggleMode} className="text-brand-primary md:hover:text-brand-primary/80 transition-colors font-medium">
           {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
         </button>
       </div>
