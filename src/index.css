@@ -28,6 +28,51 @@
     --ring: 0 0% 75%; /* Light grey for focus rings */
     --radius: 0.5rem;
     
+    /* ========================================
+       SEMANTIC SCORE COLORS
+       ======================================== */
+    --score-excellent: 145 100% 37%;    /* #00bf63 - Green */
+    --score-good: 231 100% 63%;         /* #2144ff - Blue */
+    --score-fair: 38 92% 50%;           /* #f59e0b - Amber */
+    --score-poor: 0 100% 65%;           /* #ff4b51 - Red */
+    
+    /* ========================================
+       SEMANTIC STATUS COLORS
+       ======================================== */
+    --success: 145 100% 37%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --error: 0 100% 65%;
+    --error-foreground: 0 0% 100%;
+    --info: 231 100% 63%;
+    --info-foreground: 0 0% 100%;
+    
+    /* ========================================
+       BRAND COLORS
+       ======================================== */
+    --brand-primary: 145 100% 37%;      /* #00bf63 - Green */
+    --brand-primary-foreground: 0 0% 100%;
+    --brand-secondary: 231 100% 63%;    /* #2144ff - Blue */
+    --brand-secondary-foreground: 0 0% 100%;
+    
+    /* ========================================
+       HEATMAP COLORS (for map visualization)
+       ======================================== */
+    --heatmap-very-high: 0 84% 50%;
+    --heatmap-high: 21 90% 48%;
+    --heatmap-medium-high: 38 92% 50%;
+    --heatmap-medium: 48 96% 47%;
+    --heatmap-low-medium: 84 81% 44%;
+    --heatmap-low: 142 71% 45%;
+    --heatmap-none: 220 13% 91%;
+    
+    /* ========================================
+       SURFACE COLORS
+       ======================================== */
+    --surface-warm: 33 100% 97%;
+    --surface-cream: 33 100% 94%;
+    
     /* Custom colors for milk app */
     --milk-100: 0 0% 96%; /* #F5F5F5 */
     --milk-200: 0 0% 90%; /* #E5E5E5 */
@@ -90,6 +135,20 @@
     --border: 0 0% 25%; /* Light grey for dark mode borders */
     --input: 0 0% 25%; /* Light grey for dark mode input borders */
     --ring: 0 0% 35%; /* Light grey for dark mode focus rings */
+    
+    /* Score colors - slightly brighter for dark mode */
+    --score-excellent: 145 100% 42%;
+    --score-good: 231 100% 68%;
+    --score-fair: 38 92% 55%;
+    --score-poor: 0 100% 70%;
+    
+    --success: 145 100% 42%;
+    --warning: 38 92% 55%;
+    --error: 0 100% 70%;
+    --info: 231 100% 68%;
+    
+    --brand-primary: 145 100% 42%;
+    --brand-secondary: 231 100% 68%;
   }
 }
 
