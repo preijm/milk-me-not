@@ -251,6 +251,7 @@ export const MobileFilterBar = ({
                     onClick={() => {
                       if (!isActive) {
                         onSort(option.key);
+                        setIsSortOpen(false);
                       }
                     }}
                   >
