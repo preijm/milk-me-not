@@ -288,7 +288,7 @@ export const MobileFilterBar = ({
                       </Button>
                     ) : (
                       <span className="text-sm text-muted-foreground">
-                        {sortConfig.direction === 'asc' ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />}
+                        <ArrowDown className="h-4 w-4" />
                       </span>
                     )}
                   </div>
