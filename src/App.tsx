@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -8,6 +9,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { Capacitor } from "@capacitor/core";
+import NativeSplashScreen from "./components/NativeSplashScreen";
 import Home from "./pages/Home";
 import Results from "./pages/Results";
 import About from "./pages/About";
@@ -42,11 +44,15 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  const [showSplash, setShowSplash] = useState(isNativeApp);
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <NotificationProvider>
           <TooltipProvider>
+            {showSplash && (
+              <NativeSplashScreen onComplete={() => setShowSplash(false)} />
+            )}
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
