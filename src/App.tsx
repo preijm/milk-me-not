@@ -26,6 +26,7 @@ import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import AddProduct from "./pages/AddProduct";
 import DesignSystem from "./pages/DesignSystem";
+import InstallGuide from "./pages/InstallGuide";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -89,6 +90,7 @@ const App = () => {
               } />
               <Route path="/feed" element={<Feed />} />
               <Route path="/mobile-app" element={<MobileApp />} />
+              <Route path="/install-guide" element={<InstallGuide />} />
               <Route path="/notifications" element={
                 <ProtectedRoute>
                   <Notifications />

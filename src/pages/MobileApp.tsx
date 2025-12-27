@@ -4,6 +4,7 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import { Download, ExternalLink, Smartphone } from "lucide-react";
 import { FaAndroid } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const MobileApp = () => {
   const androidDownloadUrl = "https://median.co/share/nmxqdbd#apk";
@@ -79,14 +80,12 @@ const MobileApp = () => {
 
             <p className="text-sm text-muted-foreground text-center mt-8">
               Need help? Check our{" "}
-              <a 
-                href="https://docs.lovable.dev/features/mobile" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <Link 
+                to="/install-guide"
                 className="text-brand-secondary hover:underline"
               >
                 installation guide
-              </a>
+              </Link>
             </p>
           </div>
         </div>
