@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ProtectedRoute } from "@/components/common/ProtectedRoute";
+import { ScrollToTop } from "@/components/common/ScrollToTop";
 import Home from "./pages/Home";
 import Results from "./pages/Results";
 import About from "./pages/About";
@@ -44,7 +45,8 @@ const App = () => {
         <NotificationProvider>
           <TooltipProvider>
             <BrowserRouter>
-            <Routes>
+              <ScrollToTop />
+              <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Navigate to="/results" replace />} />
               <Route path="/results" element={<Results />} />
