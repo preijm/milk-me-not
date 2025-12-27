@@ -17,6 +17,13 @@ import {
 } from "lucide-react";
 import { FaAndroid } from "react-icons/fa";
 
+// Step illustrations
+import step1Download from "@/assets/install-guide/step-1-download.png";
+import step2Settings from "@/assets/install-guide/step-2-settings.png";
+import step3Open from "@/assets/install-guide/step-3-open.png";
+import step4Install from "@/assets/install-guide/step-4-install.png";
+import step5Success from "@/assets/install-guide/step-5-success.png";
+
 const InstallGuide = () => {
   const androidDownloadUrl = "https://median.co/share/nmxqdbd#apk";
 
@@ -25,31 +32,36 @@ const InstallGuide = () => {
       icon: Download,
       title: "Download the APK",
       description: "Tap the download button to get the APK file. Your browser may show a warning — this is normal for apps outside the Play Store.",
-      note: "The file will be saved to your Downloads folder."
+      note: "The file will be saved to your Downloads folder.",
+      image: step1Download
     },
     {
       icon: Settings,
       title: "Enable Unknown Sources",
       description: "Go to Settings → Security (or Privacy) → Enable 'Install unknown apps' for your browser or file manager.",
-      note: "This allows installation of apps from outside the Play Store."
+      note: "This allows installation of apps from outside the Play Store.",
+      image: step2Settings
     },
     {
       icon: Package,
       title: "Open the APK File",
       description: "Find the downloaded APK in your Downloads folder or notification bar and tap it to start installation.",
-      note: "You may need to use a file manager app."
+      note: "You may need to use a file manager app.",
+      image: step3Open
     },
     {
       icon: ShieldCheck,
       title: "Confirm Installation",
       description: "When prompted, tap 'Install' to proceed. Android will verify the app and install it on your device.",
-      note: "This may take a few seconds."
+      note: "This may take a few seconds.",
+      image: step4Install
     },
     {
       icon: CheckCircle2,
       title: "Open & Enjoy!",
       description: "Once installed, tap 'Open' or find the app in your app drawer. Sign in with your account to sync your reviews.",
-      note: "You're all set!"
+      note: "You're all set!",
+      image: step5Success
     }
   ];
 
@@ -96,29 +108,43 @@ const InstallGuide = () => {
             </div>
 
             {/* Steps */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               {steps.map((step, index) => (
-                <Card key={index} className="border-border">
-                  <CardContent className="p-6">
-                    <div className="flex gap-4">
-                      <div className="flex-shrink-0">
-                        <div className="flex items-center justify-center h-12 w-12 rounded-full bg-brand-primary/10 text-brand-primary font-bold">
-                          {index + 1}
-                        </div>
+                <Card key={index} className="border-border overflow-hidden">
+                  <CardContent className="p-0">
+                    <div className="flex flex-col md:flex-row">
+                      {/* Image */}
+                      <div className="md:w-48 flex-shrink-0 bg-muted/30 flex items-center justify-center p-4">
+                        <img 
+                          src={step.image} 
+                          alt={step.title}
+                          className="w-32 h-32 object-contain"
+                        />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <step.icon className="h-5 w-5 text-brand-primary flex-shrink-0" />
-                          <Heading level="h4" className="text-foreground">
-                            {step.title}
-                          </Heading>
+                      
+                      {/* Content */}
+                      <div className="flex-1 p-6">
+                        <div className="flex items-start gap-4">
+                          <div className="flex-shrink-0">
+                            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-brand-primary/10 text-brand-primary font-bold text-lg">
+                              {index + 1}
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-2">
+                              <step.icon className="h-5 w-5 text-brand-primary flex-shrink-0" />
+                              <Heading level="h4" className="text-foreground">
+                                {step.title}
+                              </Heading>
+                            </div>
+                            <Text variant="muted" className="mb-2">
+                              {step.description}
+                            </Text>
+                            <Text size="sm" className="text-brand-primary">
+                              {step.note}
+                            </Text>
+                          </div>
                         </div>
-                        <Text variant="muted" className="mb-2">
-                          {step.description}
-                        </Text>
-                        <Text size="sm" className="text-brand-primary">
-                          {step.note}
-                        </Text>
                       </div>
                     </div>
                   </CardContent>
