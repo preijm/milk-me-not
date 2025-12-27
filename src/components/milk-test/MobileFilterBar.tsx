@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, SlidersHorizontal, User, ArrowUpDown, X, ArrowUp, ArrowDown, Star, Calendar, Tag, Package, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -49,6 +49,7 @@ export const MobileFilterBar = ({
 }: MobileFilterBarProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [animatingKey, setAnimatingKey] = useState<string | null>(null);
   const { user } = useAuth();
 
   const handleMyResultsToggle = () => {
@@ -273,17 +274,24 @@ export const MobileFilterBar = ({
                     {isActive ? (
                       <Button
                         size="sm"
-                        className="h-9 px-4 gap-2 rounded-lg bg-brand-secondary hover:bg-brand-secondary/90 text-white"
+                        className="h-9 px-4 gap-2 rounded-lg bg-brand-secondary hover:bg-brand-secondary/90 text-white active:animate-bounce-subtle"
                         onClick={(e) => {
                           e.stopPropagation();
+                          setAnimatingKey(option.key);
                           onSort(option.key);
+                          setTimeout(() => setAnimatingKey(null), 300);
                         }}
                       >
-                        {sortConfig.direction === 'asc' ? (
-                          <ArrowUp className="h-4 w-4" />
-                        ) : (
-                          <ArrowDown className="h-4 w-4" />
-                        )}
+                        <span className={cn(
+                          "transition-transform duration-300",
+                          animatingKey === option.key && (sortConfig.direction === 'asc' ? "animate-flip-up" : "animate-flip-down")
+                        )}>
+                          {sortConfig.direction === 'asc' ? (
+                            <ArrowUp className="h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="h-4 w-4" />
+                          )}
+                        </span>
                         <span className="text-sm font-medium">{getDirectionLabel()}</span>
                       </Button>
                     ) : (

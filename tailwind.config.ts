@@ -177,13 +177,46 @@ export default {
   				'100%': {
   					transform: 'translateX(-100%)'
   				}
+  			},
+  			'flip-up': {
+  				'0%': {
+  					transform: 'rotate(0deg) scale(1)'
+  				},
+  				'50%': {
+  					transform: 'rotate(-90deg) scale(1.1)'
+  				},
+  				'100%': {
+  					transform: 'rotate(-180deg) scale(1)'
+  				}
+  			},
+  			'flip-down': {
+  				'0%': {
+  					transform: 'rotate(-180deg) scale(1)'
+  				},
+  				'50%': {
+  					transform: 'rotate(-90deg) scale(1.1)'
+  				},
+  				'100%': {
+  					transform: 'rotate(0deg) scale(1)'
+  				}
+  			},
+  			'bounce-subtle': {
+  				'0%, 100%': {
+  					transform: 'scale(1)'
+  				},
+  				'50%': {
+  					transform: 'scale(0.95)'
+  				}
   			}
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
   			'fade-up': 'fade-up 0.5s ease-out',
-  			scroll: 'scroll 8s linear infinite'
+  			scroll: 'scroll 8s linear infinite',
+  			'flip-up': 'flip-up 0.3s ease-out forwards',
+  			'flip-down': 'flip-down 0.3s ease-out forwards',
+  			'bounce-subtle': 'bounce-subtle 0.2s ease-out'
   		},
   		fontFamily: {
   			sans: [
