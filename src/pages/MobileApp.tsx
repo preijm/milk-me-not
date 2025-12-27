@@ -4,7 +4,7 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import { Download, Smartphone, Clock } from "lucide-react";
 import { FaAndroid } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 
 const MobileApp = () => {
   const androidDownloadUrl = "https://median.co/share/nmxqdbd#apk";
@@ -37,6 +37,19 @@ const MobileApp = () => {
                     Get the full native experience on your Android device.
                   </p>
                   
+                  {/* QR Code */}
+                  <div className="bg-white p-4 rounded-lg shadow-sm">
+                    <QRCodeSVG 
+                      value={androidDownloadUrl} 
+                      size={140}
+                      level="M"
+                      className="mx-auto"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Scan to download
+                    </p>
+                  </div>
+
                   <div className="w-full space-y-3">
                     <Button 
                       asChild 
