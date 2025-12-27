@@ -7,8 +7,11 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import MobileFooter from "@/components/MobileFooter";
 import { HomeStatsOverview } from "@/components/UserStatsOverview";
 import { supabase } from "@/integrations/supabase/client";
+import { Capacitor } from "@capacitor/core";
+
 const Home = () => {
   const navigate = useNavigate();
+  const isNativeApp = Capacitor.isNativePlatform();
   const [stats, setStats] = useState({
     totalTests: 0,
     brandsCovered: 0,
@@ -113,25 +116,27 @@ const Home = () => {
           </div>
         </div>
         
-        {/* Mobile App Banner - Only visible on large desktop screens */}
-        <div className="hidden lg:block pb-8">
-          <div className="container max-w-3xl mx-auto px-4">
-            <Link to="/mobile-app" className="block">
-              <div className="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-lg shadow-md p-4 hover:shadow-lg transition-all duration-300 hover:border-brand-primary/30">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <Smartphone className="h-6 w-6 flex-shrink-0 text-brand-primary" />
-                    <div>
-                      <p className="font-semibold text-foreground">Mobile App Available</p>
-                      <p className="text-sm text-muted-foreground">Get the native experience on Android</p>
+        {/* Mobile App Banner - Visible on all screens except when running in native app */}
+        {!isNativeApp && (
+          <div className="pb-8">
+            <div className="container max-w-3xl mx-auto px-4">
+              <Link to="/mobile-app" className="block">
+                <div className="bg-white/60 backdrop-blur-sm border border-gray-200 rounded-lg shadow-md p-4 hover:shadow-lg transition-all duration-300 hover:border-brand-primary/30">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <Smartphone className="h-6 w-6 flex-shrink-0 text-brand-primary" />
+                      <div>
+                        <p className="font-semibold text-foreground">Mobile App Available</p>
+                        <p className="text-sm text-muted-foreground">Get the native experience on Android</p>
+                      </div>
                     </div>
+                    <ArrowRight className="h-5 w-5 flex-shrink-0 text-gray-600" />
                   </div>
-                  <ArrowRight className="h-5 w-5 flex-shrink-0 text-gray-600" />
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Statistics hidden on homepage to avoid scrollbar */}
       </BackgroundPattern>
