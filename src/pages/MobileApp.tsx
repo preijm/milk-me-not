@@ -16,7 +16,7 @@ const MobileApp = () => {
         <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
           <div className="container max-w-3xl mx-auto px-4 py-8 relative z-10">
             {/* Header */}
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 hidden lg:block">
               <h1 className="text-4xl md:text-5xl font-bold text-brand-primary mb-4">
                 Get the Mobile App
               </h1>
@@ -37,8 +37,8 @@ const MobileApp = () => {
                     Get the full native experience on your Android device.
                   </p>
                   
-                  {/* QR Code - Hidden on mobile */}
-                  <div className="hidden md:block bg-white p-4 rounded-lg shadow-sm">
+                  {/* QR Code - Hidden on mobile and tablet */}
+                  <div className="hidden lg:block bg-white p-4 rounded-lg shadow-sm">
                     <QRCodeSVG 
                       value={androidDownloadUrl} 
                       size={140}
