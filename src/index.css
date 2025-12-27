@@ -31,7 +31,7 @@
     /* ========================================
        SEMANTIC SCORE COLORS
        ======================================== */
-    --score-excellent: 145 100% 37%;    /* #00bf63 - Green */
+    --score-excellent: 151 100% 37%;    /* #00bf63 - Green */
     --score-good: 231 100% 63%;         /* #2144ff - Blue */
     --score-fair: 38 92% 50%;           /* #f59e0b - Amber */
     --score-poor: 0 100% 65%;           /* #ff4b51 - Red */
@@ -39,7 +39,7 @@
     /* ========================================
        SEMANTIC STATUS COLORS
        ======================================== */
-    --success: 145 100% 37%;
+    --success: 151 100% 37%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
@@ -51,7 +51,7 @@
     /* ========================================
        BRAND COLORS
        ======================================== */
-    --brand-primary: 145 100% 37%;      /* #00bf63 - Green */
+    --brand-primary: 151 100% 37%;      /* #00bf63 - Green */
     --brand-primary-foreground: 0 0% 100%;
     --brand-secondary: 231 100% 63%;    /* #2144ff - Blue */
     --brand-secondary-foreground: 0 0% 100%;
@@ -93,15 +93,15 @@
     --rating-bg: 225 100% 91%; /* #D1DCFF */
     
     /* Enhanced gradient colors */
-    --gradient-primary: linear-gradient(135deg, hsl(145 100% 38%), hsl(145 100% 42%));
-    --gradient-hero: linear-gradient(135deg, hsl(145 100% 38% / 0.1), hsl(145 100% 42% / 0.05));
+    --gradient-primary: linear-gradient(135deg, hsl(151 100% 38%), hsl(151 100% 42%));
+    --gradient-hero: linear-gradient(135deg, hsl(151 100% 38% / 0.1), hsl(151 100% 42% / 0.05));
     --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 98%));
-    --gradient-stats: linear-gradient(135deg, hsl(145 100% 38% / 0.05), hsl(145 100% 42% / 0.02));
+    --gradient-stats: linear-gradient(135deg, hsl(151 100% 38% / 0.05), hsl(151 100% 42% / 0.02));
     
     /* Notification icon colors */
     --notification-like: 0 65% 64%; /* #e45959 */
     --notification-comment: 225 100% 63%; /* #2144ff */
-    --notification-newsletter: 145 100% 38%; /* #00bf63 */
+    --notification-newsletter: 151 100% 38%; /* #00bf63 */
     
     /* Filter active color */
     --filter-active: 225 100% 63%; /* #2144ff */
@@ -110,9 +110,9 @@
     --switch-enabled: 225 100% 63%; /* #2144ff */
     
     /* Shadow colors */
-    --shadow-brand: 0 10px 30px -10px hsl(145 100% 38% / 0.2);
+    --shadow-brand: 0 10px 30px -10px hsl(151 100% 38% / 0.2);
     --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
-    --shadow-glow: 0 0 40px hsl(145 100% 42% / 0.15);
+    --shadow-glow: 0 0 40px hsl(151 100% 42% / 0.15);
   }
 
   .dark {
@@ -137,17 +137,17 @@
     --ring: 0 0% 35%; /* Light grey for dark mode focus rings */
     
     /* Score colors - slightly brighter for dark mode */
-    --score-excellent: 145 100% 42%;
+    --score-excellent: 151 100% 42%;
     --score-good: 231 100% 68%;
     --score-fair: 38 92% 55%;
     --score-poor: 0 100% 70%;
     
-    --success: 145 100% 42%;
+    --success: 151 100% 42%;
     --warning: 38 92% 55%;
     --error: 0 100% 70%;
     --info: 231 100% 68%;
     
-    --brand-primary: 145 100% 42%;
+    --brand-primary: 151 100% 42%;
     --brand-secondary: 231 100% 68%;
   }
 }
