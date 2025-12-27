@@ -29,7 +29,7 @@ const MobileApp = () => {
             <div className="max-w-md mx-auto">
               <div className="bg-card rounded-lg shadow-md p-8 hover:shadow-lg transition-shadow border border-border">
                 <div className="flex flex-col items-center text-center gap-4">
-                  <div className="h-20 w-20 rounded-full flex items-center justify-center bg-[#3DDC84]">
+                  <div className="h-20 w-20 rounded-full flex items-center justify-center bg-brand-primary">
                     <FaAndroid className="w-12 h-12 text-white" />
                   </div>
                   <h2 className="text-2xl font-semibold text-foreground">Android</h2>
