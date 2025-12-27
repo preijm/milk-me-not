@@ -37,39 +37,42 @@ const MobileApp = () => {
                     Get the full native experience on your Android device.
                   </p>
                   
-                  {/* QR Code - Hidden on mobile and tablet */}
-                  <div className="hidden lg:block bg-white p-3 rounded-lg shadow-sm">
-                    <QRCodeSVG 
-                      value={androidDownloadUrl} 
-                      size={100}
-                      level="M"
-                      className="mx-auto"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1.5">
-                      Scan to download
-                    </p>
-                  </div>
+                  {/* QR Code and Buttons - Horizontal on desktop */}
+                  <div className="w-full flex flex-col lg:flex-row lg:items-center lg:gap-6">
+                    {/* QR Code - Hidden on mobile and tablet */}
+                    <div className="hidden lg:block bg-white p-3 rounded-lg shadow-sm flex-shrink-0">
+                      <QRCodeSVG 
+                        value={androidDownloadUrl} 
+                        size={100}
+                        level="M"
+                        className="mx-auto"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1.5 text-center">
+                        Scan to download
+                      </p>
+                    </div>
 
-                  <div className="w-full space-y-3">
-                    <Button 
-                      asChild 
-                      className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white" 
-                      size="lg"
-                    >
-                      <a href={androidDownloadUrl} download>
-                        <Download className="mr-2 h-5 w-5" />
-                        Download APK
-                      </a>
-                    </Button>
-                    <Button 
-                      disabled
-                      variant="outline" 
-                      className="w-full border-2 border-muted-foreground/30 text-muted-foreground cursor-not-allowed" 
-                      size="lg"
-                    >
-                      <Clock className="mr-2 h-5 w-5" />
-                      Google Play — Coming Soon
-                    </Button>
+                    <div className="w-full space-y-3">
+                      <Button 
+                        asChild 
+                        className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white" 
+                        size="lg"
+                      >
+                        <a href={androidDownloadUrl} download>
+                          <Download className="mr-2 h-5 w-5" />
+                          Download APK
+                        </a>
+                      </Button>
+                      <Button 
+                        disabled
+                        variant="outline" 
+                        className="w-full border-2 border-muted-foreground/30 text-muted-foreground cursor-not-allowed" 
+                        size="lg"
+                      >
+                        <Clock className="mr-2 h-5 w-5" />
+                        Google Play — Coming Soon
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
