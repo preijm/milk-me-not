@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
+import { Capacitor } from "@capacitor/core";
 import Home from "./pages/Home";
 import Results from "./pages/Results";
 import About from "./pages/About";
@@ -28,6 +29,8 @@ import Profile from "./pages/Profile";
 import AddProduct from "./pages/AddProduct";
 import DesignSystem from "./pages/DesignSystem";
 import InstallGuide from "./pages/InstallGuide";
+
+const isNativeApp = Capacitor.isNativePlatform();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -91,8 +94,8 @@ const App = () => {
                 </ProtectedRoute>
               } />
               <Route path="/feed" element={<Feed />} />
-              <Route path="/mobile-app" element={<MobileApp />} />
-              <Route path="/install-guide" element={<InstallGuide />} />
+              <Route path="/mobile-app" element={isNativeApp ? <Navigate to="/" replace /> : <MobileApp />} />
+              <Route path="/install-guide" element={isNativeApp ? <Navigate to="/" replace /> : <InstallGuide />} />
               <Route path="/notifications" element={
                 <ProtectedRoute>
                   <Notifications />
