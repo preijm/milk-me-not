@@ -122,8 +122,8 @@ const Home = () => {
                   <div className="flex items-center gap-3">
                     <Smartphone className="h-6 w-6 flex-shrink-0 text-brand-primary" />
                     <div>
-                      <p className="font-semibold text-gray-800">Mobile App Available</p>
-                      <p className="text-sm text-gray-600">Get the native experience on Android & iOS</p>
+                      <p className="font-semibold text-foreground">Mobile App Available</p>
+                      <p className="text-sm text-muted-foreground">Get the native experience on Android</p>
                     </div>
                   </div>
                   <ArrowRight className="h-5 w-5 flex-shrink-0 text-gray-600" />
