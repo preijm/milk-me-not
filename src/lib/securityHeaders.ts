@@ -10,11 +10,12 @@ export const setSecurityHeaders = () => {
   // Note: frame-ancestors directive removed as it cannot be set via meta tag
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://api.mapbox.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.mapbox.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: blob: https:",
-    "connect-src 'self' https://jtabjndnietpewvknjrm.supabase.co wss://jtabjndnietpewvknjrm.supabase.co",
+    "connect-src 'self' https://jtabjndnietpewvknjrm.supabase.co wss://jtabjndnietpewvknjrm.supabase.co https://api.mapbox.com https://*.tiles.mapbox.com https://events.mapbox.com",
+    "worker-src 'self' blob:",
     "base-uri 'self'",
     "form-action 'self'"
   ].join('; ');
