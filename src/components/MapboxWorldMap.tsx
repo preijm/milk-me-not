@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { Trophy, Medal } from 'lucide-react';
+
 
 interface CountryTestCount {
   country_code: string;
@@ -338,32 +338,34 @@ const MapboxWorldMap = () => {
         )}
       </div>
 
-      {/* Top Countries Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {countryData
-          .sort((a, b) => b.test_count - a.test_count)
-          .slice(0, 10)
-          .map((country, index) => (
-          <div
-            key={country.country_code}
-            className={`bg-card p-4 rounded-lg border text-center shadow-sm hover:shadow-md transition-shadow ${
-              index === 0 ? 'border-primary border-2 bg-primary/5' : 'border-border'
-            }`}
-          >
-            <div className={`text-sm font-bold mb-1 flex items-center justify-center gap-1.5 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
-              {index === 0 && <Trophy className="w-4 h-4 text-yellow-500 flex-shrink-0" />}
-              {index === 1 && <Medal className="w-4 h-4 text-slate-400 flex-shrink-0" />}
-              {index === 2 && <Medal className="w-4 h-4 text-amber-600 flex-shrink-0" />}
-              <span className="truncate">#{index + 1} {countryCodeToName.get(country.country_code) || country.country_code}</span>
+      {/* Country Rankings */}
+      <div className="bg-card rounded-lg border border-border">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <h3 className="text-lg font-semibold text-foreground">Country Rankings</h3>
+          <span className="text-sm text-muted-foreground">{countryData.length} countries</span>
+        </div>
+        <div className="divide-y divide-border">
+          {countryData
+            .sort((a, b) => b.test_count - a.test_count)
+            .map((country, index) => (
+            <div
+              key={country.country_code}
+              className="flex items-center justify-between px-6 py-4 hover:bg-muted/50 transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <span className={`text-sm font-medium w-6 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+                  {index + 1}
+                </span>
+                <span className="font-medium text-foreground">
+                  {countryCodeToName.get(country.country_code) || country.country_code}
+                </span>
+              </div>
+              <span className={`text-lg font-bold ${index === 0 ? 'text-primary' : 'text-foreground'}`}>
+                {country.test_count}
+              </span>
             </div>
-            <div className="text-2xl font-bold text-foreground">
-              {country.test_count}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {country.test_count === 1 ? 'test' : 'tests'}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
