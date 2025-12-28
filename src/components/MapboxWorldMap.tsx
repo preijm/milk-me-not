@@ -356,18 +356,18 @@ const MapboxWorldMap = () => {
                   className="relative flex items-center justify-between px-6 py-4 hover:bg-muted/50 transition-colors"
                 >
                   <div 
-                    className="absolute inset-y-0 left-0 bg-primary/10 transition-all"
+                    className="absolute inset-y-0 left-0 bg-emerald-500/15 transition-all"
                     style={{ width: `${percentage}%` }}
                   />
                   <div className="relative flex items-center gap-4">
-                    <span className={`text-sm font-medium w-6 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+                    <span className={`text-sm font-medium w-6 ${index === 0 ? 'text-emerald-600' : 'text-muted-foreground'}`}>
                       {index + 1}
                     </span>
                     <span className="font-medium text-foreground">
                       {countryCodeToName.get(country.country_code) || country.country_code}
                     </span>
                   </div>
-                  <span className={`relative text-lg font-bold ${index === 0 ? 'text-primary' : 'text-foreground'}`}>
+                  <span className={`relative text-lg font-bold ${index === 0 ? 'text-emerald-600' : 'text-foreground'}`}>
                     {country.test_count}
                   </span>
                 </div>
