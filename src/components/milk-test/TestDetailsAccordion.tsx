@@ -8,8 +8,14 @@ import { formatScore } from "@/lib/scoreFormatter";
 import { DrinkPreferenceIcon } from "./DrinkPreferenceIcon";
 import { PriceQualityBadge } from "./PriceQualityBadge";
 import { supabase } from "@/integrations/supabase/client";
-import { ImageIcon, MapPin, DollarSign, Globe, ChevronDown, Edit3, Trash2 } from "lucide-react";
+import { ImageIcon, MapPin, DollarSign, Globe, ChevronDown, Edit3, Trash2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -194,27 +200,29 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
                   </div>
                 )}
 
-                {/* Edit/Delete buttons for own tests */}
+                {/* Edit button for own tests */}
                 {isOwnTest && (
-                  <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => handleEdit(test)}
-                      className="flex-1"
-                    >
-                      <Edit3 className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => setDeleteTestId(test.id)}
-                      className="flex-1 text-destructive hover:text-destructive border-destructive/50 hover:bg-destructive/10"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </Button>
+                  <div className="flex justify-end mt-4 pt-4 border-t border-gray-200">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-8 w-8 p-0">
+                          <Edit3 className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEdit(test)}>
+                          <Edit3 className="h-4 w-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => setDeleteTestId(test.id)}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 )}
               </AccordionContent>
