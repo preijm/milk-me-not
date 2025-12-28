@@ -206,7 +206,7 @@ export const MobileFilterBar = ({
           <DrawerTrigger asChild>
             <Button
               variant="outline"
-              className="h-11 flex items-center justify-center gap-2 rounded-lg bg-background border-border flex-shrink-0 min-w-[100px]"
+              className="h-11 flex items-center justify-center gap-2 rounded-lg bg-background border-border flex-shrink-0 w-[100px]"
             >
               <ArrowUpDown className="h-4 w-4" />
               <span className="text-sm font-medium whitespace-nowrap">{currentSort?.label || 'Sort'}</span>
@@ -314,17 +314,17 @@ export const MobileFilterBar = ({
             <Button
               variant="outline"
               className={cn(
-                "h-11 flex items-center justify-center gap-2 rounded-lg transition-colors flex-shrink-0 min-w-[100px]",
+                "h-11 flex items-center justify-center gap-2 rounded-lg transition-colors flex-shrink-0 w-[100px]",
                 activeFilterCount > 0 && "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))] hover:bg-[hsl(var(--filter-active))]/90"
               )}
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              <div className="relative">
+                <SlidersHorizontal className="h-4 w-4" />
+                {activeFilterCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full" />
+                )}
+              </div>
               <span className="text-sm font-medium">Filter</span>
-              {activeFilterCount > 0 && (
-                <span className="ml-1 bg-white text-[hsl(var(--filter-active))] rounded-full min-w-[20px] h-5 px-1.5 text-xs font-semibold flex items-center justify-center">
-                  {activeFilterCount}
-                </span>
-              )}
             </Button>
           </DrawerTrigger>
           <DrawerContent className="max-h-[85vh]">
@@ -425,7 +425,7 @@ export const MobileFilterBar = ({
             variant="outline"
             onClick={handleMyResultsToggle}
             className={cn(
-              "h-11 flex items-center justify-center gap-2 rounded-lg transition-colors flex-shrink-0 min-w-[120px]",
+              "h-11 flex items-center justify-center gap-2 rounded-lg transition-colors flex-shrink-0 w-[120px]",
               filters.myResultsOnly && "bg-brand-secondary text-white border-brand-secondary hover:bg-brand-secondary/90"
             )}
           >
