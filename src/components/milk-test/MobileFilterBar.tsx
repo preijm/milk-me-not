@@ -198,18 +198,17 @@ export const MobileFilterBar = ({
         />
       </div>
 
-      {/* Action Buttons Row - Scrollable on small screens */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide"
-           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      {/* Action Buttons Row - Equal width buttons */}
+      <div className="flex items-center gap-2">
         {/* Sort Button */}
         <Drawer open={isSortOpen} onOpenChange={setIsSortOpen}>
           <DrawerTrigger asChild>
             <Button
               variant="outline"
-              className="h-11 flex items-center justify-center gap-2 rounded-lg bg-background border-border flex-shrink-0 w-[100px]"
+              className="h-11 flex-1 flex items-center justify-center gap-2 rounded-lg bg-background border-border min-w-0"
             >
-              <ArrowUpDown className="h-4 w-4" />
-              <span className="text-sm font-medium whitespace-nowrap">{currentSort?.label || 'Sort'}</span>
+              <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
+              <span className="text-sm font-medium truncate">{currentSort?.label || 'Sort'}</span>
             </Button>
           </DrawerTrigger>
           <DrawerContent>
@@ -314,11 +313,11 @@ export const MobileFilterBar = ({
             <Button
               variant="outline"
               className={cn(
-                "h-11 flex items-center justify-center gap-2 rounded-lg transition-colors flex-shrink-0 w-[100px]",
+                "h-11 flex-1 flex items-center justify-center gap-2 rounded-lg transition-colors min-w-0",
                 activeFilterCount > 0 && "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))] hover:bg-[hsl(var(--filter-active))]/90"
               )}
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              <SlidersHorizontal className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm font-medium">Filter</span>
             </Button>
           </DrawerTrigger>
@@ -427,11 +426,11 @@ export const MobileFilterBar = ({
             variant="outline"
             onClick={handleMyResultsToggle}
             className={cn(
-              "h-11 flex items-center justify-center gap-2 rounded-lg transition-colors flex-shrink-0 px-4",
+              "h-11 flex-1 flex items-center justify-center gap-2 rounded-lg transition-colors min-w-0",
               filters.myResultsOnly && "bg-brand-secondary text-white border-brand-secondary hover:bg-brand-secondary/90"
             )}
           >
-            <User className="h-4 w-4" />
+            <User className="h-4 w-4 flex-shrink-0" />
             <span className="text-sm font-medium whitespace-nowrap">My Results</span>
           </Button>
         )}
