@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { LogIn, UserPlus, ArrowRight } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 interface LoginPromptProps {
   isOpen: boolean;
   onClose: () => void;
@@ -43,17 +43,17 @@ export const LoginPrompt = ({
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex flex-col gap-4 mt-6">
-          <Button onClick={handleLogin} size="lg" className="w-full text-white md:hover:-translate-y-1 transition-all duration-300 group bg-brand-secondary hover:bg-brand-secondary/90">
-            <LogIn className="mr-2 h-6 w-6 md:group-hover:rotate-12 transition-transform duration-300" />
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+          <Button onClick={handleLogin} variant="brand" className="border-0" size="lg" style={{
+            backgroundColor: '#2144ff',
+            color: 'white'
+          }}>
+            <LogIn className="mr-2 h-4 w-4" />
             Log In
-            <ArrowRight className="ml-2 h-5 w-5 md:group-hover:translate-x-1 transition-transform duration-300" />
           </Button>
-          
-          <Button onClick={handleSignUp} size="lg" className="w-full text-white md:hover:-translate-y-1 transition-all duration-300 group bg-brand-secondary hover:bg-brand-secondary/90">
-            <UserPlus className="mr-2 h-6 w-6 md:group-hover:rotate-12 transition-transform duration-300" />
+          <Button onClick={handleSignUp} variant="outline" size="lg">
+            <UserPlus className="mr-2 h-4 w-4" />
             Sign Up
-            <ArrowRight className="ml-2 h-5 w-5 md:group-hover:translate-x-1 transition-transform duration-300" />
           </Button>
         </div>
       </DialogContent>
