@@ -324,7 +324,7 @@ export const MobileFilterBar = ({
           <DrawerContent className="max-h-[85vh]">
             <DrawerHeader className="flex flex-row items-center justify-between">
               <DrawerTitle>
-                Filters
+                Filter by...
                 {activeFilterCount > 0 && (
                   <span className="ml-2 inline-flex items-center justify-center bg-primary text-primary-foreground rounded-full min-w-[20px] h-5 px-1.5 text-xs font-semibold">
                     {activeFilterCount}
