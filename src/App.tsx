@@ -58,7 +58,11 @@ const App = () => {
               <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Navigate to="/results" replace />} />
-              <Route path="/results" element={<Results />} />
+              <Route path="/results" element={
+                <ProtectedRoute>
+                  <Results />
+                </ProtectedRoute>
+              } />
               <Route path="/product/:productId" element={<ProductDetails />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
