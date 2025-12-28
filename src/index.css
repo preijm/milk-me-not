@@ -247,3 +247,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Mapbox popup custom styles */
+.mapboxgl-popup-close-button {
+  font-size: 20px;
+  padding: 4px 10px;
+  color: #6b7280;
+  font-weight: bold;
+  right: 4px;
+  top: 4px;
+}
+
+.mapboxgl-popup-close-button:hover {
+  color: #1f2937;
+  background-color: #f3f4f6;
+  border-radius: 4px;
+}
+
+.mapboxgl-popup-content {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}

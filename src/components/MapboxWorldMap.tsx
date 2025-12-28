@@ -241,13 +241,12 @@ const MapboxWorldMap = () => {
       const country = countryData.find((c) => c.country_code === countryCode);
       const testCount = country ? country.test_count : 0;
 
-      new mapboxgl.Popup()
+      new mapboxgl.Popup({ closeButton: true, className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div class="p-3">
-              <h3 class="font-bold text-lg">${countryName || countryCode}</h3>
-              <p class="text-sm text-gray-600">Country Code: ${countryCode}</p>
-              <p class="text-lg font-semibold mt-2" style="color: ${getCountryColor(testCount)}">
+            <div style="padding: 16px; min-width: 140px;">
+              <h3 style="font-weight: 700; font-size: 18px; margin: 0 0 8px 0; color: #1f2937;">${countryName || countryCode}</h3>
+              <p style="font-size: 20px; font-weight: 600; margin: 0; color: ${getCountryColor(testCount)};">
                 ${testCount} milk ${testCount === 1 ? 'test' : 'tests'}
               </p>
             </div>
