@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
+import { Trophy, Medal } from 'lucide-react';
 
 interface CountryTestCount {
   country_code: string;
@@ -333,7 +333,10 @@ const MapboxWorldMap = () => {
               index === 0 ? 'border-primary border-2 bg-primary/5' : 'border-border'
             }`}
           >
-            <div className={`text-lg font-bold mb-1 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+            <div className={`text-lg font-bold mb-1 flex items-center justify-center gap-1.5 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+              {index === 0 && <Trophy className="w-5 h-5 text-yellow-500" />}
+              {index === 1 && <Medal className="w-5 h-5 text-slate-400" />}
+              {index === 2 && <Medal className="w-5 h-5 text-amber-600" />}
               #{index + 1} {country.country_code}
             </div>
             <div className="text-2xl font-bold text-foreground">
