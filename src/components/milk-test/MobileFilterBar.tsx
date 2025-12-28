@@ -318,18 +318,20 @@ export const MobileFilterBar = ({
                 activeFilterCount > 0 && "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))] hover:bg-[hsl(var(--filter-active))]/90"
               )}
             >
-              <div className="relative">
-                <SlidersHorizontal className="h-4 w-4" />
-                {activeFilterCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full" />
-                )}
-              </div>
+              <SlidersHorizontal className="h-4 w-4" />
               <span className="text-sm font-medium">Filter</span>
             </Button>
           </DrawerTrigger>
           <DrawerContent className="max-h-[85vh]">
             <DrawerHeader className="flex flex-row items-center justify-between">
-              <DrawerTitle>Filters</DrawerTitle>
+              <DrawerTitle>
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="ml-2 inline-flex items-center justify-center bg-primary text-primary-foreground rounded-full min-w-[20px] h-5 px-1.5 text-xs font-semibold">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </DrawerTitle>
               {activeFilterCount > 0 && (
                 <Button
                   variant="ghost"
