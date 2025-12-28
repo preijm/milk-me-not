@@ -14,6 +14,7 @@ const MapboxWorldMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [isMapInitialized, setIsMapInitialized] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
 
   // Fetch test counts per country
   const { data: countryData = [], isLoading } = useQuery({
@@ -87,56 +88,68 @@ const MapboxWorldMap = () => {
     const token = await fetchMapboxToken();
     if (!token) {
       console.error('No Mapbox token available');
+      setMapError('Unable to load map token');
       return;
     }
 
-    mapboxgl.accessToken = token;
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      zoom: 2,
-      center: [0, 30],
-      projection: 'globe',
-    });
-
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-    map.current.on('load', () => {
-      setIsMapInitialized(true);
+    try {
+      mapboxgl.accessToken = token;
       
-      // Add atmosphere for globe
-      if (map.current) {
-        map.current.setFog({
-          color: 'rgb(186, 210, 235)',
-          'high-color': 'rgb(36, 92, 223)',
-          'horizon-blend': 0.02,
-          'space-color': 'rgb(11, 11, 25)',
-          'star-intensity': 0.6,
-        });
-      }
-    });
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/light-v11',
+        zoom: 2,
+        center: [0, 30],
+        projection: 'globe',
+      });
 
-    // Add rotation
-    let userInteracting = false;
-    const spinGlobe = () => {
-      if (!map.current) return;
-      const zoom = map.current.getZoom();
-      if (!userInteracting && zoom < 5) {
-        const center = map.current.getCenter();
-        center.lng -= 0.2;
-        map.current.easeTo({ center, duration: 1000, easing: (n) => n });
-      }
-    };
+      map.current.on('error', (e) => {
+        console.error('Mapbox error:', e);
+        setMapError('Map failed to load. Try viewing in the published app.');
+      });
 
-    map.current.on('mousedown', () => { userInteracting = true; });
-    map.current.on('mouseup', () => { userInteracting = false; spinGlobe(); });
-    map.current.on('dragend', () => { spinGlobe(); });
-    map.current.on('pitchend', () => { spinGlobe(); });
-    map.current.on('rotateend', () => { spinGlobe(); });
-    map.current.on('moveend', () => { spinGlobe(); });
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-    spinGlobe();
+      map.current.on('load', () => {
+        setIsMapInitialized(true);
+        setMapError(null);
+        
+        // Add atmosphere for globe
+        if (map.current) {
+          map.current.setFog({
+            color: 'rgb(186, 210, 235)',
+            'high-color': 'rgb(36, 92, 223)',
+            'horizon-blend': 0.02,
+            'space-color': 'rgb(11, 11, 25)',
+            'star-intensity': 0.6,
+          });
+        }
+      });
+
+      // Add rotation
+      let userInteracting = false;
+      const spinGlobe = () => {
+        if (!map.current) return;
+        const zoom = map.current.getZoom();
+        if (!userInteracting && zoom < 5) {
+          const center = map.current.getCenter();
+          center.lng -= 0.2;
+          map.current.easeTo({ center, duration: 1000, easing: (n) => n });
+        }
+      };
+
+      map.current.on('mousedown', () => { userInteracting = true; });
+      map.current.on('mouseup', () => { userInteracting = false; spinGlobe(); });
+      map.current.on('dragend', () => { spinGlobe(); });
+      map.current.on('pitchend', () => { spinGlobe(); });
+      map.current.on('rotateend', () => { spinGlobe(); });
+      map.current.on('moveend', () => { spinGlobe(); });
+
+      spinGlobe();
+    } catch (error) {
+      console.error('Error initializing map:', error);
+      setMapError('Map initialization failed');
+    }
   };
 
   const addCountryData = () => {
@@ -294,8 +307,18 @@ const MapboxWorldMap = () => {
       </div>
 
       {/* Mapbox Map */}
-      <div className="w-full h-[600px] rounded-lg border border-gray-200 shadow-lg overflow-hidden">
+      <div className="w-full h-[600px] rounded-lg border border-border shadow-lg overflow-hidden relative">
         <div ref={mapContainer} className="w-full h-full" />
+        {mapError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-muted/80 backdrop-blur-sm">
+            <div className="text-center p-6">
+              <p className="text-muted-foreground mb-2">{mapError}</p>
+              <p className="text-sm text-muted-foreground">
+                The interactive map works best in the published app.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Top Countries Stats */}
