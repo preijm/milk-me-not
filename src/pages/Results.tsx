@@ -8,7 +8,7 @@ import MobileFooter from "@/components/MobileFooter";
 import { ResultsContainer } from "@/components/milk-test/ResultsContainer";
 import { MilkCharts } from "@/components/MilkCharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChartBar, Table2, MapPin, Lock } from "lucide-react";
+import { ChartBar, Table2, MapPin, LogIn, UserPlus } from "lucide-react";
 import MapboxWorldMap from "@/components/MapboxWorldMap";
 import { MilkTestResult } from "@/types/milk-test";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -222,22 +222,28 @@ const Results = () => {
 
       {/* Login CTA overlay */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="bg-card/95 backdrop-blur-sm border border-border rounded-2xl p-8 shadow-2xl text-center max-w-md mx-4">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-primary" />
+        <div className="bg-card border border-border rounded-2xl p-8 shadow-2xl text-center max-w-md mx-4">
+          <div className="flex justify-center mb-4">
+            <div className="text-4xl">🔓</div>
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">
-            Explore the World Map
+          <h2 className="text-xl font-semibold text-foreground mb-4">
+            Ready to see more?
           </h2>
           <p className="text-muted-foreground mb-6">
-            Sign in to access our interactive world map showing milk tests from around the globe.
+            Join our community to unlock the interactive world map showing milk tests from around the globe!
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button asChild size="lg">
-              <Link to="/auth">Sign In</Link>
+            <Button asChild size="lg" style={{ backgroundColor: '#2144ff', color: 'white' }}>
+              <Link to="/auth">
+                <LogIn className="mr-2 h-4 w-4" />
+                Log In
+              </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link to="/auth?mode=signup">Create Account</Link>
+              <Link to="/auth?mode=signup">
+                <UserPlus className="mr-2 h-4 w-4" />
+                Sign Up
+              </Link>
             </Button>
           </div>
         </div>
