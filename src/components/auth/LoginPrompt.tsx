@@ -50,9 +50,10 @@ export const LoginPrompt = ({
             <ArrowRight className="ml-2 h-5 w-5 md:group-hover:translate-x-1 transition-transform duration-300" />
           </Button>
           
-          <Button onClick={handleSignUp} variant="outline" className="w-full border-2" size="lg">
-            <UserPlus className="mr-2 h-4 w-4" />
+          <Button onClick={handleSignUp} size="lg" className="w-full text-white md:hover:-translate-y-1 transition-all duration-300 group bg-brand-secondary hover:bg-brand-secondary/90">
+            <UserPlus className="mr-2 h-6 w-6 md:group-hover:rotate-12 transition-transform duration-300" />
             Sign Up
+            <ArrowRight className="ml-2 h-5 w-5 md:group-hover:translate-x-1 transition-transform duration-300" />
           </Button>
         </div>
       </DialogContent>
