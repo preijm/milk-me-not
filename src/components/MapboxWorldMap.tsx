@@ -345,26 +345,35 @@ const MapboxWorldMap = () => {
           <span className="text-sm text-muted-foreground">{countryData.length} countries</span>
         </div>
         <div className="divide-y divide-border">
-          {countryData
-            .sort((a, b) => b.test_count - a.test_count)
-            .map((country, index) => (
-            <div
-              key={country.country_code}
-              className="flex items-center justify-between px-6 py-4 hover:bg-muted/50 transition-colors"
-            >
-              <div className="flex items-center gap-4">
-                <span className={`text-sm font-medium w-6 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
-                  {index + 1}
-                </span>
-                <span className="font-medium text-foreground">
-                  {countryCodeToName.get(country.country_code) || country.country_code}
-                </span>
-              </div>
-              <span className={`text-lg font-bold ${index === 0 ? 'text-primary' : 'text-foreground'}`}>
-                {country.test_count}
-              </span>
-            </div>
-          ))}
+          {(() => {
+            const sortedData = [...countryData].sort((a, b) => b.test_count - a.test_count);
+            const maxCount = sortedData[0]?.test_count || 1;
+            return sortedData.map((country, index) => {
+              const percentage = (country.test_count / maxCount) * 100;
+              return (
+                <div
+                  key={country.country_code}
+                  className="relative flex items-center justify-between px-6 py-4 hover:bg-muted/50 transition-colors"
+                >
+                  <div 
+                    className="absolute inset-y-0 left-0 bg-primary/10 transition-all"
+                    style={{ width: `${percentage}%` }}
+                  />
+                  <div className="relative flex items-center gap-4">
+                    <span className={`text-sm font-medium w-6 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {index + 1}
+                    </span>
+                    <span className="font-medium text-foreground">
+                      {countryCodeToName.get(country.country_code) || country.country_code}
+                    </span>
+                  </div>
+                  <span className={`relative text-lg font-bold ${index === 0 ? 'text-primary' : 'text-foreground'}`}>
+                    {country.test_count}
+                  </span>
+                </div>
+              );
+            });
+          })()}
         </div>
       </div>
     </div>
