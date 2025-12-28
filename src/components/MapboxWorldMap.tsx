@@ -87,16 +87,26 @@ const MapboxWorldMap = () => {
   };
 
   const initializeMap = async () => {
-    if (!mapContainer.current || map.current) return;
+    console.log('MapboxWorldMap: initializeMap called');
+    console.log('MapboxWorldMap: mapContainer.current:', !!mapContainer.current);
+    console.log('MapboxWorldMap: map.current:', !!map.current);
+    
+    if (!mapContainer.current || map.current) {
+      console.log('MapboxWorldMap: Early return - container missing or map already exists');
+      return;
+    }
 
     const token = await fetchMapboxToken();
+    console.log('MapboxWorldMap: Token received:', token ? 'yes (length: ' + token.length + ')' : 'no');
+    
     if (!token) {
       console.error('No Mapbox token available');
-      setMapError('Unable to load map token');
+      setMapError('Unable to load map token. Please check the MAPBOX_KEY secret.');
       return;
     }
 
     try {
+      console.log('MapboxWorldMap: Setting access token and creating map...');
       mapboxgl.accessToken = token;
       
       map.current = new mapboxgl.Map({
@@ -107,14 +117,17 @@ const MapboxWorldMap = () => {
         projection: 'globe',
       });
 
+      console.log('MapboxWorldMap: Map instance created');
+
       map.current.on('error', (e) => {
-        console.error('Mapbox error:', e);
-        setMapError('Map failed to load. Try viewing in the published app.');
+        console.error('Mapbox map error event:', e);
+        setMapError('Map failed to load. Check browser console for details.');
       });
 
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
       map.current.on('load', () => {
+        console.log('MapboxWorldMap: Map loaded successfully!');
         setIsMapInitialized(true);
         setMapError(null);
         
