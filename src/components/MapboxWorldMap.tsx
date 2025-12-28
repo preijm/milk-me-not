@@ -329,10 +329,11 @@ const MapboxWorldMap = () => {
           .map((country, index) => (
           <div
             key={country.country_code}
-            className="bg-card p-4 rounded-lg border-2 text-center shadow-sm hover:shadow-md transition-shadow"
-            style={{ borderColor: getCountryColor(country.test_count) }}
+            className={`bg-card p-4 rounded-lg border text-center shadow-sm hover:shadow-md transition-shadow ${
+              index === 0 ? 'border-primary border-2 bg-primary/5' : 'border-border'
+            }`}
           >
-            <div className="text-lg font-bold mb-1" style={{ color: getCountryColor(country.test_count) }}>
+            <div className={`text-lg font-bold mb-1 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
               #{index + 1} {country.country_code}
             </div>
             <div className="text-2xl font-bold text-foreground">
