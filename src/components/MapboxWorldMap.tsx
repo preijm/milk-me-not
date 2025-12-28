@@ -76,14 +76,51 @@ const MapboxWorldMap = () => {
     }
   };
 
+  // Interpolate between colors for smooth heatmap gradient
+  const interpolateColor = (value: number, min: number, max: number): string => {
+    // Normalize value between 0 and 1 using logarithmic scale for better distribution
+    const normalized = Math.log(value + 1) / Math.log(max + 1);
+    const clamped = Math.max(0, Math.min(1, normalized));
+    
+    // Heatmap gradient: light teal -> green -> yellow -> orange -> red
+    const stops = [
+      { pos: 0, color: [200, 230, 201] },    // Light mint green
+      { pos: 0.2, color: [129, 199, 132] },  // Green
+      { pos: 0.4, color: [255, 241, 118] },  // Yellow
+      { pos: 0.6, color: [255, 183, 77] },   // Orange
+      { pos: 0.8, color: [255, 112, 67] },   // Deep orange
+      { pos: 1, color: [229, 57, 53] },      // Red
+    ];
+    
+    // Find the two stops to interpolate between
+    let lower = stops[0];
+    let upper = stops[stops.length - 1];
+    
+    for (let i = 0; i < stops.length - 1; i++) {
+      if (clamped >= stops[i].pos && clamped <= stops[i + 1].pos) {
+        lower = stops[i];
+        upper = stops[i + 1];
+        break;
+      }
+    }
+    
+    // Interpolate between the two colors
+    const range = upper.pos - lower.pos;
+    const factor = range === 0 ? 0 : (clamped - lower.pos) / range;
+    
+    const r = Math.round(lower.color[0] + factor * (upper.color[0] - lower.color[0]));
+    const g = Math.round(lower.color[1] + factor * (upper.color[1] - lower.color[1]));
+    const b = Math.round(lower.color[2] + factor * (upper.color[2] - lower.color[2]));
+    
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
   const getCountryColor = (testCount: number): string => {
-    if (testCount >= 100) return '#dc2626'; // Red - Very High
-    if (testCount >= 50) return '#ea580c'; // Orange - High  
-    if (testCount >= 20) return '#f59e0b'; // Amber - Medium-High
-    if (testCount >= 10) return '#eab308'; // Yellow - Medium
-    if (testCount >= 5) return '#84cc16'; // Lime - Low-Medium
-    if (testCount >= 1) return '#22c55e'; // Green - Low
-    return '#e5e7eb'; // Light gray for no data
+    if (testCount === 0) return '#e5e7eb'; // Light gray for no data
+    
+    // Find max for scaling (use 150 as reasonable max for good distribution)
+    const maxForScale = 150;
+    return interpolateColor(testCount, 1, maxForScale);
   };
 
   const initializeMap = async () => {
@@ -307,35 +344,23 @@ const MapboxWorldMap = () => {
         </p>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap justify-center gap-4 mb-6">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-heatmap-very-high"></div>
-          <span className="text-sm font-medium">100+ tests</span>
+      {/* Legend - Gradient bar */}
+      <div className="flex flex-col items-center gap-2 mb-6">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">Fewer tests</span>
+          <div 
+            className="w-64 h-4 rounded-full"
+            style={{
+              background: 'linear-gradient(to right, rgb(200, 230, 201), rgb(129, 199, 132), rgb(255, 241, 118), rgb(255, 183, 77), rgb(255, 112, 67), rgb(229, 57, 53))'
+            }}
+          />
+          <span className="text-sm text-muted-foreground">More tests</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-heatmap-high"></div>
-          <span className="text-sm font-medium">50-99 tests</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-heatmap-medium-high"></div>
-          <span className="text-sm font-medium">20-49 tests</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-heatmap-medium"></div>
-          <span className="text-sm font-medium">10-19 tests</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-heatmap-low-medium"></div>
-          <span className="text-sm font-medium">5-9 tests</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-heatmap-low"></div>
-          <span className="text-sm font-medium">1-4 tests</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-heatmap-none"></div>
-          <span className="text-sm font-medium">No data</span>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-gray-200"></div>
+            <span className="text-xs text-muted-foreground">No data</span>
+          </div>
         </div>
       </div>
 
