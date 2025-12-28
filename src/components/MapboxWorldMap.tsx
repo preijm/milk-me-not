@@ -172,27 +172,37 @@ const MapboxWorldMap = () => {
   const addCountryData = () => {
     if (!map.current || !isMapInitialized || !countryData.length) return;
 
+    const sourceId = 'country-boundaries';
+
+    // Ensure source exists
+    if (!map.current.getSource(sourceId)) {
+      map.current.addSource(sourceId, {
+        type: 'vector',
+        url: 'mapbox://mapbox.country-boundaries-v1',
+      });
+    }
+
+    // If layers already exist (e.g., react-query refetch), remove them to re-add with new data
+    if (map.current.getLayer('country-fills')) map.current.removeLayer('country-fills');
+    if (map.current.getLayer('country-borders')) map.current.removeLayer('country-borders');
+
     // Create country data expression for fill-color
     const countryColorExpression: any = ['case'];
-    
-    countryData.forEach(country => {
+
+    countryData.forEach((country) => {
       countryColorExpression.push(
-        ['==', ['get', 'iso_a2'], country.country_code],
+        ['==', ['get', 'iso_3166_1'], country.country_code],
         getCountryColor(country.test_count)
       );
     });
-    
+
     // Default color for countries with no data
     countryColorExpression.push('#f3f4f6');
 
-    // Add country fills
     map.current.addLayer({
       id: 'country-fills',
       type: 'fill',
-      source: {
-        type: 'vector',
-        url: 'mapbox://mapbox.country-boundaries-v1',
-      },
+      source: sourceId,
       'source-layer': 'country_boundaries',
       paint: {
         'fill-color': countryColorExpression,
@@ -200,14 +210,10 @@ const MapboxWorldMap = () => {
       },
     });
 
-    // Add country borders
     map.current.addLayer({
       id: 'country-borders',
       type: 'line',
-      source: {
-        type: 'vector',
-        url: 'mapbox://mapbox.country-boundaries-v1',
-      },
+      source: sourceId,
       'source-layer': 'country_boundaries',
       paint: {
         'line-color': '#ffffff',
@@ -215,18 +221,29 @@ const MapboxWorldMap = () => {
       },
     });
 
-    // Add click handler for countries
-    map.current.on('click', 'country-fills', (e) => {
-      if (e.features && e.features[0]) {
-        const feature = e.features[0];
-        const countryCode = feature.properties?.iso_a2;
-        const countryName = feature.properties?.name;
-        const country = countryData.find(c => c.country_code === countryCode);
-        const testCount = country ? country.test_count : 0;
+    // Add click handler for countries (avoid stacking listeners)
+    map.current.off('click', 'country-fills', onCountryClick as any);
+    map.current.on('click', 'country-fills', onCountryClick as any);
 
-        new mapboxgl.Popup()
-          .setLngLat(e.lngLat)
-          .setHTML(`
+    // Change cursor on hover
+    map.current.off('mouseenter', 'country-fills', onCountryEnter as any);
+    map.current.off('mouseleave', 'country-fills', onCountryLeave as any);
+    map.current.on('mouseenter', 'country-fills', onCountryEnter as any);
+    map.current.on('mouseleave', 'country-fills', onCountryLeave as any);
+  };
+
+  const onCountryClick = (e: mapboxgl.MapLayerMouseEvent) => {
+    if (!map.current) return;
+    if (e.features && e.features[0]) {
+      const feature = e.features[0];
+      const countryCode = (feature.properties as any)?.iso_3166_1;
+      const countryName = (feature.properties as any)?.name;
+      const country = countryData.find((c) => c.country_code === countryCode);
+      const testCount = country ? country.test_count : 0;
+
+      new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`
             <div class="p-3">
               <h3 class="font-bold text-lg">${countryName || countryCode}</h3>
               <p class="text-sm text-gray-600">Country Code: ${countryCode}</p>
@@ -235,18 +252,18 @@ const MapboxWorldMap = () => {
               </p>
             </div>
           `)
-          .addTo(map.current!);
-      }
-    });
+        .addTo(map.current);
+    }
+  };
 
-    // Change cursor on hover
-    map.current.on('mouseenter', 'country-fills', () => {
-      map.current!.getCanvas().style.cursor = 'pointer';
-    });
+  const onCountryEnter = () => {
+    if (!map.current) return;
+    map.current.getCanvas().style.cursor = 'pointer';
+  };
 
-    map.current.on('mouseleave', 'country-fills', () => {
-      map.current!.getCanvas().style.cursor = '';
-    });
+  const onCountryLeave = () => {
+    if (!map.current) return;
+    map.current.getCanvas().style.cursor = '';
   };
 
   useEffect(() => {
