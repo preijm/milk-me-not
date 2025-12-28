@@ -154,10 +154,11 @@ export const EditMilkTestForm = ({
           <AlertDialogTrigger asChild>
             <Button
               type="button"
-              variant="destructive"
+              variant="outline"
               disabled={formState.isSubmitting}
-              className="px-4 py-2"
+              className="px-4 py-2 border-destructive text-destructive hover:bg-destructive/10"
             >
+              <Trash2 className="h-4 w-4 mr-2" />
               Delete
             </Button>
           </AlertDialogTrigger>
