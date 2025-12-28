@@ -131,6 +131,7 @@ export type Database = {
           created_at: string
           drink_preference: string | null
           id: string
+          is_hidden_from_feed: boolean
           notes: string | null
           picture_path: string | null
           price_quality_ratio: string | null
@@ -144,6 +145,7 @@ export type Database = {
           created_at?: string
           drink_preference?: string | null
           id?: string
+          is_hidden_from_feed?: boolean
           notes?: string | null
           picture_path?: string | null
           price_quality_ratio?: string | null
@@ -157,6 +159,7 @@ export type Database = {
           created_at?: string
           drink_preference?: string | null
           id?: string
+          is_hidden_from_feed?: boolean
           notes?: string | null
           picture_path?: string | null
           price_quality_ratio?: string | null

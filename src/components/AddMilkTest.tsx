@@ -10,7 +10,9 @@ import { PriceInput } from "./milk-test/PriceInput";
 import { ResponsiveNotesArea } from "./milk-test/ResponsiveNotesArea";
 import { useMilkTestForm } from "@/hooks/useMilkTestForm";
 import { useLocation } from "react-router-dom";
-import { Trash2 } from "lucide-react";
+import { Trash2, EyeOff } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export const AddMilkTest = () => {
   const location = useLocation();
@@ -132,6 +134,32 @@ export const AddMilkTest = () => {
                 preference={formState.drinkPreference} 
                 setPreference={formSetters.setDrinkPreference} 
               />
+            </div>
+          </div>
+
+          {/* Privacy Section */}
+          <div className="space-y-3 md:space-y-4">
+            <div className="relative flex items-center gap-3">
+              <h2 className="text-xl font-semibold text-gray-900 whitespace-nowrap">Privacy</h2>
+              <div className="flex-1 h-px bg-gray-200"></div>
+            </div>
+            <div className="bg-muted/30 p-4 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  <Label htmlFor="hide-from-feed" className="text-sm font-medium cursor-pointer">
+                    Hide from feed
+                  </Label>
+                </div>
+                <Switch
+                  id="hide-from-feed"
+                  checked={formState.isHiddenFromFeed}
+                  onCheckedChange={formSetters.setIsHiddenFromFeed}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                When enabled, this test won't appear in the public feed but will still be visible in your personal results.
+              </p>
             </div>
           </div>
 

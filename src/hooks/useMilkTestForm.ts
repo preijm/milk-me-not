@@ -24,6 +24,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
   const [priceHasChanged, setPriceHasChanged] = useState(!!editTest?.price_quality_ratio);
   const [picture, setPicture] = useState<File | null>(null);
   const [picturePreview, setPicturePreview] = useState<string | null>(null);
+  const [isHiddenFromFeed, setIsHiddenFromFeed] = useState(editTest?.is_hidden_from_feed || false);
 
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -182,7 +183,8 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
         notes: notes ? sanitizeForDatabase(notes) : null,
         drink_preference: drinkPreference,
         user_id: userData.user.id,
-        picture_path: picturePath || (editTest?.picture_path || null)
+        picture_path: picturePath || (editTest?.picture_path || null),
+        is_hidden_from_feed: isHiddenFromFeed
       };
       
       // Only add price_quality_ratio if the user actually changed it and selected a value
@@ -317,6 +319,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
       priceHasChanged,
       picture,
       picturePreview,
+      isHiddenFromFeed,
     },
     formSetters: {
       setRating,
@@ -330,6 +333,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
       setPriceHasChanged,
       setPicture,
       setPicturePreview,
+      setIsHiddenFromFeed,
     },
     handleSubmit,
     handleDelete,

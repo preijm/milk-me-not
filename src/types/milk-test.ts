@@ -25,4 +25,5 @@ export interface MilkTestResult {
   product_type_keys?: string[];  // Added for compatibility with EditMilkTest
   price?: number | null;  // Adding the missing price property
   currency_code?: string | null;  // Adding the missing currency_code property
+  is_hidden_from_feed?: boolean | null;  // Privacy toggle for feed visibility
 }
