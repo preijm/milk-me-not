@@ -71,6 +71,7 @@ const MenuBar = () => {
   };
   const pageTitle = getPageTitle();
   const isHomePage = location.pathname === '/';
+  const isAuthPage = location.pathname === '/auth';
   const isProfilePage = location.pathname === '/profile';
   const isNotificationsPage = location.pathname === '/notifications';
   const isFeedPage = location.pathname === '/feed';
@@ -91,7 +92,7 @@ const MenuBar = () => {
         <div className="flex items-center justify-between h-16 my-[5px]">
           {/* Mobile/Tablet: Show logo only on home, page title on other pages */}
           <div className="lg:hidden flex-1">
-            {isHomePage ? <Link to="/" className="flex items-center gap-3">
+            {(isHomePage || isAuthPage) ? <Link to="/" className="flex items-center gap-3">
                 <img src="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png" alt="Milk Me Not Logo" className="h-12 w-12" width="48" height="48" loading="eager" fetchPriority="high" />
                 <span className="text-gray-800 text-2xl md:text-4xl font-bold whitespace-nowrap flex items-center" translate="no">Milk Me Not</span>
               </Link> : isAddPage ? <div className="flex items-center gap-3">
