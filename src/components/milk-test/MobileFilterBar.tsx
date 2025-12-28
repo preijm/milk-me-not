@@ -198,17 +198,18 @@ export const MobileFilterBar = ({
         />
       </div>
 
-      {/* Action Buttons Row */}
-      <div className="flex items-center gap-2">
+      {/* Action Buttons Row - Scrollable on small screens */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide"
+           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {/* Sort Button */}
         <Drawer open={isSortOpen} onOpenChange={setIsSortOpen}>
           <DrawerTrigger asChild>
             <Button
               variant="outline"
-              className="flex-1 h-11 flex items-center justify-center gap-2 rounded-lg bg-background border-border"
+              className="h-11 flex items-center justify-center gap-2 rounded-lg bg-background border-border flex-shrink-0 min-w-[100px]"
             >
               <ArrowUpDown className="h-4 w-4" />
-              <span className="text-sm font-medium">{currentSort?.label || 'Sort'}</span>
+              <span className="text-sm font-medium whitespace-nowrap">{currentSort?.label || 'Sort'}</span>
             </Button>
           </DrawerTrigger>
           <DrawerContent>
@@ -313,7 +314,7 @@ export const MobileFilterBar = ({
             <Button
               variant="outline"
               className={cn(
-                "flex-1 h-11 flex items-center justify-center gap-2 rounded-lg transition-colors",
+                "h-11 flex items-center justify-center gap-2 rounded-lg transition-colors flex-shrink-0 min-w-[100px]",
                 activeFilterCount > 0 && "bg-[hsl(var(--filter-active))] text-white border-[hsl(var(--filter-active))] hover:bg-[hsl(var(--filter-active))]/90"
               )}
             >
@@ -424,12 +425,12 @@ export const MobileFilterBar = ({
             variant="outline"
             onClick={handleMyResultsToggle}
             className={cn(
-              "flex-1 h-11 flex items-center justify-center gap-2 rounded-lg transition-colors",
+              "h-11 flex items-center justify-center gap-2 rounded-lg transition-colors flex-shrink-0 min-w-[120px]",
               filters.myResultsOnly && "bg-brand-secondary text-white border-brand-secondary hover:bg-brand-secondary/90"
             )}
           >
             <User className="h-4 w-4" />
-            <span className="text-sm font-medium">My Results</span>
+            <span className="text-sm font-medium whitespace-nowrap">My Results</span>
           </Button>
         )}
       </div>
