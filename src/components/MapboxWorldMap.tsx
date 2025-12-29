@@ -345,23 +345,15 @@ const MapboxWorldMap = () => {
       </div>
 
       {/* Legend - Gradient bar */}
-      <div className="flex flex-col items-center gap-2 mb-6">
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground">Fewer tests</span>
-          <div 
-            className="w-64 h-4 rounded-full"
-            style={{
-              background: 'linear-gradient(to right, rgb(200, 230, 201), rgb(129, 199, 132), rgb(255, 241, 118), rgb(255, 183, 77), rgb(255, 112, 67), rgb(229, 57, 53))'
-            }}
-          />
-          <span className="text-sm text-muted-foreground">More tests</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-gray-200"></div>
-            <span className="text-xs text-muted-foreground">No data</span>
-          </div>
-        </div>
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <span className="text-sm text-muted-foreground">No tests</span>
+        <div 
+          className="w-96 h-4 rounded-full"
+          style={{
+            background: 'linear-gradient(to right, rgb(200, 230, 201), rgb(129, 199, 132), rgb(255, 241, 118), rgb(255, 183, 77), rgb(255, 112, 67), rgb(229, 57, 53))'
+          }}
+        />
+        <span className="text-sm text-muted-foreground">More tests</span>
       </div>
 
       {/* Mapbox Map */}
