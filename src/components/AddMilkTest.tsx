@@ -140,11 +140,11 @@ export const AddMilkTest = () => {
               <Button 
                 type="button"
                 onClick={handleDelete}
-                disabled={formState.isSubmitting}
+                disabled={formState.isDeleting || formState.isSubmitting}
                 variant="destructive"
                 className="flex-1"
               >
-                {formState.isSubmitting ? "Deleting..." : (
+                {formState.isDeleting ? "Deleting..." : (
                   <>
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
@@ -154,7 +154,7 @@ export const AddMilkTest = () => {
             )}
             <Button 
               type="submit" 
-              disabled={formState.isSubmitting || !isFormValid} 
+              disabled={formState.isSubmitting || formState.isDeleting || !isFormValid} 
               variant="brand"
               className={isEditMode ? "flex-1" : "w-full"}
             >
