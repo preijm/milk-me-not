@@ -400,14 +400,14 @@ const MapboxWorldMap = () => {
                     style={{ width: `${percentage}%` }}
                   />
                   <div className="relative flex items-center gap-4">
-                    <span className={`text-sm font-medium w-6 ${index === 0 ? 'text-emerald-600' : 'text-foreground'}`}>
+                    <span className="text-sm font-medium w-6 text-foreground">
                       {index + 1}
                     </span>
                     <span className="font-medium text-foreground">
                       {countryCodeToName.get(country.country_code) || country.country_code}
                     </span>
                   </div>
-                  <span className={`relative text-lg font-bold ${index === 0 ? 'text-emerald-600' : 'text-foreground'}`}>
+                  <span className="relative text-lg font-bold text-foreground">
                     {country.test_count} <span className="text-sm font-normal text-muted-foreground">({Math.round(percentage)}%)</span>
                   </span>
                 </div>
