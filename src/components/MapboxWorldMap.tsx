@@ -313,9 +313,9 @@ const MapboxWorldMap = () => {
       {/* Discovery Message */}
       <div className="text-center py-4">
         <p className="text-xl md:text-2xl font-semibold text-foreground">
-          Together we've discovered{' '}
+          Together we're mapping{' '}
           <span className="text-primary font-bold">{discoveryPercentage}%</span>{' '}
-          of the world of milk 🌍
+          of plant-based milk alternatives
         </p>
       </div>
 
