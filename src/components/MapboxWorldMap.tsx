@@ -76,41 +76,19 @@ const MapboxWorldMap = () => {
     }
   };
 
-  // Interpolate between colors for smooth heatmap gradient
+  // Interpolate between colors for smooth heatmap gradient (grey to green)
   const interpolateColor = (value: number, min: number, max: number): string => {
     // Normalize value between 0 and 1 using logarithmic scale for better distribution
     const normalized = Math.log(value + 1) / Math.log(max + 1);
     const clamped = Math.max(0, Math.min(1, normalized));
     
-    // Heatmap gradient: light teal -> green -> yellow -> orange -> red
-    const stops = [
-      { pos: 0, color: [200, 230, 201] },    // Light mint green
-      { pos: 0.2, color: [129, 199, 132] },  // Green
-      { pos: 0.4, color: [255, 241, 118] },  // Yellow
-      { pos: 0.6, color: [255, 183, 77] },   // Orange
-      { pos: 0.8, color: [255, 112, 67] },   // Deep orange
-      { pos: 1, color: [229, 57, 53] },      // Red
-    ];
+    // Gradient from grey (#e5e7eb) to green (#00bf63)
+    const grey = [229, 231, 235];  // #e5e7eb
+    const green = [0, 191, 99];    // #00bf63
     
-    // Find the two stops to interpolate between
-    let lower = stops[0];
-    let upper = stops[stops.length - 1];
-    
-    for (let i = 0; i < stops.length - 1; i++) {
-      if (clamped >= stops[i].pos && clamped <= stops[i + 1].pos) {
-        lower = stops[i];
-        upper = stops[i + 1];
-        break;
-      }
-    }
-    
-    // Interpolate between the two colors
-    const range = upper.pos - lower.pos;
-    const factor = range === 0 ? 0 : (clamped - lower.pos) / range;
-    
-    const r = Math.round(lower.color[0] + factor * (upper.color[0] - lower.color[0]));
-    const g = Math.round(lower.color[1] + factor * (upper.color[1] - lower.color[1]));
-    const b = Math.round(lower.color[2] + factor * (upper.color[2] - lower.color[2]));
+    const r = Math.round(grey[0] + clamped * (green[0] - grey[0]));
+    const g = Math.round(grey[1] + clamped * (green[1] - grey[1]));
+    const b = Math.round(grey[2] + clamped * (green[2] - grey[2]));
     
     return `rgb(${r}, ${g}, ${b})`;
   };
@@ -347,7 +325,7 @@ const MapboxWorldMap = () => {
         <div 
           className="w-96 h-4 rounded-full"
           style={{
-            background: 'linear-gradient(to right, rgb(200, 230, 201), rgb(129, 199, 132), rgb(255, 241, 118), rgb(255, 183, 77), rgb(255, 112, 67), rgb(229, 57, 53))'
+            background: 'linear-gradient(to right, #e5e7eb, #00bf63)'
           }}
         />
         <span className="text-sm text-muted-foreground">More tests</span>
