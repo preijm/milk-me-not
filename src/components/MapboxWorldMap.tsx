@@ -315,7 +315,7 @@ const MapboxWorldMap = () => {
         <p className="text-xl md:text-2xl font-semibold text-foreground">
           Together we're mapping{' '}
           <span className="text-primary font-bold">{discoveryPercentage}%</span>{' '}
-          of plant-based milk alternatives
+          of plant-based milk alternatives 🌱
         </p>
       </div>
 
