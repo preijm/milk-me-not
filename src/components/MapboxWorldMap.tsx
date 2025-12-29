@@ -401,7 +401,7 @@ const MapboxWorldMap = () => {
                     style={{ width: `${percentage}%` }}
                   />
                   <div className="relative flex items-center gap-4">
-                    <span className={`text-sm font-medium w-6 ${index === 0 ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                    <span className={`text-sm font-medium w-6 ${index === 0 ? 'text-emerald-600' : 'text-foreground'}`}>
                       {index + 1}
                     </span>
                     <span className="font-medium text-foreground">
