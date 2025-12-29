@@ -15,6 +15,7 @@ const MapboxWorldMap = () => {
   const map = useRef<mapboxgl.Map | null>(null);
   const [isMapInitialized, setIsMapInitialized] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [animatedPercentage, setAnimatedPercentage] = useState(0);
 
   // Fetch test counts per country
   const { data: countryData = [], isLoading } = useQuery({
@@ -300,6 +301,26 @@ const MapboxWorldMap = () => {
   const totalTests = countryData.reduce((sum, country) => sum + country.test_count, 0);
   const discoveryPercentage = Math.round((countryData.length / totalCountries) * 100);
 
+  // Animated counter effect
+  useEffect(() => {
+    if (discoveryPercentage > 0) {
+      const duration = 1500;
+      const steps = 30;
+      const increment = discoveryPercentage / steps;
+      let current = 0;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= discoveryPercentage) {
+          setAnimatedPercentage(discoveryPercentage);
+          clearInterval(timer);
+        } else {
+          setAnimatedPercentage(Math.round(current));
+        }
+      }, duration / steps);
+      return () => clearInterval(timer);
+    }
+  }, [discoveryPercentage]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -314,8 +335,8 @@ const MapboxWorldMap = () => {
       <div className="text-center py-4">
         <p className="text-xl md:text-2xl font-semibold text-foreground">
           Together we're mapping{' '}
-          <span className="text-primary font-bold">{discoveryPercentage}%</span>{' '}
-          of plant-based milk alternatives 🌱
+          <span className="text-primary font-bold">{animatedPercentage}%</span>{' '}
+          of plant-based milk alternatives 🌍
         </p>
       </div>
 
