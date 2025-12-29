@@ -19,6 +19,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
   const [shop, setShop] = useState<string>(editTest?.shop_name || "");
   const [country, setCountry] = useState<string>(editTest?.country_code || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [drinkPreference, setDrinkPreference] = useState(editTest?.drink_preference || "cold");
   const [price, setPrice] = useState(editTest?.price_quality_ratio || "");
   const [priceHasChanged, setPriceHasChanged] = useState(!!editTest?.price_quality_ratio);
@@ -250,7 +251,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
   const handleDelete = async () => {
     if (!testId || !user) return;
 
-    setIsSubmitting(true);
+    setIsDeleting(true);
 
     try {
       // Delete the picture from storage if it exists
@@ -267,7 +268,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
           description: "You can only delete your own milk tests",
           variant: "destructive",
         });
-        setIsSubmitting(false);
+        setIsDeleting(false);
         return;
       }
 
@@ -299,7 +300,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
         variant: "destructive",
       });
     } finally {
-      setIsSubmitting(false);
+      setIsDeleting(false);
     }
   };
 
@@ -312,6 +313,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
       shop,
       country,
       isSubmitting,
+      isDeleting,
       drinkPreference,
       price,
       priceHasChanged,
