@@ -131,7 +131,14 @@ const MapboxWorldMap = () => {
         zoom: 2,
         center: [0, 30],
         projection: 'globe',
+        attributionControl: false,
       });
+
+      // Add minimal attribution without the "Improve this map" link
+      map.current.addControl(new mapboxgl.AttributionControl({
+        compact: true,
+        customAttribution: '© Mapbox © OpenStreetMap'
+      }));
 
       console.log('MapboxWorldMap: Map instance created');
 
