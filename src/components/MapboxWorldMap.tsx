@@ -388,9 +388,8 @@ const MapboxWorldMap = () => {
         <div className="divide-y divide-border">
           {(() => {
             const sortedData = [...countryData].sort((a, b) => b.test_count - a.test_count);
-            const maxCount = sortedData[0]?.test_count || 1;
             return sortedData.map((country, index) => {
-              const percentage = (country.test_count / maxCount) * 100;
+              const percentage = (country.test_count / totalTests) * 100;
               return (
                 <div
                   key={country.country_code}
