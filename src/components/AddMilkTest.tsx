@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { ShopSelect } from "./milk-test/ShopSelect";
@@ -11,11 +11,22 @@ import { ResponsiveNotesArea } from "./milk-test/ResponsiveNotesArea";
 import { useMilkTestForm } from "@/hooks/useMilkTestForm";
 import { useLocation } from "react-router-dom";
 import { Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const AddMilkTest = () => {
   const location = useLocation();
   const editTest = location.state?.editTest;
   const isEditMode = !!editTest;
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const {
     formState,
@@ -139,7 +150,7 @@ export const AddMilkTest = () => {
             {isEditMode && (
               <Button 
                 type="button"
-                onClick={handleDelete}
+                onClick={() => setShowDeleteConfirm(true)}
                 disabled={formState.isDeleting || formState.isSubmitting}
                 variant="destructive"
                 className="flex-1"
@@ -164,6 +175,23 @@ export const AddMilkTest = () => {
             </Button>
           </div>
         </form>
+
+        <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Test Record</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this milk test record? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );
