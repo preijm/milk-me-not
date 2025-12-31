@@ -11,7 +11,7 @@ import { Capacitor } from "@capacitor/core";
 
 const Home = () => {
   const navigate = useNavigate();
-  const isNativeApp = Capacitor.isNativePlatform();
+  const isNativeApp = Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'web';
   const [stats, setStats] = useState({
     totalTests: 0,
     brandsCovered: 0,
