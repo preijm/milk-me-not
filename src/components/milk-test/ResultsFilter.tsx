@@ -162,7 +162,7 @@ export const ResultsFilter = ({
                 variant="barista"
                 className={`cursor-pointer transition-all ${
                   filters.barista 
-                    ? 'bg-amber-600 text-white border-amber-600 shadow-md' 
+                    ? 'bg-amber-600 text-white border-amber-600 shadow-md hover:bg-amber-700 hover:text-white' 
                     : 'hover:bg-amber-50'
                 }`}
                 onClick={handleBaristaToggle}
@@ -180,11 +180,11 @@ export const ResultsFilter = ({
                     <Badge
                       key={property.id}
                       variant="category"
-                      className={`cursor-pointer transition-all ${
-                        filters.properties.includes(property.key)
-                          ? 'bg-slate-600 text-white border-slate-600 shadow-md'
-                          : 'hover:bg-slate-50'
-                      }`}
+                    className={`cursor-pointer transition-all ${
+                      filters.properties.includes(property.key)
+                        ? 'bg-slate-600 text-white border-slate-600 shadow-md hover:bg-slate-700 hover:text-white'
+                        : 'hover:bg-slate-50'
+                    }`}
                       onClick={() => handlePropertyToggle(property.key)}
                     >
                       {property.name}
@@ -203,11 +203,11 @@ export const ResultsFilter = ({
                     <Badge
                       key={flavor.id}
                       variant="flavor"
-                      className={`cursor-pointer transition-all ${
-                        filters.flavors.includes(flavor.key)
-                          ? 'bg-purple-600 text-white border-purple-600 shadow-md'
-                          : 'hover:bg-purple-50'
-                      }`}
+                    className={`cursor-pointer transition-all ${
+                      filters.flavors.includes(flavor.key)
+                        ? 'bg-purple-600 text-white border-purple-600 shadow-md hover:bg-purple-700 hover:text-white'
+                        : 'hover:bg-purple-50'
+                    }`}
                       onClick={() => handleFlavorToggle(flavor.key)}
                     >
                       {flavor.name}
