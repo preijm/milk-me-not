@@ -34,11 +34,15 @@ const Results = () => {
     return { barista, properties, flavors, myResultsOnly };
   };
 
+  // Initialize sort config from URL params
+  const getInitialSortConfig = (): SortConfig => {
+    const column = searchParams.get('sortColumn') as SortConfig['column'] || 'avg_rating';
+    const direction = searchParams.get('sortDir') as SortConfig['direction'] || 'desc';
+    return { column, direction };
+  };
+
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || "");
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'avg_rating',
-    direction: 'desc'
-  });
+  const [sortConfig, setSortConfig] = useState<SortConfig>(getInitialSortConfig);
   const [view, setView] = useState<'table' | 'charts' | 'map'>('table');
   const [filters, setFilters] = useState<FilterOptions>(getInitialFilters);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -53,7 +57,7 @@ const Results = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
 
-  // Update URL when search term or filters change
+  // Update URL when search term, filters, or sort changes
   useEffect(() => {
     const params: Record<string, string> = {};
     
@@ -62,9 +66,13 @@ const Results = () => {
     if (filters.properties.length > 0) params.properties = filters.properties.join(',');
     if (filters.flavors.length > 0) params.flavors = filters.flavors.join(',');
     if (filters.myResultsOnly) params.myResultsOnly = 'true';
+    if (sortConfig.column !== 'avg_rating' || sortConfig.direction !== 'desc') {
+      params.sortColumn = sortConfig.column;
+      params.sortDir = sortConfig.direction;
+    }
     
     setSearchParams(params, { replace: true });
-  }, [searchTerm, filters, setSearchParams]);
+  }, [searchTerm, filters, sortConfig, setSearchParams]);
 
   // Check if we should enable myResultsOnly filter from navigation state
   useEffect(() => {
