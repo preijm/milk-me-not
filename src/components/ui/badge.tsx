@@ -24,10 +24,11 @@ const badgeVariants = cva(
         info: "border-transparent bg-info text-info-foreground rounded-full px-2.5 py-0.5 text-xs font-semibold",
         
         // Property badges (unified styling, legacy names kept for backwards compatibility)
-        property: "bg-background/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:bg-accent hover:border-accent-foreground whitespace-nowrap",
-        barista: "bg-background/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:bg-accent hover:border-accent-foreground whitespace-nowrap",
-        category: "bg-background/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:bg-accent hover:border-accent-foreground whitespace-nowrap",
-        flavor: "bg-background/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium hover:bg-accent hover:border-accent-foreground whitespace-nowrap",
+        // Note: hover styles removed to prevent conflicts when selected state is applied via className
+        property: "bg-background/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium whitespace-nowrap",
+        barista: "bg-background/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium whitespace-nowrap",
+        category: "bg-background/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium whitespace-nowrap",
+        flavor: "bg-background/80 backdrop-blur-sm text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium whitespace-nowrap",
         
         // Score outline variants (for tables/lists) - using design tokens
         score: "bg-transparent rounded px-2 py-1 text-[11px] font-medium",
