@@ -7,11 +7,11 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import MobileFooter from "@/components/MobileFooter";
 import { HomeStatsOverview } from "@/components/UserStatsOverview";
 import { supabase } from "@/integrations/supabase/client";
-import { Capacitor } from "@capacitor/core";
+import { isNativeApp } from "@/lib/platformDetection";
 
 const Home = () => {
   const navigate = useNavigate();
-  const isNativeApp = Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'web';
+  const isNative = isNativeApp();
   const [stats, setStats] = useState({
     totalTests: 0,
     brandsCovered: 0,
@@ -117,7 +117,7 @@ const Home = () => {
         </div>
         
         {/* Mobile App Banner - Fixed on mobile/tablet, inline on desktop */}
-        {!isNativeApp && (
+        {!isNative && (
           <div className="fixed bottom-20 left-0 right-0 z-40 px-0 sm:px-4 lg:relative lg:bottom-auto lg:pb-8 lg:z-auto">
             <div className="container max-w-3xl mx-auto">
               <Link to="/mobile-app" className="block">

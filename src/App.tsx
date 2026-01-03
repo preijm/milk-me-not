@@ -8,7 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
-import { Capacitor } from "@capacitor/core";
+import { isNativeApp } from "@/lib/platformDetection";
 import NativeSplashScreen from "./components/NativeSplashScreen";
 import Home from "./pages/Home";
 import Results from "./pages/Results";
@@ -32,7 +32,7 @@ import AddProduct from "./pages/AddProduct";
 import DesignSystem from "./pages/DesignSystem";
 import InstallGuide from "./pages/InstallGuide";
 
-const isNativeApp = Capacitor.isNativePlatform();
+const isNative = isNativeApp();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +44,7 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(isNativeApp);
+  const [showSplash, setShowSplash] = useState(isNative);
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -100,8 +100,8 @@ const App = () => {
                 </ProtectedRoute>
               } />
               <Route path="/feed" element={<Feed />} />
-              <Route path="/mobile-app" element={isNativeApp ? <Navigate to="/" replace /> : <MobileApp />} />
-              <Route path="/install-guide" element={isNativeApp ? <Navigate to="/" replace /> : <InstallGuide />} />
+              <Route path="/mobile-app" element={isNative ? <Navigate to="/" replace /> : <MobileApp />} />
+              <Route path="/install-guide" element={isNative ? <Navigate to="/" replace /> : <InstallGuide />} />
               <Route path="/notifications" element={
                 <ProtectedRoute>
                   <Notifications />
