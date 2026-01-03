@@ -72,6 +72,11 @@ const Results = () => {
     }
     
     setSearchParams(params, { replace: true });
+    
+    // Store the full Results URL in sessionStorage for navigation back from product details
+    const queryString = new URLSearchParams(params).toString();
+    const fullUrl = queryString ? `/results?${queryString}` : '/results';
+    sessionStorage.setItem('lastResultsUrl', fullUrl);
   }, [searchTerm, filters, sortConfig, setSearchParams]);
 
   // Check if we should enable myResultsOnly filter from navigation state

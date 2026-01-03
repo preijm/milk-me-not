@@ -188,7 +188,15 @@ const MenuBar = () => {
             </div>
 
             {/* Mobile/Tablet: Add test button on results and feed pages, Back button on product details and account, Close button on add page, Settings button on profile */}
-            {isProductDetailsPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate('/results')} className="gap-1">
+            {isProductDetailsPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => {
+                // Use browser history if available, otherwise fallback to stored Results URL or plain /results
+                if (window.history.length > 1) {
+                  navigate(-1);
+                } else {
+                  const lastResultsUrl = sessionStorage.getItem('lastResultsUrl') || '/results';
+                  navigate(lastResultsUrl);
+                }
+              }} className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 {isMobile ? "Back" : "Back to results"}
               </Button> : isAccountNotificationsPage && isMobileOrTablet ? <Button variant="outline" size="sm" onClick={() => navigate('/account')} className="gap-1">

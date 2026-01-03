@@ -1,10 +1,20 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Radio, BarChart3, Bell, User } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useState, useEffect } from "react";
 
 const MobileFooter = () => {
   const location = useLocation();
   const { unreadCount } = useNotifications();
+  const [resultsUrl, setResultsUrl] = useState('/results');
+
+  // Update results URL from sessionStorage when location changes
+  useEffect(() => {
+    const storedUrl = sessionStorage.getItem('lastResultsUrl');
+    if (storedUrl) {
+      setResultsUrl(storedUrl);
+    }
+  }, [location.pathname]);
   
   const isActive = (path: string) => {
     if (path === "/" && location.pathname === "/") return true;
@@ -36,7 +46,7 @@ const MobileFooter = () => {
               <Radio className="w-6 h-6" />
             </Link>
             <Link 
-              to="/results" 
+              to={resultsUrl} 
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/results")}`}
             >
               <BarChart3 className="w-6 h-6" />

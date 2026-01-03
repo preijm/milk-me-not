@@ -120,7 +120,7 @@ const ProductDetails = () => {
         <BackgroundPattern>
           <div className="container max-w-5xl mx-auto px-4 py-8 pt-32 relative z-10">
             <div className="flex items-center mb-6">
-              <Button variant="outline" size="sm" className="gap-1" onClick={() => canGoBack ? navigate(-1) : navigate('/results')}>
+              <Button variant="outline" size="sm" className="gap-1" onClick={() => canGoBack ? navigate(-1) : navigate(sessionStorage.getItem('lastResultsUrl') || '/results')}>
                 <ArrowLeft className="h-4 w-4" /> Back
               </Button>
             </div>
@@ -138,7 +138,7 @@ const ProductDetails = () => {
         <BackgroundPattern>
           <div className="container max-w-5xl mx-auto px-4 py-8 pt-32 relative z-10">
             <div className="flex items-center mb-6">
-              <Button variant="outline" size="sm" className="gap-1" onClick={() => canGoBack ? navigate(-1) : navigate('/results')}>
+              <Button variant="outline" size="sm" className="gap-1" onClick={() => canGoBack ? navigate(-1) : navigate(sessionStorage.getItem('lastResultsUrl') || '/results')}>
                 <ArrowLeft className="h-4 w-4" /> Back
               </Button>
             </div>
@@ -161,7 +161,7 @@ const ProductDetails = () => {
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
           {/* Desktop: Show back button */}
           <div className="hidden lg:flex items-center mb-6">
-            <Button variant="outline" size="sm" className="gap-1" onClick={() => canGoBack ? navigate(-1) : navigate('/results')}>
+            <Button variant="outline" size="sm" className="gap-1" onClick={() => canGoBack ? navigate(-1) : navigate(sessionStorage.getItem('lastResultsUrl') || '/results')}>
               <ArrowLeft className="h-4 w-4" /> Back
             </Button>
           </div>
