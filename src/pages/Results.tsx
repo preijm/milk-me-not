@@ -24,18 +24,23 @@ interface FilterOptions {
 }
 const Results = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Initialize filters from URL params
+  const getInitialFilters = (): FilterOptions => {
+    const barista = searchParams.get('barista') === 'true';
+    const properties = searchParams.get('properties')?.split(',').filter(Boolean) || [];
+    const flavors = searchParams.get('flavors')?.split(',').filter(Boolean) || [];
+    const myResultsOnly = searchParams.get('myResultsOnly') === 'true';
+    return { barista, properties, flavors, myResultsOnly };
+  };
+
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || "");
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'avg_rating',
     direction: 'desc'
   });
   const [view, setView] = useState<'table' | 'charts' | 'map'>('table');
-  const [filters, setFilters] = useState<FilterOptions>({
-    barista: false,
-    properties: [],
-    flavors: [],
-    myResultsOnly: false
-  });
+  const [filters, setFilters] = useState<FilterOptions>(getInitialFilters);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [selectedProductName, setSelectedProductName] = useState<string>("");
   
@@ -48,14 +53,18 @@ const Results = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
 
-  // Update URL when search term changes
+  // Update URL when search term or filters change
   useEffect(() => {
-    if (searchTerm) {
-      setSearchParams({ search: searchTerm }, { replace: true });
-    } else {
-      setSearchParams({}, { replace: true });
-    }
-  }, [searchTerm, setSearchParams]);
+    const params: Record<string, string> = {};
+    
+    if (searchTerm) params.search = searchTerm;
+    if (filters.barista) params.barista = 'true';
+    if (filters.properties.length > 0) params.properties = filters.properties.join(',');
+    if (filters.flavors.length > 0) params.flavors = filters.flavors.join(',');
+    if (filters.myResultsOnly) params.myResultsOnly = 'true';
+    
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, filters, setSearchParams]);
 
   // Check if we should enable myResultsOnly filter from navigation state
   useEffect(() => {
