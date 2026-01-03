@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
 import BackgroundPattern from "@/components/BackgroundPattern";
@@ -33,6 +33,7 @@ type ProductDetails = {
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -118,11 +119,9 @@ const ProductDetails = () => {
         <BackgroundPattern>
           <div className="container max-w-5xl mx-auto px-4 py-8 pt-32 relative z-10">
             <div className="flex items-center mb-6">
-              <Link to="/results">
-                <Button variant="outline" size="sm" className="gap-1">
-                  <ArrowLeft className="h-4 w-4" /> Back to results
-                </Button>
-              </Link>
+              <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(-1)}>
+                <ArrowLeft className="h-4 w-4" /> Back
+              </Button>
             </div>
             <div className="text-center py-12">Loading product details...</div>
           </div>
@@ -138,11 +137,9 @@ const ProductDetails = () => {
         <BackgroundPattern>
           <div className="container max-w-5xl mx-auto px-4 py-8 pt-32 relative z-10">
             <div className="flex items-center mb-6">
-              <Link to="/results">
-                <Button variant="outline" size="sm" className="gap-1">
-                  <ArrowLeft className="h-4 w-4" /> Back to results
-                </Button>
-              </Link>
+              <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(-1)}>
+                <ArrowLeft className="h-4 w-4" /> Back
+              </Button>
             </div>
             <div className="text-center py-12">Product not found</div>
           </div>
@@ -163,11 +160,9 @@ const ProductDetails = () => {
         <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
           {/* Desktop: Show back button */}
           <div className="hidden lg:flex items-center mb-6">
-            <Link to="/results">
-              <Button variant="outline" size="sm" className="gap-1">
-                <ArrowLeft className="h-4 w-4" /> Back to results
-              </Button>
-            </Link>
+            <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(-1)}>
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Button>
           </div>
 
           {/* Combined comprehensive card */}
