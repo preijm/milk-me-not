@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { Capacitor } from '@capacitor/core';
 import { useIsMobile } from "@/hooks/use-mobile";
+import { isNativeApp as checkIsNativeApp } from "@/lib/platformDetection";
 
 export const useCameraCapabilities = () => {
   const [hasCameraSupport, setHasCameraSupport] = useState(false);
@@ -11,8 +11,8 @@ export const useCameraCapabilities = () => {
 
   useEffect(() => {
     const checkCapabilities = async () => {
-      // Check if running in a native app
-      const isNative = Capacitor.isNativePlatform();
+      // Check if running in a native app using robust detection
+      const isNative = checkIsNativeApp();
       setIsNativeApp(isNative);
       
       // Check for Samsung browser
