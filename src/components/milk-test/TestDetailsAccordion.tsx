@@ -226,7 +226,7 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
       <AlertDialog open={!!deleteTestId} onOpenChange={(open) => !open && setDeleteTestId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Test</AlertDialogTitle>
+            <AlertDialogTitle>Delete Test Record</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete this test? This action cannot be undone.
             </AlertDialogDescription>
