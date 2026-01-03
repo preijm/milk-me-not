@@ -6,29 +6,40 @@ import { Capacitor } from '@capacitor/core';
  * (e.g., when loading remote URLs, after WebView reload, etc.)
  */
 export const isNativeApp = (): boolean => {
+  const detectionResults = {
+    isNativePlatform: Capacitor.isNativePlatform(),
+    platform: Capacitor.getPlatform(),
+    windowCapacitorIsNative: typeof window !== 'undefined' ? (window as any).Capacitor?.isNative : undefined,
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A',
+    userAgentContainsCapacitor: typeof navigator !== 'undefined' ? navigator.userAgent.toLowerCase().includes('capacitor') : false,
+  };
+
+  console.log('[PlatformDetection] Detection check:', detectionResults);
+
   // Method 1: Standard Capacitor check
-  if (Capacitor.isNativePlatform()) {
+  if (detectionResults.isNativePlatform) {
+    console.log('[PlatformDetection] ✓ Detected as native via Capacitor.isNativePlatform()');
     return true;
   }
   
   // Method 2: Check Capacitor platform (not 'web')
-  if (Capacitor.getPlatform() !== 'web') {
+  if (detectionResults.platform !== 'web') {
+    console.log('[PlatformDetection] ✓ Detected as native via Capacitor.getPlatform():', detectionResults.platform);
     return true;
   }
   
   // Method 3: Check for Capacitor bridge in window object
-  // This exists when running inside the native WebView
-  if (typeof window !== 'undefined' && (window as any).Capacitor?.isNative) {
+  if (detectionResults.windowCapacitorIsNative) {
+    console.log('[PlatformDetection] ✓ Detected as native via window.Capacitor.isNative');
     return true;
   }
   
   // Method 4: Check user agent for Capacitor native bridge
-  if (typeof navigator !== 'undefined') {
-    const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('capacitor')) {
-      return true;
-    }
+  if (detectionResults.userAgentContainsCapacitor) {
+    console.log('[PlatformDetection] ✓ Detected as native via userAgent containing "capacitor"');
+    return true;
   }
   
+  console.log('[PlatformDetection] ✗ Not detected as native app, running as web');
   return false;
 };
