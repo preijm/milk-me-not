@@ -122,9 +122,9 @@ export const UserResultsContainer = ({
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Test Record</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the milk test from your account.
+              Are you sure you want to delete this test? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
