@@ -3,6 +3,7 @@
 ## Project info
 
 **URL**: https://lovable.dev/projects/534a6b8e-9504-4d1c-9f7f-e02ff5b37b5b
+**Site**: https://milkmenot.com
 
 ## How can I edit this code?
 
