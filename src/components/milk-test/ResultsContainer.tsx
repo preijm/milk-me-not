@@ -23,6 +23,7 @@ interface ResultsContainerProps {
   filteredResults: AggregatedResult[];
   sortConfig: SortConfig;
   handleSort: (column: string) => void;
+  onSetSort?: (column: string, direction: 'asc' | 'desc') => void;
   onClearSort?: () => void;
   onProductClick: (productId: string) => void;
   searchTerm: string;
@@ -35,6 +36,7 @@ export const ResultsContainer = ({
   filteredResults,
   sortConfig,
   handleSort,
+  onSetSort,
   onClearSort,
   onProductClick,
   searchTerm,
@@ -64,6 +66,7 @@ export const ResultsContainer = ({
               onFiltersChange={onFiltersChange}
               sortConfig={sortConfig}
               onSort={handleSort}
+              onSetSort={onSetSort}
               onClearSort={onClearSort}
               resultsCount={filteredResults.length}
             />

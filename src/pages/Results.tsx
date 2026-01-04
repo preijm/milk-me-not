@@ -133,12 +133,18 @@ const Results = () => {
   // Create mappings from keys to names
   const propertyKeyToName = new Map(properties.map(p => [p.key, p.name]));
   const flavorKeyToName = new Map(flavors.map(f => [f.key, f.name]));
+  
   const handleSort = (column: string) => {
     setSortConfig(current => ({
       column,
       direction: current.column === column && current.direction === 'asc' ? 'desc' : 'asc'
     }));
   };
+  
+  const handleSetSort = (column: string, direction: 'asc' | 'desc') => {
+    setSortConfig({ column, direction });
+  };
+  
   const handleClearSort = () => {
     setSortConfig({
       column: 'avg_rating',
@@ -303,6 +309,7 @@ const Results = () => {
               filteredResults={filteredResults} 
               sortConfig={sortConfig} 
               handleSort={handleSort} 
+              onSetSort={handleSetSort}
               onClearSort={handleClearSort} 
               onProductClick={navigateToProduct} 
               searchTerm={searchTerm} 

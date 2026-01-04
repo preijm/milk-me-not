@@ -33,9 +33,28 @@ interface MobileFilterBarProps {
   onFiltersChange: (filters: FilterOptions) => void;
   sortConfig: SortConfig;
   onSort: (column: string) => void;
+  onSetSort?: (column: string, direction: 'asc' | 'desc') => void;
   onClearSort?: () => void;
   resultsCount: number;
 }
+
+// Store default directions for each column (what makes most sense as default)
+const defaultDirections: Record<string, 'asc' | 'desc'> = {
+  'avg_rating': 'desc',      // High scores first
+  'brand_name': 'asc',       // A-Z
+  'product_name': 'asc',     // A-Z
+  'most_recent_date': 'desc', // Newest first
+  'count': 'desc'            // Most tests first
+};
+
+// Direction labels for each column
+const directionLabels: Record<string, { asc: string; desc: string }> = {
+  'avg_rating': { asc: 'Low', desc: 'High' },
+  'brand_name': { asc: 'A-Z', desc: 'Z-A' },
+  'product_name': { asc: 'A-Z', desc: 'Z-A' },
+  'most_recent_date': { asc: 'Old', desc: 'New' },
+  'count': { asc: 'Few', desc: 'Many' }
+};
 
 export const MobileFilterBar = ({
   searchTerm,
@@ -44,12 +63,14 @@ export const MobileFilterBar = ({
   onFiltersChange,
   sortConfig,
   onSort,
+  onSetSort,
   onClearSort,
   resultsCount
 }: MobileFilterBarProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [animatingKey, setAnimatingKey] = useState<string | null>(null);
+  const [pendingDirections, setPendingDirections] = useState<Record<string, 'asc' | 'desc'>>({});
   const { user } = useAuth();
 
   const handleMyResultsToggle = () => {
@@ -220,6 +241,7 @@ export const MobileFilterBar = ({
                   size="sm"
                   onClick={() => {
                     onClearSort();
+                    setPendingDirections({});
                   }}
                   className="text-primary font-medium h-auto p-0"
                 >
@@ -231,31 +253,59 @@ export const MobileFilterBar = ({
               {sortOptions.map((option) => {
                 const isActive = sortConfig.column === option.key;
                 const Icon = option.icon;
-                const getDirectionLabel = () => {
-                  if (option.key === 'avg_rating') return sortConfig.direction === 'asc' ? 'Low' : 'High';
-                  if (option.key === 'most_recent_date') return sortConfig.direction === 'asc' ? 'Old' : 'New';
-                  if (option.key === 'brand_name' || option.key === 'product_name') return sortConfig.direction === 'asc' ? 'A-Z' : 'Z-A';
-                  if (option.key === 'count') return sortConfig.direction === 'asc' ? 'Least' : 'Most';
-                  return sortConfig.direction === 'asc' ? 'Asc' : 'Desc';
+                
+                // Get the effective direction for this option
+                const getDirection = (): 'asc' | 'desc' => {
+                  if (isActive) return sortConfig.direction;
+                  if (pendingDirections[option.key]) return pendingDirections[option.key];
+                  return defaultDirections[option.key] || 'desc';
+                };
+                
+                const direction = getDirection();
+                const dirLabel = directionLabels[option.key];
+                
+                // Toggle direction for an option
+                const toggleDirection = (e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  const newDir = direction === 'asc' ? 'desc' : 'asc';
+                  setAnimatingKey(option.key);
+                  
+                  if (isActive && onSetSort) {
+                    // If active, apply immediately
+                    onSetSort(option.key, newDir);
+                  } else {
+                    // Otherwise update pending state
+                    setPendingDirections(prev => ({ ...prev, [option.key]: newDir }));
+                  }
+                  
+                  setTimeout(() => setAnimatingKey(null), 300);
+                };
+                
+                // Apply sort with current direction
+                const applySort = () => {
+                  if (onSetSort) {
+                    onSetSort(option.key, direction);
+                  } else {
+                    onSort(option.key);
+                  }
+                  setIsSortOpen(false);
                 };
                 
                 return (
                   <div
                     key={option.key}
                     className={cn(
-                      "flex items-center justify-between h-16 px-4 rounded-xl border-2 cursor-pointer transition-all",
+                      "flex items-center justify-between h-16 px-4 rounded-xl border-2 transition-all",
                       isActive 
                         ? "bg-brand-secondary/5 border-brand-secondary" 
                         : "border-border hover:bg-muted"
                     )}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (!isActive) {
-                        onSort(option.key);
-                      }
-                    }}
                   >
-                    <div className="flex items-center gap-3">
+                    {/* Main clickable area - applies sort */}
+                    <button
+                      onClick={applySort}
+                      className="flex items-center gap-3 flex-1 text-left"
+                    >
                       <div className={cn(
                         "w-10 h-10 rounded-lg flex items-center justify-center",
                         isActive ? "bg-brand-secondary/10" : "bg-muted"
@@ -271,35 +321,33 @@ export const MobileFilterBar = ({
                       )}>
                         {option.label}
                       </span>
-                    </div>
-                    {isActive ? (
-                      <Button
-                        size="sm"
-                        className="h-9 px-4 gap-2 rounded-lg bg-brand-secondary hover:bg-brand-secondary/90 text-white active:animate-bounce-subtle"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setAnimatingKey(option.key);
-                          onSort(option.key);
-                          setTimeout(() => setAnimatingKey(null), 300);
-                        }}
-                      >
-                        <span className={cn(
-                          "transition-transform duration-300",
-                          animatingKey === option.key && (sortConfig.direction === 'asc' ? "animate-flip-up" : "animate-flip-down")
-                        )}>
-                          {sortConfig.direction === 'asc' ? (
-                            <ArrowUp className="h-4 w-4" />
-                          ) : (
-                            <ArrowDown className="h-4 w-4" />
-                          )}
-                        </span>
-                        <span className="text-sm font-medium">{getDirectionLabel()}</span>
-                      </Button>
-                    ) : (
-                      <span className="text-sm text-muted-foreground">
-                        <ArrowDown className="h-4 w-4" />
+                    </button>
+                    
+                    {/* Direction toggle button - always visible */}
+                    <Button
+                      size="sm"
+                      className={cn(
+                        "h-9 px-4 gap-2 rounded-lg",
+                        isActive 
+                          ? "bg-brand-secondary hover:bg-brand-secondary/90 text-white" 
+                          : "bg-muted hover:bg-muted/80 text-muted-foreground"
+                      )}
+                      onClick={toggleDirection}
+                    >
+                      <span className={cn(
+                        "transition-transform duration-300",
+                        animatingKey === option.key && "animate-flip-up"
+                      )}>
+                        {direction === 'asc' ? (
+                          <ArrowUp className="h-4 w-4" />
+                        ) : (
+                          <ArrowDown className="h-4 w-4" />
+                        )}
                       </span>
-                    )}
+                      <span className="text-sm font-medium">
+                        {direction === 'asc' ? dirLabel.asc : dirLabel.desc}
+                      </span>
+                    </Button>
                   </div>
                 );
               })}
