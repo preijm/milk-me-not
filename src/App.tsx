@@ -45,14 +45,17 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(isNative);
+  
+  // Block rendering of the app entirely until splash is done to prevent layout flash
+  if (showSplash) {
+    return <NativeSplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+  
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <NotificationProvider>
           <TooltipProvider>
-            {showSplash && (
-              <NativeSplashScreen onComplete={() => setShowSplash(false)} />
-            )}
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
