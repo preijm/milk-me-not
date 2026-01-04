@@ -1,5 +1,12 @@
 # Mondriaan Goose 🪿
 
+[![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3-61dafb)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-5.4-646cff)](https://vitejs.dev/)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fmilkmenot.com)](https://milkmenot.com)
+
 **Project codename:** mondriaan-goose  
 **Live site:** [milkmenot.com](https://milkmenot.com)
 
