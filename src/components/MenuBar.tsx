@@ -162,9 +162,9 @@ const MenuBar = () => {
           </div>
           
           {/* Desktop: Always show logo */}
-          <Link to="/" className="hidden lg:flex items-center gap-3">
-            <img src="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png" alt="Milk Me Not Logo" className="h-12 w-12" width="48" height="48" loading="eager" fetchPriority="high" />
-            <span className="text-gray-800 text-2xl md:text-4xl font-bold whitespace-nowrap flex items-center" translate="no">Milk Me Not</span>
+          <Link to="/" className="hidden lg:flex items-center gap-2 xl:gap-3">
+            <img src="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png" alt="Milk Me Not Logo" className="h-10 w-10 xl:h-12 xl:w-12" width="48" height="48" loading="eager" fetchPriority="high" />
+            <span className="text-gray-800 text-xl xl:text-2xl font-bold whitespace-nowrap flex items-center" translate="no">Milk Me Not</span>
           </Link>
           
           <div className="flex items-center gap-4">
