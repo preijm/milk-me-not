@@ -1,4 +1,4 @@
-# Mondriaan Goose 🪿
+# Milk Me Not 🥛
 
 [![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
