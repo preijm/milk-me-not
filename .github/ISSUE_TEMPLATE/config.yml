@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions & Discussions
+    url: https://github.com/orgs/community/discussions
+    about: Ask questions or start a discussion about Milk Me Not
+  - name: 📚 Documentation
+    url: https://milkmenot.com
+    about: Check out our website for more information
