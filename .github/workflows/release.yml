@@ -1,0 +1,201 @@
+# Release workflow for automated versioning and changelog generation
+# Triggers on push to main branch with conventional commits
+
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type (patch, minor, major)'
+        required: false
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get current version
+        id: current_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Determine version bump
+        id: version_bump
+        run: |
+          # Check commit messages for conventional commit prefixes
+          COMMITS=$(git log --pretty=format:"%s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null || git log --pretty=format:"%s")
+          
+          if echo "$COMMITS" | grep -qE "^(feat|feature)(\(.+\))?!:|^BREAKING CHANGE:"; then
+            echo "bump=major" >> $GITHUB_OUTPUT
+          elif echo "$COMMITS" | grep -qE "^(feat|feature)(\(.+\))?:"; then
+            echo "bump=minor" >> $GITHUB_OUTPUT
+          else
+            echo "bump=patch" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Calculate new version
+        id: new_version
+        run: |
+          CURRENT="${{ steps.current_version.outputs.version }}"
+          BUMP="${{ github.event.inputs.release_type || steps.version_bump.outputs.bump }}"
+          
+          IFS='.' read -ra VERSION_PARTS <<< "$CURRENT"
+          MAJOR=${VERSION_PARTS[0]}
+          MINOR=${VERSION_PARTS[1]}
+          PATCH=${VERSION_PARTS[2]}
+          
+          case $BUMP in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+          
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+
+      - name: Generate changelog entry
+        id: changelog
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          DATE=$(date +%Y-%m-%d)
+          
+          # Get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          if [ -z "$LAST_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"- %s" --reverse)
+          else
+            COMMITS=$(git log --pretty=format:"- %s" --reverse $LAST_TAG..HEAD)
+          fi
+          
+          # Categorize commits
+          FEATURES=$(echo "$COMMITS" | grep -E "^- (feat|feature)" | sed 's/^- feat\(.*\): /- /' | sed 's/^- feature\(.*\): /- /' || true)
+          FIXES=$(echo "$COMMITS" | grep -E "^- fix" | sed 's/^- fix\(.*\): /- /' || true)
+          DOCS=$(echo "$COMMITS" | grep -E "^- docs" | sed 's/^- docs\(.*\): /- /' || true)
+          CHORES=$(echo "$COMMITS" | grep -E "^- (chore|build|ci)" | sed 's/^- chore\(.*\): /- /' | sed 's/^- build\(.*\): /- /' | sed 's/^- ci\(.*\): /- /' || true)
+          OTHER=$(echo "$COMMITS" | grep -vE "^- (feat|feature|fix|docs|chore|build|ci)" || true)
+          
+          # Build changelog entry
+          ENTRY="## [$NEW_VERSION] - $DATE"$'\n'
+          
+          if [ -n "$FEATURES" ]; then
+            ENTRY="$ENTRY"$'\n'"### Added"$'\n'"$FEATURES"$'\n'
+          fi
+          
+          if [ -n "$FIXES" ]; then
+            ENTRY="$ENTRY"$'\n'"### Fixed"$'\n'"$FIXES"$'\n'
+          fi
+          
+          if [ -n "$DOCS" ]; then
+            ENTRY="$ENTRY"$'\n'"### Documentation"$'\n'"$DOCS"$'\n'
+          fi
+          
+          if [ -n "$CHORES" ]; then
+            ENTRY="$ENTRY"$'\n'"### Maintenance"$'\n'"$CHORES"$'\n'
+          fi
+          
+          if [ -n "$OTHER" ]; then
+            ENTRY="$ENTRY"$'\n'"### Other"$'\n'"$OTHER"$'\n'
+          fi
+          
+          echo "entry<<EOF" >> $GITHUB_OUTPUT
+          echo "$ENTRY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Update CHANGELOG.md
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          
+          # Create temp file with new entry
+          echo "${{ steps.changelog.outputs.entry }}" > temp_changelog.md
+          echo "" >> temp_changelog.md
+          
+          # Insert after [Unreleased] section
+          if grep -q "## \[Unreleased\]" CHANGELOG.md; then
+            sed -i '/## \[Unreleased\]/r temp_changelog.md' CHANGELOG.md
+          else
+            # If no Unreleased section, add after header
+            sed -i '1,/^## /{ /^## /r temp_changelog.md
+            }' CHANGELOG.md
+          fi
+          
+          rm temp_changelog.md
+
+      - name: Update version in CHANGELOG links
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          OLD_VERSION="${{ steps.current_version.outputs.version }}"
+          
+          # Update the Unreleased comparison link
+          sed -i "s|compare/v$OLD_VERSION\.\.\.HEAD|compare/v$NEW_VERSION...HEAD|g" CHANGELOG.md
+          
+          # Add new version link if not exists
+          if ! grep -q "\[$NEW_VERSION\]:" CHANGELOG.md; then
+            echo "[$NEW_VERSION]: https://github.com/milkmenot/mondriaan-goose/releases/tag/v$NEW_VERSION" >> CHANGELOG.md
+          fi
+
+      - name: Commit and tag
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.version }}"
+          
+          git add CHANGELOG.md
+          git commit -m "chore(release): v$NEW_VERSION" || echo "No changes to commit"
+          git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
+          git push origin main --follow-tags
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.new_version.outputs.version }}
+          name: Release v${{ steps.new_version.outputs.version }}
+          body: ${{ steps.changelog.outputs.entry }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
