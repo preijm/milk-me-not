@@ -6,6 +6,7 @@ import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import MobileFooter from "@/components/MobileFooter";
 import { ResultsContainer } from "@/components/milk-test/ResultsContainer";
+import { BadgeLegend } from "@/components/milk-test/BadgeLegend";
 import { MilkCharts } from "@/components/MilkCharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartBar, Table2, MapPin, LogIn, UserPlus } from "lucide-react";
@@ -283,8 +284,10 @@ const Results = () => {
       <MenuBar />
       <BackgroundPattern>
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-8 pt-24 pb-20 sm:pb-8 relative z-10">
-          {/* Desktop only: View switcher */}
-          {!isMobile && <div className="flex justify-end mb-8">
+          {/* Desktop only: View switcher and legend */}
+          {!isMobile && (
+            <div className="flex justify-between items-center mb-6">
+              <BadgeLegend />
               <Tabs value={view} onValueChange={(v: 'table' | 'charts' | 'map') => setView(v)} className="w-auto">
                 <TabsList className="grid w-[300px] grid-cols-3 bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg">
                   <TabsTrigger value="table" className="flex items-center gap-2">
@@ -301,7 +304,8 @@ const Results = () => {
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
-            </div>}
+            </div>
+          )}
 
           {/* Mobile: Always table view, Desktop: conditional view */}
           {isMobile || view === 'table' ? (
