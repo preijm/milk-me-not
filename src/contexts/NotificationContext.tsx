@@ -234,10 +234,24 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Default values for when context is used outside provider (e.g., during initial render)
+const defaultContextValue: NotificationContextType = {
+  notifications: [],
+  unreadCount: 0,
+  loading: false,
+  markAsRead: async () => {},
+  markAllAsRead: async () => {},
+  preferences: null,
+  preferencesLoading: false,
+  updatePreferences: async () => {},
+};
+
 export function useNotificationContext() {
   const context = useContext(NotificationContext);
+  // Return default values instead of throwing if outside provider
+  // This prevents crashes during initial render before providers are mounted
   if (context === undefined) {
-    throw new Error('useNotificationContext must be used within a NotificationProvider');
+    return defaultContextValue;
   }
   return context;
 }
