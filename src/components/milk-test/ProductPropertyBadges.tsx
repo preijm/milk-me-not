@@ -2,6 +2,7 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
+import { Coffee, Tag, Droplet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // Helper function to format keys like "pumpkin_spice" to "Pumpkin Spice"
@@ -148,6 +149,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
           }`}
           onClick={filters && onFiltersChange ? handleBaristaClick : undefined}
         >
+          <Coffee className="w-3 h-3 mr-1" />
           Barista
         </Badge>
       )}
@@ -164,6 +166,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
             }`}
             onClick={filters && onFiltersChange ? handlePropertyClick(property) : undefined}
           >
+            <Tag className="w-3 h-3 mr-1" />
             {formatDisplayName(property)}
           </Badge>
         );
@@ -181,6 +184,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
             }`}
             onClick={filters && onFiltersChange ? handleFlavorClick(flavor) : undefined}
           >
+            <Droplet className="w-3 h-3 mr-1" />
             {formatDisplayName(flavor)}
           </Badge>
         );
