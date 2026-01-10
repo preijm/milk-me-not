@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Filter, X } from "lucide-react";
+import { Filter, Coffee, Tag, Droplet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
@@ -157,7 +157,10 @@ export const ResultsFilter = ({
 
             {/* Barista Filter */}
             <div>
-              <h4 className="text-sm font-medium mb-2">Type</h4>
+              <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                <Coffee className="w-3.5 h-3.5 text-amber-600" />
+                Type
+              </h4>
               <Badge
                 variant="barista"
                 className={`cursor-pointer transition-all ${
@@ -174,7 +177,10 @@ export const ResultsFilter = ({
             {/* Properties Filter */}
             {properties.length > 0 && (
               <div>
-                <h4 className="text-sm font-medium mb-2">Properties</h4>
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-slate-600" />
+                  Properties
+                </h4>
                 <div className="flex flex-wrap gap-2">
                   {properties.map(property => (
                     <Badge
@@ -197,7 +203,10 @@ export const ResultsFilter = ({
             {/* Flavors Filter */}
             {flavors.length > 0 && (
               <div>
-                <h4 className="text-sm font-medium mb-2">Flavors</h4>
+                <h4 className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <Droplet className="w-3.5 h-3.5 text-purple-600" />
+                  Flavors
+                </h4>
                 <div className="flex flex-wrap gap-2">
                   {flavors.map(flavor => (
                     <Badge
