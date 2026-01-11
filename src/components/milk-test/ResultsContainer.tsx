@@ -58,7 +58,7 @@ export const ResultsContainer = ({
     <>
       {isMobile ? (
         <>
-          <div className="fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-6 pb-2">
+          <div className="fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-3 pb-2">
             <MobileFilterBar
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -71,7 +71,7 @@ export const ResultsContainer = ({
               resultsCount={filteredResults.length}
             />
           </div>
-          <div className="pt-[140px]">
+          <div className="pt-[115px]">
             <AggregatedResultsTable
               results={filteredResults}
               sortConfig={sortConfig}

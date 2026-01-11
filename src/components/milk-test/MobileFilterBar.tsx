@@ -236,15 +236,15 @@ export const MobileFilterBar = ({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {/* Search Bar - Full Width */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
         <Input
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => handleSearchChange(e.target.value)}
-          className="pl-10 h-11 bg-background border-border rounded-lg w-full"
+          className="pl-9 h-10 bg-background border-border rounded-lg w-full text-sm"
           maxLength={100}
         />
       </div>
@@ -256,10 +256,10 @@ export const MobileFilterBar = ({
           <DrawerTrigger asChild>
             <Button
               variant="outline"
-              className="h-11 flex-1 flex items-center justify-center gap-2 rounded-lg transition-colors min-w-0"
+              className="h-9 flex-1 flex items-center justify-center gap-1.5 rounded-lg transition-colors min-w-0"
             >
-              <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm font-medium truncate">{getCurrentSortLabel()}</span>
+              <ArrowUpDown className="h-3.5 w-3.5 flex-shrink-0" />
+              <span className="text-xs font-medium truncate">{getCurrentSortLabel()}</span>
             </Button>
           </DrawerTrigger>
           <DrawerContent className="max-h-[85vh]">
@@ -325,12 +325,12 @@ export const MobileFilterBar = ({
             <Button
               variant="outline"
               className={cn(
-                "h-11 flex-1 flex items-center justify-center gap-2 rounded-lg transition-colors min-w-0",
+                "h-9 flex-1 flex items-center justify-center gap-1.5 rounded-lg transition-colors min-w-0",
                 activeFilterCount > 0 && "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#2144ff]/90 hover:text-white hover:border-[#2144ff]/90"
               )}
             >
-              <SlidersHorizontal className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm font-medium">Filter</span>
+              <SlidersHorizontal className="h-3.5 w-3.5 flex-shrink-0" />
+              <span className="text-xs font-medium">Filter</span>
             </Button>
           </DrawerTrigger>
           <DrawerContent className="max-h-[85vh]">
@@ -435,18 +435,18 @@ export const MobileFilterBar = ({
             variant="outline"
             onClick={handleMyResultsToggle}
             className={cn(
-              "h-11 flex-1 flex items-center justify-center gap-2 rounded-lg transition-colors min-w-0",
+              "h-9 flex-1 flex items-center justify-center gap-1.5 rounded-lg transition-colors min-w-0",
               filters.myResultsOnly && "bg-brand-secondary text-white border-brand-secondary hover:bg-brand-secondary/90"
             )}
           >
-            <User className="h-4 w-4 flex-shrink-0" />
-            <span className="text-sm font-medium whitespace-nowrap">My Results</span>
+            <User className="h-3.5 w-3.5 flex-shrink-0" />
+            <span className="text-xs font-medium whitespace-nowrap">My Results</span>
           </Button>
         )}
       </div>
 
       {/* Results Count */}
-      <div className="text-sm text-muted-foreground">
+      <div className="text-xs text-muted-foreground">
         {resultsCount} products
       </div>
     </div>
