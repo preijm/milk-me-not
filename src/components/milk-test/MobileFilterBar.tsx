@@ -326,7 +326,7 @@ export const MobileFilterBar = ({
               variant="outline"
               className={cn(
                 "h-11 flex-1 flex items-center justify-center gap-2 rounded-lg transition-colors min-w-0",
-                activeFilterCount > 0 && "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#2144ff]/90"
+                activeFilterCount > 0 && "bg-[#2144ff] text-white border-[#2144ff] hover:bg-[#2144ff]/90 hover:text-white hover:border-[#2144ff]/90"
               )}
             >
               <SlidersHorizontal className="h-4 w-4 flex-shrink-0" />
