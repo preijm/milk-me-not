@@ -24,7 +24,7 @@ export const DesktopResultsTable = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50 border-b border-gray-200">
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[20%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 md:w-[18%] lg:w-[22%]">
               <SortableColumnHeader 
                 column="brand_name" 
                 label="Brand" 
@@ -33,7 +33,7 @@ export const DesktopResultsTable = ({
                 width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 pr-0 w-[42%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 pr-0 md:w-[46%] lg:w-[40%]">
               <SortableColumnHeader 
                 column="product_name" 
                 label="Product" 
@@ -42,7 +42,7 @@ export const DesktopResultsTable = ({
                 width="100%" 
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 md:w-[10%] lg:w-[10%]">
               <SortableColumnHeader 
                 column="avg_rating" 
                 label="Score" 
@@ -51,7 +51,7 @@ export const DesktopResultsTable = ({
                 width="100%" 
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[10%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 md:w-[10%] lg:w-[10%]">
               <SortableColumnHeader 
                 column="count" 
                 label="Tests" 
@@ -60,7 +60,7 @@ export const DesktopResultsTable = ({
                 width="100%" 
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 w-[18%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 md:w-[16%] lg:w-[18%]">
               <SortableColumnHeader 
                 column="most_recent_date" 
                 label="Latest Test" 
