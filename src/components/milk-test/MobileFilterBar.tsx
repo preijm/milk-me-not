@@ -469,49 +469,6 @@ export const MobileFilterBar = ({
         {resultsCount} products
       </div>
 
-      {/* Active Filter Chips */}
-      {activeFilterCount > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {filters.barista && (
-            <Badge
-              variant="barista"
-              className="px-3 py-1.5 flex items-center gap-1"
-            >
-              Barista
-              <X
-                className="h-3 w-3 cursor-pointer"
-                onClick={() => handleRemoveFilter('barista')}
-              />
-            </Badge>
-          )}
-          {filters.properties.map(propKey => (
-            <Badge
-              key={propKey}
-              variant="category"
-              className="px-3 py-1.5 flex items-center gap-1"
-            >
-              {getPropertyName(propKey)}
-              <X
-                className="h-3 w-3 cursor-pointer"
-                onClick={() => handleRemoveFilter('property', propKey)}
-              />
-            </Badge>
-          ))}
-          {filters.flavors.map(flavorKey => (
-            <Badge
-              key={flavorKey}
-              variant="flavor"
-              className="px-3 py-1.5 flex items-center gap-1"
-            >
-              {getFlavorName(flavorKey)}
-              <X
-                className="h-3 w-3 cursor-pointer"
-                onClick={() => handleRemoveFilter('flavor', flavorKey)}
-              />
-            </Badge>
-          ))}
-        </div>
-      )}
 
     </div>
   );
