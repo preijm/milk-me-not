@@ -335,26 +335,7 @@ export const MobileFilterBar = ({
           </DrawerTrigger>
           <DrawerContent className="max-h-[85vh]">
             <DrawerHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="flex items-center gap-2">
-                <DrawerTitle>
-                  Filter by
-                  {activeFilterCount > 0 && (
-                    <span className="ml-2 inline-flex items-center justify-center bg-primary text-primary-foreground rounded-full min-w-[20px] h-5 px-1.5 text-xs font-semibold">
-                      {activeFilterCount}
-                    </span>
-                  )}
-                </DrawerTitle>
-                {activeFilterCount > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearAllFilters}
-                    className="text-primary font-medium h-auto p-0"
-                  >
-                    Clear All
-                  </Button>
-                )}
-              </div>
+              <DrawerTitle>Filter by</DrawerTitle>
               <DrawerClose asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <X className="h-4 w-4" />
