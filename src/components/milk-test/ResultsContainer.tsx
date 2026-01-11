@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { SearchBar } from "@/components/milk-test/SearchBar";
 import { SearchIcon } from "@/components/milk-test/SearchIcon";
 import { ResultsFilter } from "@/components/milk-test/ResultsFilter";
@@ -11,6 +11,7 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 
 interface FilterOptions {
   barista: boolean;
@@ -46,6 +47,35 @@ export const ResultsContainer = ({
 }: ResultsContainerProps) => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
+  const [isFilterBarVisible, setIsFilterBarVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
+
+  // Handle scroll direction detection
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDifference = currentScrollY - lastScrollY.current;
+
+      // Only trigger if scrolled more than threshold
+      if (Math.abs(scrollDifference) < scrollThreshold) return;
+
+      if (scrollDifference > 0 && currentScrollY > 100) {
+        // Scrolling down and past initial area - hide
+        setIsFilterBarVisible(false);
+      } else if (scrollDifference < 0) {
+        // Scrolling up - show
+        setIsFilterBarVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isMobile]);
 
   const handleMyResultsToggle = () => {
     onFiltersChange({
@@ -58,7 +88,12 @@ export const ResultsContainer = ({
     <>
       {isMobile ? (
         <>
-          <div className="fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-3 pb-2">
+          <div 
+            className={cn(
+              "fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-3 pb-2 transition-transform duration-300 ease-in-out",
+              !isFilterBarVisible && "-translate-y-full"
+            )}
+          >
             <MobileFilterBar
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
@@ -71,7 +106,10 @@ export const ResultsContainer = ({
               resultsCount={filteredResults.length}
             />
           </div>
-          <div className="pt-[115px]">
+          <div className={cn(
+            "transition-[padding-top] duration-300 ease-in-out",
+            isFilterBarVisible ? "pt-[115px]" : "pt-4"
+          )}>
             <AggregatedResultsTable
               results={filteredResults}
               sortConfig={sortConfig}
