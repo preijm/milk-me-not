@@ -468,8 +468,6 @@ export const MobileFilterBar = ({
       <div className="text-sm text-muted-foreground">
         {resultsCount} products
       </div>
-
-
     </div>
   );
 };
