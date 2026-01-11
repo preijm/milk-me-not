@@ -90,7 +90,7 @@ export const ResultsContainer = ({
         <>
           <div 
             className={cn(
-              "fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-3 pb-2 transition-transform duration-300 ease-in-out",
+              "fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-4 pb-2 transition-transform duration-300 ease-in-out",
               !isFilterBarVisible && "-translate-y-full"
             )}
           >
@@ -108,7 +108,7 @@ export const ResultsContainer = ({
           </div>
           <div className={cn(
             "transition-[padding-top] duration-300 ease-in-out",
-            isFilterBarVisible ? "pt-[115px]" : "pt-4"
+            isFilterBarVisible ? "pt-[119px]" : "pt-4"
           )}>
             <AggregatedResultsTable
               results={filteredResults}
