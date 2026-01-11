@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, SlidersHorizontal, User, ArrowUpDown, X, ArrowUp, ArrowDown, Star, Calendar, Tag, Package, Trophy, Coffee, Droplet } from "lucide-react";
+import { Search, SlidersHorizontal, User, X, ArrowUp, ArrowDown, Star, Calendar, Tag, Package, Trophy, Coffee, Droplet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -68,9 +68,6 @@ export const MobileFilterBar = ({
   resultsCount
 }: MobileFilterBarProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [isSortOpen, setIsSortOpen] = useState(false);
-  const [animatingKey, setAnimatingKey] = useState<string | null>(null);
-  const [pendingDirections, setPendingDirections] = useState<Record<string, 'asc' | 'desc'>>({});
   const { user } = useAuth();
 
   const handleMyResultsToggle = () => {
@@ -195,8 +192,6 @@ export const MobileFilterBar = ({
     { key: 'count', label: 'Tests', icon: Trophy }
   ];
 
-  const currentSort = sortOptions.find(option => option.key === sortConfig.column);
-
   const getPropertyName = (key: string) => {
     return properties.find(p => p.key === key)?.name || key;
   };
@@ -221,139 +216,57 @@ export const MobileFilterBar = ({
 
       {/* Action Buttons Row - Equal width buttons */}
       <div className="flex items-center gap-2">
-        {/* Sort Button */}
-        <Drawer open={isSortOpen} onOpenChange={setIsSortOpen}>
-          <DrawerTrigger asChild>
-            <Button
-              variant="outline"
-              className="h-11 flex-1 flex items-center justify-center gap-2 rounded-lg bg-background border-border min-w-0"
-            >
-              <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm font-medium truncate">{currentSort?.label || 'Sort'}</span>
-            </Button>
-          </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader className="flex flex-row items-center justify-between">
-              <DrawerTitle>Sort by</DrawerTitle>
-              {onClearSort && sortConfig.column !== 'avg_rating' && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    onClearSort();
-                    setPendingDirections({});
-                  }}
-                  className="text-primary font-medium h-auto p-0"
-                >
-                  Clear
-                </Button>
-              )}
-            </DrawerHeader>
-            <div className="px-4 pb-4 space-y-3">
-              {sortOptions.map((option) => {
-                const isActive = sortConfig.column === option.key;
-                const Icon = option.icon;
-                
-                // Get the effective direction for this option
-                const getDirection = (): 'asc' | 'desc' => {
-                  if (isActive) return sortConfig.direction;
-                  if (pendingDirections[option.key]) return pendingDirections[option.key];
-                  return defaultDirections[option.key] || 'desc';
-                };
-                
-                const direction = getDirection();
-                const dirLabel = directionLabels[option.key];
-                
-                // Toggle direction for an option
-                const toggleDirection = (e: React.MouseEvent) => {
-                  e.stopPropagation();
-                  const newDir = direction === 'asc' ? 'desc' : 'asc';
-                  setAnimatingKey(option.key);
-                  
-                  if (isActive && onSetSort) {
-                    // If active, apply immediately
-                    onSetSort(option.key, newDir);
-                  } else {
-                    // Otherwise update pending state
-                    setPendingDirections(prev => ({ ...prev, [option.key]: newDir }));
-                  }
-                  
-                  setTimeout(() => setAnimatingKey(null), 300);
-                };
-                
-                // Apply sort with current direction
-                const applySort = () => {
-                  if (onSetSort) {
-                    onSetSort(option.key, direction);
-                  } else {
-                    onSort(option.key);
-                  }
-                  setIsSortOpen(false);
-                };
-                
-                return (
-                  <div
-                    key={option.key}
-                    className={cn(
-                      "flex items-center justify-between h-16 px-4 rounded-xl border-2 transition-all",
-                      isActive 
-                        ? "bg-brand-secondary/5 border-brand-secondary" 
-                        : "border-border hover:bg-muted"
+        {/* Sort Options - Horizontal scrolling chips */}
+        <div className="flex items-center gap-2 overflow-x-auto flex-1 pb-1 -mb-1 scrollbar-hide">
+          {sortOptions.map((option) => {
+            const isActive = sortConfig.column === option.key;
+            const Icon = option.icon;
+            const direction = isActive ? sortConfig.direction : defaultDirections[option.key];
+            const dirLabel = directionLabels[option.key];
+            
+            // Single tap: apply sort or toggle direction if already active
+            const handleTap = () => {
+              if (isActive && onSetSort) {
+                // Toggle direction
+                const newDir = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+                onSetSort(option.key, newDir);
+              } else if (onSetSort) {
+                // Apply sort with default direction
+                onSetSort(option.key, defaultDirections[option.key] || 'desc');
+              } else {
+                onSort(option.key);
+              }
+            };
+            
+            return (
+              <Button
+                key={option.key}
+                variant="outline"
+                size="sm"
+                onClick={handleTap}
+                className={cn(
+                  "h-9 px-3 gap-1.5 rounded-lg flex-shrink-0 transition-all",
+                  isActive 
+                    ? "bg-brand-secondary text-white border-brand-secondary hover:bg-brand-secondary/90" 
+                    : "bg-background border-border"
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                <span className="text-sm font-medium">{option.label}</span>
+                {isActive && (
+                  <span className="flex items-center gap-0.5 text-xs opacity-90">
+                    {sortConfig.direction === 'asc' ? (
+                      <ArrowUp className="h-3 w-3" />
+                    ) : (
+                      <ArrowDown className="h-3 w-3" />
                     )}
-                  >
-                    {/* Main clickable area - applies sort */}
-                    <button
-                      onClick={applySort}
-                      className="flex items-center gap-3 flex-1 text-left"
-                    >
-                      <div className={cn(
-                        "w-10 h-10 rounded-lg flex items-center justify-center",
-                        isActive ? "bg-brand-secondary/10" : "bg-muted"
-                      )}>
-                        <Icon className={cn(
-                          "h-5 w-5",
-                          isActive ? "text-brand-secondary" : "text-muted-foreground"
-                        )} />
-                      </div>
-                      <span className={cn(
-                        "text-base font-medium",
-                        isActive && "text-brand-secondary"
-                      )}>
-                        {option.label}
-                      </span>
-                    </button>
-                    
-                    {/* Direction toggle button - always visible */}
-                    <Button
-                      size="sm"
-                      className={cn(
-                        "h-9 px-4 gap-2 rounded-lg",
-                        isActive 
-                          ? "bg-brand-secondary hover:bg-brand-secondary/90 text-white" 
-                          : "bg-muted hover:bg-muted/80 text-muted-foreground"
-                      )}
-                      onClick={toggleDirection}
-                    >
-                      <span className={cn(
-                        "transition-transform duration-300",
-                        animatingKey === option.key && "animate-flip-up"
-                      )}>
-                        {direction === 'asc' ? (
-                          <ArrowUp className="h-4 w-4" />
-                        ) : (
-                          <ArrowDown className="h-4 w-4" />
-                        )}
-                      </span>
-                      <span className="text-sm font-medium">
-                        {direction === 'asc' ? dirLabel.asc : dirLabel.desc}
-                      </span>
-                    </Button>
-                  </div>
-                );
-              })}
-            </div>
-          </DrawerContent>
-        </Drawer>
+                    <span>{sortConfig.direction === 'asc' ? dirLabel.asc : dirLabel.desc}</span>
+                  </span>
+                )}
+              </Button>
+            );
+          })}
+        </div>
 
         {/* Filters Button */}
         <Drawer open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
