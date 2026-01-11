@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Search, SlidersHorizontal, User, X, ArrowUp, ArrowDown, Star, Calendar, Tag, Package, Trophy, Coffee, Droplet } from "lucide-react";
+import React, { useState } from "react";
+import { Search, SlidersHorizontal, User, X, ArrowUpDown, Check, Coffee, Droplet, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,23 +38,19 @@ interface MobileFilterBarProps {
   resultsCount: number;
 }
 
-// Store default directions for each column (what makes most sense as default)
-const defaultDirections: Record<string, 'asc' | 'desc'> = {
-  'avg_rating': 'desc',      // High scores first
-  'brand_name': 'asc',       // A-Z
-  'product_name': 'asc',     // A-Z
-  'most_recent_date': 'desc', // Newest first
-  'count': 'desc'            // Most tests first
-};
-
-// Direction labels for each column
-const directionLabels: Record<string, { asc: string; desc: string }> = {
-  'avg_rating': { asc: 'Low', desc: 'High' },
-  'brand_name': { asc: 'A-Z', desc: 'Z-A' },
-  'product_name': { asc: 'A-Z', desc: 'Z-A' },
-  'most_recent_date': { asc: 'Old', desc: 'New' },
-  'count': { asc: 'Few', desc: 'Many' }
-};
+// Explicit sort options with field + direction combined
+const sortOptions = [
+  { key: 'most_recent_date', direction: 'desc' as const, label: 'Date: Newest First' },
+  { key: 'most_recent_date', direction: 'asc' as const, label: 'Date: Oldest First' },
+  { key: 'avg_rating', direction: 'desc' as const, label: 'Score: Highest First' },
+  { key: 'avg_rating', direction: 'asc' as const, label: 'Score: Lowest First' },
+  { key: 'brand_name', direction: 'asc' as const, label: 'Brand: A-Z' },
+  { key: 'brand_name', direction: 'desc' as const, label: 'Brand: Z-A' },
+  { key: 'product_name', direction: 'asc' as const, label: 'Product: A-Z' },
+  { key: 'product_name', direction: 'desc' as const, label: 'Product: Z-A' },
+  { key: 'count', direction: 'desc' as const, label: 'Tests: Most First' },
+  { key: 'count', direction: 'asc' as const, label: 'Tests: Fewest First' },
+];
 
 export const MobileFilterBar = ({
   searchTerm,
@@ -68,6 +64,7 @@ export const MobileFilterBar = ({
   resultsCount
 }: MobileFilterBarProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [isSortOpen, setIsSortOpen] = useState(false);
   const { user } = useAuth();
 
   const handleMyResultsToggle = () => {
@@ -184,13 +181,13 @@ export const MobileFilterBar = ({
     filters.properties.length + 
     filters.flavors.length;
 
-  const sortOptions = [
-    { key: 'avg_rating', label: 'Score', icon: Star },
-    { key: 'most_recent_date', label: 'Date', icon: Calendar },
-    { key: 'brand_name', label: 'Brand', icon: Tag },
-    { key: 'product_name', label: 'Product', icon: Package },
-    { key: 'count', label: 'Tests', icon: Trophy }
-  ];
+  // Get the current sort label for the button
+  const getCurrentSortLabel = () => {
+    const current = sortOptions.find(
+      opt => opt.key === sortConfig.column && opt.direction === sortConfig.direction
+    );
+    return current?.label || 'Sort';
+  };
 
   const getPropertyName = (key: string) => {
     return properties.find(p => p.key === key)?.name || key;
@@ -214,59 +211,65 @@ export const MobileFilterBar = ({
         />
       </div>
 
-      {/* Action Buttons Row - Equal width buttons */}
+      {/* Action Buttons Row */}
       <div className="flex items-center gap-2">
-        {/* Sort Options - Horizontal scrolling chips */}
-        <div className="flex items-center gap-2 overflow-x-auto flex-1 pb-1 -mb-1 scrollbar-hide">
-          {sortOptions.map((option) => {
-            const isActive = sortConfig.column === option.key;
-            const Icon = option.icon;
-            const direction = isActive ? sortConfig.direction : defaultDirections[option.key];
-            const dirLabel = directionLabels[option.key];
-            
-            // Single tap: apply sort or toggle direction if already active
-            const handleTap = () => {
-              if (isActive && onSetSort) {
-                // Toggle direction
-                const newDir = sortConfig.direction === 'asc' ? 'desc' : 'asc';
-                onSetSort(option.key, newDir);
-              } else if (onSetSort) {
-                // Apply sort with default direction
-                onSetSort(option.key, defaultDirections[option.key] || 'desc');
-              } else {
-                onSort(option.key);
-              }
-            };
-            
-            return (
-              <Button
-                key={option.key}
-                variant="outline"
-                size="sm"
-                onClick={handleTap}
-                className={cn(
-                  "h-9 px-3 gap-1.5 rounded-lg flex-shrink-0 transition-all",
-                  isActive 
-                    ? "bg-brand-secondary text-white border-brand-secondary hover:bg-brand-secondary/90" 
-                    : "bg-background border-border"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="text-sm font-medium">{option.label}</span>
-                {isActive && (
-                  <span className="flex items-center gap-0.5 text-xs opacity-90">
-                    {sortConfig.direction === 'asc' ? (
-                      <ArrowUp className="h-3 w-3" />
-                    ) : (
-                      <ArrowDown className="h-3 w-3" />
+        {/* Sort Button with Drawer */}
+        <Drawer open={isSortOpen} onOpenChange={setIsSortOpen}>
+          <DrawerTrigger asChild>
+            <Button
+              variant="outline"
+              className="h-11 flex-1 flex items-center justify-center gap-2 rounded-lg transition-colors min-w-0"
+            >
+              <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
+              <span className="text-sm font-medium truncate">{getCurrentSortLabel()}</span>
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent className="max-h-[85vh]">
+            <DrawerHeader className="flex flex-row items-center justify-between pb-2">
+              <DrawerTitle>Sort by</DrawerTitle>
+              <DrawerClose asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <X className="h-4 w-4" />
+                </Button>
+              </DrawerClose>
+            </DrawerHeader>
+            <div className="px-0 pb-4 overflow-y-auto">
+              {sortOptions.map((option) => {
+                const isActive = sortConfig.column === option.key && sortConfig.direction === option.direction;
+                
+                return (
+                  <button
+                    key={`${option.key}-${option.direction}`}
+                    onClick={() => {
+                      if (onSetSort) {
+                        onSetSort(option.key, option.direction);
+                      }
+                      setIsSortOpen(false);
+                    }}
+                    className={cn(
+                      "w-full flex items-center justify-between px-6 py-4 text-left transition-colors",
+                      isActive 
+                        ? "bg-primary/10 text-primary" 
+                        : "hover:bg-muted/50"
                     )}
-                    <span>{sortConfig.direction === 'asc' ? dirLabel.asc : dirLabel.desc}</span>
-                  </span>
-                )}
-              </Button>
-            );
-          })}
-        </div>
+                  >
+                    <span className={cn(
+                      "text-base",
+                      isActive && "font-medium"
+                    )}>
+                      {option.label}
+                    </span>
+                    {isActive && (
+                      <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center">
+                        <Check className="h-4 w-4 text-primary-foreground" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </DrawerContent>
+        </Drawer>
 
         {/* Filters Button */}
         <Drawer open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
