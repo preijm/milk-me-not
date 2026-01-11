@@ -271,12 +271,12 @@ export const MobileFilterBar = ({
                 </Button>
               </DrawerClose>
             </DrawerHeader>
-            <div className="px-4 pb-4 overflow-y-auto divide-y divide-border">
-              {sortCategories.map((category, index) => {
+            <div className="px-4 pb-4 overflow-y-auto space-y-2">
+              {sortCategories.map((category) => {
                 const Icon = category.icon;
                 
                 return (
-                  <div key={category.label} className={cn("flex items-center gap-3 py-3", index === 0 && "pt-0")}>
+                  <div key={category.label} className="flex items-center gap-3">
                     {/* Category label with icon */}
                     <div className="flex items-center gap-2 w-24 flex-shrink-0">
                       <Icon className="h-4 w-4 text-muted-foreground" />
