@@ -40,30 +40,31 @@ export const ResultCard = ({
       onClick={handleClick}
     >
       <div className="space-y-1.5">
-        {/* Top row: Product name and Score */}
+        {/* Product name, badges, and Score */}
         <div className="flex items-start justify-between gap-2">
-          <h2 className="text-sm font-semibold text-gray-900 leading-tight">
-            <span translate="no">{result.brand_name || "Unknown Brand"}</span> - {result.product_name || "Unknown Product"}
-          </h2>
+          <div className="flex-1">
+            <h2 className="text-sm font-semibold text-gray-900 leading-tight">
+              <span translate="no">{result.brand_name || "Unknown Brand"}</span> - {result.product_name || "Unknown Product"}
+            </h2>
+            {/* Badges row - always on second line, tight spacing */}
+            {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
+              <div className="flex flex-wrap gap-1.5 mt-0.5">
+                <ProductPropertyBadges 
+                  isBarista={result.is_barista}
+                  propertyNames={result.property_names}
+                  flavorNames={result.flavor_names}
+                  compact={true}
+                  displayType="all"
+                  filters={filters}
+                  onFiltersChange={onFiltersChange}
+                />
+              </div>
+            )}
+          </div>
           <Badge variant={getScoreBadgeVariant(result.avg_rating)} className="flex-shrink-0 text-xs">
             {formatScore(result.avg_rating)}
           </Badge>
         </div>
-        
-        {/* Badges row - always on second line */}
-        {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
-          <div className="flex flex-wrap gap-1.5">
-            <ProductPropertyBadges 
-              isBarista={result.is_barista}
-              propertyNames={result.property_names}
-              flavorNames={result.flavor_names}
-              compact={true}
-              displayType="all"
-              filters={filters}
-              onFiltersChange={onFiltersChange}
-            />
-          </div>
-        )}
         
         {/* Bottom row: Test count and date */}
         <div className="flex items-center justify-between text-xs">
