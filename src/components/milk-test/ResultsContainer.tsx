@@ -9,9 +9,11 @@ import { AggregatedResultsTable } from "@/components/milk-test/AggregatedResults
 import { AggregatedResult, SortConfig } from "@/hooks/useAggregatedResults";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { ChevronUp, ChevronDown, SlidersHorizontal } from "lucide-react";
 
 interface FilterOptions {
   barista: boolean;
@@ -119,6 +121,22 @@ export const ResultsContainer = ({
               onFiltersChange={onFiltersChange}
             />
           </div>
+          
+          {/* Floating toggle button */}
+          <button
+            onClick={() => setIsFilterBarVisible(!isFilterBarVisible)}
+            className={cn(
+              "fixed bottom-20 right-4 z-50 flex items-center justify-center w-11 h-11 rounded-full shadow-lg transition-all duration-300",
+              "bg-[#2144ff] text-white hover:bg-[#2144ff]/90 active:scale-95"
+            )}
+            aria-label={isFilterBarVisible ? "Hide filters" : "Show filters"}
+          >
+            {isFilterBarVisible ? (
+              <ChevronUp className="h-5 w-5" />
+            ) : (
+              <SlidersHorizontal className="h-4 w-4" />
+            )}
+          </button>
         </>
       ) : (
         <Card className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden animate-fade-in">
