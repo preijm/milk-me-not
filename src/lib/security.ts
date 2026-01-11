@@ -7,12 +7,23 @@ export const sanitizeInput = (input: string): string => {
     return '';
   }
   
-  // Remove potentially dangerous characters
-  return input
-    .replace(/[<>]/g, '') // Remove < and > to prevent XSS
-    .replace(/javascript:/gi, '') // Remove javascript: protocol
-    .replace(/on\w+=/gi, '') // Remove event handlers like onclick=
-    .trim();
+  // Remove potentially dangerous characters and patterns
+  let sanitized = input;
+  
+  // Remove < and > to prevent XSS
+  sanitized = sanitized.replace(/[<>]/g, '');
+  
+  // Remove javascript: protocol (case insensitive, handles encoding tricks)
+  sanitized = sanitized.replace(/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/gi, '');
+  
+  // Remove event handler attributes completely (on + word characters + = with optional quotes)
+  // Match the entire pattern including any value to prevent partial matches
+  sanitized = sanitized.replace(/\bon\w+\s*=\s*(['"]?)[^'"]*\1/gi, '');
+  
+  // Also remove standalone "on" followed by event names without = as a secondary measure
+  sanitized = sanitized.replace(/\bon(click|load|error|mouse\w+|key\w+|focus|blur|change|submit|reset|select|input|scroll|resize|unload|beforeunload|abort|canplay\w*|durationchange|emptied|ended|loadeddata|loadedmetadata|pause|play|playing|progress|ratechange|seeked|seeking|stalled|suspend|timeupdate|volumechange|waiting|copy|cut|paste|drag\w*|drop|wheel|contextmenu|invalid|search|toggle|animationend|animationiteration|animationstart|transitionend|pointerdown|pointermove|pointerup|pointercancel|pointerover|pointerout|pointerenter|pointerleave|gotpointercapture|lostpointercapture|touchstart|touchend|touchmove|touchcancel)\b/gi, '');
+  
+  return sanitized.trim();
 };
 
 export const validateEmail = (email: string): boolean => {
@@ -196,17 +207,31 @@ export const logSecurityEvent = async (eventType: string, eventData?: Record<str
 
 /**
  * Enhanced input sanitization for SQL injection prevention
+ * Note: This is a defense-in-depth measure. Always use parameterized queries.
  */
 export const sanitizeForDatabase = (input: string): string => {
   if (typeof input !== 'string') {
     return '';
   }
   
-  // Remove SQL injection patterns
-  return input
-    .replace(/[<>]/g, '') // Remove < and > to prevent XSS
-    .replace(/javascript:/gi, '') // Remove javascript: protocol
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .replace(/['";]|(\/\*)|(\*\/)|(\bhex\b)|(\bwaitfor\b)|(\bcount\b)|(\bunion\b)|(\bselect\b)|(\binsert\b)|(\bupdate\b)|(\bdelete\b)|(\bdrop\b)|(\balter\b)|(\bcreate\b)|(\btruncate\b)/gi, '') // Basic SQL keywords
-    .trim();
+  let sanitized = input;
+  
+  // Remove < and > to prevent XSS
+  sanitized = sanitized.replace(/[<>]/g, '');
+  
+  // Remove javascript: protocol (case insensitive, handles spacing tricks)
+  sanitized = sanitized.replace(/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/gi, '');
+  
+  // Remove event handler attributes completely
+  sanitized = sanitized.replace(/\bon\w+\s*=\s*(['"]?)[^'"]*\1/gi, '');
+  
+  // Remove standalone event handler names as secondary measure
+  sanitized = sanitized.replace(/\bon(click|load|error|mouse\w+|key\w+|focus|blur|change|submit|reset|select|input|scroll|resize|unload|beforeunload|abort|canplay\w*|durationchange|emptied|ended|loadeddata|loadedmetadata|pause|play|playing|progress|ratechange|seeked|seeking|stalled|suspend|timeupdate|volumechange|waiting|copy|cut|paste|drag\w*|drop|wheel|contextmenu|invalid|search|toggle|animationend|animationiteration|animationstart|transitionend|pointerdown|pointermove|pointerup|pointercancel|pointerover|pointerout|pointerenter|pointerleave|gotpointercapture|lostpointercapture|touchstart|touchend|touchmove|touchcancel)\b/gi, '');
+  
+  // Remove SQL-related patterns (defense in depth - always use parameterized queries)
+  sanitized = sanitized.replace(/['";]/g, ''); // Remove quotes and semicolons
+  sanitized = sanitized.replace(/(\/\*)|(\*\/)/g, ''); // Remove SQL comments
+  sanitized = sanitized.replace(/\b(hex|waitfor|count|union|select|insert|update|delete|drop|alter|create|truncate|exec|execute|xp_|sp_|0x)\b/gi, '');
+  
+  return sanitized.trim();
 };
