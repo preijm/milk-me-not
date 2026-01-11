@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, SlidersHorizontal, User, X, ArrowUpDown, Check, Coffee, Droplet, Tag } from "lucide-react";
+import { Search, SlidersHorizontal, User, X, ArrowUpDown, Check, Coffee, Droplet, Tag, Calendar, Star, Building2, Package, Hash } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -38,19 +38,54 @@ interface MobileFilterBarProps {
   resultsCount: number;
 }
 
-// Explicit sort options with field + direction combined
-const sortOptions = [
-  { key: 'most_recent_date', direction: 'desc' as const, label: 'Date: Newest First' },
-  { key: 'most_recent_date', direction: 'asc' as const, label: 'Date: Oldest First' },
-  { key: 'avg_rating', direction: 'desc' as const, label: 'Score: Highest First' },
-  { key: 'avg_rating', direction: 'asc' as const, label: 'Score: Lowest First' },
-  { key: 'brand_name', direction: 'asc' as const, label: 'Brand: A-Z' },
-  { key: 'brand_name', direction: 'desc' as const, label: 'Brand: Z-A' },
-  { key: 'product_name', direction: 'asc' as const, label: 'Product: A-Z' },
-  { key: 'product_name', direction: 'desc' as const, label: 'Product: Z-A' },
-  { key: 'count', direction: 'desc' as const, label: 'Tests: Most First' },
-  { key: 'count', direction: 'asc' as const, label: 'Tests: Fewest First' },
+// Sort categories with their options grouped
+const sortCategories = [
+  {
+    icon: Calendar,
+    label: 'Date',
+    options: [
+      { key: 'most_recent_date', direction: 'desc' as const, label: 'Newest First' },
+      { key: 'most_recent_date', direction: 'asc' as const, label: 'Oldest First' },
+    ]
+  },
+  {
+    icon: Star,
+    label: 'Score',
+    options: [
+      { key: 'avg_rating', direction: 'desc' as const, label: 'Highest First' },
+      { key: 'avg_rating', direction: 'asc' as const, label: 'Lowest First' },
+    ]
+  },
+  {
+    icon: Building2,
+    label: 'Brand',
+    options: [
+      { key: 'brand_name', direction: 'asc' as const, label: 'A-Z' },
+      { key: 'brand_name', direction: 'desc' as const, label: 'Z-A' },
+    ]
+  },
+  {
+    icon: Package,
+    label: 'Product',
+    options: [
+      { key: 'product_name', direction: 'asc' as const, label: 'A-Z' },
+      { key: 'product_name', direction: 'desc' as const, label: 'Z-A' },
+    ]
+  },
+  {
+    icon: Hash,
+    label: 'Tests',
+    options: [
+      { key: 'count', direction: 'desc' as const, label: 'Most First' },
+      { key: 'count', direction: 'asc' as const, label: 'Fewest First' },
+    ]
+  },
 ];
+
+// Flatten for label lookup
+const sortOptions = sortCategories.flatMap(cat => 
+  cat.options.map(opt => ({ ...opt, categoryLabel: cat.label }))
+);
 
 export const MobileFilterBar = ({
   searchTerm,
@@ -186,7 +221,10 @@ export const MobileFilterBar = ({
     const current = sortOptions.find(
       opt => opt.key === sortConfig.column && opt.direction === sortConfig.direction
     );
-    return current?.label || 'Sort';
+    if (current) {
+      return `${current.categoryLabel}: ${current.label}`;
+    }
+    return 'Sort';
   };
 
   const getPropertyName = (key: string) => {
@@ -233,38 +271,48 @@ export const MobileFilterBar = ({
                 </Button>
               </DrawerClose>
             </DrawerHeader>
-            <div className="px-0 pb-4 overflow-y-auto">
-              {sortOptions.map((option) => {
-                const isActive = sortConfig.column === option.key && sortConfig.direction === option.direction;
+            <div className="px-4 pb-4 overflow-y-auto space-y-2">
+              {sortCategories.map((category) => {
+                const Icon = category.icon;
                 
                 return (
-                  <button
-                    key={`${option.key}-${option.direction}`}
-                    onClick={() => {
-                      if (onSetSort) {
-                        onSetSort(option.key, option.direction);
-                      }
-                      setIsSortOpen(false);
-                    }}
-                    className={cn(
-                      "w-full flex items-center justify-between px-6 py-4 text-left transition-colors",
-                      isActive 
-                        ? "bg-primary/10 text-primary" 
-                        : "hover:bg-muted/50"
-                    )}
-                  >
-                    <span className={cn(
-                      "text-base",
-                      isActive && "font-medium"
-                    )}>
-                      {option.label}
-                    </span>
-                    {isActive && (
-                      <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center">
-                        <Check className="h-4 w-4 text-primary-foreground" />
-                      </div>
-                    )}
-                  </button>
+                  <div key={category.label} className="flex items-center gap-3">
+                    {/* Category label with icon */}
+                    <div className="flex items-center gap-2 w-24 flex-shrink-0">
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm font-medium text-foreground">{category.label}</span>
+                    </div>
+                    
+                    {/* Two sort direction buttons */}
+                    <div className="flex gap-2 flex-1">
+                      {category.options.map((option) => {
+                        const isActive = sortConfig.column === option.key && sortConfig.direction === option.direction;
+                        
+                        return (
+                          <button
+                            key={`${option.key}-${option.direction}`}
+                            onClick={() => {
+                              if (onSetSort) {
+                                onSetSort(option.key, option.direction);
+                              }
+                              setIsSortOpen(false);
+                            }}
+                            className={cn(
+                              "flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg text-sm transition-colors",
+                              isActive 
+                                ? "bg-primary text-primary-foreground font-medium" 
+                                : "bg-muted/50 hover:bg-muted text-foreground"
+                            )}
+                          >
+                            <span>{option.label}</span>
+                            {isActive && (
+                              <Check className="h-3.5 w-3.5" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 );
               })}
             </div>
