@@ -24,7 +24,7 @@ export const DesktopResultsTable = ({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50 border-b border-gray-200">
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 md:w-[18%] lg:w-[22%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 md:w-[22%] lg:w-[22%]">
               <SortableColumnHeader 
                 column="brand_name" 
                 label="Brand" 
@@ -33,7 +33,7 @@ export const DesktopResultsTable = ({
                 width="100%"
               />
             </TableHead>
-            <TableHead className="font-semibold text-gray-700 text-left pl-4 pr-0 md:w-[46%] lg:w-[40%]">
+            <TableHead className="font-semibold text-gray-700 text-left pl-4 pr-0 md:w-[42%] lg:w-[40%]">
               <SortableColumnHeader 
                 column="product_name" 
                 label="Product" 
