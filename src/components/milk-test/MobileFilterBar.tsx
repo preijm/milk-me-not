@@ -44,40 +44,40 @@ const sortCategories = [
     icon: Calendar,
     label: 'Date',
     options: [
-      { key: 'most_recent_date', direction: 'desc' as const, label: 'Newest First' },
-      { key: 'most_recent_date', direction: 'asc' as const, label: 'Oldest First' },
+      { key: 'most_recent_date', direction: 'desc' as const, label: 'Newest', fullLabel: 'Newest' },
+      { key: 'most_recent_date', direction: 'asc' as const, label: 'Oldest', fullLabel: 'Oldest' },
     ]
   },
   {
     icon: Star,
     label: 'Score',
     options: [
-      { key: 'avg_rating', direction: 'desc' as const, label: 'Highest First' },
-      { key: 'avg_rating', direction: 'asc' as const, label: 'Lowest First' },
+      { key: 'avg_rating', direction: 'desc' as const, label: 'Highest', fullLabel: 'Highest' },
+      { key: 'avg_rating', direction: 'asc' as const, label: 'Lowest', fullLabel: 'Lowest' },
     ]
   },
   {
     icon: Building2,
     label: 'Brand',
     options: [
-      { key: 'brand_name', direction: 'asc' as const, label: 'A-Z' },
-      { key: 'brand_name', direction: 'desc' as const, label: 'Z-A' },
+      { key: 'brand_name', direction: 'asc' as const, label: 'A-Z', fullLabel: 'A-Z' },
+      { key: 'brand_name', direction: 'desc' as const, label: 'Z-A', fullLabel: 'Z-A' },
     ]
   },
   {
     icon: Package,
     label: 'Product',
     options: [
-      { key: 'product_name', direction: 'asc' as const, label: 'A-Z' },
-      { key: 'product_name', direction: 'desc' as const, label: 'Z-A' },
+      { key: 'product_name', direction: 'asc' as const, label: 'A-Z', fullLabel: 'A-Z' },
+      { key: 'product_name', direction: 'desc' as const, label: 'Z-A', fullLabel: 'Z-A' },
     ]
   },
   {
     icon: Hash,
     label: 'Tests',
     options: [
-      { key: 'count', direction: 'desc' as const, label: 'Most First' },
-      { key: 'count', direction: 'asc' as const, label: 'Fewest First' },
+      { key: 'count', direction: 'desc' as const, label: 'Most', fullLabel: 'Most' },
+      { key: 'count', direction: 'asc' as const, label: 'Fewest', fullLabel: 'Fewest' },
     ]
   },
 ];
