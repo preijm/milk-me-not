@@ -30,22 +30,20 @@ export const ResultTableRow = ({
         <span translate="no">{result.brand_name || "Unknown Brand"}</span>
       </TableCell>
       <TableCell className="pr-0">
-        <div className="flex-grow">
-          <div className="text-gray-800">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-gray-800">
             {result.product_name || "Unknown Product"}
-          </div>
+          </span>
           {(result.is_barista || (result.property_names && result.property_names.length > 0) || (result.flavor_names && result.flavor_names.length > 0)) && (
-            <div className="mt-1 flex flex-wrap gap-1.5">
-              <ProductPropertyBadges 
-                isBarista={result.is_barista}
-                propertyNames={result.property_names}
-                flavorNames={result.flavor_names}
-                compact={true}
-                displayType="all"
-                filters={filters}
-                onFiltersChange={onFiltersChange}
-              />
-            </div>
+            <ProductPropertyBadges 
+              isBarista={result.is_barista}
+              propertyNames={result.property_names}
+              flavorNames={result.flavor_names}
+              compact={true}
+              displayType="all"
+              filters={filters}
+              onFiltersChange={onFiltersChange}
+            />
           )}
         </div>
       </TableCell>
