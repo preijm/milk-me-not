@@ -244,7 +244,7 @@ export const MobileFilterBar = ({
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => handleSearchChange(e.target.value)}
-          className="pl-9 h-10 bg-background border-border rounded-lg w-full text-sm"
+          className="pl-9 h-10 bg-background border-border rounded-lg w-full text-sm text-left"
           maxLength={100}
         />
       </div>
