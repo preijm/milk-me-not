@@ -6,6 +6,15 @@ import { Capacitor } from '@capacitor/core';
  * (e.g., when loading remote URLs, after WebView reload, etc.)
  */
 export const isNativeApp = (): boolean => {
+  // Method 0: Check for nativeApp=true URL parameter (most reliable for remote URL loading)
+  const hasNativeAppParam = typeof window !== 'undefined' && 
+    window.location.search.includes('nativeApp=true');
+  
+  if (hasNativeAppParam) {
+    console.log('[PlatformDetection] ✓ Detected as native via nativeApp=true URL parameter');
+    return true;
+  }
+
   const detectionResults = {
     isNativePlatform: Capacitor.isNativePlatform(),
     platform: Capacitor.getPlatform(),
