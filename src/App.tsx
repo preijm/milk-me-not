@@ -6,8 +6,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { VersionProvider } from "@/contexts/VersionContext";
 import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
+import { VersionCheck } from "@/components/version/VersionCheck";
 import { isNativeApp } from "@/lib/platformDetection";
 import NativeSplashScreen from "./components/NativeSplashScreen";
 import Home from "./pages/Home";
@@ -55,11 +57,13 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <NotificationProvider>
-          <TooltipProvider>
-            <BrowserRouter>
-              <ScrollToTop />
-              <Routes>
-              <Route path="/" element={<Home />} />
+          <VersionProvider>
+            <TooltipProvider>
+              <BrowserRouter>
+                <ScrollToTop />
+                <VersionCheck />
+                <Routes>
+                <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Navigate to="/results" replace />} />
               <Route path="/results" element={<Results />} />
               <Route path="/product/:productId" element={<ProductDetails />} />
@@ -116,11 +120,12 @@ const App = () => {
               </ProtectedRoute>
               } />
               <Route path="/design-system" element={<DesignSystem />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
-          </BrowserRouter>
-        </TooltipProvider>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+            </BrowserRouter>
+          </TooltipProvider>
+          </VersionProvider>
         </NotificationProvider>
       </AuthProvider>
     </QueryClientProvider>
