@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_versions: {
+        Row: {
+          created_at: string
+          id: string
+          is_major: boolean
+          min_supported_version: string | null
+          published_at: string
+          release_notes: string | null
+          requires_apk_update: boolean
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_major?: boolean
+          min_supported_version?: string | null
+          published_at?: string
+          release_notes?: string | null
+          requires_apk_update?: boolean
+          version: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_major?: boolean
+          min_supported_version?: string | null
+          published_at?: string
+          release_notes?: string | null
+          requires_apk_update?: boolean
+          version?: string
+        }
+        Relationships: []
+      }
       brands: {
         Row: {
           created_at: string
