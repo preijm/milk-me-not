@@ -25,8 +25,8 @@ interface FilterOptions {
 const Results = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Initialize filters from URL params
-  const getInitialFilters = (): FilterOptions => {
+  // Parse filters from URL params
+  const parseFiltersFromUrl = (): FilterOptions => {
     const barista = searchParams.get('barista') === 'true';
     const properties = searchParams.get('properties')?.split(',').filter(Boolean) || [];
     const flavors = searchParams.get('flavors')?.split(',').filter(Boolean) || [];
@@ -34,19 +34,39 @@ const Results = () => {
     return { barista, properties, flavors, myResultsOnly };
   };
 
-  // Initialize sort config from URL params
-  const getInitialSortConfig = (): SortConfig => {
+  // Parse sort config from URL params
+  const parseSortConfigFromUrl = (): SortConfig => {
     const column = searchParams.get('sortColumn') as SortConfig['column'] || 'avg_rating';
     const direction = searchParams.get('sortDir') as SortConfig['direction'] || 'desc';
     return { column, direction };
   };
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || "");
-  const [sortConfig, setSortConfig] = useState<SortConfig>(getInitialSortConfig);
+  const [sortConfig, setSortConfig] = useState<SortConfig>(parseSortConfigFromUrl);
   const [view, setView] = useState<'table' | 'charts' | 'map'>('table');
-  const [filters, setFilters] = useState<FilterOptions>(getInitialFilters);
+  const [filters, setFilters] = useState<FilterOptions>(parseFiltersFromUrl);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [selectedProductName, setSelectedProductName] = useState<string>("");
+  
+  // Track if this is the initial mount to avoid overwriting user changes
+  const isInitialMount = React.useRef(true);
+  
+  // Sync state from URL params when navigating back (URL changes but component remounts)
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    
+    // When URL changes (e.g., browser back/forward), sync state from URL
+    const urlFilters = parseFiltersFromUrl();
+    const urlSortConfig = parseSortConfigFromUrl();
+    const urlSearchTerm = searchParams.get('search') || "";
+    
+    setFilters(urlFilters);
+    setSortConfig(urlSortConfig);
+    setSearchTerm(urlSearchTerm);
+  }, [searchParams]);
   
   const {
     data: aggregatedResults = [],
