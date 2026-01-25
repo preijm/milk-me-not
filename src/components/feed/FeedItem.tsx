@@ -220,7 +220,7 @@ export const FeedItem = ({ item, blurred = false, disabled = false }: FeedItemPr
 
           {item.notes && (
             <div className="bg-muted/30 rounded-lg p-3 border-l-4 border-primary">
-              <p className="text-sm text-foreground font-medium italic">"{item.notes}"</p>
+              <p className="text-sm text-foreground font-medium italic whitespace-pre-wrap">{item.notes}</p>
             </div>
           )}
 
