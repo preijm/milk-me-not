@@ -78,7 +78,7 @@ const Feed = () => {
   if (isMobileOrTablet) {
     return <div className="min-h-screen bg-white">
         <MenuBar />
-        <div className="pt-16 pb-20 min-h-screen">
+        <div className="pt-16 pb-28 min-h-screen">
           
           <div className="container max-w-7xl mx-auto px-4 py-6">
             {isLoading ? <div className="flex items-center justify-center py-8">
