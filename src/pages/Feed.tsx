@@ -46,7 +46,7 @@ const Feed = () => {
       });
 
       // Limit the results based on authentication status
-      const limitedData = sortedData.slice(0, user ? 50 : 4);
+      const limitedData = sortedData.slice(0, user ? 50 : 6);
       return limitedData as MilkTestResult[];
     }
   });
