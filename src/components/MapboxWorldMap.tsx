@@ -3,7 +3,8 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 interface CountryTestCount {
   country_code: string;
@@ -13,7 +14,9 @@ interface CountryTestCount {
 const MapboxWorldMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const initAttempted = useRef(false);
   const [isMapInitialized, setIsMapInitialized] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
 
@@ -63,16 +66,30 @@ const MapboxWorldMap = () => {
   // Fetch Mapbox token from Supabase Edge Function
   const fetchMapboxToken = async () => {
     try {
-      console.log('Fetching Mapbox token...');
+      console.log('MapboxWorldMap: Fetching Mapbox token...');
+      
+      // Verify we have a session first
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      console.log('MapboxWorldMap: Session check:', session ? 'authenticated' : 'not authenticated', sessionError ? sessionError.message : '');
+      
+      if (!session) {
+        console.error('MapboxWorldMap: No active session found');
+        setMapError('Authentication required to load map');
+        return null;
+      }
+      
+      console.log('MapboxWorldMap: Invoking edge function...');
       const { data, error } = await supabase.functions.invoke('get-mapbox-token');
+      
       if (error) {
-        console.error('Error invoking function:', error);
+        console.error('MapboxWorldMap: Error invoking function:', error);
         throw error;
       }
-      console.log('Token fetched successfully:', data);
+      
+      console.log('MapboxWorldMap: Token fetched successfully, length:', data?.token?.length || 0);
       return data.token;
     } catch (error) {
-      console.error('Error fetching Mapbox token:', error);
+      console.error('MapboxWorldMap: Error fetching Mapbox token:', error);
       return null;
     }
   };
@@ -288,10 +305,49 @@ const MapboxWorldMap = () => {
     map.current.getCanvas().style.cursor = '';
   };
 
+  // Retry handler for the map
+  const handleRetry = () => {
+    console.log('MapboxWorldMap: Retry requested');
+    setMapError(null);
+    initAttempted.current = false;
+    if (map.current) {
+      map.current.remove();
+      map.current = null;
+    }
+    setIsMapInitialized(false);
+    setIsInitializing(true);
+    
+    initializeMap().finally(() => {
+      setIsInitializing(false);
+    });
+  };
+
   useEffect(() => {
-    initializeMap();
+    // Prevent double initialization in development (React StrictMode)
+    if (initAttempted.current) {
+      console.log('MapboxWorldMap: Skipping duplicate initialization');
+      return;
+    }
+    
+    console.log('MapboxWorldMap: Starting initialization...');
+    initAttempted.current = true;
+    setIsInitializing(true);
+    
+    const init = async () => {
+      try {
+        await initializeMap();
+      } catch (error) {
+        console.error('MapboxWorldMap: Failed to initialize:', error);
+        setMapError('Failed to initialize map. Please try again.');
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+    
+    init();
     
     return () => {
+      console.log('MapboxWorldMap: Cleanup');
       if (map.current) {
         map.current.remove();
         map.current = null;
@@ -328,10 +384,12 @@ const MapboxWorldMap = () => {
     }
   }, [discoveryPercentage]);
 
-  if (isLoading) {
+  if (isLoading || isInitializing) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-lg text-muted-foreground">Loading map data...</div>
+        <div className="text-lg text-muted-foreground">
+          {isLoading ? 'Loading map data...' : 'Initializing map...'}
+        </div>
       </div>
     );
   }
@@ -364,11 +422,15 @@ const MapboxWorldMap = () => {
         <div ref={mapContainer} className="w-full h-full" />
         {mapError && (
           <div className="absolute inset-0 flex items-center justify-center bg-muted/80 backdrop-blur-sm">
-            <div className="text-center p-6">
-              <p className="text-muted-foreground mb-2">{mapError}</p>
-              <p className="text-sm text-muted-foreground">
-                The interactive map works best in the published app.
+            <div className="text-center p-6 max-w-md">
+              <p className="text-foreground font-semibold mb-2">{mapError}</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                This could be due to network issues, authentication problems, or missing Mapbox configuration.
               </p>
+              <Button onClick={handleRetry} variant="default" className="gap-2">
+                <RefreshCw className="h-4 w-4" />
+                Retry
+              </Button>
             </div>
           </div>
         )}
