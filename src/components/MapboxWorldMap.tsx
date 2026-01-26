@@ -15,6 +15,7 @@ const MapboxWorldMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const initAttempted = useRef(false);
+  const loadTimeoutRef = useRef<number | null>(null);
   const [isMapInitialized, setIsMapInitialized] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
@@ -129,12 +130,38 @@ const MapboxWorldMap = () => {
       return;
     }
 
+    // Guard: Mapbox GL requires WebGL
+    if (typeof mapboxgl.supported === 'function' && !mapboxgl.supported()) {
+      setMapError('Your browser/device does not support WebGL, so the map cannot be displayed.');
+      return;
+    }
+
+    // Wait until the container has a real size (tab switch/layout can mount at 0x0 for a frame)
+    for (let attempt = 0; attempt < 12; attempt++) {
+      const el = mapContainer.current;
+      const w = el?.clientWidth ?? 0;
+      const h = el?.clientHeight ?? 0;
+      if (w > 0 && h > 0) break;
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    }
+
+    if (!mapContainer.current || mapContainer.current.clientWidth === 0 || mapContainer.current.clientHeight === 0) {
+      setMapError('Map container has no size yet. Please retry.');
+      return;
+    }
+
     const token = await fetchMapboxToken();
     console.log('MapboxWorldMap: Token received:', token ? 'yes (length: ' + token.length + ')' : 'no');
     
     if (!token) {
       console.error('No Mapbox token available');
       setMapError('Unable to load map token. Please check the MAPBOX_KEY secret.');
+      return;
+    }
+
+    // Guard: Mapbox GL JS expects a public token (pk.*)
+    if (!token.startsWith('pk.')) {
+      setMapError('Invalid Mapbox token format. Please use a public token that starts with “pk.”');
       return;
     }
 
@@ -158,6 +185,13 @@ const MapboxWorldMap = () => {
 
       console.log('MapboxWorldMap: Map instance created');
 
+      // If load never fires (token/style/network), surface an error instead of staying blank
+      if (loadTimeoutRef.current) window.clearTimeout(loadTimeoutRef.current);
+      loadTimeoutRef.current = window.setTimeout(() => {
+        console.error('MapboxWorldMap: Map load timeout');
+        setMapError('Map took too long to load. Please retry or check your network connection.');
+      }, 12000);
+
       map.current.on('error', (e) => {
         console.error('Mapbox map error event:', e);
         setMapError('Map failed to load. Check browser console for details.');
@@ -167,6 +201,10 @@ const MapboxWorldMap = () => {
 
       map.current.on('load', () => {
         console.log('MapboxWorldMap: Map loaded successfully!');
+        if (loadTimeoutRef.current) {
+          window.clearTimeout(loadTimeoutRef.current);
+          loadTimeoutRef.current = null;
+        }
         setIsMapInitialized(true);
         setMapError(null);
         
@@ -348,6 +386,10 @@ const MapboxWorldMap = () => {
     
     return () => {
       console.log('MapboxWorldMap: Cleanup');
+      if (loadTimeoutRef.current) {
+        window.clearTimeout(loadTimeoutRef.current);
+        loadTimeoutRef.current = null;
+      }
       if (map.current) {
         map.current.remove();
         map.current = null;
