@@ -116,9 +116,9 @@ const Home = () => {
           </div>
         </div>
         
-        {/* Mobile App Banner - Fixed on mobile/tablet, inline on desktop */}
+        {/* Mobile App Banner - Only visible on desktop (hidden on mobile/tablet) */}
         {!isNative && (
-          <div className="fixed bottom-20 left-0 right-0 z-40 px-0 sm:px-4 lg:relative lg:bottom-auto lg:pb-8 lg:z-auto">
+          <div className="hidden lg:block lg:pb-8">
             <div className="container max-w-3xl mx-auto">
               <Link to="/mobile-app" className="block">
                 <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-lg shadow-lg p-4 hover:shadow-xl transition-all duration-300 hover:border-brand-primary/30">
