@@ -80,7 +80,11 @@ const MapboxWorldMap = () => {
       }
       
       console.log('MapboxWorldMap: Invoking edge function...');
-      const { data, error } = await supabase.functions.invoke('get-mapbox-token');
+    const { data, error } = await supabase.functions.invoke('get-mapbox-token', {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
+    });
       
       if (error) {
         console.error('MapboxWorldMap: Error invoking function:', error);
