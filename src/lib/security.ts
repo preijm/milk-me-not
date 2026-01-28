@@ -2,6 +2,16 @@
  * Security utilities for input validation and sanitization
  */
 
+const replaceUntilStable = (input: string, pattern: RegExp, replacement: string): string => {
+  let current = input;
+  let previous: string;
+  do {
+    previous = current;
+    current = current.replace(pattern, replacement);
+  } while (current !== previous);
+  return current;
+};
+
 export const sanitizeInput = (input: string): string => {
   if (typeof input !== 'string') {
     return '';
@@ -14,14 +24,14 @@ export const sanitizeInput = (input: string): string => {
   sanitized = sanitized.replace(/[<>]/g, '');
   
   // Remove javascript: protocol (case insensitive, handles encoding tricks)
-  sanitized = sanitized.replace(/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/gi, '');
+  sanitized = replaceUntilStable(sanitized, /j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/gi, '');
   
   // Remove event handler attributes completely (on + word characters + = with optional quotes)
   // Match the entire pattern including any value to prevent partial matches
-  sanitized = sanitized.replace(/\bon\w+\s*=\s*(['"]?)[^'"]*\1/gi, '');
+  sanitized = replaceUntilStable(sanitized, /\bon\w+\s*=\s*(['"]?)[^'"]*\1/gi, '');
   
   // Also remove standalone "on" followed by event names without = as a secondary measure
-  sanitized = sanitized.replace(/\bon(click|load|error|mouse\w+|key\w+|focus|blur|change|submit|reset|select|input|scroll|resize|unload|beforeunload|abort|canplay\w*|durationchange|emptied|ended|loadeddata|loadedmetadata|pause|play|playing|progress|ratechange|seeked|seeking|stalled|suspend|timeupdate|volumechange|waiting|copy|cut|paste|drag\w*|drop|wheel|contextmenu|invalid|search|toggle|animationend|animationiteration|animationstart|transitionend|pointerdown|pointermove|pointerup|pointercancel|pointerover|pointerout|pointerenter|pointerleave|gotpointercapture|lostpointercapture|touchstart|touchend|touchmove|touchcancel)\b/gi, '');
+  sanitized = replaceUntilStable(sanitized, /\bon(click|load|error|mouse\w+|key\w+|focus|blur|change|submit|reset|select|input|scroll|resize|unload|beforeunload|abort|canplay\w*|durationchange|emptied|ended|loadeddata|loadedmetadata|pause|play|playing|progress|ratechange|seeked|seeking|stalled|suspend|timeupdate|volumechange|waiting|copy|cut|paste|drag\w*|drop|wheel|contextmenu|invalid|search|toggle|animationend|animationiteration|animationstart|transitionend|pointerdown|pointermove|pointerup|pointercancel|pointerover|pointerout|pointerenter|pointerleave|gotpointercapture|lostpointercapture|touchstart|touchend|touchmove|touchcancel)\b/gi, '');
   
   return sanitized.trim();
 };
@@ -220,13 +230,13 @@ export const sanitizeForDatabase = (input: string): string => {
   sanitized = sanitized.replace(/[<>]/g, '');
   
   // Remove javascript: protocol (case insensitive, handles spacing tricks)
-  sanitized = sanitized.replace(/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/gi, '');
+  sanitized = replaceUntilStable(sanitized, /j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/gi, '');
   
   // Remove event handler attributes completely
-  sanitized = sanitized.replace(/\bon\w+\s*=\s*(['"]?)[^'"]*\1/gi, '');
+  sanitized = replaceUntilStable(sanitized, /\bon\w+\s*=\s*(['"]?)[^'"]*\1/gi, '');
   
   // Remove standalone event handler names as secondary measure
-  sanitized = sanitized.replace(/\bon(click|load|error|mouse\w+|key\w+|focus|blur|change|submit|reset|select|input|scroll|resize|unload|beforeunload|abort|canplay\w*|durationchange|emptied|ended|loadeddata|loadedmetadata|pause|play|playing|progress|ratechange|seeked|seeking|stalled|suspend|timeupdate|volumechange|waiting|copy|cut|paste|drag\w*|drop|wheel|contextmenu|invalid|search|toggle|animationend|animationiteration|animationstart|transitionend|pointerdown|pointermove|pointerup|pointercancel|pointerover|pointerout|pointerenter|pointerleave|gotpointercapture|lostpointercapture|touchstart|touchend|touchmove|touchcancel)\b/gi, '');
+  sanitized = replaceUntilStable(sanitized, /\bon(click|load|error|mouse\w+|key\w+|focus|blur|change|submit|reset|select|input|scroll|resize|unload|beforeunload|abort|canplay\w*|durationchange|emptied|ended|loadeddata|loadedmetadata|pause|play|playing|progress|ratechange|seeked|seeking|stalled|suspend|timeupdate|volumechange|waiting|copy|cut|paste|drag\w*|drop|wheel|contextmenu|invalid|search|toggle|animationend|animationiteration|animationstart|transitionend|pointerdown|pointermove|pointerup|pointercancel|pointerover|pointerout|pointerenter|pointerleave|gotpointercapture|lostpointercapture|touchstart|touchend|touchmove|touchcancel)\b/gi, '');
   
   // Remove SQL-related patterns (defense in depth - always use parameterized queries)
   // Note: We preserve single and double quotes as they are safe with parameterized queries
