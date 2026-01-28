@@ -126,10 +126,7 @@ export const MobileFilterBar = ({
   });
 
   const handleSearchChange = (value: string) => {
-    const sanitized = value
-      .replace(/[<>]/g, '')
-      .replace(/javascript:/gi, '')
-      .replace(/on\w+=/gi, '');
+    const sanitized = value.replace(/[<>]/g, '');
 
     if (sanitized.length <= 100) {
       setSearchTerm(sanitized);
