@@ -150,7 +150,7 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
         price_quality_ratio?: string | null;
       } = {
         shop_name: shop ? sanitizeInput(shop) : null,
-        country_code: country || null,
+        country_code: country,
         rating: Number(rating),
         notes: notes ? sanitizeInput(notes) : null,
         picture_path: picturePath,
