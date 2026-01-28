@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Heart, MessageCircle, BarChart3, Edit3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,55 +35,83 @@ export const FeedEngagement = ({
   onViewAllResults,
   onEdit
 }: FeedEngagementProps) => {
+  const [showLikesPopover, setShowLikesPopover] = useState(false);
+
+  const handleLikeClick = () => {
+    onLike();
+  };
+
+  const handleShowLikes = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (likes.length > 0) {
+      setShowLikesPopover(true);
+    }
+  };
+
   return (
     <div className="flex items-center justify-between pt-3 border-t border-border/50">
       <div className="flex items-center space-x-1">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={onLike}
-                disabled={isLikePending}
+        <div className="flex items-center">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleLikeClick}
+            disabled={isLikePending}
+            className={cn(
+              "flex items-center space-x-1 px-2 py-1.5 rounded-full transition-all duration-200",
+              isLiked ? "text-destructive bg-destructive/10 hover:bg-destructive/20" : "hover:bg-muted"
+            )}
+          >
+            <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+          </Button>
+          
+          {/* Separate clickable area for showing likes */}
+          <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
+            <PopoverTrigger asChild>
+              <button
+                onClick={handleShowLikes}
                 className={cn(
-                  "flex items-center space-x-1 px-2 py-1.5 rounded-full transition-all duration-200",
-                  isLiked ? "text-red-500 bg-red-50 hover:bg-red-100" : "hover:bg-gray-50"
+                  "flex items-center space-x-1 px-1 py-1.5 rounded-r-full transition-all duration-200 -ml-1",
+                  likes.length > 0 && "hover:bg-muted cursor-pointer"
                 )}
+                disabled={likes.length === 0}
               >
-                <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
                 <span className="font-semibold text-sm">{likes.length}</span>
                 <span className="text-xs hidden lg:inline">Likes</span>
-              </Button>
-            </TooltipTrigger>
+              </button>
+            </PopoverTrigger>
             {likes.length > 0 && (
-              <TooltipContent 
+              <PopoverContent 
                 side="top" 
-                className="p-0 bg-card border border-border shadow-lg rounded-xl overflow-hidden"
+                align="start"
+                className="p-0 w-56 bg-card border border-border shadow-xl rounded-xl overflow-hidden"
               >
                 <div className="px-4 py-3 bg-muted/50 border-b border-border">
-                  <p className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-                    <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500" />
+                  <p className="font-semibold text-sm text-foreground flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-destructive fill-destructive" />
                     Liked by
                   </p>
                 </div>
-                <div className="px-4 py-2 space-y-1.5 max-h-48 overflow-y-auto">
+                <div className="py-2 max-h-48 overflow-y-auto">
                   {likes.map(like => (
-                    <p key={like.id} className="text-sm text-foreground/90 py-0.5">
+                    <div 
+                      key={like.id} 
+                      className="px-4 py-2 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                    >
                       {like.username}
-                    </p>
+                    </div>
                   ))}
                 </div>
-              </TooltipContent>
+              </PopoverContent>
             )}
-          </Tooltip>
-        </TooltipProvider>
+          </Popover>
+        </div>
         
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={onToggleComments}
-          className="flex items-center space-x-1 px-2 py-1.5 rounded-full hover:bg-gray-50 transition-all duration-200"
+          className="flex items-center space-x-1 px-2 py-1.5 rounded-full hover:bg-muted transition-all duration-200"
         >
           <MessageCircle className="h-4 w-4" />
           <span className="font-semibold text-sm">{commentsCount}</span>
@@ -93,7 +122,7 @@ export const FeedEngagement = ({
           variant="ghost" 
           size="sm" 
           onClick={onViewAllResults}
-          className="flex items-center space-x-1 px-2 py-1.5 rounded-full hover:bg-gray-50 transition-all duration-200"
+          className="flex items-center space-x-1 px-2 py-1.5 rounded-full hover:bg-muted transition-all duration-200"
         >
           <BarChart3 className="h-4 w-4" />
           <span className="text-xs hidden lg:inline">View All</span>
