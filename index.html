@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,76 +8,22 @@
     <meta name="author" content="Lovable" />
     <link rel="icon" href="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png" type="image/png" />
     <meta property="og:image" content="/og-image.png" />
-    
-    <!-- Critical CSS loading optimization -->
-    <script>
-      // Optimize CSS loading to prevent render blocking
-      (function() {
-        // Immediately observe for CSS links being added by Vite
-        const observer = new MutationObserver(function(mutations) {
-          mutations.forEach(function(mutation) {
-            mutation.addedNodes.forEach(function(node) {
-              if (node.tagName === 'LINK' && 
-                  node.rel === 'stylesheet' && 
-                  node.href && 
-                  node.href.includes('assets/index-') && 
-                  node.href.includes('.css')) {
-                
-                // Convert blocking CSS to non-blocking preload
-                node.rel = 'preload';
-                node.as = 'style';
-                node.onload = function() {
-                  this.rel = 'stylesheet';
-                  this.onload = null;
-                };
-                
-                // Fallback for browsers without JS
-                const noscript = document.createElement('noscript');
-                const fallbackLink = document.createElement('link');
-                fallbackLink.rel = 'stylesheet';
-                fallbackLink.href = node.href;
-                noscript.appendChild(fallbackLink);
-                node.parentNode.insertBefore(noscript, node.nextSibling);
-              }
-            });
-          });
-        });
-        
-        // Start observing
-        observer.observe(document.head, { childList: true });
-        
-        // Also check existing links immediately
-        document.addEventListener('DOMContentLoaded', function() {
-          const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
-          cssLinks.forEach(function(link) {
-            if (link.href.includes('assets/index-') && link.href.includes('.css')) {
-              link.rel = 'preload';
-              link.as = 'style';
-              link.onload = function() {
-                this.rel = 'stylesheet';
-                this.onload = null;
-              };
-            }
-          });
-          
-          // Stop observing once DOM is ready
-          observer.disconnect();
-        });
-      })();
-    </script>
-    
-    <!-- Preload hint for faster CSS discovery -->
-    <link rel="dns-prefetch" href="//mondriaan-goose.lovable.app">
-    
+
+    <!-- Hide content until styles are ready to prevent FOUC -->
+    <style>
+      html { visibility: hidden; }
+      html.ready { visibility: visible; }
+    </style>
+
     <!-- Preconnect to Supabase to reduce critical request chain -->
     <link rel="preconnect" href="https://jtabjndnietpewvknjrm.supabase.co" crossorigin>
     <meta property="og:title" content="Milk Me Not">
-  <meta name="twitter:title" content="Milk Me Not">
-  <meta property="og:description" content="Discover and rate your perfect plant-based milk.">
-  <meta name="twitter:description" content="Discover and rate your perfect plant-based milk.">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:type" content="website">
-</head>
+    <meta name="twitter:title" content="Milk Me Not">
+    <meta property="og:description" content="Discover and rate your perfect plant-based milk.">
+    <meta name="twitter:description" content="Discover and rate your perfect plant-based milk.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:type" content="website">
+  </head>
   <body>
     <!-- Native app splash screen - shows immediately before React loads -->
     <div id="native-splash" style="
