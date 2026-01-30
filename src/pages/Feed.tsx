@@ -2,13 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { FeedContent } from "@/components/feed/FeedContent";
 import { MilkTestResult } from "@/types/milk-test";
 import { useIsMobileOrTablet } from "@/hooks/use-mobile";
+import { useHighlightScroll } from "@/hooks/useHighlightScroll";
 
 const Feed = () => {
   const { user } = useAuth();
@@ -42,33 +42,11 @@ const Feed = () => {
   });
 
   // Scroll to specific test when coming from notification
-  useEffect(() => {
-    if (highlightTestId && feedItems.length > 0) {
-      const timer = setTimeout(() => {
-        const element = document.getElementById(`test-${highlightTestId}`);
-        if (element) {
-          element.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-          // Add a temporary highlight effect using brand blue
-          element.classList.add(
-            "ring-2",
-            "ring-[hsl(var(--brand-blue))]",
-            "ring-offset-2"
-          );
-          setTimeout(() => {
-            element.classList.remove(
-              "ring-2",
-              "ring-[hsl(var(--brand-blue))]",
-              "ring-offset-2"
-            );
-          }, 3000);
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [highlightTestId, feedItems]);
+  useHighlightScroll({
+    targetId: highlightTestId,
+    idPrefix: "test-",
+    enabled: feedItems.length > 0,
+  });
 
   const isMobileOrTablet = useIsMobileOrTablet();
 

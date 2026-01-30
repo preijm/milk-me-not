@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobileOrTablet } from "@/hooks/use-mobile";
-import { format } from "date-fns";
+import { useProfileStats } from "@/hooks/useProfileStats";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
 import { ProfileContent } from "@/components/profile/ProfileContent";
 
@@ -24,6 +24,8 @@ const Profile = () => {
   const { toast } = useToast();
   const isMobileOrTablet = useIsMobileOrTablet();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  
+  const { totalTests, avgRating, memberSince } = useProfileStats(milkTests, profile);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -33,19 +35,6 @@ const Profile = () => {
     });
     navigate("/");
   };
-
-  // Calculate stats
-  const totalTests = milkTests.length;
-  const avgRating =
-    totalTests > 0
-      ? (
-          milkTests.reduce((sum, test) => sum + Number(test.rating), 0) /
-          totalTests
-        ).toFixed(1)
-      : "0.0";
-  const memberSince = profile?.created_at
-    ? format(new Date(profile.created_at), "MMM yyyy")
-    : "Recently";
 
 
   const profileProps = {
