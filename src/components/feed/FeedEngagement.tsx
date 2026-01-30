@@ -52,59 +52,66 @@ export const FeedEngagement = ({
     <div className="flex items-center justify-between pt-3 border-t border-border/50">
       <div className="flex items-center gap-2">
         {/* Like button with count */}
-        <div className="flex items-center">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleLikeClick}
-            disabled={isLikePending}
-            className={cn(
-              "flex items-center gap-1.5 px-2 py-1.5 rounded-full transition-all duration-200",
-              isLiked 
-                ? "text-destructive hover:bg-destructive/10" 
-                : "hover:bg-muted"
-            )}
-          >
-            <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
-            <span className="text-sm">{likes.length}</span>
-            <span className="text-sm hidden lg:inline">Likes</span>
-          </Button>
-          
-          {/* Desktop: clickable popover for showing who liked */}
-          {likes.length > 0 && (
-            <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
+        <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
+          <div className="flex items-center">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleLikeClick}
+              disabled={isLikePending}
+              className={cn(
+                "flex items-center gap-1.5 px-2 py-1.5 rounded-full transition-all duration-200",
+                isLiked 
+                  ? "text-destructive hover:bg-destructive/10" 
+                  : "hover:bg-muted"
+              )}
+            >
+              <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
               <PopoverTrigger asChild>
-                <button
-                  onClick={handleShowLikes}
-                  className="hidden"
-                  aria-label="Show who liked"
-                />
+                <span 
+                  className={cn(
+                    "text-sm",
+                    likes.length > 0 && "cursor-pointer"
+                  )}
+                  onClick={(e) => {
+                    if (likes.length > 0) {
+                      e.stopPropagation();
+                      setShowLikesPopover(true);
+                    }
+                  }}
+                >
+                  {likes.length}
+                </span>
               </PopoverTrigger>
-              <PopoverContent 
-                side="top" 
-                align="start"
-                className="p-0 w-56 bg-card border border-border shadow-xl rounded-xl overflow-hidden"
-              >
-                <div className="px-4 py-3 bg-muted/50 border-b border-border">
-                  <p className="font-semibold text-sm text-foreground flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-destructive fill-destructive" />
-                    Liked by
-                  </p>
-                </div>
-                <div className="py-2 max-h-48 overflow-y-auto">
-                  {likes.map(like => (
-                    <div 
-                      key={like.id} 
-                      className="px-4 py-2 text-sm text-foreground hover:bg-muted/50 transition-colors"
-                    >
-                      {like.username}
-                    </div>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
+              <span className="text-sm hidden lg:inline">Likes</span>
+            </Button>
+          </div>
+          
+          {likes.length > 0 && (
+            <PopoverContent 
+              side="top" 
+              align="start"
+              className="p-0 w-56 bg-card border border-border shadow-xl rounded-xl overflow-hidden"
+            >
+              <div className="px-4 py-3 bg-muted/50 border-b border-border">
+                <p className="font-semibold text-sm text-foreground flex items-center gap-2">
+                  <Heart className="h-4 w-4 text-destructive fill-destructive" />
+                  Liked by
+                </p>
+              </div>
+              <div className="py-2 max-h-48 overflow-y-auto">
+                {likes.map(like => (
+                  <div 
+                    key={like.id} 
+                    className="px-4 py-2 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                  >
+                    {like.username}
+                  </div>
+                ))}
+              </div>
+            </PopoverContent>
           )}
-        </div>
+        </Popover>
         
         {/* Comments button */}
         <Button 
