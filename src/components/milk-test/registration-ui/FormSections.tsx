@@ -6,7 +6,7 @@ import { FlavorSelector } from "../FlavorSelector";
 import { BaristaToggle } from "../BaristaToggle";
 import { ProductOptions } from "../ProductOptions";
 import { NameSelect } from "../NameSelect";
-import { Trash2 } from "lucide-react";
+import { Trash2, Coffee, Tag, Droplet } from "lucide-react";
 
 interface ProductFormProps {
   onSubmit: (e: React.FormEvent) => Promise<void>;
@@ -70,12 +70,18 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-foreground">Type</span>
+          <span className="block font-medium text-foreground flex items-center gap-1.5">
+            <Coffee className="w-4 h-4 text-amber-600" />
+            Type
+          </span>
           <BaristaToggle isBarista={isBarista} onToggle={setIsBarista} />
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-foreground">Properties</span>
+          <span className="block font-medium text-foreground flex items-center gap-1.5">
+            <Tag className="w-4 h-4 text-slate-600" />
+            Properties
+          </span>
           <ProductOptions
             selectedTypes={selectedProductTypes}
             setSelectedTypes={setSelectedProductTypes}
@@ -83,7 +89,10 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-foreground">Flavors</span>
+          <span className="block font-medium text-foreground flex items-center gap-1.5">
+            <Droplet className="w-4 h-4 text-purple-600" />
+            Flavors
+          </span>
           <FlavorSelector
             flavors={flavors}
             selectedFlavors={selectedFlavors}
