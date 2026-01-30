@@ -11,6 +11,7 @@ interface BrandSelectProps {
   defaultBrand?: string;
   className?: string;
   onInputReady?: (input: HTMLInputElement | null) => void;
+  autoFocus?: boolean;
 }
 
 export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({ 
@@ -18,7 +19,8 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
   setBrandId, 
   defaultBrand, 
   className,
-  onInputReady
+  onInputReady,
+  autoFocus = true
 }, ref) => {
   const [inputValue, setInputValue] = useState(defaultBrand || "");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -101,7 +103,7 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
         }}
         className="w-full pr-10"
         disabled={isLoading}
-        autoFocus
+        autoFocus={autoFocus}
       />
       <BrandSuggestions
         suggestions={suggestions}

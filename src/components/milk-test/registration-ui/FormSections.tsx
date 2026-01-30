@@ -53,6 +53,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
               brandId={brandId}
               setBrandId={setBrandId}
               onInputReady={onBrandInputReady}
+              autoFocus={!isEditMode}
             />
           </div>
         </div>
