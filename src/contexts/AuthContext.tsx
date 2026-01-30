@@ -74,12 +74,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         
+        // Handle password recovery event - store flag in sessionStorage
+        if (event === 'PASSWORD_RECOVERY') {
+          console.log('PASSWORD_RECOVERY event detected, setting recovery mode');
+          sessionStorage.setItem('passwordRecoveryMode', 'true');
+        }
+        
         setSession(session);
         setUser(session?.user ?? null);
         
         if (event === 'SIGNED_OUT') {
           setSession(null);
           setUser(null);
+          // Clear recovery mode on sign out
+          sessionStorage.removeItem('passwordRecoveryMode');
         }
       }
     );
