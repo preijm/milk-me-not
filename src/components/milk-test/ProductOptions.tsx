@@ -38,7 +38,7 @@ export const ProductOptions = ({
         <Badge
           key={property.key}
           variant="category"
-          className={`cursor-pointer transition-all ${
+          className={`cursor-pointer transition-all h-7 flex items-center ${
             selectedTypes.includes(property.key)
               ? 'bg-primary text-primary-foreground border-primary'
               : ''
