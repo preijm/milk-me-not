@@ -122,7 +122,7 @@ export const FlavorSelector = ({
           <Badge 
             key={flavor.id} 
             variant="flavor" 
-            className={`cursor-pointer transition-all ${
+            className={`cursor-pointer transition-all h-7 flex items-center ${
               selectedFlavors.includes(flavor.key) 
                 ? 'bg-primary text-primary-foreground border-primary' 
                 : ''
