@@ -50,7 +50,8 @@ export const FeedEngagement = ({
 
   return (
     <div className="flex items-center justify-between pt-3 border-t border-border/50">
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center gap-2">
+        {/* Like button with count */}
         <div className="flex items-center">
           <Button 
             variant="ghost" 
@@ -58,34 +59,27 @@ export const FeedEngagement = ({
             onClick={handleLikeClick}
             disabled={isLikePending}
             className={cn(
-              "flex items-center space-x-1 px-2 py-1.5 rounded-full transition-all duration-200",
-              isLiked ? "text-destructive bg-destructive/10 hover:bg-destructive/20" : "hover:bg-muted"
+              "flex items-center gap-1.5 px-2 py-1.5 rounded-full transition-all duration-200",
+              isLiked 
+                ? "text-destructive hover:bg-destructive/10" 
+                : "hover:bg-muted"
             )}
           >
             <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+            <span className="text-sm">{likes.length}</span>
+            <span className="text-sm hidden lg:inline">Likes</span>
           </Button>
           
-          {/* Like count - non-clickable on mobile/tablet, popover on desktop */}
-          <span className="font-semibold text-sm px-1 py-1.5 -ml-1 lg:hidden">
-            {likes.length}
-          </span>
-          
           {/* Desktop: clickable popover for showing who liked */}
-          <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
-            <PopoverTrigger asChild>
-              <button
-                onClick={handleShowLikes}
-                className={cn(
-                  "hidden lg:flex items-center space-x-1 px-1 py-1.5 rounded-r-full transition-all duration-200 -ml-1",
-                  likes.length > 0 && "hover:bg-muted cursor-pointer"
-                )}
-                disabled={likes.length === 0}
-              >
-                <span className="font-semibold text-sm">{likes.length}</span>
-                <span className="text-xs">Likes</span>
-              </button>
-            </PopoverTrigger>
-            {likes.length > 0 && (
+          {likes.length > 0 && (
+            <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={handleShowLikes}
+                  className="hidden"
+                  aria-label="Show who liked"
+                />
+              </PopoverTrigger>
               <PopoverContent 
                 side="top" 
                 align="start"
@@ -108,29 +102,31 @@ export const FeedEngagement = ({
                   ))}
                 </div>
               </PopoverContent>
-            )}
-          </Popover>
+            </Popover>
+          )}
         </div>
         
+        {/* Comments button */}
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={onToggleComments}
-          className="flex items-center space-x-1 px-2 py-1.5 rounded-full hover:bg-muted transition-all duration-200"
+          className="flex items-center gap-1.5 px-2 py-1.5 rounded-full hover:bg-muted transition-all duration-200"
         >
           <MessageCircle className="h-4 w-4" />
-          <span className="font-semibold text-sm">{commentsCount}</span>
-          <span className="text-xs hidden lg:inline">Comments</span>
+          <span className="text-sm">{commentsCount}</span>
+          <span className="text-sm hidden lg:inline">Comments</span>
         </Button>
         
+        {/* View All button */}
         <Button 
           variant="ghost" 
           size="sm" 
           onClick={onViewAllResults}
-          className="flex items-center space-x-1 px-2 py-1.5 rounded-full hover:bg-muted transition-all duration-200"
+          className="flex items-center gap-1.5 px-2 py-1.5 rounded-full hover:bg-muted transition-all duration-200"
         >
           <BarChart3 className="h-4 w-4" />
-          <span className="text-xs hidden lg:inline">View All</span>
+          <span className="text-sm hidden lg:inline">View All</span>
         </Button>
       </div>
 
