@@ -20,6 +20,7 @@ export const SearchBox = ({
   hasSelectedProduct
 }: SearchBoxProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onSearchChange(e.target.value);
   };
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     // If the user presses backspace when there's a selected product, 
