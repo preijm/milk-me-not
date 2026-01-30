@@ -48,21 +48,25 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-dvh overflow-hidden">
+    <div className="min-h-dvh overflow-hidden flex flex-col">
       <MenuBar />
 
       <BackgroundPattern>
-        <div className="container max-w-4xl mx-auto px-4 pt-8 lg:pt-16 flex items-center justify-center min-h-[calc(100dvh-120px)] lg:min-h-[calc(100dvh-180px)]">
-          <div className="flex flex-col items-center">
-            <HeroSection onStartJourney={handleStartJourney} />
-            <TrustIndicators
-              items={trustIndicatorItems}
-              formatNumber={formatNumber}
-            />
+        <div className="flex-1 flex flex-col min-h-[calc(100dvh-64px)]">
+          {/* Hero content - centered */}
+          <div className="container max-w-4xl mx-auto px-4 pt-8 lg:pt-16 flex items-center justify-center flex-1">
+            <div className="flex flex-col items-center">
+              <HeroSection onStartJourney={handleStartJourney} />
+              <TrustIndicators
+                items={trustIndicatorItems}
+                formatNumber={formatNumber}
+              />
+            </div>
           </div>
-        </div>
 
-        {!isNative && <MobileAppBanner />}
+          {/* Mobile App Banner - centered in remaining space */}
+          {!isNative && <MobileAppBanner />}
+        </div>
       </BackgroundPattern>
 
       <MobileFooter />

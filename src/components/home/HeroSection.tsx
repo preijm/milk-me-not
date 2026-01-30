@@ -9,9 +9,9 @@ interface HeroSectionProps {
 export const HeroSection = ({ onStartJourney }: HeroSectionProps) => {
   return (
     <div className="flex flex-col items-center justify-center text-center relative z-10">
-      {/* Enhanced hero title with green color */}
+      {/* Enhanced hero title with responsive scaling */}
       <div className="mb-4 md:mb-6 relative">
-        <h1 className="text-[2.625rem] md:text-7xl lg:text-8xl font-bold mb-3 md:mb-4 max-w-4xl animate-fade-in relative text-brand-primary">
+        <h1 className="text-[clamp(1.75rem,6vw,5rem)] md:text-7xl lg:text-8xl font-bold mb-3 md:mb-4 max-w-4xl animate-fade-in relative text-brand-primary leading-tight">
           Ditch the Moo.
           <br />
           <span className="flex items-center justify-center gap-4">

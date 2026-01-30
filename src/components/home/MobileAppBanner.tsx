@@ -3,7 +3,7 @@ import { Smartphone, ArrowRight } from "lucide-react";
 
 export const MobileAppBanner = () => {
   return (
-    <div className="hidden lg:block lg:pb-8">
+    <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-center lg:pb-8">
       <div className="container max-w-3xl mx-auto">
         <Link to="/mobile-app" className="block">
           <div className="bg-card/95 backdrop-blur-sm border border-border rounded-lg shadow-lg p-4 hover:shadow-xl transition-all duration-300 hover:border-brand-primary/30">
