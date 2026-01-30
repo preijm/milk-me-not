@@ -1,10 +1,9 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Search, CornerDownLeft } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SearchIconProps {
   searchTerm: string;
@@ -15,7 +14,6 @@ interface SearchIconProps {
 export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search..." }: SearchIconProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
-  const isMobile = useIsMobile();
 
   const handleClearSearch = () => {
     setLocalSearchTerm("");
@@ -45,7 +43,7 @@ export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search...
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className={`${isMobile ? 'w-48' : 'w-48'} p-4`} 
+        className="w-48 p-4" 
         align="start"
         side="bottom"
         sideOffset={8}

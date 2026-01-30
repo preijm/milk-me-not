@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ArrowUpDown, ArrowUp, ArrowDown, Star, Calendar, Tag, Package, Trophy } from "lucide-react";
 import { SortConfig } from "@/hooks/useAggregatedResults";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SortButtonProps {
   sortConfig: SortConfig;
@@ -35,7 +34,6 @@ export const SortButton = ({ sortConfig, onSort, onClearSort, onSetSort }: SortB
   const [isOpen, setIsOpen] = useState(false);
   // Track pending directions for each option (before selecting)
   const [pendingDirections, setPendingDirections] = useState<Record<string, 'asc' | 'desc'>>({});
-  const isMobile = useIsMobile();
 
   const sortOptions = [
     { key: 'avg_rating', label: 'Score', icon: Star },
@@ -102,7 +100,7 @@ export const SortButton = ({ sortConfig, onSort, onClearSort, onSetSort }: SortB
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className={`${isMobile ? 'w-72' : 'w-72'} p-4`} 
+        className="w-72 p-4" 
         align="end"
         side="bottom"
         sideOffset={8}
