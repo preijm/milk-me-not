@@ -134,7 +134,11 @@ export const EditMilkTestForm = ({
         <Button
           type="button"
           variant="outline"
-          onClick={onCancel}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onCancel();
+          }}
           disabled={formState.isSubmitting}
           className="px-4 py-2"
         >

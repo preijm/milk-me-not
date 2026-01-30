@@ -115,7 +115,11 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
           <Button
             type="button"
             variant="outline"
-            onClick={onCancel}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onCancel(e);
+            }}
             className="px-4"
           >
             Cancel
