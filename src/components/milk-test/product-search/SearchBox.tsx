@@ -2,7 +2,7 @@ import React, { KeyboardEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 interface SearchBoxProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
@@ -19,9 +19,7 @@ export const SearchBox = ({
   onFocus,
   hasSelectedProduct
 }: SearchBoxProps) => {
-  const isMobile = useIsMobile();
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearchChange(e.target.value);
   };
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     // If the user presses backspace when there's a selected product, 

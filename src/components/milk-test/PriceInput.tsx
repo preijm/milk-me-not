@@ -1,17 +1,5 @@
 
 import React from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
 
 interface PriceInputProps {
   price: string;
@@ -26,8 +14,6 @@ export const PriceInput = ({
   hasChanged,
   setHasChanged
 }: PriceInputProps) => {
-  const isMobile = useIsMobile();
-  
   // Ensure price is a string and default to empty string if null/undefined
   const priceValue = price || "";
 
