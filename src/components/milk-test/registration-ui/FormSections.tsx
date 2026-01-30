@@ -44,8 +44,8 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-4">
         <div className="space-y-2">
-          <label htmlFor="brand" className="block font-medium text-gray-900">
-            Brand <span className="text-red-500">*</span>
+          <label htmlFor="brand" className="block font-medium text-foreground">
+            Brand <span className="text-destructive">*</span>
           </label>
           <div className="w-full">
             <BrandSelect
@@ -59,8 +59,8 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="product" className="block font-medium text-gray-900">
-            Product <span className="text-red-500">*</span>
+          <label htmlFor="product" className="block font-medium text-foreground">
+            Product <span className="text-destructive">*</span>
           </label>
           <NameSelect
             productName={productName}
@@ -70,12 +70,12 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-gray-900">Type</span>
+          <span className="block font-medium text-foreground">Type</span>
           <BaristaToggle isBarista={isBarista} onToggle={setIsBarista} />
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-gray-900">Properties</span>
+          <span className="block font-medium text-foreground">Properties</span>
           <ProductOptions
             selectedTypes={selectedProductTypes}
             setSelectedTypes={setSelectedProductTypes}
@@ -83,7 +83,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-gray-900">Flavors</span>
+          <span className="block font-medium text-foreground">Flavors</span>
           <FlavorSelector
             flavors={flavors}
             selectedFlavors={selectedFlavors}
