@@ -1,4 +1,3 @@
-import React from "react";
 import { MilkTestResult } from "@/types/milk-test";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,15 +20,6 @@ export const MyResultsGrid = ({
   onDelete
 }: MyResultsGridProps) => {
   
-  const getCountryFlag = (code: string) => {
-    if (!code) return '';
-    const codePoints = code
-      .toUpperCase()
-      .split('')
-      .map(char => 127397 + char.charCodeAt(0));
-    return String.fromCodePoint(...codePoints);
-  };
-  
   const getPictureUrl = (picturePath: string | null | undefined) => {
     if (!picturePath) return null;
     return supabase.storage.from('milk-pictures').getPublicUrl(picturePath).data.publicUrl;
@@ -47,9 +37,6 @@ export const MyResultsGrid = ({
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
       {results.map(result => {
         const imageUrl = getPictureUrl(result.picture_path);
-        const hasBadges = result.is_barista || 
-          (result.property_names && result.property_names.length > 0) || 
-          (result.flavor_names && result.flavor_names.length > 0);
 
         return (
           <Card 
