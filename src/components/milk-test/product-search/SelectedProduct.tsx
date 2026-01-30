@@ -34,7 +34,11 @@ export const SelectedProduct = ({
           <Button
             variant="ghost"
             size="sm"
-            onClick={onEdit}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onEdit();
+            }}
             className="h-8 w-8 p-0 hover:bg-gray-200"
           >
             <Edit className="h-4 w-4" />
