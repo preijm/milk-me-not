@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  clearRecoveryMode,
+  getRecoveryFromUrlHash,
+  getStoredRecoveryAccessToken,
+  isRecoveryMode,
+  setRecoveryMode,
+  updatePasswordWithAccessToken,
+} from "@/lib/auth/recovery";
 
 export const useAuthFlow = () => {
   const [isPasswordReset, setIsPasswordReset] = useState(false);
@@ -26,8 +34,7 @@ export const useAuthFlow = () => {
       // Log the full URL for debugging
       console.log("Current URL:", window.location.href);
 
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const type = hashParams.get('type');
+      const { type, accessToken } = getRecoveryFromUrlHash();
       
       // Handle email confirmation - sign out user and show success message
       if (type === 'signup') {
@@ -40,17 +47,20 @@ export const useAuthFlow = () => {
         return;
       }
       
-      // Check for password recovery mode set by AuthContext's PASSWORD_RECOVERY event
-      const recoveryMode = sessionStorage.getItem('passwordRecoveryMode');
-      console.log("Password recovery mode from sessionStorage:", recoveryMode);
-      
-      if (recoveryMode === 'true') {
+      // If URL itself indicates recovery, set recovery mode (works even when event doesn't fire)
+      if (type === 'recovery' && accessToken) {
+        setRecoveryMode(accessToken);
+        // Clean up hash to avoid leaking tokens via copy/paste
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+
+      // Recovery mode can be set either by AuthContext event or by the hash fallback above
+      const recoveryMode = isRecoveryMode();
+      console.log("Password recovery mode:", recoveryMode);
+
+      if (recoveryMode) {
         console.log("Password recovery mode detected, showing reset form");
         setIsPasswordReset(true);
-        // Clean up the URL if there are hash params
-        if (window.location.hash) {
-          window.history.replaceState(null, '', window.location.pathname);
-        }
       } else {
         setIsPasswordReset(false);
       }
@@ -120,27 +130,42 @@ export const useAuthFlow = () => {
       console.log("Attempting to update password...");
       
       const { data: { session }, error: getSessionError } = await supabase.auth.getSession();
-      
-      if (getSessionError || !session) {
-        console.error("No valid session found:", getSessionError);
-        throw new Error("No authentication session found. Please click the reset link from your email again.");
-      }
-      
-      console.log("Valid session confirmed, proceeding with password update");
 
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
+      // Primary path: we have a normal Supabase session
+      if (!getSessionError && session) {
+        console.log("Valid session confirmed, proceeding with password update");
 
-      if (error) {
-        console.error("Password update error:", error);
-        throw error;
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword,
+        });
+
+        if (error) {
+          console.error("Password update error:", error);
+          throw error;
+        }
+      } else {
+        // Fallback path: recovery link provided access_token but no refresh_token -> no session
+        const token = getStoredRecoveryAccessToken();
+        if (!token) {
+          console.error("No valid session found:", getSessionError);
+          throw new Error(
+            "No authentication session found. Please click the reset link from your email again."
+          );
+        }
+
+        console.log(
+          "No session, using stored recovery access token to update password"
+        );
+        await updatePasswordWithAccessToken({
+          accessToken: token,
+          password: newPassword,
+        });
       }
 
       console.log("Password updated successfully");
       
       // Clear the recovery mode flag
-      sessionStorage.removeItem('passwordRecoveryMode');
+      clearRecoveryMode();
       
       toast({
         title: "Password updated successfully",
