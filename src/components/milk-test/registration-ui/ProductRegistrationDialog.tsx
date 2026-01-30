@@ -215,7 +215,10 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
   };
   return <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto backdrop-blur-sm border border-white/20 shadow-xl bg-white">
+        <DialogContent 
+          className="max-w-2xl max-h-[85vh] overflow-y-auto backdrop-blur-sm border border-white/20 shadow-xl bg-white"
+          onOpenAutoFocus={editProductId ? (e) => e.preventDefault() : undefined}
+        >
           <ProductRegistrationHeader isEditMode={!!editProductId} />
           <DialogDescription className="sr-only">
             {editProductId ? 'Edit milk product details, properties, and flavors' : 'Register a new milk product with brand, product details, properties, and flavors'}

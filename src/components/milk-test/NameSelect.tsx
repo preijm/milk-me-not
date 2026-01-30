@@ -10,9 +10,10 @@ interface NameSelectProps {
   productName: string;
   setProductName: (name: string) => void;
   onNameIdChange?: (nameId: string | null) => void;
+  autoFocus?: boolean;
 }
 
-export const NameSelect = ({ productName, setProductName, onNameIdChange }: NameSelectProps) => {
+export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFocus = false }: NameSelectProps) => {
   const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string }>>([]);
   const [showAddNew, setShowAddNew] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
@@ -111,6 +112,7 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange }: Name
         onFocus={() => setIsDropdownVisible(true)}
         onBlur={() => setTimeout(() => setIsDropdownVisible(false), 200)}
         className="w-full pr-10"
+        autoFocus={autoFocus}
       />
       {isDropdownVisible && (suggestions.length > 0 || showAddNew) && (
         <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
