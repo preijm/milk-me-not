@@ -13,7 +13,7 @@ export const BaristaToggle = ({ isBarista, onToggle, disabled = false }: Barista
     <div className="flex flex-wrap gap-2">
       <Badge
         variant="barista"
-        className={`cursor-pointer transition-all ${
+        className={`cursor-pointer transition-all h-7 flex items-center ${
           isBarista
             ? 'bg-primary text-primary-foreground border-primary'
             : ''
