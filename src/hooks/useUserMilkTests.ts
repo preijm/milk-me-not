@@ -1,8 +1,6 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MilkTestResult } from "@/types/milk-test";
-import { useNavigate } from "react-router-dom";
 
 export type SortConfig = {
   column: string;
@@ -10,14 +8,11 @@ export type SortConfig = {
 };
 
 export const useUserMilkTests = (sortConfig: SortConfig) => {
-  const navigate = useNavigate();
-
   return useQuery({
     queryKey: ['my-milk-tests', sortConfig],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        navigate('/auth');
         return [];
       }
       

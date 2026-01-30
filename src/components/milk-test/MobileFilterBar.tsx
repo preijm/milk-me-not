@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Search, SlidersHorizontal, User, X, ArrowUpDown, Check, Coffee, Droplet, Tag, Calendar, Star, Building2, Package, Hash } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
