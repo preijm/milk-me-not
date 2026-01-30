@@ -65,19 +65,24 @@ export const FeedEngagement = ({
             <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
           </Button>
           
-          {/* Separate clickable area for showing likes */}
+          {/* Like count - non-clickable on mobile/tablet, popover on desktop */}
+          <span className="font-semibold text-sm px-1 py-1.5 -ml-1 lg:hidden">
+            {likes.length}
+          </span>
+          
+          {/* Desktop: clickable popover for showing who liked */}
           <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
             <PopoverTrigger asChild>
               <button
                 onClick={handleShowLikes}
                 className={cn(
-                  "flex items-center space-x-1 px-1 py-1.5 rounded-r-full transition-all duration-200 -ml-1",
+                  "hidden lg:flex items-center space-x-1 px-1 py-1.5 rounded-r-full transition-all duration-200 -ml-1",
                   likes.length > 0 && "hover:bg-muted cursor-pointer"
                 )}
                 disabled={likes.length === 0}
               >
                 <span className="font-semibold text-sm">{likes.length}</span>
-                <span className="text-xs hidden lg:inline">Likes</span>
+                <span className="text-xs">Likes</span>
               </button>
             </PopoverTrigger>
             {likes.length > 0 && (
