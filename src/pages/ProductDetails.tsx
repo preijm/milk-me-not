@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
@@ -9,10 +8,9 @@ import { TestDetailsTable } from "@/components/milk-test/TestDetailsTable";
 import { ImageModal } from "@/components/milk-test/ImageModal";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ClipboardList } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,7 +31,6 @@ type ProductDetails = {
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
-  const canGoBack = window.history.length > 1;
   const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);

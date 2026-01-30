@@ -162,52 +162,6 @@ export const MobileFilterBar = ({
     });
   };
 
-  const clearAllFilters = () => {
-    onFiltersChange({
-      barista: false,
-      properties: [],
-      flavors: [],
-      myResultsOnly: false
-    });
-  };
-
-  const clearTypeFilters = () => {
-    onFiltersChange({
-      ...filters,
-      barista: false
-    });
-  };
-
-  const clearPropertyFilters = () => {
-    onFiltersChange({
-      ...filters,
-      properties: []
-    });
-  };
-
-  const clearFlavorFilters = () => {
-    onFiltersChange({
-      ...filters,
-      flavors: []
-    });
-  };
-
-  const handleRemoveFilter = (type: 'barista' | 'property' | 'flavor', value?: string) => {
-    if (type === 'barista') {
-      onFiltersChange({ ...filters, barista: false });
-    } else if (type === 'property' && value) {
-      onFiltersChange({
-        ...filters,
-        properties: filters.properties.filter(p => p !== value)
-      });
-    } else if (type === 'flavor' && value) {
-      onFiltersChange({
-        ...filters,
-        flavors: filters.flavors.filter(f => f !== value)
-      });
-    }
-  };
-
   const activeFilterCount = 
     (filters.barista ? 1 : 0) + 
     filters.properties.length + 
@@ -222,14 +176,6 @@ export const MobileFilterBar = ({
       return `${current.categoryLabel}: ${current.label}`;
     }
     return 'Sort';
-  };
-
-  const getPropertyName = (key: string) => {
-    return properties.find(p => p.key === key)?.name || key;
-  };
-
-  const getFlavorName = (key: string) => {
-    return flavors.find(f => f.key === key)?.name || key;
   };
 
   return (

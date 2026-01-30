@@ -1,22 +1,17 @@
 import React from "react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import { ArrowLeft, Bell } from "lucide-react";
+import { Bell } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { useNotifications } from "@/hooks/useNotifications";
 import { NotificationList } from "@/components/notifications/NotificationList";
 import { MobileNotificationList } from "@/components/notifications/MobileNotificationList";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 const Notifications = () => {
   const {
     notifications,
     unreadCount,
     markAllAsRead
   } = useNotifications();
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
 
   // Check if device is mobile or tablet (up to 1024px)
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;

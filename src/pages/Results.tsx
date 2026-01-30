@@ -6,11 +6,9 @@ import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import MobileFooter from "@/components/MobileFooter";
 import { ResultsContainer } from "@/components/milk-test/ResultsContainer";
-import { MilkCharts } from "@/components/MilkCharts";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartBar, Table2, MapPin, LogIn, UserPlus } from "lucide-react";
 import MapboxWorldMap from "@/components/MapboxWorldMap";
-import { MilkTestResult } from "@/types/milk-test";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
@@ -228,23 +226,6 @@ const Results = () => {
     });
   }, [aggregatedResults, searchTerm, filters, user, userTests, propertyKeyToName, flavorKeyToName]);
 
-  // Convert AggregatedResult[] to MilkTestResult[] for MilkCharts component
-  const chartsData: MilkTestResult[] = filteredResults.map(result => ({
-    id: result.product_id,
-    created_at: new Date().toISOString(),
-    // Use current date as fallback
-    rating: result.avg_rating,
-    brand_name: result.brand_name,
-    product_name: result.product_name,
-    property_names: result.property_names,
-    flavor_names: result.flavor_names,
-    is_barista: result.is_barista,
-    product_id: result.product_id,
-    brand_id: result.brand_id
-  }));
-  console.log("Charts data length:", chartsData.length);
-  console.log("Sample charts data:", chartsData.length > 0 ? chartsData[0] : 'No data');
-  console.log("Filtered results length:", filteredResults.length);
   if (isLoading) {
     return <div className="min-h-screen">
         <MenuBar />

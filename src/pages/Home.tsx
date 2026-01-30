@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Milk, Sparkles, ArrowRight, Smartphone } from "lucide-react";
+import { Milk, ArrowRight, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import MobileFooter from "@/components/MobileFooter";
-import { HomeStatsOverview } from "@/components/UserStatsOverview";
 import { supabase } from "@/integrations/supabase/client";
 import { isNativeApp } from "@/lib/platformDetection";
 

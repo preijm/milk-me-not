@@ -6,13 +6,12 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useUserMilkTests } from "@/hooks/useUserMilkTests";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
 const Profile = () => {
@@ -33,7 +32,6 @@ const Profile = () => {
   const {
     toast
   } = useToast();
-  const isMobile = useIsMobile();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const handleSignOut = async () => {
     await supabase.auth.signOut();
