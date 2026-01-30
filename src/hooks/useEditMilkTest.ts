@@ -111,12 +111,6 @@ export const useEditMilkTest = ({ test, onSuccess, onClose }: UseEditMilkTestPro
         return;
       }
       
-      const { data: shopData } = await supabase
-        .from('shops')
-        .select('id')
-        .eq('name', shop)
-        .maybeSingle();
-
       let picturePath = test.picture_path;
       if (picture) {
         const fileExt = picture.name.split('.').pop();

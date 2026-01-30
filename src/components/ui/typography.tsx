@@ -45,8 +45,9 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
   ({ className, level, fluid, as, children, ...props }, ref) => {
     const Component = as || level || "h2"
     // When fluid is set, don't apply the level-based text size classes
-    const levelClass = fluid && fluid !== "none" ? "" : headingVariants({ level: level || as, fluid: "none" })
-    const fluidClass = fluid && fluid !== "none" ? headingVariants({ fluid }) : ""
+    const isFluid = fluid && fluid !== "none";
+    const levelClass = isFluid ? "" : headingVariants({ level: level || as, fluid: "none" });
+    const fluidClass = isFluid ? headingVariants({ fluid }) : "";
     return React.createElement(
       Component,
       {

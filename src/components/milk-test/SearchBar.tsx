@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
-import { validateSearchInput, sanitizeInput } from "@/lib/security";
+import { sanitizeInput } from "@/lib/security";
 
 interface SearchBarProps {
   searchTerm: string;
