@@ -131,6 +131,20 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     try {
       setIsSubmitting(true);
       
+      // Get the product's brand_id and name_id before deletion
+      const { data: productData, error: productFetchError } = await supabase
+        .from('products')
+        .select('brand_id, name_id')
+        .eq('id', editProductId)
+        .single();
+      
+      if (productFetchError) {
+        console.error('Error fetching product data:', productFetchError);
+        throw productFetchError;
+      }
+      
+      const { brand_id: productBrandId, name_id: productNameId } = productData;
+      
       // First, delete any linked milk tests
       if (testCount > 0) {
         const { error: testsError } = await supabase
@@ -183,6 +197,50 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
           variant: "destructive"
         });
         return;
+      }
+      
+      // Clean up orphaned brand (if no other products use it)
+      if (productBrandId) {
+        const { data: otherProductsWithBrand } = await supabase
+          .from('products')
+          .select('id')
+          .eq('brand_id', productBrandId)
+          .limit(1);
+        
+        if (!otherProductsWithBrand || otherProductsWithBrand.length === 0) {
+          const { error: brandDeleteError } = await supabase
+            .from('brands')
+            .delete()
+            .eq('id', productBrandId);
+          
+          if (brandDeleteError) {
+            console.log('Could not delete orphaned brand:', brandDeleteError);
+          } else {
+            console.log('Deleted orphaned brand:', productBrandId);
+          }
+        }
+      }
+      
+      // Clean up orphaned product name (if no other products use it)
+      if (productNameId) {
+        const { data: otherProductsWithName } = await supabase
+          .from('products')
+          .select('id')
+          .eq('name_id', productNameId)
+          .limit(1);
+        
+        if (!otherProductsWithName || otherProductsWithName.length === 0) {
+          const { error: nameDeleteError } = await supabase
+            .from('names')
+            .delete()
+            .eq('id', productNameId);
+          
+          if (nameDeleteError) {
+            console.log('Could not delete orphaned name:', nameDeleteError);
+          } else {
+            console.log('Deleted orphaned name:', productNameId);
+          }
+        }
       }
       
       toast({
