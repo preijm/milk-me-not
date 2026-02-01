@@ -289,7 +289,7 @@ export const MobileFilterBar = ({
               {/* Type Section */}
               <div>
                 <h4 className="text-sm font-medium mb-3 flex items-center gap-1.5">
-                  <Coffee className="w-3.5 h-3.5 text-amber-600" />
+                  <Coffee className="w-3.5 h-3.5 text-badge-barista" />
                   Type
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -298,7 +298,7 @@ export const MobileFilterBar = ({
                     className={cn(
                       "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
                       filters.barista &&
-                        "bg-amber-600 text-white border-amber-600"
+                        "bg-badge-barista text-badge-barista-foreground border-badge-barista"
                     )}
                     onClick={handleBaristaToggle}
                   >
@@ -311,7 +311,7 @@ export const MobileFilterBar = ({
               {properties.length > 0 && (
                 <div>
                   <h4 className="text-sm font-medium mb-3 flex items-center gap-1.5">
-                    <Tag className="w-3.5 h-3.5 text-slate-600" />
+                    <Tag className="w-3.5 h-3.5 text-badge-property" />
                     Properties
                   </h4>
                   <div className="flex flex-wrap gap-2">
@@ -322,7 +322,7 @@ export const MobileFilterBar = ({
                         className={cn(
                           "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
                           filters.properties.includes(property.key) &&
-                            "bg-slate-600 text-white border-slate-600"
+                            "bg-badge-property text-badge-property-foreground border-badge-property"
                         )}
                         onClick={() => handlePropertyToggle(property.key)}
                       >
@@ -337,7 +337,7 @@ export const MobileFilterBar = ({
               {flavors.length > 0 && (
                 <div>
                   <h4 className="text-sm font-medium mb-3 flex items-center gap-1.5">
-                    <Droplet className="w-3.5 h-3.5 text-purple-600" />
+                    <Droplet className="w-3.5 h-3.5 text-badge-flavor" />
                     Flavors
                   </h4>
                   <div className="flex flex-wrap gap-2">
@@ -348,7 +348,7 @@ export const MobileFilterBar = ({
                         className={cn(
                           "cursor-pointer transition-all px-3 py-1.5 text-sm font-medium",
                           filters.flavors.includes(flavor.key) &&
-                            "bg-purple-600 text-white border-purple-600"
+                            "bg-badge-flavor text-badge-flavor-foreground border-badge-flavor"
                         )}
                         onClick={() => handleFlavorToggle(flavor.key)}
                       >

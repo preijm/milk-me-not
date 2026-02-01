@@ -103,6 +103,14 @@
     --notification-comment: 225 100% 63%; /* #2144ff */
     --notification-newsletter: 151 100% 38%; /* #00bf63 */
     
+    /* Badge category colors */
+    --badge-barista: 33 90% 50%; /* amber-600 */
+    --badge-barista-foreground: 0 0% 100%;
+    --badge-property: 215 16% 47%; /* slate-600 */
+    --badge-property-foreground: 0 0% 100%;
+    --badge-flavor: 271 70% 48%; /* purple-600 */
+    --badge-flavor-foreground: 0 0% 100%;
+    
     /* Filter active color */
     --filter-active: 225 100% 63%; /* #2144ff */
     

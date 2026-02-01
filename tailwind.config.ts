@@ -120,6 +120,14 @@ export default {
 				like: 'hsl(var(--notification-like))',
 				comment: 'hsl(var(--notification-comment))',
 				newsletter: 'hsl(var(--notification-newsletter))'
+			},
+			badge: {
+				barista: 'hsl(var(--badge-barista))',
+				'barista-foreground': 'hsl(var(--badge-barista-foreground))',
+				property: 'hsl(var(--badge-property))',
+				'property-foreground': 'hsl(var(--badge-property-foreground))',
+				flavor: 'hsl(var(--badge-flavor))',
+				'flavor-foreground': 'hsl(var(--badge-flavor-foreground))'
 			}
 		},
 		// Typography scale
