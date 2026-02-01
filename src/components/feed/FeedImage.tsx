@@ -19,7 +19,6 @@ export const FeedImage = ({ picturePath, brandName, productName, blurred }: Feed
         <div className="text-center">
           <div className="text-4xl mb-2">🥛</div>
           <p className="text-sm font-medium text-muted-foreground">No photo available</p>
-          <p className="text-xs text-muted-foreground">Share a photo of this product!</p>
         </div>
       </div>
     );
