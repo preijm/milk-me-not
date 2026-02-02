@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
-import { Phone, Mail, MessageSquare, Bird, HelpCircle, ChevronRight } from "lucide-react";
+import { Phone, Mail, MessageSquare, Bird } from "lucide-react";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { ContactCard } from "@/components/contact/ContactCard";
 import { FlyingBird } from "@/components/contact/FlyingBird";
@@ -113,23 +112,7 @@ const Contact = () => {
               </ContactCard>
             </div>
 
-            {isMobile ? (
-              <Link
-                to="/faq"
-                className="flex items-center justify-between bg-card rounded-2xl shadow-sm p-4 hover:shadow-md transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                    <HelpCircle className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-foreground">FAQ</h2>
-                    <p className="text-sm text-muted-foreground">Frequently Asked Questions</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground" />
-              </Link>
-            ) : (
+            {!isMobile && (
               <FAQSection title="Frequently Asked Questions" items={faqItems} />
             )}
           </div>
