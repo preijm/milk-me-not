@@ -56,6 +56,14 @@ export const accountMenuSections = [
       },
       {
         icon: HelpCircle,
+        iconBgColor: "#e0e7ff",
+        iconColor: "#4f46e5",
+        title: "FAQ",
+        description: "Frequently asked questions",
+        path: "/faq",
+      },
+      {
+        icon: HelpCircle,
         iconBgColor: "#dcfce7",
         iconColor: "#16a34a",
         title: "About",
