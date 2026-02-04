@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -49,6 +50,23 @@ const Feed = () => {
   });
 
   const isMobileOrTablet = useIsMobileOrTablet();
+
+  // Preload feed images so full-page screenshots (Edge) capture already-loaded assets.
+  useEffect(() => {
+    const picturePaths = feedItems
+      .map((i) => i.picture_path)
+      .filter((p): p is string => !!p);
+
+    // Dedupe to avoid unnecessary requests
+    const uniquePaths = Array.from(new Set(picturePaths));
+
+    uniquePaths.forEach((picturePath) => {
+      const url = `https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/milk-pictures/${encodeURIComponent(picturePath)}`;
+      const img = new Image();
+      img.decoding = "sync";
+      img.src = url;
+    });
+  }, [feedItems]);
 
   // Mobile/Tablet layout with white background
   if (isMobileOrTablet) {
