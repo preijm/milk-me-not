@@ -199,10 +199,10 @@ export const MobileFilterBar = ({
           <DrawerTrigger asChild>
             <Button
               variant="outline"
-              className="h-9 flex-1 flex items-center justify-center gap-1.5 rounded-lg transition-colors min-w-0"
+              className="h-9 flex-1 flex items-center justify-center gap-1.5 rounded-lg transition-colors"
             >
               <ArrowUpDown className="h-3.5 w-3.5 flex-shrink-0" />
-              <span className="text-xs font-medium truncate">{getCurrentSortLabel()}</span>
+              <span className="text-xs font-medium whitespace-nowrap">{getCurrentSortLabel()}</span>
             </Button>
           </DrawerTrigger>
           <DrawerContent className="max-h-[85vh]">
