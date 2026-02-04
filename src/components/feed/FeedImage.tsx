@@ -32,6 +32,7 @@ export const FeedImage = ({ picturePath, brandName, productName, blurred }: Feed
         <img 
           src={imageUrl}
           alt={`${brandName} ${productName}`}
+          loading="eager"
           className={cn(
             "w-full h-64 sm:h-80 object-cover transition-transform duration-300 hover:scale-105",
             blurred && "blur-md"
@@ -59,6 +60,7 @@ export const FeedImage = ({ picturePath, brandName, productName, blurred }: Feed
             <img 
               src={imageUrl}
               alt={`${brandName} ${productName}`}
+              loading="eager"
               className="w-full h-auto max-h-[90vh] object-contain"
             />
           </div>
