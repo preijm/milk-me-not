@@ -1,10 +1,13 @@
 import React from "react";
-import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { LogOut, TrendingUp, Calendar, ListPlus, PlusCircle, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfileStats } from "./ProfileStats";
 import { ProfileActions } from "./ProfileActions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "lucide-react";
 
 interface ProfileContentProps {
   username: string;
@@ -18,6 +21,60 @@ interface ProfileContentProps {
   variant: "mobile" | "desktop";
 }
 
+interface MobileMenuItem {
+  icon: React.ElementType;
+  iconBgColor: string;
+  iconColor: string;
+  title: string;
+  value?: string;
+  action?: () => void;
+  path?: string;
+}
+
+const MobileProfileMenuItem = ({ 
+  item, 
+  showChevron = false 
+}: { 
+  item: MobileMenuItem;
+  showChevron?: boolean;
+}) => {
+  const navigate = useNavigate();
+  
+  const handleClick = () => {
+    if (item.action) {
+      item.action();
+    } else if (item.path) {
+      navigate(item.path);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
+    >
+      <div
+        className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+        style={{ backgroundColor: item.iconBgColor }}
+      >
+        <item.icon
+          className="w-6 h-6"
+          style={{ color: item.iconColor }}
+        />
+      </div>
+      <div className="flex-1 text-left">
+        <h4 className="font-semibold text-foreground">{item.title}</h4>
+        {item.value && (
+          <p className="text-sm text-muted-foreground">{item.value}</p>
+        )}
+      </div>
+      {showChevron && (
+        <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+      )}
+    </button>
+  );
+};
+
 export const ProfileContent = ({
   username,
   email,
@@ -29,46 +86,112 @@ export const ProfileContent = ({
   onSignOut,
   variant,
 }: ProfileContentProps) => {
+  const navigate = useNavigate();
+
   if (variant === "mobile") {
+    const statsItems: MobileMenuItem[] = [
+      {
+        icon: TrendingUp,
+        iconBgColor: "#dbeafe",
+        iconColor: "#2563eb",
+        title: "Total Tests",
+        value: totalTests.toString(),
+      },
+      {
+        icon: TrendingUp,
+        iconBgColor: "#dcfce7",
+        iconColor: "#16a34a",
+        title: "Average Rating",
+        value: avgRating,
+      },
+      {
+        icon: Calendar,
+        iconBgColor: "#f3e8ff",
+        iconColor: "#9333ea",
+        title: "Member Since",
+        value: memberSince,
+      },
+    ];
+
+    const actionItems: MobileMenuItem[] = [
+      {
+        icon: ListPlus,
+        iconBgColor: "#ffedd5",
+        iconColor: "#ea580c",
+        title: "My Results",
+        value: "View all your milk tests",
+        path: "/results",
+        action: () => navigate("/results", { state: { myResultsOnly: true } }),
+      },
+      {
+        icon: PlusCircle,
+        iconBgColor: "#e0e7ff",
+        iconColor: "#4f46e5",
+        title: "Add Test",
+        value: "Log a new milk test",
+        path: "/add",
+        action: () => navigate("/add"),
+      },
+    ];
+
     return (
       <div className="space-y-6">
-        {/* Profile Header */}
+        {/* Profile Header Card */}
         <Card className="overflow-hidden">
           <CardContent className="p-6">
-            <ProfileHeader
-              username={username}
-              email={email}
-              avatarUrl={avatarUrl}
-              onEditClick={onEditClick}
-              variant="mobile"
-            />
+            <div className="flex flex-col items-center text-center space-y-4">
+              <button onClick={onEditClick} className="relative group">
+                <Avatar className="h-24 w-24 ring-4 ring-background shadow-lg">
+                  <AvatarImage src={avatarUrl || undefined} />
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80">
+                    <User className="w-12 h-12 text-primary-foreground" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-white text-xs font-medium">Edit</span>
+                </div>
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">{username}</h1>
+                <p className="text-sm text-muted-foreground mt-1">{email}</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        {/* User Stats */}
-        <Card>
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold mb-4 text-foreground">
-              Your Activity
-            </h2>
-            <ProfileStats
-              totalTests={totalTests}
-              avgRating={avgRating}
-              memberSince={memberSince}
-              variant="mobile"
-            />
-          </CardContent>
-        </Card>
+        {/* Activity Stats Section */}
+        <div>
+          <h3 className="text-sm font-bold text-foreground uppercase mb-4 px-1 tracking-wide">
+            Your Activity
+          </h3>
+          <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border shadow-sm">
+            {statsItems.map((item) => (
+              <MobileProfileMenuItem key={item.title} item={item} />
+            ))}
+          </div>
+        </div>
 
-        {/* Quick Actions */}
-        <Card>
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold mb-4 text-foreground">
-              Quick Actions
-            </h2>
-            <ProfileActions variant="mobile" />
-          </CardContent>
-        </Card>
+        {/* Quick Actions Section */}
+        <div>
+          <h3 className="text-sm font-bold text-foreground uppercase mb-4 px-1 tracking-wide">
+            Quick Actions
+          </h3>
+          <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border shadow-sm">
+            {actionItems.map((item) => (
+              <MobileProfileMenuItem key={item.title} item={item} showChevron />
+            ))}
+          </div>
+        </div>
+
+        {/* Sign Out Button */}
+        <Button
+          variant="destructive"
+          onClick={onSignOut}
+          className="w-full h-12 text-base font-medium"
+        >
+          <LogOut className="w-5 h-5 mr-2" />
+          Sign Out
+        </Button>
       </div>
     );
   }
