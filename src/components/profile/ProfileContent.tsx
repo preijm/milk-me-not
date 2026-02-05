@@ -138,22 +138,22 @@ export const ProfileContent = ({
       <div className="space-y-6">
         {/* Profile Header Card */}
         <Card className="overflow-hidden">
-          <CardContent className="p-6">
-            <div className="flex flex-col items-center text-center space-y-4">
-              <button onClick={onEditClick} className="relative group">
-                <Avatar className="h-24 w-24 ring-4 ring-background shadow-lg">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <button onClick={onEditClick} className="relative group flex-shrink-0">
+                <Avatar className="h-16 w-16 ring-2 ring-background shadow-md">
                   <AvatarImage src={avatarUrl || undefined} />
                   <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80">
-                    <User className="w-12 h-12 text-primary-foreground" />
+                    <User className="w-8 h-8 text-primary-foreground" />
                   </AvatarFallback>
                 </Avatar>
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-white text-xs font-medium">Edit</span>
+                  <span className="text-white text-[10px] font-medium">Edit</span>
                 </div>
               </button>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">{username}</h1>
-                <p className="text-sm text-muted-foreground mt-1">{email}</p>
+              <div className="text-left min-w-0">
+                <h1 className="text-xl font-bold text-foreground truncate">{username}</h1>
+                <p className="text-sm text-muted-foreground truncate">{email}</p>
               </div>
             </div>
           </CardContent>
