@@ -182,16 +182,6 @@ export const ProfileContent = ({
             ))}
           </div>
         </div>
-
-        {/* Sign Out Button */}
-        <Button
-          variant="destructive"
-          onClick={onSignOut}
-          className="w-full h-12 text-base font-medium"
-        >
-          <LogOut className="w-5 h-5 mr-2" />
-          Sign Out
-        </Button>
       </div>
     );
   }
