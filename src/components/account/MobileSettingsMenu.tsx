@@ -62,7 +62,9 @@ export const MobileSettingsMenu = ({ sections }: MobileSettingsMenuProps) => {
                     {item.description}
                   </p>
                 </div>
-                <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                {item.path && (
+                  <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                )}
               </button>
             ))}
           </div>
