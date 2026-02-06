@@ -2,16 +2,17 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { LucideIcon, ChevronRight } from "lucide-react";
 
-interface MenuItem {
+export interface MenuItem {
   icon: LucideIcon;
   iconBgColor: string;
   iconColor: string;
   title: string;
   description: string;
-  path: string;
+  path?: string;
+  onClick?: () => void;
 }
 
-interface MenuSection {
+export interface MenuSection {
   title: string;
   items: MenuItem[];
 }
@@ -22,6 +23,14 @@ interface MobileSettingsMenuProps {
 
 export const MobileSettingsMenu = ({ sections }: MobileSettingsMenuProps) => {
   const navigate = useNavigate();
+
+  const handleItemClick = (item: MenuItem) => {
+    if (item.onClick) {
+      item.onClick();
+    } else if (item.path) {
+      navigate(item.path);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -34,8 +43,8 @@ export const MobileSettingsMenu = ({ sections }: MobileSettingsMenuProps) => {
           <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border shadow-sm">
             {section.items.map((item) => (
               <button
-                key={item.path}
-                onClick={() => navigate(item.path)}
+                key={item.title}
+                onClick={() => handleItemClick(item)}
                 className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
               >
                 <div

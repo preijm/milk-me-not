@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut } from "lucide-react";
+import { LogOut, User, Shield, Bell, Globe, HelpCircle } from "lucide-react";
 import MenuBar from "@/components/MenuBar";
 import MobileFooter from "@/components/MobileFooter";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileSettingsMenu } from "@/components/account/MobileSettingsMenu";
+import { MobileSettingsMenu, MenuSection } from "@/components/account/MobileSettingsMenu";
 import { DesktopAccountTabs } from "@/components/account/DesktopAccountTabs";
-import { accountMenuSections } from "@/components/account/accountMenuConfig";
+import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 const Account = () => {
   const [username, setUsername] = useState("");
@@ -21,9 +22,11 @@ const Account = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { profile, refetchProfile } = useUserProfile();
 
   useEffect(() => {
     const getProfile = async () => {
@@ -48,6 +51,81 @@ const Account = () => {
     };
     getProfile();
   }, [navigate]);
+
+  // Build menu sections with Profile onClick handler
+  const accountMenuSections: MenuSection[] = useMemo(() => [
+    {
+      title: "Account",
+      items: [
+        {
+          icon: User,
+          iconBgColor: "#dbeafe",
+          iconColor: "#2563eb",
+          title: "Profile",
+          description: "Edit your personal information",
+          onClick: () => setEditDialogOpen(true),
+        },
+        {
+          icon: Shield,
+          iconBgColor: "#f3e8ff",
+          iconColor: "#9333ea",
+          title: "Security",
+          description: "Password and authentication",
+          path: "/account/security",
+        },
+      ],
+    },
+    {
+      title: "Preferences",
+      items: [
+        {
+          icon: Bell,
+          iconBgColor: "#ffedd5",
+          iconColor: "#ea580c",
+          title: "Notifications",
+          description: "Manage your alerts",
+          path: "/account/notifications",
+        },
+        {
+          icon: Globe,
+          iconBgColor: "#dcfce7",
+          iconColor: "#16a34a",
+          title: "Country",
+          description: "Set your default location",
+          path: "/account/country",
+        },
+      ],
+    },
+    {
+      title: "Support",
+      items: [
+        {
+          icon: HelpCircle,
+          iconBgColor: "#fef9c3",
+          iconColor: "#ca8a04",
+          title: "Contact",
+          description: "Reach out to our team",
+          path: "/contact",
+        },
+        {
+          icon: HelpCircle,
+          iconBgColor: "#e0e7ff",
+          iconColor: "#4f46e5",
+          title: "FAQ",
+          description: "Frequently asked questions",
+          path: "/faq",
+        },
+        {
+          icon: HelpCircle,
+          iconBgColor: "#dcfce7",
+          iconColor: "#16a34a",
+          title: "About",
+          description: "Learn about our story",
+          path: "/about",
+        },
+      ],
+    },
+  ], []);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,6 +225,18 @@ const Account = () => {
             Log Out
           </Button>
         </div>
+
+        {/* Profile Edit Dialog */}
+        {profile && userId && (
+          <ProfileEditDialog
+            open={editDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            currentUsername={profile.username}
+            currentAvatarUrl={profile.avatar_url}
+            userId={userId}
+            onSuccess={refetchProfile}
+          />
+        )}
 
         <MobileFooter />
       </div>
