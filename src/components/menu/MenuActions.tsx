@@ -121,7 +121,7 @@ export const MenuActions = ({
   if (isProfilePage) {
     return (
       <Button variant="ghost" size="icon" onClick={() => navigate('/account')} className="h-12 w-12">
-        <Settings className="h-6 w-6" />
+        <Settings className="h-7 w-7" />
       </Button>
     );
   }
