@@ -1,43 +1,74 @@
 
+# Fix Mobile Feed Centering
 
-## Fix: Feed Page Images Not Visible in Screenshots
+## Problem
+The feed cards on mobile appear left-aligned instead of centered. This is caused by the Masonry grid's column styling (`pl-4` padding-left) which creates an offset when there's only a single column on mobile.
 
-### Problem
-When taking a browser screenshot of the feed page, not all images are visible. This happens because images that are outside the viewport haven't been loaded yet when the screenshot is captured.
+## Solution
+For the mobile variant, we need to adjust the styling approach to properly center the single-column layout:
 
-### Root Cause
-The feed uses a masonry grid layout that can display many items at once. The browser's default behavior may defer loading images that aren't immediately visible, especially for full-page screenshots that capture content beyond the current viewport.
+1. **Update FeedGrid.tsx** - Add specific mobile styling that removes the left padding offset on the column when in single-column mode, and centers the content properly.
 
-### Solution
-Add the `loading="eager"` attribute to feed images to ensure they load immediately rather than being deferred. This tells the browser to prioritize loading these images regardless of their position relative to the viewport.
+2. **Update FeedContent.tsx** - Pass a flag or different className to indicate mobile mode so we can apply appropriate centering styles.
 
-### Changes
+## Technical Details
 
-**File: `src/components/feed/FeedImage.tsx`**
+### File: `src/components/feed/FeedGrid.tsx`
+- Modify the `columnClassName` to conditionally remove `pl-4` on mobile (or apply it symmetrically)
+- Use `className` more effectively to center the single column
+- Option A: Use CSS to override the masonry default margins for mobile
+- Option B: Pass a `variant` prop and conditionally change the columnClassName
 
-Add the `loading="eager"` attribute to both image elements (the thumbnail and the enlarged dialog image):
+### File: `src/components/feed/FeedContent.tsx`  
+- Pass a `variant` prop to `FeedGrid` to signal mobile layout
+- Adjust the wrapper div styling to properly center the grid
 
+### Recommended Changes
+
+**FeedGrid.tsx:**
 ```tsx
-<img 
-  src={imageUrl}
-  alt={`${brandName} ${productName}`}
-  loading="eager"  // Add this line
-  className={cn(
-    "w-full h-64 sm:h-80 object-cover transition-transform duration-300 hover:scale-105",
-    blurred && "blur-md"
-  )}
-  // ... existing handlers
+interface FeedGridProps {
+  items: MilkTestResult[];
+  isAuthenticated: boolean;
+  className?: string;
+  variant?: "mobile" | "desktop";
+}
+
+export const FeedGrid = ({ items, isAuthenticated, className, variant = "desktop" }: FeedGridProps) => {
+  // For mobile single-column, remove the left margin offset
+  const masonryClassName = variant === "mobile" 
+    ? "flex w-full justify-center" 
+    : (className || "flex -ml-4 w-auto");
+  
+  // For mobile, remove left padding that causes offset
+  const columnClass = variant === "mobile"
+    ? "space-y-4 w-full max-w-md mx-auto"
+    : "pl-4 space-y-4";
+
+  return (
+    <Masonry
+      breakpointCols={breakpointColumns}
+      className={masonryClassName}
+      columnClassName={columnClass}
+    >
+      {/* ... items */}
+    </Masonry>
+  );
+};
+```
+
+**FeedContent.tsx:**
+```tsx
+// Pass variant to FeedGrid
+<FeedGrid
+  items={items}
+  isAuthenticated={isAuthenticated}
+  variant={variant}
 />
 ```
 
-### Technical Details
-- The `loading="eager"` attribute is the browser's default for images, but explicitly setting it ensures consistent behavior
-- This change affects both the main feed image and the enlarged dialog image
-- Adding `decoding="sync"` could also help ensure images are decoded before the screenshot is taken
-- For the feed specifically, this is appropriate since users expect to see all content; for very long lists, lazy loading would normally be preferred
-
-### Trade-offs
-- **Pro**: Images will always be visible in screenshots
-- **Pro**: Images load immediately when scrolling, no "pop-in" effect
-- **Con**: Initial page load may be slightly slower if there are many images (minimal impact since feed is limited to 50 items for authenticated users, 6 for guests)
-
+This approach:
+- Removes the negative margin/padding combo that causes left alignment
+- Centers the column using `mx-auto` and flex centering
+- Constrains card width with `max-w-md` for a nice mobile appearance
+- Keeps desktop multi-column layout unchanged
