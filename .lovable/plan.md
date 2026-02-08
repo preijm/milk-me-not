@@ -1,74 +1,88 @@
 
-# Fix Mobile Feed Centering
+# Plan: Harmonize Profile Page Colors with Settings Page Design
 
-## Problem
-The feed cards on mobile appear left-aligned instead of centered. This is caused by the Masonry grid's column styling (`pl-4` padding-left) which creates an offset when there's only a single column on mobile.
+## Problem Identified
+The Profile page uses a different color scheme than the Settings page, creating visual inconsistency. Looking at both screens:
+- **Settings page** follows a structured color pattern by item category
+- **Profile page** uses arbitrary color assignments that don't follow the same semantic logic
 
-## Solution
-For the mobile variant, we need to adjust the styling approach to properly center the single-column layout:
+## Solution Approach
+Align the Profile page's icon colors with a consistent semantic color scheme that matches the established Settings page patterns, organized by item purpose.
 
-1. **Update FeedGrid.tsx** - Add specific mobile styling that removes the left padding offset on the column when in single-column mode, and centers the content properly.
+## Color Mapping Strategy
 
-2. **Update FeedContent.tsx** - Pass a flag or different className to indicate mobile mode so we can apply appropriate centering styles.
+### Your Activity Section
+| Item | Current Colors | Proposed Colors | Rationale |
+|------|---------------|-----------------|-----------|
+| Total Tests | Blue bg + Blue icon | Blue bg + Blue icon | Keep - represents data/stats |
+| Average Rating | Green bg + Green icon | Blue bg + Blue icon | Match Total Tests - both are stats |
+| Member Since | Purple bg + Purple icon | Green bg + Green icon | Match Country (location/profile info) |
 
-## Technical Details
+### Quick Actions Section
+| Item | Current Colors | Proposed Colors | Rationale |
+|------|---------------|-----------------|-----------|
+| My Results | Orange bg + Orange icon | Indigo bg + Indigo icon | Match FAQ (viewing content) |
+| Add Test | Indigo bg + Indigo icon | Orange bg + Orange icon | Match Notifications (action-oriented) |
 
-### File: `src/components/feed/FeedGrid.tsx`
-- Modify the `columnClassName` to conditionally remove `pl-4` on mobile (or apply it symmetrically)
-- Use `className` more effectively to center the single column
-- Option A: Use CSS to override the masonry default margins for mobile
-- Option B: Pass a `variant` prop and conditionally change the columnClassName
+## Technical Changes
 
-### File: `src/components/feed/FeedContent.tsx`  
-- Pass a `variant` prop to `FeedGrid` to signal mobile layout
-- Adjust the wrapper div styling to properly center the grid
+**File: `src/components/profile/ProfileContent.tsx`**
 
-### Recommended Changes
+Update the color definitions for mobile stats and action items (lines 92-135):
 
-**FeedGrid.tsx:**
 ```tsx
-interface FeedGridProps {
-  items: MilkTestResult[];
-  isAuthenticated: boolean;
-  className?: string;
-  variant?: "mobile" | "desktop";
-}
+const statsItems: MobileMenuItem[] = [
+  {
+    icon: TrendingUp,
+    iconBgColor: "#dbeafe",  // blue-100 (unchanged)
+    iconColor: "#2563eb",    // blue-600 (unchanged)
+    title: "Total Tests",
+    value: totalTests.toString(),
+  },
+  {
+    icon: TrendingUp,
+    iconBgColor: "#dbeafe",  // Changed from green to blue
+    iconColor: "#2563eb",    // Match Total Tests - both are stats
+    title: "Average Rating",
+    value: avgRating,
+  },
+  {
+    icon: Calendar,
+    iconBgColor: "#dcfce7",  // Changed from purple to green
+    iconColor: "#16a34a",    // Match Country setting
+    title: "Member Since",
+    value: memberSince,
+  },
+];
 
-export const FeedGrid = ({ items, isAuthenticated, className, variant = "desktop" }: FeedGridProps) => {
-  // For mobile single-column, remove the left margin offset
-  const masonryClassName = variant === "mobile" 
-    ? "flex w-full justify-center" 
-    : (className || "flex -ml-4 w-auto");
-  
-  // For mobile, remove left padding that causes offset
-  const columnClass = variant === "mobile"
-    ? "space-y-4 w-full max-w-md mx-auto"
-    : "pl-4 space-y-4";
-
-  return (
-    <Masonry
-      breakpointCols={breakpointColumns}
-      className={masonryClassName}
-      columnClassName={columnClass}
-    >
-      {/* ... items */}
-    </Masonry>
-  );
-};
+const actionItems: MobileMenuItem[] = [
+  {
+    icon: ListPlus,
+    iconBgColor: "#e0e7ff",  // Changed from orange to indigo
+    iconColor: "#4f46e5",    // Match FAQ (viewing/reading content)
+    title: "My Results",
+    // ...
+  },
+  {
+    icon: PlusCircle,
+    iconBgColor: "#ffedd5",  // Changed from indigo to orange
+    iconColor: "#ea580c",    // Match Notifications (action/alert oriented)
+    title: "Add Test",
+    // ...
+  },
+];
 ```
 
-**FeedContent.tsx:**
-```tsx
-// Pass variant to FeedGrid
-<FeedGrid
-  items={items}
-  isAuthenticated={isAuthenticated}
-  variant={variant}
-/>
-```
+## Visual Consistency Achieved
+After these changes:
+- **Blue icons** = Data/statistics (Total Tests, Average Rating)
+- **Green icons** = Profile/location info (Member Since, Country)
+- **Orange icons** = Primary actions (Add Test, Notifications)
+- **Indigo icons** = View/browse content (My Results, FAQ)
+- **Purple icons** = Security-related (Security setting only)
+- **Yellow icons** = Support/help (Contact)
 
-This approach:
-- Removes the negative margin/padding combo that causes left alignment
-- Centers the column using `mx-auto` and flex centering
-- Constrains card width with `max-w-md` for a nice mobile appearance
-- Keeps desktop multi-column layout unchanged
+## Impact
+- Single file change: `src/components/profile/ProfileContent.tsx`
+- No new dependencies
+- Maintains the established design patterns from the Settings page
