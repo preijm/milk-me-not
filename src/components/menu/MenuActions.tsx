@@ -121,7 +121,8 @@ export const MenuActions = ({
   if (isProfilePage) {
     return (
       <Button variant="ghost" size="icon" onClick={() => navigate('/account')} className="h-12 w-12">
-        <Settings className="h-8 w-8" />
+        {/* Button variants apply `[&_svg]:size-4` — force override so the icon is actually larger */}
+        <Settings className="!h-10 !w-10" />
       </Button>
     );
   }
