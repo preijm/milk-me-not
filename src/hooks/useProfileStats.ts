@@ -9,6 +9,7 @@ interface Profile {
 interface ProfileStats {
   totalTests: number;
   avgRating: string;
+  bestScore: number;
   memberSince: string;
 }
 
@@ -26,11 +27,15 @@ export function useProfileStats(
             totalTests
           ).toFixed(1)
         : "0.0";
+
+    const bestScore = totalTests > 0
+      ? Math.max(...milkTests.map(t => Number(t.rating)))
+      : 0;
     
     const memberSince = profile?.created_at
       ? format(new Date(profile.created_at), "MMM yyyy")
       : "Recently";
 
-    return { totalTests, avgRating, memberSince };
+    return { totalTests, avgRating, bestScore, memberSince };
   }, [milkTests, profile?.created_at]);
 }

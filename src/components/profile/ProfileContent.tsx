@@ -15,6 +15,7 @@ interface ProfileContentProps {
   avatarUrl?: string | null;
   totalTests: number;
   avgRating: string;
+  bestScore: number;
   memberSince: string;
   onEditClick: () => void;
   onSignOut: () => void;
@@ -81,6 +82,7 @@ export const ProfileContent = ({
   avatarUrl,
   totalTests,
   avgRating,
+  bestScore,
   memberSince,
   onEditClick,
   onSignOut,
@@ -89,29 +91,7 @@ export const ProfileContent = ({
   const navigate = useNavigate();
 
   if (variant === "mobile") {
-    const statsItems: MobileMenuItem[] = [
-      {
-        icon: TrendingUp,
-        iconBgColor: "#dbeafe",
-        iconColor: "#2563eb",
-        title: "Total Tests",
-        value: totalTests.toString(),
-      },
-      {
-        icon: Star,
-        iconBgColor: "#fef3c7",
-        iconColor: "#d97706",
-        title: "Average Rating",
-        value: avgRating,
-      },
-      {
-        icon: Calendar,
-        iconBgColor: "#dcfce7",
-        iconColor: "#16a34a",
-        title: "Member Since",
-        value: memberSince,
-      },
-    ];
+    
 
     const actionItems: MobileMenuItem[] = [
       {
@@ -159,15 +139,40 @@ export const ProfileContent = ({
           </CardContent>
         </Card>
 
-        {/* Activity Stats Section */}
+        {/* Activity Stats Section - Compact Grid */}
         <div>
           <h3 className="text-sm font-bold text-foreground uppercase mb-4 px-1 tracking-wide">
             Your Activity
           </h3>
-          <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border shadow-sm">
-            {statsItems.map((item) => (
-              <MobileProfileMenuItem key={item.title} item={item} />
-            ))}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                <span className="text-xs text-muted-foreground">Tests</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{totalTests}</p>
+            </div>
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-2 mb-1">
+                <Star className="w-4 h-4 text-amber-500" />
+                <span className="text-xs text-muted-foreground">Avg Rating</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{avgRating}</p>
+            </div>
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="w-4 h-4 text-emerald-500" />
+                <span className="text-xs text-muted-foreground">Best Score</span>
+              </div>
+              <p className="text-2xl font-bold text-foreground">{bestScore > 0 ? bestScore : "—"}</p>
+            </div>
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-2 mb-1">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">Joined</span>
+              </div>
+              <p className="text-sm font-bold text-foreground mt-1">{memberSince}</p>
+            </div>
           </div>
         </div>
 
