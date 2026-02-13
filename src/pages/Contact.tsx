@@ -58,7 +58,7 @@ const Contact = () => {
     <div className="min-h-screen">
       <MenuBar />
       <BackgroundPattern>
-        <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
+        <div className="lg:flex lg:items-center lg:justify-center min-h-screen pt-16 pb-20 sm:pb-8">
           <div className="container max-w-4xl mx-auto px-4 py-8 sm:py-12 relative z-10">
             <Heading as="h1" fluid="page" className="hidden lg:block text-center mb-12 text-foreground">
               Get in Touch
