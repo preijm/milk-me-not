@@ -41,6 +41,7 @@ export const MenuActions = ({
   const isContactPage = pathname === '/contact';
   const isAboutPage = pathname === '/about';
   const isMobileAppPage = pathname === '/mobile-app';
+  const isFaqPage = pathname === '/faq';
 
   // Desktop: Only show AuthButton
   if (!isMobileOrTablet) {
@@ -76,7 +77,7 @@ export const MenuActions = ({
   }
 
   // Pages with simple back navigation
-  if (isContactPage || isAboutPage || isMobileAppPage || isAccountPage) {
+  if (isContactPage || isAboutPage || isMobileAppPage || isAccountPage || isFaqPage) {
     return (
       <Button variant="outline" size="sm" onClick={() => navigate(-1)} className="gap-1">
         <ArrowLeft className="h-4 w-4" />
