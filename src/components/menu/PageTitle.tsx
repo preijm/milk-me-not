@@ -1,4 +1,4 @@
-import { LucideIcon, Bell, Radio, BarChart3, Plus, Settings, User, Lock, Globe, Smartphone } from "lucide-react";
+import { LucideIcon, Bell, Radio, BarChart3, Plus, Settings, User, Lock, Globe, Smartphone, HelpCircle, Mail, Info } from "lucide-react";
 
 interface PageTitleConfig {
   icon: LucideIcon;
@@ -61,6 +61,15 @@ const getPageTitleConfig = (
   }
   if (pathname === '/mobile-app') {
     return { icon: Smartphone, title: 'Get the Mobile App' };
+  }
+  if (pathname === '/faq') {
+    return { icon: HelpCircle, title: 'FAQ' };
+  }
+  if (pathname === '/contact') {
+    return { icon: Mail, title: 'Contact' };
+  }
+  if (pathname === '/about') {
+    return { icon: Info, title: 'About' };
   }
 
   return null;
