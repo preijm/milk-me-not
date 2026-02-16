@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, ArrowRight } from "lucide-react";
+import { normalizeName, findClosestMatch } from "@/lib/nameNormalization";
 
 interface NameSelectProps {
   productName: string;
@@ -16,13 +17,13 @@ interface NameSelectProps {
 export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFocus = false }: NameSelectProps) => {
   const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string }>>([]);
   const [showAddNew, setShowAddNew] = useState(false);
+  const [closeMatch, setCloseMatch] = useState<{ id: string; name: string } | null>(null);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { toast } = useToast();
 
   const { data: names = [] } = useQuery({
     queryKey: ['product_names'],
     queryFn: async () => {
-      console.log('Fetching product names from database...');
       const { data, error } = await supabase
         .from('names')
         .select('id, name')
@@ -33,7 +34,6 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFo
         throw error;
       }
       
-      console.log('Fetched product names:', data);
       return data || [];
     },
   });
@@ -42,6 +42,7 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFo
     if (productName.trim() === '') {
       setSuggestions([]);
       setShowAddNew(false);
+      setCloseMatch(null);
       if (onNameIdChange) onNameIdChange(null);
       return;
     }
@@ -58,11 +59,16 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFo
     
     if (exactMatch && onNameIdChange) {
       onNameIdChange(exactMatch.id);
-    } else if (onNameIdChange) {
-      onNameIdChange(null);
+      setCloseMatch(null);
+      setShowAddNew(false);
+    } else {
+      if (onNameIdChange) onNameIdChange(null);
+      
+      // Find close match using fuzzy matching
+      const match = findClosestMatch(productName, names, 0.75);
+      setCloseMatch(match);
+      setShowAddNew(!match && productName.trim() !== '');
     }
-    
-    setShowAddNew(!exactMatch && productName.trim() !== '');
   }, [productName, names, onNameIdChange]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,11 +82,30 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFo
   };
 
   const handleAddNewName = async () => {
-    if (productName.trim() === '') return;
+    const normalized = normalizeName(productName);
+    if (normalized === '') return;
+
+    // Check DB directly with ilike to avoid stale cache duplicates
+    const { data: existingInDb } = await supabase
+      .from('names')
+      .select('id, name')
+      .ilike('name', normalized)
+      .maybeSingle();
+
+    if (existingInDb) {
+      setProductName(existingInDb.name);
+      if (onNameIdChange) onNameIdChange(existingInDb.id);
+      setIsDropdownVisible(false);
+      toast({
+        title: "Name found",
+        description: `Using existing name "${existingInDb.name}".`,
+      });
+      return;
+    }
 
     const { data, error } = await supabase
       .from('names')
-      .insert({ name: productName.trim() })
+      .insert({ name: normalized })
       .select()
       .single();
 
@@ -114,12 +139,24 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFo
         className="w-full pr-10"
         autoFocus={autoFocus}
       />
-      {isDropdownVisible && (suggestions.length > 0 || showAddNew) && (
-        <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
+      {isDropdownVisible && (suggestions.length > 0 || showAddNew || closeMatch) && (
+        <div className="absolute z-10 w-full mt-1 bg-background border rounded-md shadow-lg">
+          {closeMatch && (
+            <div
+              className="px-4 py-2 cursor-pointer bg-accent/30 hover:bg-accent/50 flex items-center gap-2 text-sm border-b"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleSelectName(closeMatch);
+              }}
+            >
+              <ArrowRight className="w-4 h-4 text-primary" />
+              <span>Did you mean <strong>"{closeMatch.name}"</strong>?</span>
+            </div>
+          )}
           {suggestions.map((suggestion) => (
             <div
               key={suggestion.id}
-              className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+              className="px-4 py-2 cursor-pointer hover:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 handleSelectName(suggestion);
@@ -130,7 +167,7 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFo
           ))}
           {showAddNew && (
             <div
-              className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center text-gray-700"
+              className="px-4 py-2 cursor-pointer hover:bg-muted flex items-center text-muted-foreground"
               onMouseDown={(e) => {
                 e.preventDefault();
                 handleAddNewName();
