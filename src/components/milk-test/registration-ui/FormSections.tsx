@@ -102,23 +102,25 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
       </div>
 
-      <div className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-3 pt-4">
+      <div className="flex justify-between items-center gap-2 pt-4">
         {/* Remove button for admins in edit mode */}
-        {isEditMode && isAdmin && onDelete && (
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={onDelete}
-            className="w-full sm:w-auto px-4"
-            disabled={isSubmitting}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Remove
-          </Button>
-        )}
+        <div>
+          {isEditMode && isAdmin && onDelete && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={onDelete}
+              className="px-4"
+              disabled={isSubmitting}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Remove
+            </Button>
+          )}
+        </div>
         
         {/* Cancel and Submit buttons */}
-        <div className="flex gap-2 sm:ml-auto w-full sm:w-auto">
+        <div className="flex gap-2">
           <Button
             type="button"
             variant="outline"
@@ -127,7 +129,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
               e.stopPropagation();
               onCancel(e);
             }}
-            className="flex-1 sm:flex-initial px-4"
+            className="px-4"
           >
             Cancel
           </Button>
@@ -135,11 +137,11 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
             type="submit"
             variant="brand"
             disabled={!isFormValid || isSubmitting}
-            className="flex-1 sm:flex-initial px-4"
+            className="px-4"
           >
             {isSubmitting 
               ? (isEditMode ? "Updating..." : "Registering...")
-              : (isEditMode ? "Update Product" : "Register Product")
+              : (isEditMode ? (<><span className="sm:hidden">Update</span><span className="hidden sm:inline">Update Product</span></>) : "Register Product")
             }
           </Button>
         </div>
