@@ -60,7 +60,7 @@ export const FeedEngagement = ({
               onClick={handleLikeClick}
               disabled={isLikePending}
               className={cn(
-                "flex items-center gap-1.5 px-2 py-1.5 rounded-full transition-all duration-200",
+                "flex items-center gap-2.5 sm:gap-1.5 px-3 sm:px-2 py-1.5 rounded-full transition-all duration-200",
                 isLiked 
                   ? "text-destructive hover:bg-destructive/10" 
                   : "hover:bg-muted"
