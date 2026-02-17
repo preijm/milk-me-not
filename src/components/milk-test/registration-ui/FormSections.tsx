@@ -102,25 +102,23 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-4">
-        {/* Left side - Remove button for admins in edit mode */}
-        <div>
-          {isEditMode && isAdmin && onDelete && (
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={onDelete}
-              className="px-4"
-              disabled={isSubmitting}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Remove
-            </Button>
-          )}
-        </div>
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-3 pt-4">
+        {/* Remove button for admins in edit mode */}
+        {isEditMode && isAdmin && onDelete && (
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={onDelete}
+            className="w-full sm:w-auto px-4"
+            disabled={isSubmitting}
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Remove
+          </Button>
+        )}
         
-        {/* Right side - Cancel and Submit buttons */}
-        <div className="flex space-x-2">
+        {/* Cancel and Submit buttons */}
+        <div className="flex gap-2 sm:ml-auto w-full sm:w-auto">
           <Button
             type="button"
             variant="outline"
@@ -129,7 +127,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
               e.stopPropagation();
               onCancel(e);
             }}
-            className="px-4"
+            className="flex-1 sm:flex-initial px-4"
           >
             Cancel
           </Button>
@@ -137,7 +135,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
             type="submit"
             variant="brand"
             disabled={!isFormValid || isSubmitting}
-            className="px-4"
+            className="flex-1 sm:flex-initial px-4"
           >
             {isSubmitting 
               ? (isEditMode ? "Updating..." : "Registering...")
