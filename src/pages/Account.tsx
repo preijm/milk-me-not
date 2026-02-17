@@ -219,7 +219,7 @@ const Account = () => {
       <div className="min-h-screen bg-background">
         <MenuBar />
 
-        <div className="px-4 py-6 pb-24 pt-20">
+        <div className="px-4 py-6 pb-24 pt-24">
           <MobileSettingsMenu sections={accountMenuSections} />
 
           <Button
