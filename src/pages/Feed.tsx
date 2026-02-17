@@ -19,8 +19,11 @@ const Feed = () => {
   const { data: feedItems = [], isLoading } = useQuery({
     queryKey: ["feed", user?.id || "anonymous"],
     queryFn: async () => {
-      // For social feed, show all users' tests with their details using security definer function
-      const { data, error } = await supabase.rpc("get_all_milk_tests");
+      const limit = user ? 50 : 6;
+      const { data, error } = await supabase.rpc("get_all_milk_tests", {
+        page_limit: limit,
+        page_offset: 0,
+      });
       if (error) throw error;
 
       // Filter out posts from 1970 (invalid dates)
@@ -29,16 +32,7 @@ const Feed = () => {
         return year !== 1970;
       });
 
-      // Sort by created_at descending (newest first)
-      const sortedData = validData.sort((a, b) => {
-        const dateA = new Date(a.created_at).getTime();
-        const dateB = new Date(b.created_at).getTime();
-        return dateB - dateA;
-      });
-
-      // Limit the results based on authentication status
-      const limitedData = sortedData.slice(0, user ? 50 : 6);
-      return limitedData as MilkTestResult[];
+      return validData as MilkTestResult[];
     },
   });
 
