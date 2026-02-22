@@ -174,45 +174,66 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    fetchNotifications();
-    fetchPreferences();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const setupRealtimeChannel = () => {
+      // Remove any existing channel before creating a new one
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+      channel = supabase
+        .channel('notifications')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'notifications',
+          },
+          (payload) => {
+            const newNotification = payload.new as Notification;
+            setNotifications(prev => [newNotification, ...prev]);
+            setUnreadCount(prev => prev + 1);
+            
+            toast({
+              title: newNotification.title,
+              description: newNotification.message.split('|')[0],
+            });
+          }
+        )
+        .subscribe();
+    };
+
+    // Check initial session before subscribing
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        fetchNotifications();
+        fetchPreferences();
+        setupRealtimeChannel();
+      }
+    });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         fetchNotifications();
         fetchPreferences();
+        setupRealtimeChannel();
       } else if (event === 'SIGNED_OUT') {
         setNotifications([]);
         setUnreadCount(0);
         setPreferences(null);
+        if (channel) {
+          supabase.removeChannel(channel);
+          channel = null;
+        }
       }
     });
 
-    const channel = supabase
-      .channel('notifications')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-        },
-        (payload) => {
-          const newNotification = payload.new as Notification;
-          setNotifications(prev => [newNotification, ...prev]);
-          setUnreadCount(prev => prev + 1);
-          
-          toast({
-            title: newNotification.title,
-            description: newNotification.message.split('|')[0],
-          });
-        }
-      )
-      .subscribe();
-
     return () => {
       subscription.unsubscribe();
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, [fetchNotifications, fetchPreferences]);
 
