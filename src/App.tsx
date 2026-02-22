@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -13,28 +12,36 @@ import { VersionCheck } from "@/components/version/VersionCheck";
 import { isNativeApp } from "@/lib/platformDetection";
 import NativeSplashScreen from "./components/NativeSplashScreen";
 import Home from "./pages/Home";
-import Results from "./pages/Results";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Auth from "./pages/Auth";
-import Account from "./pages/Account";
-import AccountSecurity from "./pages/AccountSecurity";
-import AccountNotifications from "./pages/AccountNotifications";
-import AccountCountry from "./pages/AccountCountry";
-import AccountProfile from "./pages/AccountProfile";
-import ProductDetails from "./pages/ProductDetails";
-import ResetPassword from "./pages/ResetPassword";
-import Feed from "./pages/Feed";
-import MobileApp from "./pages/MobileApp";
-import Notifications from "./pages/Notifications";
-import Profile from "./pages/Profile";
-import AddProduct from "./pages/AddProduct";
-import DesignSystem from "./pages/DesignSystem";
-import InstallGuide from "./pages/InstallGuide";
-import FAQ from "./pages/FAQ";
+import { Loader } from "lucide-react";
 
+// Lazy-loaded routes for code splitting
+const Results = lazy(() => import("./pages/Results"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Index = lazy(() => import("./pages/Index"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Account = lazy(() => import("./pages/Account"));
+const AccountSecurity = lazy(() => import("./pages/AccountSecurity"));
+const AccountNotifications = lazy(() => import("./pages/AccountNotifications"));
+const AccountCountry = lazy(() => import("./pages/AccountCountry"));
+const AccountProfile = lazy(() => import("./pages/AccountProfile"));
+const ProductDetails = lazy(() => import("./pages/ProductDetails"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Feed = lazy(() => import("./pages/Feed"));
+const MobileApp = lazy(() => import("./pages/MobileApp"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+const Profile = lazy(() => import("./pages/Profile"));
+const AddProduct = lazy(() => import("./pages/AddProduct"));
+const DesignSystem = lazy(() => import("./pages/DesignSystem"));
+const InstallGuide = lazy(() => import("./pages/InstallGuide"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+
+const PageFallback = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <Loader className="h-8 w-8 animate-spin text-primary" />
+  </div>
+);
 const isNative = isNativeApp();
 
 const queryClient = new QueryClient({
@@ -63,6 +70,7 @@ const App = () => {
               <BrowserRouter>
                 <ScrollToTop />
                 <VersionCheck />
+                <Suspense fallback={<PageFallback />}>
                 <Routes>
                 <Route path="/" element={<Home />} />
               <Route path="/dashboard" element={<Navigate to="/results" replace />} />
@@ -124,6 +132,7 @@ const App = () => {
               <Route path="/faq" element={<FAQ />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </Suspense>
               <Toaster />
             </BrowserRouter>
           </TooltipProvider>
