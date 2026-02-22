@@ -10,7 +10,7 @@ export const Logo = ({ className = "" }: LogoProps) => {
       <img 
         src="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png" 
         alt="Milk Me Not Logo" 
-        className="h-12 w-12" 
+        className="h-12 w-12 object-cover" 
         width="48" 
         height="48" 
         loading="eager" 
