@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAggregatedResults } from "@/hooks/useAggregatedResults";
 import { useResultsUrlState, useResultsFiltering } from "@/hooks/useResultsState";
@@ -9,11 +9,14 @@ import MenuBar from "@/components/MenuBar";
 import BackgroundPattern from "@/components/BackgroundPattern";
 import MobileFooter from "@/components/MobileFooter";
 import { ResultsContainer } from "@/components/milk-test/ResultsContainer";
-import MapboxWorldMap from "@/components/MapboxWorldMap";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { ResultsViewSwitcher } from "@/components/results/ResultsViewSwitcher";
 import { MapLoginOverlay } from "@/components/results/MapLoginOverlay";
 import { ChartComingSoon } from "@/components/results/ChartComingSoon";
+import { Loader } from "lucide-react";
+
+// Lazy-load heavy map component (~200KB+ mapbox-gl) - only needed when user clicks "map" view
+const MapboxWorldMap = lazy(() => import("@/components/MapboxWorldMap"));
 
 const Results = () => {
   const {
@@ -104,7 +107,9 @@ const Results = () => {
           ) : view === "charts" ? (
             <ChartComingSoon />
           ) : user ? (
-            <MapboxWorldMap />
+            <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><Loader className="h-8 w-8 animate-spin text-primary" /></div>}>
+              <MapboxWorldMap />
+            </Suspense>
           ) : (
             <MapLoginOverlay />
           )}
