@@ -246,16 +246,6 @@
 }
 
 
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
 /* Mapbox popup custom styles */
 .mapboxgl-popup-close-button {
   font-size: 20px;
