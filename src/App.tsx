@@ -70,69 +70,15 @@ const App = () => {
               <BrowserRouter>
                 <ScrollToTop />
                 <VersionCheck />
+                <main>
                 <Suspense fallback={<PageFallback />}>
                 <Routes>
                 <Route path="/" element={<Home />} />
-              <Route path="/dashboard" element={<Navigate to="/results" replace />} />
-              <Route path="/results" element={<Results />} />
-              <Route path="/product/:productId" element={<ProductDetails />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/auth/reset-password" element={<ResetPassword />} />
-              <Route path="/add" element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } />
-              <Route path="/add-product" element={
-                <ProtectedRoute>
-                  <AddProduct />
-                </ProtectedRoute>
-              } />
-              <Route path="/account" element={
-                <ProtectedRoute>
-                  <Account />  
-                </ProtectedRoute>
-              } />
-              <Route path="/account/security" element={
-                <ProtectedRoute>
-                  <AccountSecurity />
-                </ProtectedRoute>
-              } />
-              <Route path="/account/notifications" element={
-                <ProtectedRoute>
-                  <AccountNotifications />
-                </ProtectedRoute>
-              } />
-              <Route path="/account/country" element={
-                <ProtectedRoute>
-                  <AccountCountry />
-                </ProtectedRoute>
-              } />
-              <Route path="/account/profile" element={
-                <ProtectedRoute>
-                  <AccountProfile />
-                </ProtectedRoute>
-              } />
-              <Route path="/feed" element={<Feed />} />
-              <Route path="/mobile-app" element={isNative ? <Navigate to="/" replace /> : <MobileApp />} />
-              <Route path="/install-guide" element={isNative ? <Navigate to="/" replace /> : <InstallGuide />} />
-              <Route path="/notifications" element={
-                <ProtectedRoute>
-                  <Notifications />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <Profile />
-              </ProtectedRoute>
-              } />
-              <Route path="/design-system" element={<DesignSystem />} />
-              <Route path="/faq" element={<FAQ />} />
+...
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>
+                </main>
               <Toaster />
             </BrowserRouter>
           </TooltipProvider>
