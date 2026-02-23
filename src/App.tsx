@@ -74,7 +74,26 @@ const App = () => {
                 <Suspense fallback={<PageFallback />}>
                 <Routes>
                 <Route path="/" element={<Home />} />
-...
+                <Route path="/feed" element={<Feed />} />
+                <Route path="/results" element={<Results />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/mobile-app" element={<MobileApp />} />
+                <Route path="/install-guide" element={<InstallGuide />} />
+                <Route path="/design-system" element={<DesignSystem />} />
+                <Route path="/product/:productId" element={<ProductDetails />} />
+                <Route path="/profile/:userId" element={<Profile />} />
+                <Route path="/add" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
+                <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+                <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+                <Route path="/account/security" element={<ProtectedRoute><AccountSecurity /></ProtectedRoute>} />
+                <Route path="/account/notifications" element={<ProtectedRoute><AccountNotifications /></ProtectedRoute>} />
+                <Route path="/account/country" element={<ProtectedRoute><AccountCountry /></ProtectedRoute>} />
+                <Route path="/account/profile" element={<ProtectedRoute><AccountProfile /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>
