@@ -10,7 +10,7 @@ import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { VersionCheck } from "@/components/version/VersionCheck";
 import { isNativeApp } from "@/lib/platformDetection";
-import NativeSplashScreen from "./components/NativeSplashScreen";
+const NativeSplashScreen = lazy(() => import("./components/NativeSplashScreen"));
 const Home = lazy(() => import("./pages/Home"));
 import { Loader } from "lucide-react";
 
