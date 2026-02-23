@@ -11,7 +11,7 @@ import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { VersionCheck } from "@/components/version/VersionCheck";
 import { isNativeApp } from "@/lib/platformDetection";
 import NativeSplashScreen from "./components/NativeSplashScreen";
-import Home from "./pages/Home";
+const Home = lazy(() => import("./pages/Home"));
 import { Loader } from "lucide-react";
 
 // Lazy-loaded routes for code splitting
