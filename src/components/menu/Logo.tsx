@@ -11,7 +11,7 @@ export const Logo = ({ className = "" }: LogoProps) => {
       <img 
         src={logoImg} 
         alt="Milk Me Not Logo"
-        className="h-12 w-12 object-cover" 
+        className="h-12 w-12 object-contain" 
         width="48" 
         height="48" 
         loading="eager"
