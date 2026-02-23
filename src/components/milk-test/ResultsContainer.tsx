@@ -90,7 +90,7 @@ export const ResultsContainer = ({
         <>
           <div 
             className={cn(
-              "fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-5 pb-2 transition-transform duration-300 ease-in-out",
+              "fixed top-16 left-0 right-0 z-40 bg-white border-b border-gray-100 px-4 pt-5 pb-2 transition-transform duration-300 ease-in-out",
               !isFilterBarVisible && "-translate-y-full"
             )}
           >

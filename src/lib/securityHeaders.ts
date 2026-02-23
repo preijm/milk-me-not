@@ -28,32 +28,7 @@ export const setSecurityHeaders = () => {
     document.head.appendChild(meta);
   }
 
-  // Add referrer policy
-  if (!document.querySelector('meta[name="referrer"]')) {
-    const referrerMeta = document.createElement('meta');
-    referrerMeta.setAttribute('name', 'referrer');
-    referrerMeta.setAttribute('content', 'strict-origin-when-cross-origin');
-    document.head.appendChild(referrerMeta);
-  }
-
-  // Disable MIME type sniffing
-  if (!document.querySelector('meta[http-equiv="X-Content-Type-Options"]')) {
-    const mimeTypeMeta = document.createElement('meta');
-    mimeTypeMeta.setAttribute('http-equiv', 'X-Content-Type-Options');
-    mimeTypeMeta.setAttribute('content', 'nosniff');
-    document.head.appendChild(mimeTypeMeta);
-  }
-
-  // Enable XSS filtering
-  if (!document.querySelector('meta[http-equiv="X-XSS-Protection"]')) {
-    const xssMeta = document.createElement('meta');
-    xssMeta.setAttribute('http-equiv', 'X-XSS-Protection');
-    xssMeta.setAttribute('content', '1; mode=block');
-    document.head.appendChild(xssMeta);
-  }
-
-  // X-Frame-Options removed to allow embedding in Lovable iframe
-  // In production, configure this at the server level based on your requirements
+  // referrer, X-Content-Type-Options, and X-XSS-Protection are now static in index.html
 };
 
 /**

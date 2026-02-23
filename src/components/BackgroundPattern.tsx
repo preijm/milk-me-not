@@ -23,9 +23,9 @@ const BackgroundPattern = ({ children }: BackgroundPatternProps) => {
         }}
       />
       
-      {/* Milk splash - CSS animation only */}
+      {/* Milk splash - hidden on mobile for performance */}
       <div 
-        className="absolute pointer-events-none"
+        className="absolute pointer-events-none hidden md:block"
         style={{
           top: '40%',
           right: '30%',

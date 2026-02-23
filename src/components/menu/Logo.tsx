@@ -14,7 +14,8 @@ export const Logo = ({ className = "" }: LogoProps) => {
         className="h-12 w-12 object-cover" 
         width="48" 
         height="48" 
-        loading="eager" 
+        loading="eager"
+        fetchPriority="high"
       />
       <span 
         className="text-gray-800 text-2xl md:text-4xl font-bold whitespace-nowrap flex items-center" 
