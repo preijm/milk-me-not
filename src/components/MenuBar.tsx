@@ -18,9 +18,9 @@ const MenuBar = () => {
   const { user } = useAuth();
   const { notifications, unreadCount, markAllAsRead } = useNotifications();
   const [showAddTestDialog, setShowAddTestDialog] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= TABLET_BREAKPOINT);
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= TABLET_BREAKPOINT);
 
-  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < TABLET_BREAKPOINT;
+  const isMobileOrTablet = !isDesktop;
   const isHomePage = location.pathname === '/';
   const isAuthPage = location.pathname === '/auth';
 
