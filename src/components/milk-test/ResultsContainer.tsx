@@ -49,28 +49,32 @@ export const ResultsContainer = ({
   const { user } = useAuth();
   const [isFilterBarVisible, setIsFilterBarVisible] = useState(true);
   const lastScrollY = useRef(0);
-  const scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
+  const ticking = useRef(false);
 
-  // Handle scroll direction detection
+  // Handle scroll direction detection with rAF to prevent flickering
   useEffect(() => {
     if (!isMobile) return;
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const scrollDifference = currentScrollY - lastScrollY.current;
+      if (ticking.current) return;
+      ticking.current = true;
 
-      // Only trigger if scrolled more than threshold
-      if (Math.abs(scrollDifference) < scrollThreshold) return;
+      requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        const scrollDifference = currentScrollY - lastScrollY.current;
 
-      if (scrollDifference > 0 && currentScrollY > 100) {
-        // Scrolling down and past initial area - hide
-        setIsFilterBarVisible(false);
-      } else if (scrollDifference < 0) {
-        // Scrolling up - show
-        setIsFilterBarVisible(true);
-      }
+        // Need a meaningful scroll distance to change state
+        if (Math.abs(scrollDifference) > 30) {
+          if (scrollDifference > 0 && currentScrollY > 100) {
+            setIsFilterBarVisible(false);
+          } else if (scrollDifference < 0) {
+            setIsFilterBarVisible(true);
+          }
+          lastScrollY.current = currentScrollY;
+        }
 
-      lastScrollY.current = currentScrollY;
+        ticking.current = false;
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
