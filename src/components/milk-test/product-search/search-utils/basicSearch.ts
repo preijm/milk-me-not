@@ -9,6 +9,7 @@ export async function performBasicSearch(
   combinedResults: ProductSearchResult[]
 ): Promise<void> {
   const searchWithUnderscores = lowercaseSearchTerm.replace(/\s+/g, '_');
+  const searchWithSpaces = lowercaseSearchTerm.replace(/_/g, ' ');
   
   // Build OR conditions: search across name, brand, properties, and flavors
   const orConditions = [
@@ -16,8 +17,10 @@ export async function performBasicSearch(
     `brand_name.ilike.%${lowercaseSearchTerm}%`,
     `property_names::text.ilike.%${lowercaseSearchTerm}%`,
     `property_names::text.ilike.%${searchWithUnderscores}%`,
+    `property_names::text.ilike.%${searchWithSpaces}%`,
     `flavor_names::text.ilike.%${lowercaseSearchTerm}%`,
     `flavor_names::text.ilike.%${searchWithUnderscores}%`,
+    `flavor_names::text.ilike.%${searchWithSpaces}%`,
   ];
 
   // If searching for "barista", also include is_barista = true
