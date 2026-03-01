@@ -30,7 +30,7 @@ export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResu
             isBarista={product.is_barista}
             compact={true}
             displayType="barista"
-            className="mb-1"
+            inline
           />
         )}
         
@@ -40,7 +40,7 @@ export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResu
             propertyNames={product.property_names}
             compact={true}
             displayType="properties"
-            className="mb-1"
+            inline
           />
         )}
         
@@ -50,6 +50,7 @@ export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResu
             flavorNames={product.flavor_names}
             compact={true}
             displayType="flavors"
+            inline
           />
         )}
       </div>
