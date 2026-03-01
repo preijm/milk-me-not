@@ -15,22 +15,6 @@ export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResu
     onSelect(product.id);
   };
 
-  // Check if a tag name matches the search term (with underscore/space normalization)
-  const isTagMatch = (tagName: string): boolean => {
-    if (!searchTerm || searchTerm.length < 2) return false;
-    const search = searchTerm.toLowerCase();
-    const searchSpaces = search.replace(/_/g, ' ');
-    const lower = tagName.toLowerCase();
-    const normalized = lower.replace(/_/g, ' ');
-    return lower.includes(search) || normalized.includes(search) || lower.includes(searchSpaces) || normalized.includes(searchSpaces);
-  };
-
-  // Check if brand/product name already matches — if so, no need to highlight tags
-  const nameMatches = 
-    (product.brand_name || "").toLowerCase().includes((searchTerm || "").toLowerCase()) ||
-    (product.product_name || "").toLowerCase().includes((searchTerm || "").toLowerCase());
-
-  const shouldHighlight = !nameMatches && !!searchTerm && searchTerm.length >= 2;
   
   return (
     <div 
@@ -47,7 +31,6 @@ export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResu
             compact={true}
             displayType="barista"
             className="mb-1"
-            highlightTerm={shouldHighlight ? searchTerm : undefined}
           />
         )}
         
@@ -58,7 +41,6 @@ export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResu
             compact={true}
             displayType="properties"
             className="mb-1"
-            highlightTerm={shouldHighlight ? searchTerm : undefined}
           />
         )}
         
@@ -68,7 +50,6 @@ export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResu
             flavorNames={product.flavor_names}
             compact={true}
             displayType="flavors"
-            highlightTerm={shouldHighlight ? searchTerm : undefined}
           />
         )}
       </div>

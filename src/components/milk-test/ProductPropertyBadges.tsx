@@ -46,7 +46,7 @@ interface ProductPropertyBadgesProps {
   inline?: boolean;
   filters?: FilterOptions;
   onFiltersChange?: (filters: FilterOptions) => void;
-  highlightTerm?: string;
+  
 }
 
 export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({ 
@@ -59,19 +59,8 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   inline = false,
   filters,
   onFiltersChange,
-  highlightTerm
+  
 }) => {
-  // Helper to check if a tag matches the highlight term
-  const isHighlighted = (tagName: string): boolean => {
-    if (!highlightTerm || highlightTerm.length < 2) return false;
-    const search = highlightTerm.toLowerCase();
-    const searchSpaces = search.replace(/_/g, ' ');
-    const lower = tagName.toLowerCase();
-    const normalized = lower.replace(/_/g, ' ');
-    return lower.includes(search) || normalized.includes(search) || lower.includes(searchSpaces) || normalized.includes(searchSpaces);
-  };
-
-  const highlightClass = "ring-2 ring-primary ring-offset-1";
   // Fetch properties and flavors to create name-to-key mapping for badge clicks
   const { data: properties = [] } = useQuery({
     queryKey: ['properties'],
@@ -159,7 +148,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
           variant="barista"
           className={`${filters && onFiltersChange ? 'cursor-pointer hover:shadow-md transition-shadow' : 'cursor-default hover:shadow-none'} ${
             filters?.barista ? 'bg-badge-barista text-badge-barista-foreground border-badge-barista shadow-md' : ''
-          } ${highlightTerm && "barista".includes(highlightTerm.toLowerCase()) ? highlightClass : ''}`}
+          }`}
           onClick={filters && onFiltersChange ? handleBaristaClick : undefined}
         >
           <Coffee className="w-3 h-3 mr-1" />
@@ -176,7 +165,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
             variant="category"
             className={`${filters && onFiltersChange ? 'cursor-pointer hover:shadow-md transition-shadow' : 'cursor-default hover:shadow-none'} ${
               propertyKey && filters?.properties.includes(propertyKey) ? 'bg-badge-property text-badge-property-foreground border-badge-property shadow-md' : ''
-            } ${isHighlighted(property) ? highlightClass : ''}`}
+            }`}
             onClick={filters && onFiltersChange ? handlePropertyClick(property) : undefined}
           >
             <Tag className="w-3 h-3 mr-1" />
@@ -194,7 +183,7 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
             variant="flavor"
             className={`${filters && onFiltersChange ? 'cursor-pointer hover:shadow-md transition-shadow' : 'cursor-default hover:shadow-none'} ${
               flavorKey && filters?.flavors.includes(flavorKey) ? 'bg-badge-flavor text-badge-flavor-foreground border-badge-flavor shadow-md' : ''
-            } ${isHighlighted(flavor) ? highlightClass : ''}`}
+            }`}
             onClick={filters && onFiltersChange ? handleFlavorClick(flavor) : undefined}
           >
             <Droplet className="w-3 h-3 mr-1" />
