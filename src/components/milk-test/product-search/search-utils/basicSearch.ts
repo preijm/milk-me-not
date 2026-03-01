@@ -8,11 +8,28 @@ export async function performBasicSearch(
   processedIds: Set<string>,
   combinedResults: ProductSearchResult[]
 ): Promise<void> {
+  const searchWithUnderscores = lowercaseSearchTerm.replace(/\s+/g, '_');
+  
+  // Build OR conditions: search across name, brand, properties, and flavors
+  const orConditions = [
+    `product_name.ilike.%${lowercaseSearchTerm}%`,
+    `brand_name.ilike.%${lowercaseSearchTerm}%`,
+    `property_names::text.ilike.%${lowercaseSearchTerm}%`,
+    `property_names::text.ilike.%${searchWithUnderscores}%`,
+    `flavor_names::text.ilike.%${lowercaseSearchTerm}%`,
+    `flavor_names::text.ilike.%${searchWithUnderscores}%`,
+  ];
+
+  // If searching for "barista", also include is_barista = true
+  if (lowercaseSearchTerm.includes('barista')) {
+    orConditions.push('is_barista.eq.true');
+  }
+
   const { data: basicResults, error: basicError } = await supabase
     .from('product_search_view')
     .select('*')
-    .or(`product_name.ilike.%${lowercaseSearchTerm}%,brand_name.ilike.%${lowercaseSearchTerm}%`)
-    .limit(20);
+    .or(orConditions.join(','))
+    .limit(30);
   
   if (basicError) throw basicError;
   
