@@ -190,7 +190,10 @@ export function useResultsFiltering(
       const searchString = searchTerm.toLowerCase();
       const matchesSearch =
         (result.brand_name || "").toLowerCase().includes(searchString) ||
-        (result.product_name || "").toLowerCase().includes(searchString);
+        (result.product_name || "").toLowerCase().includes(searchString) ||
+        (result.property_names || []).some(p => p.toLowerCase().includes(searchString)) ||
+        (result.flavor_names || []).some(f => f.toLowerCase().includes(searchString)) ||
+        (result.is_barista && "barista".includes(searchString));
 
       // Filter by My Results Only
       if (filters.myResultsOnly && user) {
