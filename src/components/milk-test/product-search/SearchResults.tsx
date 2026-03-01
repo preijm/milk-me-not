@@ -48,6 +48,7 @@ export const SearchResults = ({
             key={product.id}
             product={product}
             onSelect={handleProductSelect}
+            searchTerm={searchTerm}
           />
         ))
       ) : (
