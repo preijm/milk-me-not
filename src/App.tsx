@@ -85,6 +85,7 @@ const App = () => {
                 <Route path="/install-guide" element={<InstallGuide />} />
                 <Route path="/design-system" element={<DesignSystem />} />
                 <Route path="/product/:productId" element={<ProductDetails />} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/:userId" element={<Profile />} />
                 <Route path="/add" element={<ProtectedRoute><Index /></ProtectedRoute>} />
                 <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
