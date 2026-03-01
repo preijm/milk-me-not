@@ -2,37 +2,14 @@
 import { supabase } from "@/integrations/supabase/client";
 import { ProductSearchResult } from "./types";
 
-// Basic search for product name and brand name
+// Basic search using the search_product_types RPC which handles name, brand, properties, and flavors
 export async function performBasicSearch(
   lowercaseSearchTerm: string,
   processedIds: Set<string>,
   combinedResults: ProductSearchResult[]
 ): Promise<void> {
-  const searchWithUnderscores = lowercaseSearchTerm.replace(/\s+/g, '_');
-  const searchWithSpaces = lowercaseSearchTerm.replace(/_/g, ' ');
-  
-  // Build OR conditions: search across name, brand, properties, and flavors
-  const orConditions = [
-    `product_name.ilike.%${lowercaseSearchTerm}%`,
-    `brand_name.ilike.%${lowercaseSearchTerm}%`,
-    `property_names::text.ilike.%${lowercaseSearchTerm}%`,
-    `property_names::text.ilike.%${searchWithUnderscores}%`,
-    `property_names::text.ilike.%${searchWithSpaces}%`,
-    `flavor_names::text.ilike.%${lowercaseSearchTerm}%`,
-    `flavor_names::text.ilike.%${searchWithUnderscores}%`,
-    `flavor_names::text.ilike.%${searchWithSpaces}%`,
-  ];
-
-  // If searching for "barista", also include is_barista = true
-  if (lowercaseSearchTerm.includes('barista')) {
-    orConditions.push('is_barista.eq.true');
-  }
-
   const { data: basicResults, error: basicError } = await supabase
-    .from('product_search_view')
-    .select('*')
-    .or(orConditions.join(','))
-    .limit(30);
+    .rpc('search_product_types', { search_term: lowercaseSearchTerm });
   
   if (basicError) throw basicError;
   
