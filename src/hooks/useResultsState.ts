@@ -188,11 +188,17 @@ export function useResultsFiltering(
   const filteredResults = useMemo(() => {
     return aggregatedResults.filter((result) => {
       const searchString = searchTerm.toLowerCase();
+      const searchWithSpaces = searchString.replace(/_/g, ' ');
+      const matchesField = (val: string) => {
+        const lower = val.toLowerCase();
+        const normalized = lower.replace(/_/g, ' ');
+        return lower.includes(searchString) || normalized.includes(searchString) || lower.includes(searchWithSpaces) || normalized.includes(searchWithSpaces);
+      };
       const matchesSearch =
-        (result.brand_name || "").toLowerCase().includes(searchString) ||
-        (result.product_name || "").toLowerCase().includes(searchString) ||
-        (result.property_names || []).some(p => p.toLowerCase().includes(searchString)) ||
-        (result.flavor_names || []).some(f => f.toLowerCase().includes(searchString)) ||
+        matchesField(result.brand_name || "") ||
+        matchesField(result.product_name || "") ||
+        (result.property_names || []).some(matchesField) ||
+        (result.flavor_names || []).some(matchesField) ||
         (result.is_barista && "barista".includes(searchString));
 
       // Filter by My Results Only
