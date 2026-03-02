@@ -54,39 +54,52 @@ export const FeedEngagement = ({
         {/* Like button with count */}
         <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
           <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleLikeClick}
-              disabled={isLikePending || isOwnPost}
-              className={cn(
-                "flex items-center gap-2.5 sm:gap-1.5 px-3 sm:px-2 py-1.5 rounded-full transition-all duration-200",
-                isOwnPost
-                  ? "opacity-50 cursor-not-allowed"
-                  : isLiked 
+            {isOwnPost ? (
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => likes.length > 0 && setShowLikesPopover(true)}
+                  className="flex items-center gap-2.5 sm:gap-1.5 px-3 sm:px-2 py-1.5 rounded-full transition-all duration-200 hover:bg-muted"
+                >
+                  <Heart className={cn("h-4 w-4", likes.length > 0 && "text-destructive fill-current")} />
+                  <span className="text-sm">{likes.length}</span>
+                  <span className="text-sm hidden lg:inline">Likes</span>
+                </Button>
+              </PopoverTrigger>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLikeClick}
+                disabled={isLikePending}
+                className={cn(
+                  "flex items-center gap-2.5 sm:gap-1.5 px-3 sm:px-2 py-1.5 rounded-full transition-all duration-200",
+                  isLiked 
                     ? "text-destructive hover:bg-destructive/10" 
                     : "hover:bg-muted"
-              )}
-            >
-              <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
-              <PopoverTrigger asChild>
-                <span 
-                  className={cn(
-                    "text-sm",
-                    likes.length > 0 && "cursor-pointer"
-                  )}
-                  onClick={(e) => {
-                    if (likes.length > 0) {
-                      e.stopPropagation();
-                      setShowLikesPopover(true);
-                    }
-                  }}
-                >
-                  {likes.length}
-                </span>
-              </PopoverTrigger>
-              <span className="text-sm hidden lg:inline">Likes</span>
-            </Button>
+                )}
+              >
+                <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+                <PopoverTrigger asChild>
+                  <span 
+                    className={cn(
+                      "text-sm",
+                      likes.length > 0 && "cursor-pointer"
+                    )}
+                    onClick={(e) => {
+                      if (likes.length > 0) {
+                        e.stopPropagation();
+                        setShowLikesPopover(true);
+                      }
+                    }}
+                  >
+                    {likes.length}
+                  </span>
+                </PopoverTrigger>
+                <span className="text-sm hidden lg:inline">Likes</span>
+              </Button>
+            )}
           </div>
           
           {likes.length > 0 && (
