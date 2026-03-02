@@ -106,7 +106,7 @@ export const FeedEngagement = ({
             <PopoverContent 
               side="top" 
               align="start"
-              className="p-0 w-44 bg-card border border-border shadow-lg rounded-lg overflow-hidden"
+              className="p-0 w-36 bg-card border border-border shadow-lg rounded-lg overflow-hidden"
             >
               <div className="px-3 py-1.5 bg-muted/50 border-b border-border">
                 <p className="font-semibold text-xs text-foreground flex items-center gap-1.5">
