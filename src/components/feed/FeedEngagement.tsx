@@ -106,19 +106,19 @@ export const FeedEngagement = ({
             <PopoverContent 
               side="top" 
               align="start"
-              className="p-0 w-56 bg-card border border-border shadow-xl rounded-xl overflow-hidden"
+              className="p-0 w-44 bg-card border border-border shadow-lg rounded-lg overflow-hidden"
             >
-              <div className="px-4 py-3 bg-muted/50 border-b border-border">
-                <p className="font-semibold text-sm text-foreground flex items-center gap-2">
-                  <Heart className="h-4 w-4 text-destructive fill-destructive" />
+              <div className="px-3 py-1.5 bg-muted/50 border-b border-border">
+                <p className="font-semibold text-xs text-foreground flex items-center gap-1.5">
+                  <Heart className="h-3 w-3 text-destructive fill-destructive" />
                   Liked by
                 </p>
               </div>
-              <div className="py-2 max-h-48 overflow-y-auto">
+              <div className="py-1 max-h-36 overflow-y-auto">
                 {likes.map(like => (
                   <div 
                     key={like.id} 
-                    className="px-4 py-2 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                    className="px-3 py-1 text-xs text-foreground hover:bg-muted/50 transition-colors"
                   >
                     {like.username}
                   </div>
