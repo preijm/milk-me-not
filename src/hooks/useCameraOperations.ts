@@ -142,15 +142,28 @@ export const useCameraOperations = ({
     }
   };
 
+  const isCapacitorAvailable = () => {
+    try {
+      return !!(window as any).Capacitor?.isNativePlatform?.();
+    } catch {
+      return false;
+    }
+  };
+
   const handleTakePhoto = () => {
-    if (isNativeApp) {
+    if (isNativeApp && isCapacitorAvailable()) {
       takePictureWithNativeCamera();
     } else {
-      // Check if we have camera access available
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // For web browsers and webview wrappers (e.g. Median), use web APIs
+      // On mobile webviews, file input with capture is most reliable
+      if (isSamsungBrowser || (isNativeApp && !isCapacitorAvailable())) {
+        // Webview wrappers like Median: use file input with capture attribute
+        if (cameraInputRef.current) {
+          cameraInputRef.current.click();
+        }
+      } else if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         setShowDesktopCamera(true);
       } else {
-        // Fallback to file input for older browsers
         if (cameraInputRef.current) {
           cameraInputRef.current.click();
         }
@@ -159,11 +172,11 @@ export const useCameraOperations = ({
   };
 
   const handleChooseFromGallery = () => {
-    if (isNativeApp) {
+    if (isNativeApp && isCapacitorAvailable()) {
       // Use native gallery picker
       takePictureWithGallery();
     } else {
-      // For web browsers, use file input
+      // For web browsers and webview wrappers, use file input
       if (fileInputRef.current) {
         fileInputRef.current.click();
       }
