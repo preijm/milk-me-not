@@ -52,8 +52,46 @@ export const useCameraOperations = ({
     }
   };
 
+  const requestCameraPermission = async (): Promise<boolean> => {
+    try {
+      const status = await CapacitorCamera.checkPermissions();
+      console.log('[Camera] Current permissions:', status);
+      
+      if (status.camera === 'denied') {
+        toast({
+          title: "Camera Permission Required",
+          description: "Please enable camera access in your device settings for this app.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      if (status.camera !== 'granted') {
+        const requested = await CapacitorCamera.requestPermissions({ permissions: ['camera'] });
+        console.log('[Camera] Requested permissions result:', requested);
+        
+        if (requested.camera !== 'granted') {
+          toast({
+            title: "Camera Permission Denied",
+            description: "Camera access is needed to take photos. Please allow it in your device settings.",
+            variant: "destructive",
+          });
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.warn('[Camera] Permission check failed:', error);
+      return true; // Proceed anyway, getPhoto will handle the error
+    }
+  };
+
   const takePictureWithNativeCamera = async (): Promise<boolean> => {
     try {
+      const hasPermission = await requestCameraPermission();
+      if (!hasPermission) return false;
+
       const image = await CapacitorCamera.getPhoto({
         quality: 90,
         allowEditing: false,
