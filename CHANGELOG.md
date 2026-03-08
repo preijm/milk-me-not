@@ -6,6 +6,2699 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.1.0] - 2026-03-08
+
+### Added
+- Store price-to-quality ratio
+- Implement column sorting in tables
+- Conditionally show sort icon
+- Open product details on click
+- Add link to individual results
+- Display product properties after name
+- Implement grid view for results
+- Enhance UserResultsContainer and MyResultsTable
+- Add notes popover
+- Add more stats to overview
+- Add delete confirmation dialog
+- Implement edit milk test form
+- Change app theme to green and blue
+- Change stats overview background color
+- Add more green and blue colors
+- Implement top menu and homepage design
+- Apply consistent styling to pages
+- Style account menu to match homepage
+- Style contact and about pages
+- Update contact page icons
+- Add "Add Results" link to account menu
+- Update home page colors
+- Improve auth page design
+- Update account settings page design
+- Style account settings page
+- Apply login page styling to settings
+- Apply consistent background and blur to pages
+- Style shop add button and rename section
+- Add search icon and adjust input sizes
+- Implement forgot password functionality
+- Add password toggle to account settings
+- Redirect to MyResults after login
+- Make card height dynamic
+- Enhance homepage design
+- Implement desktop camera functionality
+- Implement notification visibility enhancements
+- Style login button like start journey button
+- Enlarge image on click
+- Display feed in grid on web
+- Open add test form on new page
+
+### Maintenance
+- bump zod from 3.23.8 to 4.3.5
+- bump the minor-and-patch group across 1 directory with 17 updates
+- bump vite from 5.4.10 to 7.3.1
+- bump jsdom from 20.0.3 to 28.0.0
+- bump @capacitor/ios from 7.4.2 to 8.0.2
+- bump @capacitor/android from 7.4.2 to 8.0.2
+- bump @capacitor/core from 7.4.2 to 8.0.2
+- bump @supabase/supabase-js in the supabase group
+- bump @tanstack/react-query in the tanstack group
+- bump the react group with 2 updates
+- bump the typescript group with 2 updates
+- bump the minor-and-patch group across 1 directory with 14 updates
+- update bun.lock [skip ci]
+- update lockfiles [skip ci]
+
+### Other
+- Use tech stack vite_react_shadcn_ts [skip gpt_engineer]
+- Create milk taste test webapp
+- Fix missing border class
+- Add charts for milk ratings
+- Add new sections to web app
+- Refactor Add Test Page
+- Add top bar menu to add test page
+- Connect Supabase project
+- Set up authentication
+- Run SQL review changes
+- Add sign-in button to homepage
+- Adjust component size consistency
+- Run SQL review changes.
+- Fix type errors in Dashboard and Index
+- Adjust Index Page Size
+- Refactor AddMilkTest component
+- Restrict test addition to logged-in users
+- Change rating system to emoji
+- Hide username on public page
+- Improve layout of MilkCard
+- Improve homepage with animations
+- Reverted to edit 7045827f-58b6-4b22-b88b-84a521db0e45: "Improve layout of MilkCard
+- Add autocomplete for brand input
+- Fix TypeError in milk test component
+- Fix TypeError in milk test component
+- Run reviewed SQL script
+- Fix runtime TypeError in code
+- Refactor AddMilkTest component
+- Fix type errors in IngredientsSelect
+- Fix runtime TypeError in code
+- Fix country selection issue
+- Run reviewed SQL script
+- Fix TypeError in milk test component
+- Run SQL review changes.
+- Fix brand selection issue
+- Fix brand selection issue
+- Improve Brand Select Functionality
+- Improve Ingredients Input
+- Improve IngredientsSelect UI
+- Deploy database changes
+- Fix: 404 error when editing results
+- Run SQL migrations
+- Fix: TypeError in CountrySelect component
+- Refactor: Replace country select with brand select
+- Update database schema
+- Refactor milk test form
+- Refactor: Update milk test form styling
+- Run database migrations
+- Run SQL migration
+- Fix: Type error in EditMilkTest component
+- Run SQL migrations
+- Fix: Add missing country field to shops table
+- Refactor AddMilkTest component
+- Improve Add Milk Test UI Consistency
+- Improve dropdown behavior
+- Fix typo in ShopSelect component
+- Improve dropdown menu behavior
+- Enhance milk test form
+- Run database migrations
+- Refactor milk test form
+- Refactor rating slider
+- Refactor: RatingSelect component
+- Refactor RatingSelect component
+- Update milk test rating slider
+- Refactor UI and add search
+- Run SQL query
+- Run SQL migrations
+- Fix: App.tsx inclusion error
+- Run SQL migrations
+- Run database migrations
+- Run database migrations
+- Enhance table filtering/sorting
+- Refactor table component
+- Update MilkCard component
+- Refactor MilkCard component
+- Reverted to edit edt-cdbf449c-dba3-4671-a2fd-457bae4b4a18: "Refactor table component
+- Refactor My Results page
+- Improve Milk Test Result Cards
+- Improve Add Milk Test UI
+- Deploy database changes
+- Run database migrations
+- Implement MyResults page
+- Refactor MyResults page
+- Refactor StatsOverview component
+- Update StatsOverview component
+- Fix MyResults rating and shop display
+- Update rating display
+- Update rating scale to 1-10
+- Fix ShopSelect file inclusion error
+- Update labels and icons
+- Fix import error for TeaCup
+- Reverted to edit edt-0baecd70-75dc-497d-915c-e95d821454ac: "Update labels and icons
+- Reverted to edit edt-ebf16925-c1c0-4146-919a-481d5f125a43: "Fix ShopSelect file inclusion error
+- Update DrinkPreference styles and add tea cup button
+- Improve Drink Preference UI
+- Connect product_type database
+- Change icon to tea cup
+- Run SQL review changes
+- Center Popover
+- Center popover on add location
+- Fix: Center ShopSelect popover
+- Adjust popup position on mobile
+- Refactor ShopSelect component
+- Add initial codebase structure
+- Improve mobile layout for component
+- Update mobile layout for drink options
+- Center pop-up on mobile
+- Fix popover positioning on mobile
+- Center popover on mobile
+- Improve navigation menu styling
+- Align navigation to the left
+- Update project template to latest Lovable version
+- Update Tea icon
+- Update tea icon color
+- Fix: Adjust popover positioning
+- Center popover and adjust styling
+- Fix popover visibility
+- Reverted to edit edt-132f3691-48b9-43f9-8026-62e0a7931a4e: "Fix: Adjust popover positioning
+- Update mobile positioning for add shop form
+- Reverted to edit edt-1a3ba7bd-7547-49b6-b657-d143a1e4717c: "Fix popover visibility
+- Update popup position for shop addition
+- Ensure Consistent Mobile and Desktop Behavior
+- Center component on mobile devices
+- Update dashboard page
+- Update Add button layout
+- Fix type error in MilkCharts
+- Adjust Button Widths
+- Update Add button styling
+- Run SQL migration
+- Fix type errors in milk test components
+- Run SQL query
+- Fix: ProductOptions import error
+- Run SQL migrations
+- Run SQL migrations
+- Run SQL migrations
+- Refactor milk test form
+- Improve Price Input Component
+- Refactor: Add price input field
+- Refactor PriceInput component
+- Update PriceInput component
+- Improve PriceInput component
+- Run SQL migrations
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Refactor: Reduce PriceInput size
+- Fix: Close brand dropdown after selection
+- Fix: BrandSelect dropdown behavior
+- Update currency selection and slider
+- Run database migrations
+- Fix: Brand select dropdown behavior
+- Fix: Shop suggestion dropdown
+- Revert brand select dropdown behavior
+- Fix shop suggestions dropdown
+- Add barcode scanning feature
+- Refactor barcode scanning UI
+- Improve Barcode Scanner UI and Fix Camera Error
+- Fix: Camera access error message
+- Improve barcode scanner
+- Remove duplicate dialog close button
+- Fix: Barcode Scanner Functionality
+- Fix: TypeScript error in BarcodeScanner
+- Fix: Barcode scanner Android compatibility
+- Investigate camera preview issue
+- Fix: Barcode scanner preview
+- Refactor: Barcode scanner
+- Fix: Barcode scanner camera preview
+- Fix TypeScript comparison error
+- Add milk image capture
+- Run SQL migrations
+- Fix: Add milk test validation
+- Deploy database changes
+- Improve picture upload UI
+- Improve Picture Capture UI
+- Improve UI of Add Milk Test form
+- Fix: Export BarcodeScanner component
+- Fix: Standardize picture thumbnail size
+- Run database migrations
+- Improve Product Search Results
+- Fix: Product search results
+- Improve product search and registration
+- Refactor product registration page
+- Improve Product Registration UI
+- Run SQL query
+- Run SQL query
+- Enhance Product Search Display
+- Improve product search
+- Refactor product search component
+- Fix search and empty divs
+- Improve product search and registration
+- Fix: ProductSearch const reassignment
+- Improve Product Registration
+- Fix tooltip and improve UI
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Refactor: Update tooltip and switch
+- Fix: Product search "No Sugar" issue
+- Improve search result matching
+- Filter shop suggestions by name only
+- Fix: Improve shop search functionality
+- Update tea icon
+- Update tea and coffee icons
+- Refactor: Update drink preference icons
+- Improve product search functionality
+- Refactor ProductSearch component
+- Remove "Barista" text.
+- Improve product cost registration
+- Refactor picture capture component
+- Improve product search functionality
+- Fix TypeScript error in useProductSearch
+- Run reviewed SQL scripts
+- Improve search result compactness
+- Enable search by badges
+- Improve product search functionality
+- Investigate product types key
+- Run reviewed SQL queries
+- Fix TypeScript errors
+- Update product registration dialog
+- Improve product search functionality
+- Refactor flavor section styling
+- Fix Typescript errors in ProductSearch
+- Run SQL migrations
+- Refactor product types to properties
+- Fix TypeScript errors
+- Improve product search results
+- Investigate RLS security impact
+- Execute SQL changes
+- Execute reviewed SQL script
+- Run SQL migrations
+- Run reviewed SQL queries
+- Run reviewed SQL scripts
+- Fix product select type errors
+- Run reviewed SQL scripts
+- Run SQL migrations
+- Run reviewed SQL
+- Remove unnecessary tooltip
+- Visual edit in Lovable
+- Improve flavor selection contrast
+- Visual edit in Lovable
+- Update popup component
+- Update product registration dialog
+- Reverted to edit edt-1a97e0c3-263f-4707-a15e-10b69f51793a: "Update popup component
+- Update product registration tooltip
+- Improve product registration dialog
+- Refactor ProductRegistrationDialog
+- Remove duplicate product registration toast
+- Refactor product registration form
+- Refactor product registration form hook
+- Fix product registration issues
+- Fix product visibility issue
+- Fix: Allow duplicate brand names
+- Fix product creation with existing brand
+- Improve product registration logic
+- Remove DialogContent warning
+- Fix product registration validation
+- Refactor form validation messages
+- Update missing field message
+- Improve form validation messages
+- Remove rating validation for product registration
+- Register new product variants correctly
+- Fix is_barista property
+- Refactor product registration utils
+- Run SQL migrations
+- Run reviewed SQL queries
+- Display barista badge on products
+- Prevent duplicate product registration
+- Handle existing product registration
+- Fix product registration dialog
+- Revert recent changes
+- Fix issues in code
+- Validate product form fields only
+- Refactor product registration form state
+- Fix: Remove rating validation
+- Fix: Remove toaster from product registration
+- Refactor ProductRegistrationDialog component
+- Fix module import errors
+- Fix: Prevent toast on existing product
+- Fix form freeze on product selection
+- Fix existing product selection
+- Fix product registration form
+- Fix product registration dialog
+- Fix search results visibility
+- Fix product selection issue
+- Fix TypeScript error in ProductSearch
+- Show warning for existing product
+- Resolve duplicate product alert issue
+- Remove duplicate product check
+- Fix type error in FormSections
+- Fix: Resolve TS2339 error
+- Investigate duplicate product registration
+- Remove product selection toast
+- Remove unnecessary div
+- Remove missing field component
+- Display flavor and property names
+- Improve product property and flavor display
+- Clear selected product on backspace
+- Prevent backspace from clearing product name
+- Clear product on backspace
+- Prevent duplicate product registration
+- Simplify duplicate product handling
+- Add flavor functionality and rename header
+- Update FlavorSelector component
+- Fix type error in ProductRegistrationContext
+- Refactor Add Flavor Dialog
+- Make shop addition similar
+- Replace flavor dialog with inline form
+- Update Flavor Selector UI
+- Refactor FlavorSelector component
+- Refactor flavor selector
+- Fix product registration button state
+- Reset brand on new product
+- Run SQL migrations
+- Run reviewed SQL migrations
+- Run SQL migrations
+- Fix type errors in components
+- Run SQL migrations
+- Disable product registration button
+- Run reviewed SQL migrations
+- Fix camera capture functionality
+- Open device camera app
+- Improve product search functionality
+- Refactor product search functionality
+- Improve product search functionality
+- Refactor useProductSearch for maintainability
+- Fix TypeScript error in ProductSearch
+- Update shop search input placeholder
+- Implement dynamic textarea expansion
+- Fix product search functionality
+- Remove Toaster component
+- Fix product search functionality
+- Implement product details expansion
+- Fix Typescript errors in Results page
+- Add drinking style column to tests
+- Reorder and modify columns
+- Ensure newest results are on top
+- Refactor results table columns
+- Fix sorting issues
+- Fix score sorting direction
+- Add product properties to registration
+- Update product display and image modal
+- Refactor results table and image modal
+- Refactor properties display in results
+- Combine badge columns in Results
+- Adjust table column alignment
+- Update image modal style
+- Remove unnecessary button
+- Remove white rectangle around image
+- Refactor image style
+- Round image corners
+- Refactor price input to ratio
+- Adjust price input scale
+- Update price input component
+- Remove unnecessary text
+- Make price optional
+- Fix: Resolve type error in EditMilkTest
+- Implement price quality ratio selection
+- Update PriceInput component
+- Update price input component
+- Improve price input component
+- Reverted to edit edt-8e307139-3925-493a-ab5b-5d4e47d8d587: "Update price input component
+- Update price input component
+- Use emojis instead of icons
+- Reorder form elements
+- Fix price selection and remove currencies
+- Run SQL migrations
+- Run reviewed SQL scripts
+- Fix: Type errors in Dashboard and MyResults
+- Fix: Price quality ratio selection
+- Fix: Toggle group item selection
+- Add price quality ratio selection
+- Refactor: Restore emoji styling
+- Refactor: Apply styling changes
+- Fix: Price input button selection
+- Refactor: Update drink preference icons
+- Fix: Price-to-quality ratio submission error
+- Fix: Allow deselecting price buttons
+- Run SQL migration
+- Run SQL migrations
+- Add price quality ratio emoji to results page
+- Remove unknown price quality option and add tooltips for style icons.
+- Fix: Improve tooltip styling consistency
+- Run SQL migrations
+- Fix: Apply rounded corners to image modal
+- Fix: Apply rounded corners to images
+- Reverted to edit edt-07a03331-2c5b-4f65-96fb-3dd15f64693f: "Run SQL migrations"
+- Fix: Display notes and shop country
+- Refactor: Split Results page into components
+- Refactor: Break down MyResults.tsx into components
+- Refactor: Reorder result table columns
+- Refactor: Change results table column order
+- Fix: Order individual test results
+- Reverted to edit edt-dde7015c-55bc-4121-8a0d-348edde644e9: "Refactor: Change results table column order
+- Fix: Incorrect order on individual tests page
+- Reverted to edit edt-7f100e9a-25d2-41b7-bd34-77927ea8a27e: "Fix: Order individual test results
+- Rearrange TestDetailsTable columns
+- Move shop column
+- Remove white square around image
+- Fix: Restore thumbnail rounded corners
+- Fix: Apply rounded corners to thumbnail
+- Fix: Tooltip responsiveness on mobile
+- Fix: Make popups work on mobile
+- Fix: Center tooltip and remove cursor style
+- Fix: Add sortable arrow to price column
+- Fix: Enable sorting on all columns
+- Refactor: Split Results page into components
+- Refactor: Split MyResults page into components
+- Fix: Type error in handleSort function
+- Refactor: Split product properties into categories
+- Refactor: Implement the plan
+- Refactor: Merge product details columns
+- Refactor: Move product details below product name
+- Rearrange product badges
+- Fix: Align table column titles to the left
+- Fix: Align table headers to the left
+- Refactor: Only show sort arrows for sorted column
+- Refactor: Replace purple color with soft-blue
+- Remove badges from test details
+- Fix: Reduce spacing in aggregated results table
+- Fix: Remove border from image modal
+- Fix: Change cursor on price emoji hover
+- Fix: Change cursor to hand
+- Fix: ProductDetails type errors
+- Fix: Improve table column sorting
+- Add product click indicator
+- Refactor: Use Chevron/Arrow icon
+- Fix: Make chevron bigger and black
+- Refactor: Display average score and total tests
+- Reverted to edit edt-96a65a1e-dad0-479d-982d-35d960ea08b0: "Fix: Make chevron bigger and black
+- Fix: Product details page
+- Refactor: Reduce header space usage
+- Remove hover effect from flavor badges
+- Fix: Resolve MyResultsTable type errors
+- Refactor: Adjust table column widths
+- Fix: Update note icon and column
+- Refactor: Improve MyResultsTable layout
+- Fix: Adjust spacing for product badges
+- Add background color to stats overview
+- Refactor: Improve stats overview layout
+- Refactor: Show last test and date
+- Visual edit in Lovable
+- Fix: Update UI elements
+- Visual edit in Lovable
+- Fix: Preserve view mode on sort
+- Fix: Resolve existing issue
+- Fix: Preserve view mode on sort
+- Fix: Pass viewMode to UserResultsContainer
+- Refactor: Improve stats card design
+- Refactor: Split EditMilkTest.tsx into smaller components
+- Fix: MilkTestResult type mismatch in EditMilkTest
+- Fix: Tailwind class not found
+- Visual edit in Lovable
+- Reverted to edit edt-586fe6cf-1ba0-4457-9280-2e76690d6f3c: "Fix: Tailwind class not found
+- Code edited in Lovable Code Editor
+- Fix: Remove extra closing brace in CSS
+- Reverted to edit edt-e8d206bb-1747-452b-993e-ba893f7ec157: "Fix: MilkTestResult type mismatch in EditMilkTest
+- Fix: Redirect to add page on cancel
+- Fix: Prop type errors in FormSections
+- Fix: BrandSelect className prop
+- Add optional className prop to BrandSelect
+- Refactor: Improve BrandSelect component
+- Refactor: Update color scheme and logo
+- Refactor: Improve color visibility
+- Code edited in Lovable Code Editor
+- Code edited in Lovable Code Editor
+- Code edited in Lovable Code Editor
+- Code edited in Lovable Code Editor
+- Add blurred background colors
+- Enhance wavy background effect
+- Refactor: Improve design for calmness
+- Fix: CSS parsing error in index.css
+- Reverted to edit edt-6530dd44-b5cd-49a8-9405-8be31777cc95: "Refactor: Improve BrandSelect component
+- Refactor: Redesign home page and account button
+- Refactor: Update home page content and design
+- Refactor: Update home page content and animation
+- Fix: Update home page text and button
+- Refactor: Improve menu bar and background styling
+- Rename project and update favicon
+- Refactor: Update menu and chart styling
+- Fix: Menu bar layout and logo size
+- Fix: Adjust menu bar text size
+- Visual edit in Lovable
+- Fix: Menu styling to match homepage
+- Reverted to edit edt-8dd6e91b-89e3-4884-8704-88447b18c6d5: "Visual edit in Lovable
+- Refactor: Improve menu
+- Visual edit in Lovable
+- Refactor: Merge dashboard and results pages
+- Fix: Import and type errors
+- Fix: Adjust page layout and remove title
+- Fix: Product details page not rendering
+- Visual edit in Lovable
+- Add chart background
+- Fix: Chart container height
+- Add funny contact page to menu bar
+- Refactor: Improve home page design
+- Center content on About and Contact pages
+- Fix: Import PizzaSlice from lucide-react
+- Refactor: Restore contact page content
+- Reverted to edit edt-80ac8031-ece1-4329-aef0-a8edc3b6762d: "feat: Update contact page icons
+- Fix: Import error for PizzaSlice
+- Update contact page content
+- Visual edit in Lovable
+- Add test link and rename button
+- Add plus icon to the UI
+- Refactor: Update Product Registration UI styles
+- Fix: Tailwind hover style error
+- Refactor: Center form fields and remove gradients
+- Fix: Improve auth button and input styles
+- Reverted to edit edt-28ca5c42-80ef-4330-83d5-3c7a77071993: "Refactor: Center form fields and remove gradients
+- Refactor: Remove login requirement for milk test
+- Fix: Input field border color
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Fix: Apply sign in button styling
+- Remove sign out button
+- Add password update functionality
+- Rename "Save Changes" to "Save Username"
+- Fix: Adjust menu bar and text size
+- Fix: Reduce navbar height
+- Reverted to edit edt-431076b0-6837-44ec-8c36-73e3e11f5fe0: "Rename "Save Changes" to "Save Username"
+- Visual edit in Lovable
+- Fix: Improve background visuals
+- Refactor: Extract background pattern component
+- Refactor: Update background wave patterns
+- Refactor: Improve background visuals
+- Reverted to edit edt-789b6133-026e-4e22-b746-924fa8fe317c: "Refactor: Update background wave patterns
+- Add animated milk drops
+- Reverted to edit edt-edd1301f-3076-4491-bd1e-4af6f515f393: "Refactor: Improve background visuals
+- Reverted to edit edt-789b6133-026e-4e22-b746-924fa8fe317c: "Refactor: Update background wave patterns
+- Refactor: Use background pattern in all pages
+- Add extra lines to BackgroundPattern
+- Code edited in Lovable Code Editor
+- Code edited in Lovable Code Editor
+- Add more background pattern lines
+- Code edited in Lovable Code Editor
+- Add background pattern
+- Fix: Use homepage background
+- Fix: Update About and Contact page styling
+- Visual edit in Lovable
+- Fix: Update icon colors
+- Reverted to edit edt-ccc89cc9-5cad-4f95-8bcb-83f5c51a9a0a: "Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Fix: Style input fields with grey borders
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Fix: Selected menu item text color
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Remove toast notifications
+- Fix: Resolve TypeScript errors in hooks and components
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Reverted to edit edt-8a3fbabd-9095-43a4-9ae8-71cab847c634: "Visual edit in Lovable
+- Fix: Improve input field highlight color
+- Refactor: Improve input field color
+- Fix: Auth error handling and forgot password
+- Fix: Show results table when not logged in
+- Fix: Show brand and product names in results
+- Fix: Show product and brand names
+- Fix: Redirect to login on add milk test
+- Fix: Remove flash of add milk test page
+- Fix: Ensure brand and product names are populated
+- Fix: Ensure brand and product names
+- Refactor: Break down Auth page into components
+- Fix: Redirect to reset password page
+- Fix: Handle password reset redirect
+- Fix: Password reset redirect
+- Fix: Auth redirect issue
+- Fix: Ensure confirmation URL is correct
+- Fix: Password reset flow
+- Fix: Password reset flow
+- Add password visibility toggle
+- Fix: Signup button not working
+- Fix: Show error on incorrect login
+- Code edited in Lovable Code Editor
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Fix: Implement ConfirmationURL
+- Fix: Sign up flow and email verification
+- Refactor: AuthForm component
+- Fix: Sign up button not working
+- Fix: Sign up button functionality
+- Fix: Display specific error for login failures
+- Fix: Incorrect type in supabase.auth.getUser
+- Fix: Login error message for invalid email
+- Fix: Resolve TypeScript error in useAuthForm.ts
+- Fix: Implement forgot password functionality
+- Fix password reset link
+- Style: Apply homepage styling to results page
+- Apply product details page styling
+- Refactor: Implement styling improvements
+- Visual edit in Lovable
+- Fix password reset link
+- Fix login UX
+- Fix login error handling
+- Style password reset email
+- Fix signup greeting
+- Add logo to email
+- Fix: Password reset redirect
+- Fix: Password reset error
+- Fix auth session missing error
+- Fix: Password reset flow
+- Fix: Password reset redirect
+- Fix: Separate auth and reset password pages
+- Fix password reset error
+- Fix: Implement password reset flow improvements
+- Refactor: Add redirect button for password reset
+- Refactor: Use exchangeCodeForSession for password reset
+- Fix: Password reset error
+- Fix: Improve password reset flow
+- Run SQL script
+- Redirect after signup
+- Fix: Prevent auto-login after email confirmation
+- Add email validation success page
+- Refactor: Split Auth.tsx into smaller components
+- Improve signup flow
+- Fix: Redirect to login after email confirmation
+- Fix: Email confirmation redirect
+- Fix: Prevent duplicate email signups
+- Fix reset-password page
+- Fix duplicate email signup warning
+- Fix reset password functionality
+- Add badge and score styling
+- Fix score display
+- Apply test count styling
+- Implement badge design
+- Apply result table styling
+- Fix signup existing email warning
+- Fix signup existing email warning
+- Fix reset password link validation
+- Style button blue
+- Style reset password button
+- Apply result table styling
+- Improve result card styling
+- Refactor: Make design more minimalistic
+- Add colored borders and style switch
+- Refactor: Adjust table column widths and add image column
+- Refactor: Adjust table column widths and order
+- Run SQL migration
+- Refactor: Make design more minimalistic
+- Reverted to commit 1a782d85169653b139df537cfc718a741315bb71
+- Refactor: Style profile badge
+- Add blurred background to badge
+- Fix: Position edit/delete buttons in bottom right
+- Fix: Ensure consistent card styling
+- Style add test page
+- Style add results button
+- Update add product and shop page styling
+- Apply button styling.
+- Add edit/delete options
+- Refactor: Hide actions column, show on hover
+- Refactor: Use result page column widths
+- Update edit milk page styling
+- Make edit milk test page more compact
+- Change rating color
+- Fix scrollbar styling
+- Visual edit in Lovable
+- Fix: Consistent input field highlight color
+- Fix input field styling
+- Disable add shop button
+- Style disabled buttons.
+- Fix disabled button color
+- Refactor badge styling
+- Visual edit in Lovable
+- Add filter for badges
+- Remove filter badge
+- Fix: Remove filter badges
+- Show active filter count
+- Add button to add new milk test
+- Add "Add Test" button
+- Remove Barista toggle
+- Adjust badge size
+- Add horizontal line
+- Update flavor adding styling
+- Fix: Ensure badge sizes are consistent
+- Style chart page like table page
+- Refactor add flavor styling
+- Compact product grid
+- Fix barista badge styling and position
+- Refactor product grid styling
+- Revert product name position
+- Adjust product name and badge spacing
+- Visual edit in Lovable
+- Fix: Consistent badge spacing on results page
+- Fix badge spacing
+- Adjust badge spacing
+- Fix badge spacing on results page
+- Fix badge spacing on results page
+- Apply badge spacing
+- Visual edit in Lovable
+- Fix: Adjust column width for product name
+- Move badges behind product name
+- Visual edit in Lovable
+- Remove horizontal lines in form
+- Fix flavor display on add page.
+- Style disabled buttons
+- Change rating bar color
+- Style badges consistently
+- Make badges more compact.
+- Fix: Update rating color codes
+- Change badge design
+- Update fair rating color
+- Style price-to-quality ratio buttons
+- Use existing color codes
+- Update price-to-quality colors
+- Reduce badge border size.
+- Fix max value display
+- Replace text in product details.
+- Widen tooltip size.
+- Update drinking style button styling
+- Update color for drinking style.
+- Style button to be purple.
+- Refactor: Remove bold from product name
+- Update styling for consistency
+- Fix: Increase badge spacing
+- Update a value to -5.
+- Fix rating badge corners
+- Fix rounded corners on div
+- Reverted to commit 6cd4892ff1795f3a3f0436ad181778896bc76516
+- Fix rounded corners
+- Implement mobile menu
+- Show account badge always
+- Refactor: Remove and reorder menu items
+- Move account badge and remove arrow
+- Make result table responsive
+- Center page title on mobile.
+- Remove table view on mobile
+- Remove "Account" text
+- Move profile badge to the right
+- Fix menu icon alignment
+- Prevent text wrapping
+- Refactor mobile navigation
+- Reverted to commit 2039f1c3a690abc55b2ec8d3ee8a5252347175fb
+- Visual edit in Lovable
+- Fix: Left-align placeholder text
+- Fix search field placeholder alignment
+- Fix: Align placeholder text in search
+- Fix search placeholder alignment
+- Visual edit in Lovable
+- Improve mobile menu design
+- Add menu to the options
+- Remove hamburger button
+- Add mobile navigation to dropdown
+- Remove chart/table switch for mobile
+- Move add shop button on mobile
+- Remove login/logout success toasts
+- Refactor result page layout
+- Add another statistic
+- Visual edit in Lovable
+- Add secondary sort criteria
+- Improve product name display.
+- Reverted to commit 51ccbc1f85050c9f65eb6a482618f46ba1a3a634
+- Change highest rated statistic to most tested product
+- Add rounded corners to form
+- Fix most tested product statistic
+- Fix "Most Tested Product" display
+- Use product name in statistic.
+- Fix: Score badge size on my results page
+- Change text size to 12px
+- Remove bold formatting
+- Change font size to 14px
+- Update product name styling
+- Implement hover effect for buttons
+- Visual edit in Lovable
+- Remove extra space when no badges
+- Fix results display and card heights
+- Reverted to commit e4007ac9af1f10c3716aef3b6c347e96ab22f31a
+- Make card height dynamic.
+- Remove bottom whitespace for cards
+- Focus on brand name input
+- Fix initial focus on product registration.
+- Fix initial form focus issue
+- Fix: Focus on brand input on initial load
+- Fix focus switching issue
+- Fix brand field focus issue
+- Fix focus on new product form
+- Style search box for consistency
+- Code edited in Lovable Code Editor
+- Code edited in Lovable Code Editor
+- Style edit page to match add page
+- Add product information badges
+- Add missing badges
+- Fix: Display flavor badges on edit page
+- Move icons to bottom right
+- Adjust card spacing for dynamic view
+- Reverted to commit 2d706709f6524238e90e5d9e7250242b2cf0eff4
+- Fix: Place icons on bottom right
+- Fix badge spacing
+- Add mobile menu to milk test cards
+- Remove 3-dot menu for mobile
+- Refactor card actions for tablet/windows
+- Add delete button
+- Rename and reposition delete button.
+- Remove icon
+- Fix: Truncation issue on cards
+- Move badges on mobile results page
+- Fix mobile badge positioning
+- Refactor mobile results design
+- Refactor product result card
+- Reverted to commit 4437182c4279780af4793d2aa94ac42a2f1fb99d
+- Refactor: Use product details card on mobile results
+- Apply card styling
+- Refactor: Apply product details card styling
+- Adjust card spacing on mobile
+- Add sort button for mobile
+- Refactor sort and search
+- Add "Search" text to search button
+- Fix button alignment
+- Fix indicator color
+- Fix sort button visibility
+- Reverted to commit 1d8ec93f98fb0f2a86ef0c5369287e7f70b8a862
+- Refactor: Show indicator dot for active filters/sort
+- Align filter popup on tablet
+- Align filter popup on mobile
+- Space buttons on mobile
+- Adjust filter popup alignment
+- Align sort popup on mobile.
+- Add clear sort option
+- Apply color to sorted column name
+- Change sort column color
+- Fix spacing inconsistency
+- Fix spacing issue
+- Add filter on badge click
+- Refactor AggregatedResultsTable.tsx
+- Fix badge filtering
+- Implement filter toggle and add functionality
+- Highlight active filters
+- Visual edit in Lovable
+- Remove badge animations
+- Fix filter menu for properties and flavors
+- Fix badge click filtering
+- Make mobile buttons same size
+- Fix: Mobile button widths
+- Refactor search button
+- Refactor: Use "Clear" text for search clear button
+- Fix mobile popover width
+- Fix: Make popups the same size
+- Center mobile popups
+- Fix mobile pop-up alignment
+- Fix: Adjust grid view badge placement
+- Change font size to 16px
+- Remove badge animations
+- Adjust font size for different devices
+- Adjust font size for desktop
+- Refactor: Implement mobile results page design
+- Change font size to 14px
+- Center pop-up on screen
+- Fix: Center search and sort popups on mobile
+- Center search popup on mobile
+- Fix search popup centering
+- Reduce badge whitespace.
+- Format rating display
+- Show rating with one decimal place
+- Keep card squared on mobile.
+- Fix score badge ratio on mobile
+- Add enter icon and center search popup
+- Add click functionality to enter icon
+- Center the div
+- Fix: Align sort popup to the left
+- Fix: Center sort popup
+- Fix: Center sort button popup on mobile
+- Align sort popup to button
+- Rearrange sort options and style.
+- Reduce filter popup size.
+- Align search field to the left
+- Set width to 350px
+- Reverted to commit 19f8c8a545334efed0d6b25a6fba0837c6b65833
+- Change search popup width to w-54
+- Change search popup width to w-60
+- Fix: Address no changes reported
+- Revert search popup width.
+- Make search bar placeholder scrolling
+- Implement horizontal scrolling for search bar text.
+- Fix search field alignment
+- Remove scrolling placeholder
+- Remove search text
+- Apply SQL changes
+- Apply SQL migration
+- Implement security fixes
+- Fix: Resolve read-only property error
+- Apply security fixes
+- Apply security-related SQL changes
+- Apply security fixes
+- Refactor codebase
+- Fix: Mobile results page login requirement
+- Refactor: Improve menu bar design
+- Reverted to commit d95f40006289638df50f539a7f3735abbafd0b4f
+- Add footer navigation
+- Add footer to homepage
+- Add mobile footer
+- Remove mobile footer
+- Reverted to commit f70edbce3586e78f80d9c2ee3d9719d75fe9f82a
+- Remove mobile menu items
+- Run security SQL scripts
+- Add mobile footer to all pages
+- Run database migration
+- Add product name suggestions
+- Fix: Ensure consistent button heights
+- Fix: Failed to add milk test error
+- Make badge sizes compacter
+- Fix: Show new test immediately
+- Add average rating graph
+- Make badges more compact
+- Fix chart data display
+- Run SQL changes
+- Add top 10 products bar chart
+- Update chart axes
+- Implement chart enhancements
+- Add BrushBarChart for test results
+- Rearrange chart elements
+- Create rating per brand bar chart
+- Fix missing brands in overview
+- Refactor: Implement rating per brand chart
+- Implement camera/file picker for image upload
+- Add bar chart interaction
+- Run SQL script
+- Implement camera and gallery options
+- Add home button for mobile/tablet
+- Add home button to header
+- Remove footer on tablet
+- Add homepage summary section
+- Refactor home page statistics
+- Fix product count display
+- Move button below main text
+- Adjust layout for better page fit
+- Adjust home page layout
+- Adjust positioning
+- Reverted to commit accea057ae0d097c5492a1c2281acd48352cd371
+- Run SQL script
+- Fix: Match button dimensions with badges
+- Fix button size.
+- Visual edit in Lovable
+- Fix photo preview in edit mode
+- Fix badge display on tablet
+- Visual edit in Lovable
+- Run SQL migration
+- Remove country dropdown when preselected
+- Run database migration
+- Run database migration
+- Run database migration
+- Run database migration
+- Run SQL to clean shops
+- Fix duplicate shops and country codes
+- Fix: Product search not returning shops
+- Update email functionality
+- Visual edit in Lovable
+- Update account settings page
+- Refactor account settings page
+- Reverted to commit 9ec67a06503219254db2aa70b0fa6128e86d02a6
+- Overlay stats on background
+- Add transparent background and button
+- Update homepage layout
+- Reverted to commit 0731de20a4ee35812714dcf99fe8d1423b3a4576
+- Add total tests stat
+- Refactor stats layout and button
+- Visual edit in Lovable
+- Reverted to commit 805bcc098a61f120c3b8da74c43afd9a5c19170f
+- Style stats as cards
+- Adjust text size and position
+- Update stats for mobile view
+- Fix borders and button styling
+- Add navigation to results page
+- Fix: Enable Add Result button conditionally
+- Fix milk test submission and navigation
+- Update homepage title color
+- Visual edit in Lovable
+- Connect stats to database
+- Update button color and remove blur
+- Visual edit in Lovable
+- Center homepage text
+- Center homepage text horizontally
+- Ensure homepage responsiveness
+- Remove blue blur from title
+- Implement automatic image compression
+- Run SQL cleanup
+- Update edit milk test page
+- Add country required indicator
+- Refactor shop dropdown behavior
+- Fix missing country name
+- Add country code to table views
+- Fix duplicate country display
+- Fix homepage text alignment
+- Remove country flags from display
+- Add shop and country columns
+- Add map view to results
+- Fix CSP error for Mapbox
+- Add map view for test activity
+- Fix map visualization
+- Update map to real map
+- Revert map to Mapbox
+- Update Mapbox token name
+- Fix: Map not displayed
+- Fix: Ensure take photo button visibility
+- Fix take photo button on desktop
+- Fix image compression warnings
+- Add users to user_roles
+- Run SQL to update roles
+- Run SQL to update RLS policies
+- Update RLS policies
+- Style '+' button
+- Adjust button dimensions in FlavorSelector
+- Style flavor badges like properties
+- Refactor flavor badge styling
+- Adjust layout for mobile
+- Center text and buttons
+- Fix button hidden by footer
+- Order results by date
+- Refactor results view
+- Compact badges by reducing whitespace
+- Adjust date placement in results
+- Fix badge padding inconsistency
+- Fix badge padding inconsistency
+- Fix badge padding inconsistency
+- Fix badge padding inconsistencies
+- Remove country selection
+- Run SQL migration
+- Run SQL for feed page
+- Fix feed page image display
+- Fix feed display issues
+- Fix feed photo display
+- Improve feed layout for images
+- Refine feed item display
+- Visual edit in Lovable
+- Run wishlist migration
+- Refactor menu and wishlist button
+- Remove "Try This" button
+- Add authentication to feed
+- Refine feed authentication experience
+- Remove feed blur
+- Adjust feed to require login
+- Run SQL migration
+- Fix RLS policy for member count
+- Refactor feed authentication message
+- Minimize login button on mobile
+- Prevent translation of brand name
+- Style brand and product names
+- Style brand and product names
+- Remove lowest badge
+- Add missing badges
+- Fix FeedItem badges and score styling
+- Update user badge style
+- Fix wishlist title overlap
+- Add edit option for own milk tests
+- Fix edit milk test navigation
+- Remove homepage scrollbar
+- Fix scrollbar on homepage
+- Add hyphen between brand and product
+- Refactor: Use dot separator
+- Fix: Remove homepage scrollbar
+- Add product edit functionality
+- Add update and remove buttons
+- Fix: Handle undefined score in CircularStats
+- Fix product update and removal logic
+- Fix mobile page layout
+- Fix: Prevent translation of specific fields
+- Add settings side menu
+- Refactor settings menu layout
+- Refactor settings menu tabs
+- Refactor settings menu layout
+- Reverted to commit 31d398641370a821421943f5cd470a4bd1d03a3a
+- Revert preference tab addition
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Adjust text size on mobile
+- Adjust font size on mobile
+- Center logo text vertically
+- Align wishlist title
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Change header background color
+- Fix settings card size and mobile tabs
+- Center items in tabs
+- Adjust settings for mobile
+- Visual edit in Lovable
+- Adjust font size for mobile
+- Run SQL scripts
+- Run SQL migration
+- Add notification functionality
+- Visual edit in Lovable
+- Fix: User is not defined in MenuBar
+- Run newsletter migration
+- Update notification icon colors
+- Fix toggle switch color
+- Fix notification update error
+- Remove toasters
+- Refactor: Reduce settings card height
+- Ensure consistent tab sizes
+- Adjust background pattern height
+- Refactor BackgroundPattern to CSS
+- Fix scrollbar issue
+- Fix homepage scrollbar
+- Fix background on lower page
+- Fix homepage scrollbar with overflow-hidden
+- Fix: Adjust Home page layout
+- Fix horizontal scrollbar
+- Visual edit in Lovable
+- Refactor: Decrease hero div height
+- Center the main container
+- Refactor: Remake SVG background in CSS
+- Refactor: Improve visibility of stats
+- Refactor background patterns
+- Remove username restrictions
+- Run SQL triggers
+- Fix notification insertion policy
+- Run SQL migration for notifications
+- Fix notification badge and scrollbar
+- Remove redundant notification text
+- Fix notification navigation
+- Fix hover background color
+- Fix notification hover styling
+- Fix notification hover styling
+- Fix notification menu styling
+- Fix notification hover background
+- Fix notification styling
+- Fix question mark icon alignment
+- Fix notification popup styling
+- Fix notification popup styling
+- Fix notification close button styling
+- Fix notification popup corners
+- Center outer div
+- Fix search input for spaces
+- Fix search bar space issue
+- Run SQL script
+- Run SQL migration
+- Fix: Feed shows no tests
+- Remove scrollbar on homepage
+- Fix badge sizing for flavors
+- Fix notification indicator overlap
+- Fix notification badge positioning
+- Fix notification badge positioning
+- Refactor notification component
+- Make unread notifications clearer
+- Remove notification dot from menu
+- Fix notification text alignment
+- Refactor notification popup
+- Fix notification button alignment
+- Fix notification button overlap
+- Align notification text in dropdown
+- Add notification dot
+- Remove blue dots from notifications
+- Fix: Close notification page after click
+- Fix notification highlight color
+- Style notifications menu item
+- Fix notification text size
+- Fix notification hover background
+- Fix notification hover accents
+- Fix notification menu alignment
+- Fix notification hover background
+- Adjust red dot position
+- Adjust menu size
+- Reverted to commit 16264ef83d8f141f6c7f1f573e4a76d7dc392dbf
+- Reduce menu size
+- Adjust menu size
+- Adjust AuthButton width
+- Add hover functionality for likes
+- Add button to view all results
+- Fix: Make account icons smaller
+- Add Oat Milk background theme
+- Revert background changes
+- Fix background not applying
+- Refactor background components
+- Fix blurred background on pages
+- Add green stripe to feed page
+- Reverted to commit 347a08f7bd04363aff23860f2db11c843b81d15a
+- Compact ResultCard for mobile
+- Update Wishlist icon
+- Update Wishlist icon
+- Replace likes with bookmarks
+- Fix bookmark icon flashing
+- Fix: Remove unnecessary query invalidation
+- Fix wishlist icon flashing
+- Fix flashing icons on wishlist removal
+- Fix undefined variable
+- Fix flashing login button
+- Add image navigation to Wishlist
+- Add button for test results
+- Reverted to commit b7f1d02b014fb74058116bc6ef1e6fb5ba800369
+- Add "Show All Results" button
+- Add navigation to product results
+- Fix security issue
+- Fix public data exposure
+- Approve Lovable tool use
+- Fix security vulnerabilities
+- Fix card dimensions on pages
+- Fix: Ensure counts are visible anonymously
+- Add anonymous access to results
+- Update login button style
+- Change login prompt sentence
+- Visual edit in Lovable
+- Refactor login prompt text
+- Style login prompt
+- Reverted to commit 8268a383717c65cf1df0ee54c05e38775310e963
+- Update login button color
+- Update LoginPrompt text and styling
+- Adjust text position
+- Remove border from login button
+- Remove border from login button
+- Visual edit in Lovable
+- Adjust vertical spacing in LoginPrompt
+- Fix: Remove focus ring from login button
+- Refactor feed for unauthenticated users
+- Approve tool use
+- Fix profile table access
+- Fix security linter warnings
+- Fix profile table security
+- Approve tool use
+- Fix milk_tests table policies
+- Fix: Show other users' results
+- Fix feed and results views
+- Fix feed to show all results
+- Fix feed to show all users' results
+- Fix feed to show all users' results
+- Fix feed to show all results
+- Refactor feed to use functions
+- Remove security barrier
+- Fix product details page to show all results
+- Fix security definer view
+- Defer non-critical CSS
+- Fix CSP meta tag issue
+- Fix render-blocking CSS
+- Add preconnect hints
+- Fix: Allow all users to add new flavors
+- Approve Lovable tool use
+- Fix invalid App ID
+- Add mobile app install information
+- Refactor mobile app banner
+- Refactor home page banner
+- Fix scrollbar issue
+- Refactor mobile app page
+- Refactor mobile app installation page
+- Visual edit in Lovable
+- Refactor mobile app page layout
+- Add Android download link
+- Visual edit in Lovable
+- Refactor: Make feed two columns
+- Update feed preview to 4 cards
+- Add in-progress indicator
+- Refactor Results page tabs
+- Fix scrollbar shifting issue
+- Remove hover animation from store links
+- Update login modal style
+- Refactor: Style sign up button
+- Fix button hover background
+- Fix sign up button redirect
+- Remove green background element
+- Refactor: Consolidate background components
+- Refactor header for mobile navigation
+- Improve mobile footer navigation
+- Improve mobile header visibility
+- Refactor: Make contact and about pages compact
+- Refactor search and filter UI
+- Refactor mobile filter bar
+- Remove unnecessary div
+- Refactor mobile search and filter bar
+- Fix button widths in mobile filter bar
+- Make div sticky
+- Add margin to top
+- Visual edit in Lovable
+- Reverted to commit 94e633603f7f1eb70259e4561ff7b7bd5c6083bd
+- Make product cards wider
+- Widen product cards further
+- Refactor: Adjust padding
+- Fix card width
+- Fix: Match filter/sort button width to search bar
+- Add text next to icons
+- Fix: Set product card width to 490px
+- Fix card centering
+- Fix card width
+- Fix card width
+- Fix: Match product card width to search bar
+- Center contact page blocks
+- Revert contact page changes
+- Reverted to commit b47744156218c9451582891599b4195c60a2eba5
+- Refactor: Use homepage colors for stats
+- Refactor: Update page colors
+- Fix login button color
+- Fix login button styling
+- Remove login arrow
+- Remove button hover animation
+- Remove icon animations from buttons
+- Re-enable icon animations on web
+- Center div on mobile/tablet
+- Add footer to tablets
+- Remove element for tablets
+- Fix mobile footer on tablets
+- Apply mobile header styling to tablets
+- Center div on tablets
+- Increase text size on mobile
+- Adjust text size on mobile
+- Fix flashing logo and button on mobile
+- Fix login button flashing
+- Refactor About Page
+- Reverted to commit dc8a2af42cd8a78c9eeeb41960fd1e035d637d60
+- Refactor page availability by device
+- Add checkbox for own results
+- Remove logout success message
+- Style login button for mobile and tablet
+- Remove hover animations on touch devices
+- Fix hover effect on button
+- Fix icon spacing in footer
+- Use full screen for notifications
+- Refactor: Change "Notification" to "Notifs"
+- Fix notification text on tablet
+- Move "My results only" checkbox
+- Refactor notification page
+- Add icons to notification page
+- Revert web changes for notifications
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Add notification dot indicator
+- Add notification indicator to mobile
+- Refactor header for mobile/tablet
+- Visual edit in Lovable
+- Reverted to commit 0592ce54559e53302a8fcd942fd07f3ddf4c123a
+- Visual edit in Lovable
+- Reverted to commit 0592ce54559e53302a8fcd942fd07f3ddf4c123a
+- Remove text below icons
+- Make footer icons bigger
+- Replace header on notifications page
+- Remove red dot from mobile header
+- Update header on notifications page
+- Update notification page header
+- Fix whitespace on notification page
+- Refactor notification header
+- Remove menu bar transparency
+- Add collapsible sections and sorting
+- Add logo and name to auth pages
+- Reverted to commit fa05ca037fb91a7decd3fd1f6a59bc168b28bb4e
+- Fix whitespace below header
+- Fix whitespace above Recent section
+- Fix: Adjust Recent section spacing
+- Fix feed page styling
+- Add feed icon to header
+- Refactor: Update menu bar styling
+- Visual edit in Lovable
+- Reverted to commit fd82de380f580cc65bb39867d5a0738246af5f99
+- Visual edit in Lovable
+- Add brand, product, and badges
+- Refactor: Reorder badges in FeedItem
+- Refactor: Replace save button with edit
+- Add horizontal line above product name
+- Refactor: Optimize feed item layout
+- Refactor: Remove "about" from timestamp
+- Remove feed header
+- Update menu bar icon
+- Refactor: Move date below username
+- Refactor: Make feed more compact
+- Improve close button visibility
+- Refactor FeedHeader and FeedItem
+- Refactor feed layout
+- Remove whitespace below menu bar
+- Refactor test results to accordion
+- Refactor test results display
+- Add "Individual Tests" to menu
+- Add chart icon to results page
+- Move back button to right
+- Refactor test details accordion
+- Refactor product card display
+- Add '+' button to menu bar
+- Refactor product card selection
+- Refactor product card styling
+- Refactor product selection behavior
+- Visual edit in Lovable
+- Refactor: Adjust text size on mobile
+- Reverted to commit f52ccc9fdedf22a8f1772f6fcd64d71179c9fd64
+- Refactor product card styling
+- Revert product card styling changes
+- Sort feed chronologically
+- Update feed layout
+- Filter out posts from 1970
+- Fix feed layout gaps
+- Fix feed page layout
+- Fix feed card ordering
+- Fix: Combine grid and masonry layout
+- Update feed layout for tablets
+- Use feed user icon on notifications
+- Fix notification message format
+- Update notifications with product details
+- Refactor: Adjust card width
+- Refactor mobile results to table format
+- Reverted to commit e0561b86805cfb8ec8486695cd7e8ffcc7036277
+- Refactor: Adjust mobile results view
+- Reverted to commit b08c81548ad4f23a6fcca23783d0a824db8384d8
+- Reverted to commit e0561b86805cfb8ec8486695cd7e8ffcc7036277
+- Fix: Update older notifications to use badges
+- Fix: Add flavor button popup not working
+- Fix: Add flavor button not working
+- Add header to add milk test page
+- Refactor: Move header to new location
+- Fix mobile add test page
+- Refactor: Distinguish sections on add test page
+- Refactor: Update header color scheme
+- Reverted to commit 5f0dadac26eb9a3d0baa5ad0c5a8d2b64f5f5e47
+- Refactor: Add plus button to search bar
+- Refactor: Open register product on new page
+- Refactor: Add shop from search bar
+- Fix placeholder text alignment
+- Refactor: Add new flavors inline
+- Fix: Add badges to notifications
+- Fix: Remove plus signs
+- Refactor: Sort results by score
+- Fix: Remove blue dot from notifications
+- Refactor: Adapt results page for mobile
+- Refactor Results Filter
+- Refactor notification click handling
+- Fix alignment on web/tablet
+- Adjust badge width on mobile
+- Reverted to commit e731d7092c928943568109fd0a0b0ee87a9f5baa
+- Widen mobile result cards
+- Revert card width changes
+- Fix card size on mobile
+- Fix results page card width
+- Fix card width inconsistency
+- Fix card width on results page
+- Reverted to commit 5e697845878a25ef9849a6253e975bc9ff820eea
+- Fix card width on results page
+- Add border animation on click
+- Fix notification dot disappearance
+- Refactor notification state management
+- Refactor detail result page
+- Reverted to commit 41cc8d5912b95b735790da2cdc351f94340ba784
+- Refactor product details page
+- Reverted to commit c3a415dc5a7a7146ea7b68d50eaf473040697d7d
+- Reverted to commit 41cc8d5912b95b735790da2cdc351f94340ba784
+- Reorder "My Results" button
+- Fix footer refresh on page load
+- Refactor product details page
+- Add collapse functionality to tests
+- Fix style icon color
+- Hide "Individual Tests" on mobile
+- Fix thumbnail picture view
+- Refactor image modal styling
+- Remove button on web/tablet
+- Visual edit in Lovable
+- Revert hiding "Individual Tests"
+- Fix duplicate close buttons
+- Fix close buttons on feed and detail pages
+- Refactor feed to 3 columns
+- Fix close button and image display
+- Fix result detail page layout
+- Reverted to commit a86599e3792eb688544c839b97a0558b34a816b0
+- Fix tablet view on product details
+- Reorder product details on cards
+- Refactor result card layout
+- Reorder product details on cards
+- Refactor score display
+- Update result detail card styling
+- Remove test count and separator
+- Fix filter visibility on results page
+- Update filter badge colors
+- Remove extra padding when no filters are active
+- Align score badges and collapse indicator
+- Make brand and product bold
+- Update notification page styling
+- Remove toaster notification
+- Fix notification separator
+- Fix: Remove old notifications
+- Refactor notification grouping
+- Add two columns to feed
+- Fix scrolling on mobile/tablet
+- Add text labels to icons
+- Add score input functionality
+- Refactor score input box
+- Refactor score input color
+- Fix security definer views
+- Hide "Individual Tests" on mobile
+- Refactor product search section
+- Change "Back to results" to "Back"
+- Reverted to commit 63ca0ee7859f8704a84870151c0149aa2d620432
+- Refactor "Back to results" text
+- Revert text change on tablet
+- Refactor search and filter area
+- Reverted to commit 81be0e6404bc17ef982ea966d02363940ffc56c3
+- Refactor mobile filter and search
+- Update search bar and buttons
+- Increase mobile header spacing
+- Apply active filter color
+- Make filter buttons equal width and add text
+- Add sort direction indicators
+- Convert popovers to bottom sheets
+- Add My Results filter to bottom sheet
+- Reverted to commit 9d5daf5f52398e6814ad5f0580d7f561e0952988
+- Update sort functionality
+- Visual edit in Lovable
+- Update sort drawer to match design
+- Update site info
+- Fix DrawerDescription component
+- Update sort drawer and active colors
+- Remove whitespace above "Last Week" section
+- Visual edit in Lovable
+- Remove clear buttons from filter categories
+- Fix DrawerDescription component
+- Update "Show Results" button color
+- Keep sort drawer open after select
+- Changes
+- Remove Apply Sort button
+- Changes
+- Adjust My Results hover
+- Changes
+- Redirect milk test to feed page
+- Changes
+- Improve profile mobile UI
+- Changes
+- Restore web layout for profile
+- Changes
+- Remove wishlist files
+- Changes
+- Enhance profile mobile edit
+- Changes
+- Redirect my tests to results with filter
+- Changes
+- Remove My Results page
+- Changes
+- Hide mobile top-right menu
+- Changes
+- Add mobile settings button
+- Changes
+- Remove profile settings section
+- Changes
+- Hide settings on home page
+- Changes
+- Improve mobile settings UI
+- Reverted to commit e55ef53a1eb3f3648d5bf6919a13751c51dddf28
+- Changes
+- Add timeline About page
+- Changes
+- Add timeline animations
+- Changes
+- Add pulsing timeline line
+- Changes
+- Redesign mobile settings page
+- Changes
+- Match mobile colors to theme
+- Changes
+- Add colors to account page
+- Visual edit in Lovable
+- Changes
+- Align contact icons colors
+- Changes
+- Remove profile card in Settings
+- Changes
+- Add profile icon on mobile
+- Changes
+- Adjust mobile Settings header
+- Changes
+- Add settings button top-right
+- Changes
+- Hide mobile overall score
+- Changes
+- Restore individual test scores on mobile
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Visual edit in Lovable
+- Changes
+- Fix mobile notifications layout
+- Changes
+- Add header back arrow
+- Changes
+- Move header to MenuBar
+- Changes
+- Add security header for mobile
+- Changes
+- Add country option in account
+- Visual edit in Lovable
+- Changes
+- Increase top padding on security
+- Visual edit in Lovable
+- Changes
+- Add back button to contact and about
+- Changes
+- Improve account page clarity
+- Changes
+- Sync logout button style
+- Changes
+- Make logout red
+- Changes
+- Set logout button color to red
+- Changes
+- Improve account profile route
+- Changes
+- Limit profile to username
+- Changes
+- Adjust notification labels
+- Changes
+- Add top spacing in Notifications
+- Changes
+- Add pt-6 to all settings pages
+- Changes
+- Standardize settings headings
+- Changes
+- Sort results style to filter
+- Changes
+- Arrange filters in grid columns
+- Changes
+- Adapt filter cards to text
+- Changes
+- Match filter badges to results
+- Changes
+- Fix filter badge colors
+- Changes
+- Fill selected badges solid
+- Changes
+- Redirect edit to add page
+- Changes
+- Standardize test menu to Test
+- Changes
+- Add about page image to story
+- Changes
+- Add soy drawing to About start
+- Changes
+- Add lightbox for About images
+- Changes
+- Remove large close button
+- Changes
+- Add captions to About images
+- Changes
+- Add third timeline photos
+- Changes
+- Reorder timeline item layout
+- Changes
+- Remove image whitespace
+- Reverted to commit 8d3386f8bf84258b32f7b61dc4e2ae8a55a156b8
+- Changes
+- Update soy milk image
+- Changes
+- Improve modal close visibility
+- Changes
+- Remove timeline animation on About page
+- Changes
+- Replace start with two photos
+- Changes
+- Remove timeline line animation
+- Changes
+- Add parallax background
+- Changes
+- Use escalated image for timeline
+- Changes
+- Create photo collage for About
+- Changes
+- Make collage a carousel
+- Changes
+- Change about title text
+- Applied theme Test
+- Applied theme The Theme
+- Reverted to commit 3b404b1cddcf1171454acf2025de109117efe14d
+- Changes
+- Remove sproudMilk from carousel
+- Changes
+- Remove click-to-enlarge from carousel images
+- Changes
+- Improve close button visibility
+- Changes
+- Integrate circular close button
+- Changes
+- Add add images to carousel
+- Manually updated project theme
+- Manually updated project theme
+- Changes
+- Replace right image in start section
+- Changes
+- Add carousel arrows
+- Changes
+- Change about text now
+- Changes
+- Move carousel arrows inside card
+- Changes
+- Move carousel arrows outward
+- Changes
+- Remove black modal border
+- Changes
+- Place close button inside image and add rounded corners
+- Changes
+- Enhance image modal UI
+- Changes
+- Overlay close button on image
+- Changes
+- Add contact buttons and FAQ
+- Changes
+- Align badges to right on contact cards
+- Changes
+- Fix tablet card grid
+- Changes
+- Adjust contact grid on tablet
+- Changes
+- Add postduif contact option
+- Changes
+- Add animated birds
+- Changes
+- Increase bird speed animation
+- Changes
+- Reflow contact to two columns
+- Changes
+- Align contact grid to FAQ width
+- Visual edit in Lovable
+- Changes
+- Make mobile cards denser
+- Changes
+- Remove global bird animation
+- Changes
+- Align contact header style with About page
+- Changes
+- Show add test in mobile menu
+- Changes
+- Remove about timeline line
+- Changes
+- Restore subtle background timeline in About page
+- Changes
+- Move Get in Touch to header
+- Changes
+- Make FAQ smaller on mobile
+- Changes
+- Hide Add Test on mobile
+- Changes
+- Rename Product header
+- Visual edit in Lovable
+- Changes
+- Integrate headers with dividers
+- Changes
+- Make lines solid in AddMilkTest
+- Changes
+- Lighten section dividers
+- Changes
+- Left-align shop search placeholder
+- Changes
+- Remove wishlist menu item
+- Changes
+- Set MyResults color to blue
+- Visual edit in Lovable
+- Changes
+- Persist search term in URL
+- Changes
+- Fix preview connectivity issue
+- Changes
+- Align shop search input left
+- Changes
+- Make ShopSearchInput full width
+- Changes
+- Align shop input text left
+- Changes
+- Align shop input to product search
+- Changes
+- Fix shop placeholder alignment
+- Changes
+- Unify theme on add page
+- Changes
+- Fix CLS by sizing logo
+- Changes
+- Prioritize logo loading
+- Changes
+- Add fetchpriority high to logos
+- Changes
+- Design system phase 1 and 2
+- Changes
+- Consolidate design tokens
+- Changes
+- Replace hex colors with tokens
+- Changes
+- Migrate color tokens in pages
+- Changes
+- Fix design tokens integration
+- Changes
+- Add design system docs page
+- Changes
+- Adjust web copy for Android only
+- Changes
+- Add Android install guide page
+- Changes
+- Add install guide illustrations
+- Changes
+- Add Coming Soon for Google Play
+- Changes
+- Adjust home banner text
+- Changes
+- Scroll to top on route change
+- Changes
+- Fix inactive sort arrows
+- Changes
+- Add sort direction animation
+- Changes
+- Close sort popup after pick
+- Changes
+- Remove auto close on sort
+- Changes
+- Prevent sort row navigation
+- Changes
+- Hide help link on mobile app
+- Changes
+- Add Android QR code for APK
+- Changes
+- Hide QR code on mobile
+- Changes
+- Hide QR code on tablet
+- Changes
+- Set Android logo to brand green
+- Changes
+- Fix android logo hue
+- Changes
+- Unify AddMilkTest sections
+- Changes
+- Reduce QR size on desktop
+- Changes
+- Move QR code to side of buttons
+- Reverted to commit 814cb1c2250eeb02b8044b316aaba1aa60a8aa40
+- Changes
+- Show mobile banner on web only
+- Changes
+- Hide mobile-app route in APK
+- Changes
+- Add native APK splash screen
+- Changes
+- Improve mobile banner visibility
+- Changes
+- Fix banner on tablets
+- Changes
+- Fix mobile filter bar overflow
+- Changes
+- Fix mobile filter bar sizing
+- Changes
+- Show filter count in header
+- Changes
+- Restore My Results button size
+- Changes
+- Align filter bar to search width
+- Changes
+- Disable hover on touch devices
+- Changes
+- Rename filters header
+- Changes
+- Rename filter header text
+- Changes
+- Add edit/delete for results
+- Changes
+- Simplify mobile actions
+- Reverted to commit 1fab87c06e0aabea814aba96b85dfafb3a77c203
+- Changes
+- Remove border from login button
+- Changes
+- Match Sign Up button styling
+- Changes
+- Add mobile logo to auth page
+- Reverted to commit c1e36615930ed7e85af7b258393c605883760397
+- Changes
+- Add auth page logo
+- Changes
+- Match logo text size to logo
+- Changes
+- Increase mobile logo text size
+- Changes
+- Shorten Android text
+- Changes
+- Widen mobile banner
+- Changes
+- Adjust banner text fit
+- Reverted to commit c1e4592abef61fa98726778a8a44fb8a1685f046
+- Changes
+- Remove mobile banner padding
+- Changes
+- Update Android banner text
+- Changes
+- Style login prompts
+- Visual edit in Lovable
+- Changes
+- Hide labels on tablet too
+- Changes
+- Align delete button outline
+- Changes
+- Add undo on delete milk test
+- Changes
+- Add feed hide toggle to form
+- Reverted to commit 883c6d63bfcfee13e45badc17437d34e60f86785
+- Changes
+- Integrate world map view
+- Changes
+- Improve map with token and error handling
+- Changes
+- Simplify leaderboard colors
+- Changes
+- Add trophy icons for top 3
+- Changes
+- Show full country names
+- Changes
+- Improve map load resilience
+- Changes
+- Redesign country rankings UI
+- Changes
+- Add progress bars to rankings
+- Changes
+- Adjust CSP to allow Mapbox
+- Changes
+- Make progress bar green
+- Changes
+- Improve map colors visibility
+- Changes
+- Hide map page behind login
+- Changes
+- Add unauth preview banner
+- Changes
+- Improve map tooltip UI
+- Changes
+- Adjust map protection only
+- Changes
+- Match world map overlay style
+- Changes
+- Enhance heatmap colors
+- Changes
+- Make ranking text black
+- Changes
+- Show total share in rankings
+- Changes
+- Show percentage next to count
+- Changes
+- Highlight first place in black
+- Changes
+- Widen gradient legend
+- Changes
+- Show only first sentence
+- Code edited in Lovable Code Editor
+- Reverted to commit 59bd224844f8e5dabe8519d2f2c033b70fc09e4b
+- Changes
+- Change heatmap to green scale
+- Changes
+- Change discovery text
+- Changes
+- Add mapping emoji at end
+- Changes
+- Add animated discovery counter
+- Changes
+- Add country flags in dropdown
+- Changes
+- Separate delete and submit state
+- Changes
+- Remove Improve this map link
+- Changes
+- Change milk tests label
+- Changes
+- Change test label to results
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Restrict mapbox token endpoint
+- Changes
+- Fix map attribution duplicates
+- Changes
+- Lovable update
+- Changes
+- Add delete confirmation to edit form
+- Changes
+- Add delete confirmation prompts
+- Changes
+- Fix delete confirm line breaks
+- Changes
+- Hide mobile banner on native
+- Changes
+- Fix badge hover text color
+- Changes
+- Prevent header text truncation
+- Changes
+- Improve native app detection
+- Changes
+- Add console logs to platformDetection
+- Changes
+- Fix badge hover on selected
+- Changes
+- Remember filters in results URL
+- Changes
+- Persist sort in URL
+- Changes
+- Use browser history for back
+- Changes
+- Fix back navigation fallback
+- Changes
+- Make delete buttons solid red
+- Changes
+- Align undo text on one line
+- Changes
+- Update delete dialog title
+- Changes
+- Update delete confirmation text
+- Changes
+- Update delete dialog text
+- Changes
+- Preserve results state in navigation
+- Changes
+- Fix back navigation stale UI
+- Changes
+- Fix splash flash on mobile load
+- Changes
+- Improve sort UI indicators
+- Add site URL to README
+- Changes
+- Update public README
+- Changes
+- Add badges to README
+- Changes
+- Add changelog
+- Changes
+- Add contributing guidelines
+- Changes
+- Link to docs in README
+- Revise project name and description in README
+- Rename project from 'Mondriaan Goose' to 'Milk Me Not'
+- Changes
+- Adjust header sizing for small screens
+- Reverted to commit 91e9ff6f0909daf31da6853191aa403b77396199
+- Changes
+- Link CODE_OF_CONDUCT in README
+- Changes
+- Add PR template
+- Changes
+- Add issue templates
+- Changes
+- Add CODEOWNERS
+- Changes
+- Add dependabot config
+- Changes
+- Add release workflow
+- Merge pull request #10 from preijm/dependabot/npm_and_yarn/zod-4.3.5
+- Changes
+- Add CI workflow
+- Changes
+- Upgrade embla-carousel packages
+- Changes
+- Proactively update charts types
+- Changes
+- Add CodeQL and badges
+- Changes
+- Fix android splash flash
+- Changes
+- Fix embla types in carousel
+- Changes
+- Refactor no-explicit-any
+- Changes
+- Fix notification context guard
+- Changes
+- Update badge colors
+- Changes
+- Add badge icons
+- Changes
+- Add badge legend header
+- Changes
+- Remove badge legend from header
+- Changes
+- Enhance mobile filter icons
+- Changes
+- Add icons to feed badges
+- Changes
+- Make mobile cards more compact
+- Changes
+- Inline badges with product
+- Changes
+- Make sort mobile single tap
+- Changes
+- Enhance mobile sort UI
+- Changes
+- Improve mobile sort UI groupings
+- Changes
+- Shorten mobile sort labels
+- Changes
+- Add dividers to sort rows
+- Reverted to commit c21cdd038dfc2b0cacfb5b6d4b12177babb3ad4c
+- Changes
+- Add close button to drawer
+- Changes
+- Hide active filter badges on mobile bar
+- Changes
+- Fix extra space after filter bar
+- Changes
+- Improve mobile results spacing
+- Changes
+- Set sort/filter active blue
+- Changes
+- Remove filter header extras
+- Changes
+- Fix filter hover text color
+- Changes
+- Improve input sanitization
+- Changes
+- Compact mobile header
+- Changes
+- Make mobile filter collapsible
+- Changes
+- Add floating toggle button
+- Reverted to commit 13619d1da7df01ca836fa573c695a938a5eaf80e
+- Changes
+- Place badges on second line
+- Changes
+- Place badges closer to name
+- Changes
+- Increase top padding of search bar
+- Changes
+- Adjust header spacing to 12px
+- Changes
+- Adjust results header padding
+- Changes
+- Align search placeholder left
+- Changes
+- Inline badges for desktop/tablet
+- Changes
+- Increase tablet product column width
+- Changes
+- Add responsive column widths
+- Changes
+- Increase tablet brand width
+- Changes
+- Truncate brand names on tablet
+- Changes
+- Add nativeApp flag to APK config
+- Changes
+- Integrate version system
+- Changes
+- Remove quagga dependency
+- Changes
+- Persist filters on back nav
+- Changes
+- Two-column feed on tablet
+- Changes
+- Adjust feed columns layout
+- Changes
+- Show 6 previews web
+- Changes
+- Increase bottom padding on Feed
+- Changes
+- Display notes without extra quotes
+- Changes
+- Preserved notes quotes in feed
+- Changes
+- Enhance Mapbox initialization
+- Changes
+- Harden MapboxWorldMap loading
+- Changes
+- Improve Mapbox init flow
+- Changes
+- Prevent FOUC on load
+- Changes
+- Pass auth token to edge function
+- Changes
+- Fix map token auth flow
+- Changes
+- Change map title to new text
+- Changes
+- Improve like popover styling
+- Changes
+- Improve likes popup on mobile
+- Changes
+- Hide mobile banner on mobile
+- Changes
+- Semantic tokens in Home.tsx
+- Changes
+- Set up Vitest RTM tests
+- Changes
+- Exclude test files from TS build
+- Potential fix for code scanning alert no. 5: Incomplete multi-character sanitization
+- Merge pull request #28 from preijm/alert-autofix-5
+- Potential fix for code scanning alert no. 98: Incomplete multi-character sanitization
+- Changes
+- Remove fetchPriority prop from MenuBar images
+- Merge pull request #29 from preijm/alert-autofix-98
+- Merge pull request #27 from preijm/dependabot/npm_and_yarn/minor-and-patch-b0b4d7d201
+- Potential fix for code scanning alert no. 6: Incomplete multi-character sanitization
+- Changes
+- Refactor MenuBar component
+- Merge pull request #30 from preijm/alert-autofix-6
+- Potential fix for code scanning alert no. 90: Useless conditional
+- Merge pull request #31 from preijm/alert-autofix-90
+- Changes
+- Lovable update
+- Updated plan file
+- Changes
+- Fix unused code and imports
+- Changes
+- Remove clearDismissedVersions
+- Changes
+- Cleaned up unused code across UI
+- Changes
+- Increase test coverage for core utilities
+- Changes
+- Refactor scoreUtils tests
+- Changes
+- Refactor Feed to extract layout
+- Changes
+- Refactor profile page layouts
+- Changes
+- Refactor account page UI
+- Changes
+- Refactored results page
+- Changes
+- Refactor About page components
+- Changes
+- Refactored UI colors to tokens
+- Changes
+- Componentized Contact page
+- Changes
+- Add tests for ContactCard and FAQSection
+- Changes
+- Refactored Home into components
+- Changes
+- Add mobile detection hook shared
+- Changes
+- Introduce shared hooks for profile stats and feed highlight
+- Changes
+- Make hero responsive and center banner
+- Changes
+- Lovable update
+- Changes
+- Fluid hero font scaling adjusted
+- Changes
+- Add fluid typography to headings
+- Updated plan file
+- Changes
+- Code quality cleanup
+- Changes
+- Cleanup unused imports and streamline responsive logic
+- Changes
+- Clean up AuthButton imports
+- Changes
+- Code quality cleanup complete
+- Changes
+- Deleted plan file plan.md
+- Updated plan file
+- Changes
+- Fix password reset flow
+- Changes
+- Hide like count on mobile
+- Changes
+- Improve password recovery flow
+- Changes
+- Fix recovery token flow
+- Changes
+- Fix show Password Updated state
+- Changes
+- Replace hardcoded color with design token
+- Rename project from 'Mondriaan Goose' to 'Milk Me Not'
+- Changes
+- Fix search input handling
+- Changes
+- Enhanged shop admin controls
+- Changes
+- Improve feed like UI spacing
+- Changes
+- Improve feed like UI visuals
+- Changes
+- Cascade delete product tests
+- Changes
+- Prevent edit button propagation
+- Changes
+- Use design tokens in SelectedProduct
+- Changes
+- Remove undo note in delete warning
+- Changes
+- Disable auto focus in edit mode
+- Changes
+- Align flavor badges height
+- Changes
+- Fix cancel propagation
+- Changes
+- Migrate form labels to tokens
+- Changes
+- Prevent autoFocus on edit mode
+- Changes
+- Align badge height for products
+- Changes
+- Add icons to form headers
+- Changes
+- Align barista badge height
+- Changes
+- Remove country from edit shop and enable inline rename
+- Changes
+- Removed EditShopDialog.tsx
+- Changes
+- Cleanup orphaned brand and name on delete
+- Changes
+- Lovable update
+- Changes
+- Keep delete dialog mounted
+- Changes
+- Remove photo prompt in empty state
+- Visual edit in Lovable
+- Changes
+- Fix mobile My Results style
+- Changes
+- Update badge colors to semantic tokens
+- Changes
+- Update badges to semantic tokens
+- Changes
+- Fix pigeon click on contact page
+- Changes
+- Separate FAQ to mobile page
+- Changes
+- Add FAQ to account menu
+- Changes
+- Remove FAQ from mobile contact page
+- Updated plan file
+- Changes
+- Feed images loaded eagerly
+- Changes
+- Preload feed images for edge
+- Changes
+- Center feed cards on mobile
+- Changes
+- Centered sort label on mobile
+- Changes
+- Center mobile filter buttons
+- Changes
+- Redesigned mobile profile
+- Changes
+- Smaller profile card and larger settings button
+- Changes
+- Consolidated sign out button
+- Changes
+- Unify profile access flow
+- Changes
+- Make mobile settings use dialogs
+- Changes
+- Hide chevron on dialogs
+- Updated plan file
+- Changes
+- Fix mobile feed centering
+- Changes
+- Increase settings icon size
+- Changes
+- Enlarged profile settings icon
+- Changes
+- Increase settings icon size
+- Changes
+- Shrink settings icon on profile
+- Updated plan file
+- Changes
+- Harmonized profile colors
+- Changes
+- Update account support icons
+- Changes
+- Change Average Rating icon
+- Changes
+- Refined rating icon colors
+- Changes
+- Redesigned mobile stats grid
+- Changes
+- Redesigned profile actions grid
+- Changes
+- Adjust profile stats text weight
+- Reverted to commit 80c5987b67b7f134f65dc2a5bbc90cc12856f6ed
+- Changes
+- Refined profile UI typography
+- Changes
+- Increase member joined text size
+- Changes
+- Reduce joined text size on profile
+- Changes
+- Enhance FAQ header icons
+- Changes
+- Add FAQ back button support
+- Changes
+- Start Top on Contact and FAQ
+- Visual edit in Lovable
+- Updated plan file
+- Changes
+- Refined naming normalization
+- Changes
+- Fix mobile button alignment
+- Changes
+- Align mobile buttons in one row
+- Changes
+- Match add button to badge shape
+- Changes
+- Increase account mobile padding
+- Updated plan file
+- Changes
+- Increase like button tap target
+- Changes
+- Fix Like Username Lookup
+- Changes
+- Lovable update
+- Changes
+- Improve milk tests pagination
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Switch Mapbox token to env key
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Lovable update
+- Changes
+- Compact mobile settings UI
+- Changes
+- Disable like on own posts
+- Changes
+- Update Capacitor CLI dependency
+- Changes
+- Lovable update
+- Changes
+- Code split routes added
+- Changes
+- Enable source maps for build
+- Changes
+- Fix logo aspect ratio
+- Changes
+- Reduce Supabase realtime events
+- Changes
+- Conditional realtime subscription on auth
+- Changes
+- Mobile performance improvements
+- Changes
+- Reduce FOUC with fade-in
+- Changes
+- Lazy-load mapbox map
+- Changes
+- Improve MenuBar initial render
+- Changes
+- Lazy-load Home and heavy components
+- Changes
+- Use local logo asset
+- Changes
+- Wrap routes in main landmark
+- Changes
+- Add aria labels to mobile footer
+- Updated plan file
+- Changes
+- Improve mobile performance plan
+- Changes
+- Adjusted logo fit to contain
+- Changes
+- Replaced logo with original
+- Changes
+- Defer NativeSplashScreen load
+- Changes
+- Restore routes in App.tsx
+- Changes
+- Fix scroll flicker on results
+- Changes
+- Enhance product search terms
+- Changes
+- Extend results search to include attributes
+- Changes
+- Improve results search matching
+- Changes
+- Expand search on underscores and spaces
+- Changes
+- Highlight search term in badges
+- Changes
+- Fix profile route 404
+- Changes
+- Update NotFound colors to tokens
+- Changes
+- Switch to RPC search for products
+- Changes
+- Remove highlight badge feature
+- Changes
+- Align badges inline on add test
+- Changes
+- Enable viewing likes on own posts
+- Changes
+- Lovable update
+- Changes
+- Smaller like popover UI
+- Changes
+- Widen liked-by popover
+- Changes
+- Fix camera fallback for Median
+- Changes
+- Align liked-by text size
+- Changes
+- Remove anonymous profile policy
+- Changes
+- Improve results scroll flicker
+- Work in progress
+- Changes
+- Fix camera flow for APK
+- Patch camera flow for APK
+- Changes
+- Improve camera permissions flow
+- Fix camera action cancel state
+- Fixed cancel button behavior
+- Fix cancel keeps button active
+- Save plan in Lovable
+- Changes
+- Consolidate toast system
+- Preceding changes
+- Preceding changes
+- Show unique products tested
+- Show products on home
+- Show products on home stats
+- Adjust trust colors
+- Change trust indicator colors
+- Preceding changes
+- Use semantic color token
+- Use semantic color tokens
+- Improve filter badge colors
+- Update badge colors for filters
+- Changes
+- Sort flavors by creation date
+- Remove Flavor Test
+- Remove test flavor data
+- Add GitHub improvements
+- Add Code of Conduct and media
+- Merge pull request #34 from preijm/dependabot/npm_and_yarn/typescript-078ba02a4d
+- Merge pull request #39 from preijm/dependabot/npm_and_yarn/capacitor/core-8.0.2
+- Changes
+- Downgrade Capacitor packages
+- Merge pull request #41 from preijm/dependabot/npm_and_yarn/capacitor/android-8.0.2
+- Merge branch 'main' into dependabot/npm_and_yarn/capacitor/ios-8.0.2
+- Changes
+- Add issue labels automation
+- Fix disable on cancel
+- Improve photo actions feedback
+- Merge pull request #36 from preijm/dependabot/npm_and_yarn/tanstack-6ba4fc8c19
+- Changes
+- Add GitHub action to sync labels
+- Merge branch 'main' into dependabot/npm_and_yarn/react-473b7e537e
+- Merge pull request #33 from preijm/dependabot/npm_and_yarn/react-473b7e537e
+- Merge pull request #35 from preijm/dependabot/npm_and_yarn/supabase-248fa8c30f
+- Merge pull request #38 from preijm/dependabot/npm_and_yarn/capacitor/ios-8.0.2
+- Merge branch 'main' into dependabot/npm_and_yarn/vite-7.3.1
+- Merge pull request #37 from preijm/dependabot/npm_and_yarn/vite-7.3.1
+- Merge pull request #40 from preijm/dependabot/npm_and_yarn/jsdom-28.0.0
+- Merge branch 'main' into dependabot/npm_and_yarn/minor-and-patch-73eb4c3b51
+- Merge pull request #47 from preijm/dependabot/npm_and_yarn/minor-and-patch-73eb4c3b51
+- Preceding changes
+- Preceding changes
+- Preceding changes
+- Preceding changes
+- Changes
+- Fixed package.json and badges
+- Fix broken repo links and deps
+- Enable strict label pruning
+- Enable strict label cleanup
+- Fix password update button state
+- Fix password update button
+- Update org name to preijm
+- Update README org links
+- Potential fix for code scanning alert no. 86: Useless assignment to local variable
+- Verified badges on GitHub
+- Fix broken badges in README
+- Preceding changes
+- Changes
+- Merge pull request #48 from preijm/alert-autofix-86
+- Switch to Bun in CI workflow
+- Potential fix for code scanning alert no. 89: Useless conditional
+- Changes
+- Use Bun in CodeQL workflow
+- Merge pull request #49 from preijm/alert-autofix-89
+- Switch to bun install
+- Fix CI and CodeQL workflows
+- Add auto-commit bun.lock
+- Commit bun.lock automatically
+- Potential fix for code scanning alert no. 88: Useless conditional
+- Merge pull request #50 from preijm/alert-autofix-88
+- Fix CI to use Bun
+- Fix lockfile push logic
+- Fix ESLint errors
+- Fix ESLint errors and warnings
+- Changes
+- Add test job to CI workflow
+- Add tests for core components
+- Add tests for core components
+- Preceding changes
+- Add tests for feed components
+- Add tests for feed components
+- Switch to Bun in release flow
+- Switch to Bun in release
+- Changes
+- Add release test job
+- Changes
+- Add CI step to generate lockfile
+- Preceding changes
+- Preceding changes
+- Preceding changes
+- Preceding changes
+- Preceding changes
+- Fix unused imports
+- Cleaned unused imports/vars
+- Enable unused var rule
+- Enable unused vars lint rule
+- Preceding changes
+- Preceding changes
+- Preceding changes
+- Preceding changes
+- Fix unused CodeQL alerts
+- Removed unused imports and vars
+- Clean up CodeQL issues
+- Clean up CodeQL issues
+- Fixed unused imports and vars
+- Codebase cleanup and fixes
+- Fail CI on unused variables
+- Fail CI on unused vars
+- Changes
+- Fix CI npm install peer
+- Fix release workflow error
+- Fix changelog update step
+
+
 
 ### Added
 - Public GitHub repository with MIT license
@@ -67,3 +2760,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/milkmenot/mondriaan-goose/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/milkmenot/mondriaan-goose/releases/tag/v1.0.0
+[0.1.0]: https://github.com/milkmenot/mondriaan-goose/releases/tag/v0.1.0
