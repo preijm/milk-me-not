@@ -66,7 +66,7 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
       if (product) {
         setInputValue(product.name);
       }
-    } else if (products.length === 0 || !productId) {
+    } else {
       setInputValue("");
     }
   }, [productId, products]);
