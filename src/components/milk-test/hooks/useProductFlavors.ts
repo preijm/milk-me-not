@@ -10,7 +10,8 @@ export const useProductFlavors = () => {
       const { data, error } = await supabase
         .from('flavors')
         .select('id, name, key')
-        .order('ordering', { ascending: true });
+        .order('ordering', { ascending: true })
+        .order('created_at', { ascending: true });
       
       if (error) {
         console.error('Error fetching product flavors:', error);

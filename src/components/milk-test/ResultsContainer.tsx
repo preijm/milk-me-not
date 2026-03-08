@@ -49,32 +49,37 @@ export const ResultsContainer = ({
   const { user } = useAuth();
   const [isFilterBarVisible, setIsFilterBarVisible] = useState(true);
   const lastScrollY = useRef(0);
-  const ticking = useRef(false);
+  const isVisible = useRef(true);
+  const cooldown = useRef(false);
 
-  // Handle scroll direction detection with rAF to prevent flickering
+  // Handle scroll direction detection - uses refs to avoid re-render feedback loops
   useEffect(() => {
     if (!isMobile) return;
 
+    // Initialize with current scroll position to avoid jump on mount
+    lastScrollY.current = window.scrollY;
+
     const handleScroll = () => {
-      if (ticking.current) return;
-      ticking.current = true;
+      if (cooldown.current) return;
 
-      requestAnimationFrame(() => {
-        const currentScrollY = window.scrollY;
-        const scrollDifference = currentScrollY - lastScrollY.current;
+      const currentScrollY = window.scrollY;
+      const scrollDifference = currentScrollY - lastScrollY.current;
 
-        // Need a meaningful scroll distance to change state
-        if (Math.abs(scrollDifference) > 30) {
-          if (scrollDifference > 0 && currentScrollY > 100) {
-            setIsFilterBarVisible(false);
-          } else if (scrollDifference < 0) {
-            setIsFilterBarVisible(true);
-          }
-          lastScrollY.current = currentScrollY;
+      // Need a meaningful scroll distance to change state
+      if (Math.abs(scrollDifference) > 50) {
+        const shouldBeVisible = scrollDifference < 0 || currentScrollY <= 100;
+
+        if (shouldBeVisible !== isVisible.current) {
+          isVisible.current = shouldBeVisible;
+          setIsFilterBarVisible(shouldBeVisible);
+
+          // Cooldown prevents the padding change from triggering another toggle
+          cooldown.current = true;
+          setTimeout(() => { cooldown.current = false; }, 400);
         }
 
-        ticking.current = false;
-      });
+        lastScrollY.current = currentScrollY;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

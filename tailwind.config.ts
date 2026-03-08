@@ -81,7 +81,9 @@ export default {
 				primary: 'hsl(var(--brand-primary))',
 				'primary-foreground': 'hsl(var(--brand-primary-foreground))',
 				secondary: 'hsl(var(--brand-secondary))',
-				'secondary-foreground': 'hsl(var(--brand-secondary-foreground))'
+				'secondary-foreground': 'hsl(var(--brand-secondary-foreground))',
+				tertiary: 'hsl(var(--brand-tertiary))',
+				'tertiary-foreground': 'hsl(var(--brand-tertiary-foreground))'
 			},
 			// Heatmap colors (for map visualizations)
 			heatmap: {

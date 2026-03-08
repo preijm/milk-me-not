@@ -42,7 +42,8 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
     setPicture,
     setPicturePreview,
     isNativeApp,
-    isSamsungBrowser
+    isSamsungBrowser,
+    isMobile
   });
 
   const removePicture = () => {
