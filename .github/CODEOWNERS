@@ -2,37 +2,37 @@
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Default owners for everything in the repo
-*                                   @your-username
+*                                   @milkmenot
 
 # Frontend components
-/src/components/                    @your-username
-/src/pages/                         @your-username
+/src/components/                    @milkmenot
+/src/pages/                         @milkmenot
 
 # Core application logic
-/src/hooks/                         @your-username
-/src/contexts/                      @your-username
-/src/lib/                           @your-username
+/src/hooks/                         @milkmenot
+/src/contexts/                      @milkmenot
+/src/lib/                           @milkmenot
 
 # Supabase & Backend
-/supabase/                          @your-username
+/supabase/                          @milkmenot
 
 # Styling & Design System
-/src/index.css                      @your-username
-/src/styles/                        @your-username
-/tailwind.config.ts                 @your-username
+/src/index.css                      @milkmenot
+/src/styles/                        @milkmenot
+/tailwind.config.ts                 @milkmenot
 
 # Mobile (Capacitor)
-/capacitor.config.ts                @your-username
-/android/                           @your-username
-/ios/                               @your-username
+/capacitor.config.ts                @milkmenot
+/android/                           @milkmenot
+/ios/                               @milkmenot
 
 # Configuration & Build
-/vite.config.ts                     @your-username
-/tsconfig*.json                     @your-username
+/vite.config.ts                     @milkmenot
+/tsconfig*.json                     @milkmenot
 
 # Documentation
-/*.md                               @your-username
-/email-templates/                   @your-username
+/*.md                               @milkmenot
+/email-templates/                   @milkmenot
 
 # GitHub workflows & templates
-/.github/                           @your-username
+/.github/                           @milkmenot
