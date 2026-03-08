@@ -11,7 +11,7 @@ import { MilkTestResult } from "@/types/milk-test";
 import { useAuth } from "@/contexts/AuthContext";
 
 export const useMilkTestForm = (editTest?: MilkTestResult) => {
-  const [testId, setTestId] = useState<string | undefined>(editTest?.id);
+  const [testId] = useState<string | undefined>(editTest?.id);
   const [rating, setRating] = useState(editTest?.rating || 0);
   const [productId, setProductId] = useState(editTest?.product_id || "");
   const [brandId, setBrandId] = useState(editTest?.brand_id || "");

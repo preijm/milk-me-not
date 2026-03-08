@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ProductRegistrationHeader } from "../ProductRegistrationHeader";
 import { DialogDescription } from "@/components/ui/dialog";
 import { ProductRegistrationProvider, useProductRegistration } from "./ProductRegistrationContext";
 import { ProductForm } from "./FormSections";
-import { useToast } from "@/hooks/use-toast";
+
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useProductTestCount } from "@/hooks/useProductTestCount";

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { searchProducts } from "./search-utils/searchProducts";
 import { useSelectedProductQuery } from "./search-utils/selectedProductQuery";
-import { ProductSearchResult, SearchState } from "./search-utils/types";
+import { SearchState } from "./search-utils/types";
 
 export const useProductSearch = (selectedProductId?: string): SearchState => {
   const [searchTerm, setSearchTerm] = useState("");

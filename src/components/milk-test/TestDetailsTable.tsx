@@ -123,14 +123,6 @@ export const TestDetailsTable = ({
     return String.fromCodePoint(...codePoints);
   };
 
-  const getRatingColorClass = (rating: number) => {
-    if (rating >= 8.5) return "bg-green-500 text-white";
-    if (rating >= 7.5) return "bg-green-400 text-white";
-    if (rating >= 6.5) return "bg-blue-400 text-white";
-    if (rating >= 5.5) return "bg-yellow-400 text-gray-800";
-    if (rating >= 4.5) return "bg-orange-400 text-white";
-    return "bg-red-400 text-white";
-  };
 
   return (
     <div className="overflow-x-auto">

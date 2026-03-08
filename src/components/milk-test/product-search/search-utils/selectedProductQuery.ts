@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ProductSearchResult } from "./types";
+
 import { mapToProductSearchResult } from "./basicSearch";
 
 // Custom hook to fetch selected product details

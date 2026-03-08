@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { User, Shield, Bell, Database, HelpCircle, Menu } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 import {
   Sidebar,
   SidebarContent,
@@ -31,7 +31,7 @@ function SettingsSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const isActive = (path: string) => currentPath === path;
+  
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50";
 
@@ -71,9 +71,6 @@ export default function SettingsLayout({ children, title }: SettingsLayoutProps)
   const currentPath = location.pathname;
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
   
-  // Find the current section's icon
-  const currentItem = settingsItems.find(item => item.url === currentPath);
-  const CurrentIcon = currentItem?.icon || User;
   
   // Mobile/Tablet layout
   if (isMobileOrTablet) {

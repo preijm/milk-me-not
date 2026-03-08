@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Badge } from "@/components/ui/badge";
+
 import { ProductData } from "./search-utils/types";
 import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
 
