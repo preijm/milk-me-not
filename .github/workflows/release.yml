@@ -163,11 +163,13 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Update CHANGELOG.md
+        env:
+          CHANGELOG_ENTRY: ${{ steps.changelog.outputs.entry }}
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
           
           # Create temp file with new entry
-          echo "${{ steps.changelog.outputs.entry }}" > temp_changelog.md
+          echo "$CHANGELOG_ENTRY" > temp_changelog.md
           echo "" >> temp_changelog.md
           
           # Insert after [Unreleased] section
