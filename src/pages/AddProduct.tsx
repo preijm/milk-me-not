@@ -6,7 +6,7 @@ import { ProductRegistrationProvider } from "@/components/milk-test/registration
 import { ProductForm } from "@/components/milk-test/registration-ui/FormSections";
 import { useToast } from "@/hooks/use-toast";
 import { useProductRegistration } from "@/components/milk-test/registration-ui/ProductRegistrationContext";
-import { handleProductSubmit } from "@/components/milk-test/hooks/product-registration";
+
 
 const AddProductForm = () => {
   const navigate = useNavigate();
