@@ -31,7 +31,7 @@ jobs:
 
       - name: Generate package-lock.json for Dependabot
         run: |
-          npm install --package-lock-only --ignore-scripts
+          npm install --package-lock-only --ignore-scripts --legacy-peer-deps
       
       - name: Commit updated lockfiles
         run: |
