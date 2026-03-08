@@ -42,7 +42,7 @@ const Home = () => {
     {
       value: stats.uniqueProducts,
       label: "Products",
-      colorClass: "bg-amber-500",
+      colorClass: "bg-brand-tertiary",
       delayClass: "delay-500",
     },
   ];
