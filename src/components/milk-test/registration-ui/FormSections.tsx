@@ -21,7 +21,6 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
     setBrandId,
     productName,
     setProductName,
-    nameId,
     setNameId,
     selectedProductTypes,
     setSelectedProductTypes,
