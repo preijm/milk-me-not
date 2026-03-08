@@ -29,13 +29,17 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Commit updated lockfile
+      - name: Generate package-lock.json for Dependabot
+        run: |
+          npm install --package-lock-only --ignore-scripts
+      
+      - name: Commit updated lockfiles
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bun.lock bun.lockb
+          git add bun.lock bun.lockb package-lock.json
           if ! git diff --cached --quiet; then
-            git commit -m "chore: update bun.lock [skip ci]"
+            git commit -m "chore: update lockfiles [skip ci]"
             git push
           fi
 
