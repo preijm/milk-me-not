@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ProductRegistrationHeader } from "../ProductRegistrationHeader";
 import { DialogDescription } from "@/components/ui/dialog";
