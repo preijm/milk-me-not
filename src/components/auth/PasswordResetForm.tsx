@@ -54,10 +54,9 @@ const PasswordResetForm = ({ isResetting, onPasswordUpdate }: PasswordResetFormP
               <Button
                 variant="brand"
                 className="w-full"
-                disabled={isResetting}
                 onClick={handleSubmit}
               >
-                {isResetting ? "Updating..." : "Update Password"}
+                Update Password
               </Button>
             </div>
           </>
