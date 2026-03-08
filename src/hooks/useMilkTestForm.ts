@@ -187,7 +187,7 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
         price_quality_ratio?: string;
       } = {
         product_id: productId,
-        country_code: country ? sanitizeInput(country) : null,
+        country_code: sanitizeInput(country),
         shop_name: shop ? sanitizeForDatabase(shop) : null,
         rating: Number(rating),
         notes: notes ? sanitizeForDatabase(notes) : null,
