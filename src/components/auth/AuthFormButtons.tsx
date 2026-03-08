@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { LogIn, UserPlus } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 
 interface AuthFormButtonsProps {
   isLogin: boolean;
@@ -15,7 +15,7 @@ const AuthFormButtons = ({
   onForgotPassword,
   onToggleMode
 }: AuthFormButtonsProps) => {
-  const isMobile = useIsMobile();
+  
   
   // Check if device is mobile or tablet (up to 1024px)
   const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;

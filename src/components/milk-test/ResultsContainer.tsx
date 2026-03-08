@@ -1,9 +1,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { SearchBar } from "@/components/milk-test/SearchBar";
-import { SearchIcon } from "@/components/milk-test/SearchIcon";
 import { ResultsFilter } from "@/components/milk-test/ResultsFilter";
-import { SortButton } from "@/components/milk-test/SortButton";
 import { MobileFilterBar } from "@/components/milk-test/MobileFilterBar";
 import { AggregatedResultsTable } from "@/components/milk-test/AggregatedResultsTable";
 import { AggregatedResult, SortConfig } from "@/hooks/useAggregatedResults";

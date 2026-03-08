@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LogIn, Settings, ChevronDown, Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useToast } from "@/hooks/use-toast";
+
 import { lazy, Suspense } from "react";
 const NotificationDropdown = lazy(() => import("@/components/notifications/NotificationDropdown").then(m => ({ default: m.NotificationDropdown })));
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export const AuthButton = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  
   const isMobile = useIsMobile();
   const { unreadCount } = useNotifications();
 
