@@ -1,8 +1,8 @@
 # Milk Me Not 🥛
 
 [![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
-[![CI](https://github.com/milkmenot/mondriaan-goose/actions/workflows/ci.yml/badge.svg)](https://github.com/milkmenot/mondriaan-goose/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/milkmenot/mondriaan-goose/actions/workflows/codeql.yml/badge.svg)](https://github.com/milkmenot/mondriaan-goose/actions/workflows/codeql.yml)
+[![CI](https://github.com/milk-me-not/mondriaan-goose/actions/workflows/ci.yml/badge.svg)](https://github.com/milk-me-not/mondriaan-goose/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/milk-me-not/mondriaan-goose/actions/workflows/codeql.yml/badge.svg)](https://github.com/milk-me-not/mondriaan-goose/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb)](https://react.dev/)
