@@ -11,7 +11,7 @@ export const useHomeStats = () => {
   const [stats, setStats] = useState<Stats>({
     totalTests: 0,
     brandsCovered: 0,
-    activeMembers: 0,
+    uniqueProducts: 0,
   });
 
   useEffect(() => {
