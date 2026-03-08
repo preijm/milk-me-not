@@ -49,28 +49,37 @@ export const ResultsContainer = ({
   const { user } = useAuth();
   const [isFilterBarVisible, setIsFilterBarVisible] = useState(true);
   const lastScrollY = useRef(0);
-  const scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
+  const isVisible = useRef(true);
+  const cooldown = useRef(false);
 
-  // Handle scroll direction detection
+  // Handle scroll direction detection - uses refs to avoid re-render feedback loops
   useEffect(() => {
     if (!isMobile) return;
 
+    // Initialize with current scroll position to avoid jump on mount
+    lastScrollY.current = window.scrollY;
+
     const handleScroll = () => {
+      if (cooldown.current) return;
+
       const currentScrollY = window.scrollY;
       const scrollDifference = currentScrollY - lastScrollY.current;
 
-      // Only trigger if scrolled more than threshold
-      if (Math.abs(scrollDifference) < scrollThreshold) return;
+      // Need a meaningful scroll distance to change state
+      if (Math.abs(scrollDifference) > 50) {
+        const shouldBeVisible = scrollDifference < 0 || currentScrollY <= 100;
 
-      if (scrollDifference > 0 && currentScrollY > 100) {
-        // Scrolling down and past initial area - hide
-        setIsFilterBarVisible(false);
-      } else if (scrollDifference < 0) {
-        // Scrolling up - show
-        setIsFilterBarVisible(true);
+        if (shouldBeVisible !== isVisible.current) {
+          isVisible.current = shouldBeVisible;
+          setIsFilterBarVisible(shouldBeVisible);
+
+          // Cooldown prevents the padding change from triggering another toggle
+          cooldown.current = true;
+          setTimeout(() => { cooldown.current = false; }, 400);
+        }
+
+        lastScrollY.current = currentScrollY;
       }
-
-      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -90,7 +99,7 @@ export const ResultsContainer = ({
         <>
           <div 
             className={cn(
-              "fixed top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-4 pt-5 pb-2 transition-transform duration-300 ease-in-out",
+              "fixed top-16 left-0 right-0 z-40 bg-white border-b border-gray-100 px-4 pt-5 pb-2 transition-transform duration-300 ease-in-out",
               !isFilterBarVisible && "-translate-y-full"
             )}
           >

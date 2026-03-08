@@ -40,7 +40,7 @@ export const ProductOptions = ({
           variant="category"
           className={`cursor-pointer transition-all h-7 flex items-center ${
             selectedTypes.includes(property.key)
-              ? 'bg-primary text-primary-foreground border-primary'
+              ? 'bg-badge-property text-badge-property-foreground border-badge-property shadow-md'
               : ''
           }`}
           onClick={() => handleTypeToggle(property.key)}

@@ -1,4 +1,4 @@
-import { User, Shield, Bell, Globe, HelpCircle } from "lucide-react";
+import { User, Shield, Bell, Globe, Mail, BookOpen, Info } from "lucide-react";
 
 export const accountMenuSections = [
   {
@@ -47,7 +47,7 @@ export const accountMenuSections = [
     title: "Support",
     items: [
       {
-        icon: HelpCircle,
+        icon: Mail,
         iconBgColor: "#fef9c3",
         iconColor: "#ca8a04",
         title: "Contact",
@@ -55,7 +55,15 @@ export const accountMenuSections = [
         path: "/contact",
       },
       {
-        icon: HelpCircle,
+        icon: BookOpen,
+        iconBgColor: "#e0e7ff",
+        iconColor: "#4f46e5",
+        title: "FAQ",
+        description: "Frequently asked questions",
+        path: "/faq",
+      },
+      {
+        icon: Info,
         iconBgColor: "#dcfce7",
         iconColor: "#16a34a",
         title: "About",

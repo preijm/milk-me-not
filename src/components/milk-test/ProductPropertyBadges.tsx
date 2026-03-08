@@ -43,9 +43,10 @@ interface ProductPropertyBadgesProps {
   className?: string;
   compact?: boolean;
   displayType?: 'all' | 'barista' | 'properties' | 'flavors';
-  inline?: boolean; // Prop to enable inline display
+  inline?: boolean;
   filters?: FilterOptions;
   onFiltersChange?: (filters: FilterOptions) => void;
+  
 }
 
 export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({ 
@@ -55,9 +56,10 @@ export const ProductPropertyBadges: React.FC<ProductPropertyBadgesProps> = ({
   className = "",
   compact = false,
   displayType = 'all',
-  inline = false, // Default to false for backward compatibility
+  inline = false,
   filters,
-  onFiltersChange
+  onFiltersChange,
+  
 }) => {
   // Fetch properties and flavors to create name-to-key mapping for badge clicks
   const { data: properties = [] } = useQuery({

@@ -124,7 +124,7 @@ export const FlavorSelector = ({
             variant="flavor" 
             className={`cursor-pointer transition-all h-7 flex items-center ${
               selectedFlavors.includes(flavor.key) 
-                ? 'bg-primary text-primary-foreground border-primary' 
+                ? 'bg-badge-flavor text-badge-flavor-foreground border-badge-flavor shadow-md' 
                 : ''
             }`}
             onClick={() => onFlavorToggle(flavor.key)}
@@ -135,16 +135,15 @@ export const FlavorSelector = ({
         ))}
         
         {!showAddInput ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-7 px-2 rounded-full"
-            aria-label="Add new flavor"
+          <Badge
+            variant="flavor"
+            className="cursor-pointer h-7 flex items-center px-2.5"
             onClick={() => setShowAddInput(true)}
+            role="button"
+            aria-label="Add new flavor"
           >
             <Plus size={16} />
-          </Button>
+          </Badge>
         ) : (
           <div className="flex items-center gap-2">
             <Input

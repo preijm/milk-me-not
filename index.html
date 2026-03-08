@@ -9,14 +9,20 @@
     <link rel="icon" href="/lovable-uploads/9f030b65-074a-4e64-82d9-f0eba7246e1a.png" type="image/png" />
     <meta property="og:image" content="/og-image.png" />
 
-    <!-- Hide content until styles are ready to prevent FOUC -->
+    <!-- Minimal FOUC prevention - fade in instead of blocking LCP -->
     <style>
-      html { visibility: hidden; }
-      html.ready { visibility: visible; }
+      html:not(.ready) body { opacity: 0; }
+      html.ready body { opacity: 1; transition: opacity 0.1s ease-in; }
     </style>
 
     <!-- Preconnect to Supabase to reduce critical request chain -->
     <link rel="preconnect" href="https://jtabjndnietpewvknjrm.supabase.co" crossorigin>
+    <link rel="dns-prefetch" href="https://jtabjndnietpewvknjrm.supabase.co">
+
+    <!-- Security meta tags (static, no JS needed) -->
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta property="og:title" content="Milk Me Not">
     <meta name="twitter:title" content="Milk Me Not">
     <meta property="og:description" content="Discover and rate your perfect plant-based milk.">

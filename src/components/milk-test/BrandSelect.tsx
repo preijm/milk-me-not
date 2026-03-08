@@ -29,6 +29,7 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
     brands,
     suggestions,
     showAddNew,
+    closeMatch,
     isLoading,
     addNewBrand
   } = useBrandData(inputValue, brandId, setBrandId);
@@ -36,27 +37,20 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
   // Update the input value when brands or brandId changes
   useEffect(() => {
     if (brandId && brands) {
-      console.log("BrandSelect: brandId changed to", brandId);
       const selectedBrand = brands.find(brand => brand.id === brandId);
       if (selectedBrand) {
         setInputValue(selectedBrand.name);
-        console.log("BrandSelect: Setting input value to", selectedBrand.name);
       }
     } else if (brandId === '' && inputValue !== '') {
-      // Clear input value when brandId is empty
       setInputValue("");
-      console.log("BrandSelect: Clearing input value since brandId is empty");
     }
   }, [brandId, brands]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    console.log("BrandSelect: Input changed to", newValue);
-    setInputValue(newValue);
+    setInputValue(e.target.value);
   };
 
   const handleSelectBrand = (selectedBrand: Brand) => {
-    console.log("BrandSelect: Selected brand", selectedBrand);
     setInputValue(selectedBrand.name);
     setBrandId(selectedBrand.id);
     setIsDropdownVisible(false);
@@ -65,7 +59,6 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
   const handleAddNewBrand = async () => {
     const newBrand = await addNewBrand(inputValue);
     if (newBrand) {
-      console.log("BrandSelect: New brand created, setting brandId to", newBrand.id);
       setBrandId(newBrand.id);
       setIsDropdownVisible(false);
     }
@@ -75,7 +68,6 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
     <div className={cn("relative", className)}>
       <Input
         ref={(el) => {
-          // Handle forwarded ref
           if (ref) {
             if (typeof ref === 'function') {
               ref(el);
@@ -83,20 +75,14 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
               ref.current = el;
             }
           }
-          // Notify parent when input is ready
           onInputReady?.(el);
-          console.log('BrandSelect Input ref set:', el);
         }}
         placeholder="Enter brand name..."
         value={inputValue}
         onChange={handleInputChange}
-        onFocus={() => {
-          console.log('BrandSelect input focused');
-          setIsDropdownVisible(true);
-        }}
+        onFocus={() => setIsDropdownVisible(true)}
         onBlur={() => setTimeout(() => setIsDropdownVisible(false), 200)}
         onKeyDown={(e) => {
-          // Ensure the spacebar works inside dialogs/popovers by stopping propagation only
           if (e.key === ' ' || e.key === 'Spacebar') {
             e.stopPropagation();
           }
@@ -108,6 +94,7 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
       <BrandSuggestions
         suggestions={suggestions}
         showAddNew={showAddNew}
+        closeMatch={closeMatch}
         inputValue={inputValue}
         onSelectBrand={handleSelectBrand}
         onAddNewBrand={handleAddNewBrand}

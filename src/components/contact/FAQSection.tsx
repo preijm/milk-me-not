@@ -2,8 +2,8 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  AccordionTrigger } from
+"@/components/ui/accordion";
 
 interface FAQItem {
   question: string;
@@ -18,12 +18,12 @@ interface FAQSectionProps {
 export const FAQSection = ({ title, items }: FAQSectionProps) => {
   return (
     <div className="bg-card rounded-2xl shadow-sm p-4 sm:p-8 max-w-4xl mx-auto">
-      <h2 className="text-xl sm:text-3xl font-bold text-foreground mb-4 sm:mb-6 text-center">
-        {title}
-      </h2>
+      
+
+
       <Accordion type="single" collapsible className="w-full">
-        {items.map((item, index) => (
-          <AccordionItem key={index} value={`item-${index + 1}`}>
+        {items.map((item, index) =>
+        <AccordionItem key={index} value={`item-${index + 1}`}>
             <AccordionTrigger className="text-left">
               {item.question}
             </AccordionTrigger>
@@ -31,8 +31,8 @@ export const FAQSection = ({ title, items }: FAQSectionProps) => {
               {item.answer}
             </AccordionContent>
           </AccordionItem>
-        ))}
+        )}
       </Accordion>
-    </div>
-  );
+    </div>);
+
 };

@@ -7,6 +7,7 @@ interface FeedGridProps {
   items: MilkTestResult[];
   isAuthenticated: boolean;
   className?: string;
+  variant?: "mobile" | "desktop";
 }
 
 const breakpointColumns = {
@@ -15,12 +16,20 @@ const breakpointColumns = {
   639: 1,
 };
 
-export const FeedGrid = ({ items, isAuthenticated, className }: FeedGridProps) => {
+export const FeedGrid = ({ items, isAuthenticated, className, variant = "desktop" }: FeedGridProps) => {
+  const masonryClassName = variant === "mobile" 
+    ? "flex w-full justify-center" 
+    : (className || "flex -ml-4 w-auto");
+  
+  const columnClass = variant === "mobile"
+    ? "space-y-4 w-full max-w-md mx-auto"
+    : "pl-4 space-y-4";
+
   return (
     <Masonry
       breakpointCols={breakpointColumns}
-      className={className || "flex -ml-4 w-auto"}
-      columnClassName="pl-4 space-y-4"
+      className={masonryClassName}
+      columnClassName={columnClass}
     >
       {items.map((item) => (
         <FeedItem

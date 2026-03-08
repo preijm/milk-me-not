@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, ArrowRight } from "lucide-react";
+import { normalizeName, findClosestMatch } from "@/lib/nameNormalization";
 
 interface ProductSelectProps {
   brandId: string;
@@ -21,6 +22,7 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
   const [suggestions, setSuggestions] = useState<ProductWithName[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [showAddNew, setShowAddNew] = useState(false);
+  const [closeMatch, setCloseMatch] = useState<ProductWithName | null>(null);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { toast } = useToast();
 
@@ -79,6 +81,7 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
     if (!brandId || inputValue.trim() === '') {
       setSuggestions([]);
       setShowAddNew(false);
+      setCloseMatch(null);
       return;
     }
 
@@ -96,8 +99,11 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
     if (exactMatch) {
       setProductId(exactMatch.id);
       setShowAddNew(false);
+      setCloseMatch(null);
     } else {
-      setShowAddNew(inputValue.trim() !== '');
+      const match = findClosestMatch(inputValue, products, 0.75);
+      setCloseMatch(match);
+      setShowAddNew(inputValue.trim() !== '' && !match);
     }
   }, [inputValue, products, brandId, setProductId]);
 
@@ -123,38 +129,49 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
   const handleAddNewProduct = async () => {
     if (!brandId || inputValue.trim() === '') return;
 
-    // Check if product already exists for this brand (case-insensitive)
     const existingProduct = products.find(
       product => product.name.toLowerCase() === inputValue.trim().toLowerCase()
     );
 
     if (existingProduct) {
-      console.log('Product already exists for this brand, selecting it:', existingProduct);
       handleSelectProduct(existingProduct);
       return;
     }
 
     try {
-      // 1. First create a name entry
-      const { data: nameData, error: nameError } = await supabase
+      const normalized = normalizeName(inputValue);
+      
+      // Check if name already exists in DB
+      const { data: existingName } = await supabase
         .from('names')
-        .insert({ name: inputValue.trim() })
-        .select()
-        .single();
+        .select('id, name')
+        .ilike('name', normalized)
+        .maybeSingle();
 
-      if (nameError) {
-        console.error('Error creating name:', nameError);
-        throw nameError;
+      let nameId: string;
+      
+      if (existingName) {
+        nameId = existingName.id;
+      } else {
+        const { data: nameData, error: nameError } = await supabase
+          .from('names')
+          .insert({ name: normalized })
+          .select()
+          .single();
+        
+        if (nameError) {
+          console.error('Error creating name:', nameError);
+          throw nameError;
+        }
+        nameId = nameData.id;
       }
 
-      console.log('Created name entry:', nameData);
-
-      // 2. Then create the product with the name_id
+      // Create the product with the name_id
       const { data, error } = await supabase
         .from('products')
         .insert({ 
           brand_id: brandId,
-          name_id: nameData.id
+          name_id: nameId
         })
         .select()
         .single();
@@ -169,9 +186,7 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
         return;
       }
 
-      console.log('Created product entry:', data);
-      
-      // 3. Fetch the newly created product with its name
+      // Fetch the newly created product with its name
       const { data: newProductData, error: fetchError } = await supabase
         .from('products')
         .select(`
@@ -190,8 +205,6 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
         id: newProductData.id,
         name: newProductData.names.name
       };
-      
-      console.log('New product with name:', newProduct);
 
       toast({
         title: "Success",
@@ -222,12 +235,24 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
         className="w-full"
         disabled={!brandId || isLoading}
       />
-      {isDropdownVisible && (suggestions.length > 0 || showAddNew) && (
-        <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
+      {isDropdownVisible && (suggestions.length > 0 || showAddNew || closeMatch) && (
+        <div className="absolute z-10 w-full mt-1 bg-background border rounded-md shadow-lg">
+          {closeMatch && (
+            <div
+              className="px-4 py-2 cursor-pointer bg-accent/30 hover:bg-accent/50 flex items-center gap-2 text-sm border-b"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleSelectProduct(closeMatch);
+              }}
+            >
+              <ArrowRight className="w-4 h-4 text-primary" />
+              <span>Did you mean <strong>"{closeMatch.name}"</strong>?</span>
+            </div>
+          )}
           {suggestions.map((suggestion) => (
             <div
               key={suggestion.id}
-              className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+              className="px-4 py-2 cursor-pointer hover:bg-muted"
               onMouseDown={(e) => {
                 e.preventDefault();
                 handleSelectProduct(suggestion);
@@ -238,7 +263,7 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
           ))}
           {showAddNew && (
             <div
-              className="px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center text-gray-700"
+              className="px-4 py-2 cursor-pointer hover:bg-muted flex items-center text-muted-foreground"
               onMouseDown={(e) => {
                 e.preventDefault();
                 handleAddNewProduct();

@@ -64,39 +64,16 @@ const MapboxWorldMap = () => {
   const countryCodeToName = new Map(countriesData.map(c => [c.code, c.name]));
   const totalCountries = countriesData.length || 195;
 
-  // Fetch Mapbox token from Supabase Edge Function
-  const fetchMapboxToken = async () => {
-    try {
-      console.log('MapboxWorldMap: Fetching Mapbox token...');
-      
-      // Verify we have a session first
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      console.log('MapboxWorldMap: Session check:', session ? 'authenticated' : 'not authenticated', sessionError ? sessionError.message : '');
-      
-      if (!session) {
-        console.error('MapboxWorldMap: No active session found');
-        setMapError('Authentication required to load map');
-        return null;
-      }
-      
-      console.log('MapboxWorldMap: Invoking edge function...');
-    const { data, error } = await supabase.functions.invoke('get-mapbox-token', {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`
-      }
-    });
-      
-      if (error) {
-        console.error('MapboxWorldMap: Error invoking function:', error);
-        throw error;
-      }
-      
-      console.log('MapboxWorldMap: Token fetched successfully, length:', data?.token?.length || 0);
-      return data.token;
-    } catch (error) {
-      console.error('MapboxWorldMap: Error fetching Mapbox token:', error);
+  // Read Mapbox public token from environment variable
+  // Public tokens (pk.*) are designed for client-side use and should be URL-restricted
+  // in the Mapbox dashboard to your domains for quota protection.
+  const getMapboxToken = (): string | null => {
+    const token = import.meta.env.VITE_MAPBOX_PUBLIC_KEY;
+    if (!token) {
+      console.error('MapboxWorldMap: VITE_MAPBOX_PUBLIC_KEY is not set');
       return null;
     }
+    return token;
   };
 
   // Interpolate between colors for smooth heatmap gradient (grey to green)
@@ -154,7 +131,7 @@ const MapboxWorldMap = () => {
       return;
     }
 
-    const token = await fetchMapboxToken();
+    const token = getMapboxToken();
     console.log('MapboxWorldMap: Token received:', token ? 'yes (length: ' + token.length + ')' : 'no');
     
     if (!token) {

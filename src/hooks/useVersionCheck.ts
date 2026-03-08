@@ -90,8 +90,13 @@ export function useVersionCheck(): VersionCheckResult {
     [latestVersion]
   );
 
+  // Defer version check to avoid blocking initial render
   useEffect(() => {
-    checkVersion();
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => checkVersion());
+    } else {
+      setTimeout(() => checkVersion(), 2000);
+    }
   }, [checkVersion]);
 
   const hasUpdate = latestVersion ? isNewerVersion(APP_VERSION, latestVersion.version) : false;

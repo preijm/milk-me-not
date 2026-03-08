@@ -102,8 +102,8 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-4">
-        {/* Left side - Remove button for admins in edit mode */}
+      <div className="flex justify-between items-center gap-2 pt-4">
+        {/* Remove button for admins in edit mode */}
         <div>
           {isEditMode && isAdmin && onDelete && (
             <Button
@@ -119,8 +119,8 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
           )}
         </div>
         
-        {/* Right side - Cancel and Submit buttons */}
-        <div className="flex space-x-2">
+        {/* Cancel and Submit buttons */}
+        <div className="flex gap-2">
           <Button
             type="button"
             variant="outline"
@@ -141,7 +141,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
           >
             {isSubmitting 
               ? (isEditMode ? "Updating..." : "Registering...")
-              : (isEditMode ? "Update Product" : "Register Product")
+              : (isEditMode ? (<><span className="sm:hidden">Update</span><span className="hidden sm:inline">Update Product</span></>) : "Register Product")
             }
           </Button>
         </div>

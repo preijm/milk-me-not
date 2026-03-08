@@ -30,29 +30,33 @@ const MobileFooter = () => {
 
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
-      <div className="bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-lg">
+      <div className="bg-white border-t border-gray-200 shadow-lg">
         <div className="px-2 py-2">
           <div className="grid grid-cols-5 gap-1">
             <Link 
               to="/" 
+              aria-label="Home"
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/")}`}
             >
               <Home className="w-6 h-6" />
             </Link>
             <Link 
               to="/feed" 
+              aria-label="Feed"
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/feed")}`}
             >
               <Radio className="w-6 h-6" />
             </Link>
             <Link 
               to={resultsUrl} 
+              aria-label="Results"
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/results")}`}
             >
               <BarChart3 className="w-6 h-6" />
             </Link>
             <Link 
               to="/notifications" 
+              aria-label="Notifications"
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/notifications")}`}
             >
               <div className="relative">
@@ -67,6 +71,7 @@ const MobileFooter = () => {
             </Link>
             <Link 
               to="/profile" 
+              aria-label="Profile"
               className={`flex flex-col items-center justify-center py-1.5 rounded-lg transition-colors ${getLinkClass("/profile")}`}
             >
               <User className="w-6 h-6" />

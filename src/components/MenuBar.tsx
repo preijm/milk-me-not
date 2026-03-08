@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AddMilkTest } from "@/components/AddMilkTest";
+
+const AddMilkTest = lazy(() => import("@/components/AddMilkTest").then(m => ({ default: m.AddMilkTest })));
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Logo } from "@/components/menu/Logo";
@@ -17,9 +18,9 @@ const MenuBar = () => {
   const { user } = useAuth();
   const { notifications, unreadCount, markAllAsRead } = useNotifications();
   const [showAddTestDialog, setShowAddTestDialog] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= TABLET_BREAKPOINT);
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= TABLET_BREAKPOINT);
 
-  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < TABLET_BREAKPOINT;
+  const isMobileOrTablet = !isDesktop;
   const isHomePage = location.pathname === '/';
   const isAuthPage = location.pathname === '/auth';
 
@@ -45,7 +46,7 @@ const MenuBar = () => {
   };
 
   return (
-    <nav className="bg-white lg:bg-white/5 lg:backdrop-blur-[2px] fixed w-full z-50 border-b lg:border-white/10 border-gray-200/60 shadow-sm lg:shadow-none">
+    <nav className="bg-white lg:bg-white/5 lg:backdrop-blur-[2px] fixed w-full z-50 border-b lg:border-white/10 border-gray-200/60 shadow-sm lg:shadow-none" role="navigation" aria-label="Main navigation">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 my-[5px]">
           {/* Mobile/Tablet: Show logo only on home/auth, page title on other pages */}
@@ -88,7 +89,9 @@ const MenuBar = () => {
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-brand-primary">Add New Test</DialogTitle>
           </DialogHeader>
-          <AddMilkTest />
+          <Suspense fallback={<div className="flex items-center justify-center p-8"><div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /></div>}>
+            <AddMilkTest />
+          </Suspense>
         </DialogContent>
       </Dialog>
     </nav>

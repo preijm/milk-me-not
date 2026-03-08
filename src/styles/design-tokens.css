@@ -31,6 +31,8 @@
     --brand-primary-foreground: 0 0% 100%;
     --brand-secondary: 231 100% 63%;    /* #2144ff - Blue */
     --brand-secondary-foreground: 0 0% 100%;
+    --brand-tertiary: 38 92% 50%;       /* #f59e0b - Amber */
+    --brand-tertiary-foreground: 0 0% 100%;
     
     /* ========================================
        HEATMAP COLORS (for map visualization)

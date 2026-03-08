@@ -40,9 +40,9 @@ const Home = () => {
       delayClass: "delay-300",
     },
     {
-      value: stats.activeMembers,
-      label: "Members",
-      colorClass: "bg-primary",
+      value: stats.uniqueProducts,
+      label: "Products",
+      colorClass: "bg-brand-tertiary",
       delayClass: "delay-500",
     },
   ];

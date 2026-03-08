@@ -7,29 +7,21 @@ import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBad
 interface ProductResultItemProps {
   product: ProductData & { id: string };
   onSelect: (productId: string) => void;
+  searchTerm?: string;
 }
 
-export const ProductResultItem = ({ product, onSelect }: ProductResultItemProps) => {
-  // Debug logging
-  console.log("Rendering ProductResultItem:", {
-    id: product.id,
-    name: product.product_name,
-    flavors: product.flavor_names,
-    properties: product.property_names,
-    isBarista: product.is_barista
-  });
-  
+export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResultItemProps) => {
   const handleItemClick = () => {
-    console.log("Product item clicked:", product.id);
     onSelect(product.id);
   };
+
   
   return (
     <div 
-      className="px-4 py-3 hover:bg-gray-50 cursor-pointer flex flex-col border-b last:border-b-0"
+      className="px-4 py-3 hover:bg-muted/50 cursor-pointer flex flex-col border-b last:border-b-0"
       onClick={handleItemClick}
     >
-      <div className="font-medium text-gray-900"><span translate="no">{product.brand_name}</span> - {product.product_name}</div>
+      <div className="font-medium text-foreground"><span translate="no">{product.brand_name}</span> - {product.product_name}</div>
       
       <div className="mt-2 flex flex-wrap gap-2.5">
         {/* Barista status */}
@@ -38,7 +30,7 @@ export const ProductResultItem = ({ product, onSelect }: ProductResultItemProps)
             isBarista={product.is_barista}
             compact={true}
             displayType="barista"
-            className="mb-1"
+            inline
           />
         )}
         
@@ -48,7 +40,7 @@ export const ProductResultItem = ({ product, onSelect }: ProductResultItemProps)
             propertyNames={product.property_names}
             compact={true}
             displayType="properties"
-            className="mb-1"
+            inline
           />
         )}
         
@@ -58,6 +50,7 @@ export const ProductResultItem = ({ product, onSelect }: ProductResultItemProps)
             flavorNames={product.flavor_names}
             compact={true}
             displayType="flavors"
+            inline
           />
         )}
       </div>

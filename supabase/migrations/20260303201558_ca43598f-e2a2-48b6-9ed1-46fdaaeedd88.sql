@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anonymous users can count profiles for public stats" ON public.profiles;

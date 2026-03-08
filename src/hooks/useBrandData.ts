@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { normalizeName, findClosestMatch } from "@/lib/nameNormalization";
 
 export interface Brand {
   id: string;
@@ -12,13 +13,14 @@ export interface Brand {
 export const useBrandData = (inputValue: string, brandId: string, setBrandId: (id: string) => void) => {
   const [suggestions, setSuggestions] = useState<Brand[]>([]);
   const [showAddNew, setShowAddNew] = useState(false);
+  const [closeMatch, setCloseMatch] = useState<Brand | null>(null);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Fetch brands from Supabase
   const { data: brands = [], isLoading } = useQuery({
     queryKey: ['brands'],
     queryFn: async () => {
-      console.log('Fetching brands from database...');
       const { data, error } = await supabase
         .from('brands')
         .select('id, name')
@@ -29,7 +31,6 @@ export const useBrandData = (inputValue: string, brandId: string, setBrandId: (i
         throw error;
       }
       
-      console.log('Fetched brands:', data);
       return data || [];
     },
   });
@@ -39,6 +40,7 @@ export const useBrandData = (inputValue: string, brandId: string, setBrandId: (i
     if (inputValue.trim() === '') {
       setSuggestions([]);
       setShowAddNew(false);
+      setCloseMatch(null);
       return;
     }
 
@@ -53,10 +55,10 @@ export const useBrandData = (inputValue: string, brandId: string, setBrandId: (i
       brand => brand.name.toLowerCase() === inputValue.trim().toLowerCase()
     );
     
-    // If there's an exact match, select it automatically and don't show "Add new"
     if (exactMatch) {
       setBrandId(exactMatch.id);
       setShowAddNew(false);
+      setCloseMatch(null);
     } else {
       // Only clear brandId if the input has changed
       if (brandId) {
@@ -65,28 +67,41 @@ export const useBrandData = (inputValue: string, brandId: string, setBrandId: (i
           setBrandId('');
         }
       }
-      setShowAddNew(inputValue.trim() !== '');
+      
+      // Find close match using fuzzy matching
+      const match = findClosestMatch(inputValue, brands, 0.75);
+      setCloseMatch(match);
+      
+      // Only show "Add new" when there's no close match
+      setShowAddNew(inputValue.trim() !== '' && !match);
     }
   }, [inputValue, brands, brandId, setBrandId]);
 
   // Add new brand to database
   const addNewBrand = async (brandName: string) => {
-    if (brandName.trim() === '') return null;
+    const normalized = normalizeName(brandName);
+    if (normalized === '') return null;
 
-    // First, check if the brand already exists (case-insensitive)
-    const existingBrand = brands.find(
-      brand => brand.name.toLowerCase() === brandName.trim().toLowerCase()
-    );
+    // Check the database directly with ilike to prevent stale-cache duplicates
+    const { data: existingInDb } = await supabase
+      .from('brands')
+      .select('id, name')
+      .ilike('name', normalized)
+      .maybeSingle();
 
-    if (existingBrand) {
-      console.log('Brand already exists, selecting it:', existingBrand);
-      return existingBrand;
+    if (existingInDb) {
+      console.log('Brand already exists in DB, selecting it:', existingInDb);
+      toast({
+        title: "Brand found",
+        description: `Using existing brand "${existingInDb.name}".`,
+      });
+      return existingInDb;
     }
 
     try {
       const { data, error } = await supabase
         .from('brands')
-        .insert({ name: brandName.trim() })
+        .insert({ name: normalized })
         .select()
         .single();
 
@@ -99,6 +114,9 @@ export const useBrandData = (inputValue: string, brandId: string, setBrandId: (i
         });
         return null;
       }
+
+      // Invalidate the brands cache so it picks up the new entry
+      queryClient.invalidateQueries({ queryKey: ['brands'] });
 
       toast({
         title: "Success",
@@ -117,6 +135,7 @@ export const useBrandData = (inputValue: string, brandId: string, setBrandId: (i
     brands,
     suggestions,
     showAddNew,
+    closeMatch,
     isLoading,
     addNewBrand
   };

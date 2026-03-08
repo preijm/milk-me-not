@@ -19,15 +19,16 @@ export const useProductTests = (productId: string | null, sortConfig: SortConfig
       
       if (user) {
         // Authenticated users can see all community tests for this product
-        const { data: allTests, error } = await supabase.rpc('get_all_milk_tests');
+        const { data: productTests, error } = await supabase.rpc('get_all_milk_tests', {
+          page_limit: 200,
+          page_offset: 0,
+          filter_product_id: productId,
+        });
         
         if (error) {
           console.error("Error fetching all product tests:", error);
           throw error;
         }
-        
-        // Filter for this specific product
-        const productTests = (allTests || []).filter(test => test.product_id === productId);
       
         // Apply sorting to the filtered tests
         const detailSortableColumns = [

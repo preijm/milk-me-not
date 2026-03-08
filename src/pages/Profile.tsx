@@ -25,7 +25,7 @@ const Profile = () => {
   const isMobileOrTablet = useIsMobileOrTablet();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   
-  const { totalTests, avgRating, memberSince } = useProfileStats(milkTests, profile);
+  const { totalTests, avgRating, bestScore, memberSince } = useProfileStats(milkTests, profile);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -43,6 +43,7 @@ const Profile = () => {
     avatarUrl: profile?.avatar_url,
     totalTests,
     avgRating,
+    bestScore,
     memberSince,
     onEditClick: () => setEditDialogOpen(true),
     onSignOut: handleSignOut,

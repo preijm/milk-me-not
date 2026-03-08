@@ -54,7 +54,7 @@ export const ContactCard = ({
 
   return (
     <div
-      onClick={onClick && !buttonDisabled ? onClick : undefined}
+      onClick={onClick}
       className={`bg-card rounded-2xl shadow-sm p-4 sm:p-6 hover:shadow-md transition-all flex flex-col ${onClick ? "cursor-pointer relative overflow-visible" : ""}`}
     >
       {children}

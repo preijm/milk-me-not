@@ -27,28 +27,17 @@ export const FeedContent = ({
   }
 
   const gridClassName =
-    variant === "desktop" ? "flex gap-6" : "flex -ml-4 w-auto";
-  const columnClassName =
-    variant === "desktop" ? "space-y-6" : "pl-4 space-y-4";
+    variant === "desktop" ? "flex gap-6" : "flex justify-center w-full";
 
   return (
     <>
       {items.length > 0 ? (
         <>
-          <div
-            className={gridClassName}
-            style={
-              variant === "desktop"
-                ? {}
-                : { marginLeft: "-1rem", width: "auto" }
-            }
-          >
-            <FeedGrid
-              items={items}
-              isAuthenticated={isAuthenticated}
-              className={gridClassName}
-            />
-          </div>
+          <FeedGrid
+            items={items}
+            isAuthenticated={isAuthenticated}
+            variant={variant}
+          />
 
           {!isAuthenticated && <FeedLoginPrompt className="mt-6" />}
         </>

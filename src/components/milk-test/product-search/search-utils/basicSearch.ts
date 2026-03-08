@@ -2,17 +2,14 @@
 import { supabase } from "@/integrations/supabase/client";
 import { ProductSearchResult } from "./types";
 
-// Basic search for product name and brand name
+// Basic search using the search_product_types RPC which handles name, brand, properties, and flavors
 export async function performBasicSearch(
   lowercaseSearchTerm: string,
   processedIds: Set<string>,
   combinedResults: ProductSearchResult[]
 ): Promise<void> {
   const { data: basicResults, error: basicError } = await supabase
-    .from('product_search_view')
-    .select('*')
-    .or(`product_name.ilike.%${lowercaseSearchTerm}%,brand_name.ilike.%${lowercaseSearchTerm}%`)
-    .limit(20);
+    .rpc('search_product_types', { search_term: lowercaseSearchTerm });
   
   if (basicError) throw basicError;
   

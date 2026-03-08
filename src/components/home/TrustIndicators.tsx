@@ -16,7 +16,7 @@ export const TrustIndicators = ({ items, formatNumber }: TrustIndicatorsProps) =
       {items.map((item, index) => (
         <div key={index} className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full animate-pulse ${item.colorClass} ${item.delayClass || ""}`}
+            className={`w-2 h-2 rounded-full ${item.colorClass}`}
           />
           <span>
             {formatNumber(item.value)} {item.label}

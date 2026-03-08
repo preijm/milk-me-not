@@ -86,11 +86,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        
         // Handle password recovery event - store flag in sessionStorage
         if (event === 'PASSWORD_RECOVERY') {
-          console.log('PASSWORD_RECOVERY event detected, setting recovery mode');
           sessionStorage.setItem('passwordRecoveryMode', 'true');
         }
         

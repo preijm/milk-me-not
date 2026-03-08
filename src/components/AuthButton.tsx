@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { LogIn, Settings, ChevronDown, Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
+import { lazy, Suspense } from "react";
+const NotificationDropdown = lazy(() => import("@/components/notifications/NotificationDropdown").then(m => ({ default: m.NotificationDropdown })));
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuth } from "@/contexts/AuthContext";
@@ -78,7 +79,9 @@ export const AuthButton = () => {
           <span>My Tests</span>
         </DropdownMenuItem>
         
-        <NotificationDropdown variant="menu" />
+        <Suspense fallback={null}>
+          <NotificationDropdown variant="menu" />
+        </Suspense>
         
         <DropdownMenuItem onClick={() => navigate('/account')} className="flex items-center gap-2 rounded-lg px-3 py-2.5 md:hover:bg-emerald-50 transition-colors cursor-pointer">
           <Settings className="w-4 h-4 opacity-70" />

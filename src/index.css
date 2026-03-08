@@ -55,6 +55,8 @@
     --brand-primary-foreground: 0 0% 100%;
     --brand-secondary: 231 100% 63%;    /* #2144ff - Blue */
     --brand-secondary-foreground: 0 0% 100%;
+    --brand-tertiary: 38 92% 50%;       /* #f59e0b - Amber */
+    --brand-tertiary-foreground: 0 0% 100%;
     
     /* ========================================
        HEATMAP COLORS (for map visualization)
@@ -157,6 +159,7 @@
     
     --brand-primary: 151 100% 42%;
     --brand-secondary: 231 100% 68%;
+    --brand-tertiary: 38 92% 55%;
   }
 }
 
@@ -245,16 +248,6 @@
   }
 }
 
-
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
 
 /* Mapbox popup custom styles */
 .mapboxgl-popup-close-button {

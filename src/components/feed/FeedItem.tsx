@@ -56,7 +56,7 @@ export const FeedItem = ({ item, blurred = false, disabled = false }: FeedItemPr
       const likesWithUsernames = await Promise.all(
         (data || []).map(async (like) => {
           const { data: profile } = await supabase
-            .from('profiles')
+            .from('profiles_public')
             .select('username')
             .eq('id', like.user_id)
             .maybeSingle();
@@ -84,7 +84,7 @@ export const FeedItem = ({ item, blurred = false, disabled = false }: FeedItemPr
       const commentsWithUsernames = await Promise.all(
         (data || []).map(async (comment) => {
           const { data: profile } = await supabase
-            .from('profiles')
+            .from('profiles_public')
             .select('username')
             .eq('id', comment.user_id)
             .maybeSingle();
