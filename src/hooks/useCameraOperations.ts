@@ -120,7 +120,12 @@ export const useCameraOperations = ({
 
       await processAndSetFile(file, image.dataUrl);
       return true;
-    } catch (error) {
+    } catch (error: any) {
+      const msg = error?.message?.toLowerCase() || '';
+      if (msg.includes('cancel') || msg.includes('user') || msg.includes('dismissed') || error?.code === 'RESULT_CANCELED') {
+        console.log('[Camera] User cancelled native camera');
+        return true; // Return true to prevent fallback to file input
+      }
       console.warn('[Camera] Native camera unavailable, falling back to web capture:', error);
       return false;
     }
@@ -250,7 +255,12 @@ export const useCameraOperations = ({
 
       await processAndSetFile(file, image.dataUrl);
       return true;
-    } catch (error) {
+    } catch (error: any) {
+      const msg = error?.message?.toLowerCase() || '';
+      if (msg.includes('cancel') || msg.includes('user') || msg.includes('dismissed') || error?.code === 'RESULT_CANCELED') {
+        console.log('[Camera] User cancelled native gallery');
+        return true; // Return true to prevent fallback
+      }
       console.warn('[Camera] Native gallery unavailable, falling back to file picker:', error);
       return false;
     }
