@@ -22,8 +22,18 @@ interface ProfileContentProps {
   variant: "mobile" | "desktop";
 }
 
-
-
+export const ProfileContent = ({
+  username,
+  email,
+  avatarUrl,
+  totalTests,
+  avgRating,
+  bestScore,
+  memberSince,
+  onEditClick,
+  onSignOut,
+  variant,
+}: ProfileContentProps) => {
     return (
       <div className="space-y-6">
         {/* Profile Header Card */}

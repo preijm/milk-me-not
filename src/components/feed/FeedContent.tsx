@@ -26,9 +26,6 @@ export const FeedContent = ({
     );
   }
 
-  const gridClassName =
-    variant === "desktop" ? "flex gap-6" : "flex justify-center w-full";
-
   return (
     <>
       {items.length > 0 ? (
