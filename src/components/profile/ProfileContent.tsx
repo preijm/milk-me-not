@@ -22,76 +22,7 @@ interface ProfileContentProps {
   variant: "mobile" | "desktop";
 }
 
-interface MobileMenuItem {
-  icon: React.ElementType;
-  iconBgColor: string;
-  iconColor: string;
-  title: string;
-  value?: string;
-  action?: () => void;
-  path?: string;
-}
 
-const MobileProfileMenuItem = ({ 
-  item, 
-  showChevron = false 
-}: { 
-  item: MobileMenuItem;
-  showChevron?: boolean;
-}) => {
-  const navigate = useNavigate();
-  
-  const handleClick = () => {
-    if (item.action) {
-      item.action();
-    } else if (item.path) {
-      navigate(item.path);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      className="w-full p-4 flex items-center gap-4 hover:bg-muted/50 transition-colors"
-    >
-      <div
-        className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-        style={{ backgroundColor: item.iconBgColor }}
-      >
-        <item.icon
-          className="w-6 h-6"
-          style={{ color: item.iconColor }}
-        />
-      </div>
-      <div className="flex-1 text-left">
-        <h4 className="font-semibold text-foreground">{item.title}</h4>
-        {item.value && (
-          <p className="text-sm text-muted-foreground">{item.value}</p>
-        )}
-      </div>
-      {showChevron && (
-        <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-      )}
-    </button>
-  );
-};
-
-export const ProfileContent = ({
-  username,
-  email,
-  avatarUrl,
-  totalTests,
-  avgRating,
-  bestScore,
-  memberSince,
-  onEditClick,
-  onSignOut,
-  variant,
-}: ProfileContentProps) => {
-  const navigate = useNavigate();
-
-  if (variant === "mobile") {
-    
 
     return (
       <div className="space-y-6">
