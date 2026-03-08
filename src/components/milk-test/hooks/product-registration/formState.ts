@@ -43,7 +43,7 @@ export const handleProductSubmit = async ({
   editProductId
 }: ProductSubmitParams): Promise<ProductSubmitResult> => {
   let finalNameId = nameId;
-  let productId;
+  let productId = editProductId || null;
 
   console.log('Starting product submission with:', { 
     brandId, 
