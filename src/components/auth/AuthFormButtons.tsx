@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { LogIn, UserPlus } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 
 interface AuthFormButtonsProps {
   isLogin: boolean;
