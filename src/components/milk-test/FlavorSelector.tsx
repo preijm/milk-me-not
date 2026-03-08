@@ -124,7 +124,7 @@ export const FlavorSelector = ({
             variant="flavor" 
             className={`cursor-pointer transition-all h-7 flex items-center ${
               selectedFlavors.includes(flavor.key) 
-                ? 'bg-primary text-primary-foreground border-primary' 
+                ? 'bg-badge-flavor text-badge-flavor-foreground border-badge-flavor shadow-md' 
                 : ''
             }`}
             onClick={() => onFlavorToggle(flavor.key)}
