@@ -10,7 +10,7 @@ interface ProductResultItemProps {
   searchTerm?: string;
 }
 
-export const ProductResultItem = ({ product, onSelect, searchTerm }: ProductResultItemProps) => {
+export const ProductResultItem = ({ product, onSelect, searchTerm: _searchTerm }: ProductResultItemProps) => {
   const handleItemClick = () => {
     onSelect(product.id);
   };

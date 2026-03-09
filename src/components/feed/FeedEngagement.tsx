@@ -29,7 +29,7 @@ export const FeedEngagement = ({
   isLiked,
   isOwnPost,
   isLikePending,
-  showComments,
+  showComments: _showComments,
   onLike,
   onToggleComments,
   onViewAllResults,

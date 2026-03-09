@@ -20,7 +20,7 @@ interface PictureCaptureProps {
 }
 
 export const PictureCapture: React.FC<PictureCaptureProps> = ({
-  picture,
+  picture: _picture,
   picturePreview,
   setPicture,
   setPicturePreview,

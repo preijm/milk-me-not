@@ -15,7 +15,7 @@ interface FAQSectionProps {
   items: FAQItem[];
 }
 
-export const FAQSection = ({ title, items }: FAQSectionProps) => {
+export const FAQSection = ({ title: _title, items }: FAQSectionProps) => {
   return (
     <div className="bg-card rounded-2xl shadow-sm p-4 sm:p-8 max-w-4xl mx-auto">
       

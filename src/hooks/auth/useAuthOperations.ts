@@ -249,7 +249,7 @@ export const useAuthOperations = () => {
       });
       
       return { success: true };
-    } catch (error: any) {
+    } catch (_error: any) {
       toast({
         title: "Reset password failed",
         description: "Please check your email address and try again.",

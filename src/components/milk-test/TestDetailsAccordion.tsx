@@ -58,7 +58,7 @@ export const TestDetailsAccordion = ({ productTests, handleImageClick }: TestDet
       
       queryClient.invalidateQueries({ queryKey: ['product-tests'] });
       queryClient.invalidateQueries({ queryKey: ['product-details'] });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "Failed to delete test. Please try again.",

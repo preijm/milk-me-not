@@ -61,7 +61,7 @@ export const validateFile = async (
           error: `Image dimensions too large. Maximum: ${opts.maxDimensions.width}x${opts.maxDimensions.height}px. Current: ${dimensions.width}x${dimensions.height}px`
         };
       }
-    } catch (error) {
+    } catch (_error) {
       return {
         isValid: false,
         error: 'Invalid image file or corrupted data'

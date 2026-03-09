@@ -10,7 +10,7 @@ interface ProductInformationProps {
   setProductId: (id: string) => void;
 }
 export const ProductInformation = ({
-  brandId,
+  brandId: _brandId,
   setBrandId,
   productId,
   setProductId

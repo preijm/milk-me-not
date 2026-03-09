@@ -11,7 +11,7 @@ interface SearchIconProps {
   placeholder?: string;
 }
 
-export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder = "Search..." }: SearchIconProps) => {
+export const SearchIcon = ({ searchTerm, setSearchTerm, placeholder: _placeholder = "Search..." }: SearchIconProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
 
