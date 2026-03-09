@@ -11,7 +11,7 @@ interface LoginPromptProps {
 export const LoginPrompt = ({
   isOpen,
   onClose,
-  productName
+  productName: _productName
 }: LoginPromptProps) => {
   const navigate = useNavigate();
   const handleLogin = () => {

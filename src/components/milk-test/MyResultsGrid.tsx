@@ -17,7 +17,7 @@ interface MyResultsGridProps {
 export const MyResultsGrid = ({
   results,
   onEdit,
-  onDelete
+  onDelete: _onDelete
 }: MyResultsGridProps) => {
   
   const getPictureUrl = (picturePath: string | null | undefined) => {

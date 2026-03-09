@@ -92,9 +92,9 @@ export const MobileFilterBar = ({
   filters,
   onFiltersChange,
   sortConfig,
-  onSort,
+  onSort: _onSort,
   onSetSort,
-  onClearSort,
+  onClearSort: _onClearSort,
   resultsCount
 }: MobileFilterBarProps) => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
