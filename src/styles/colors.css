@@ -1,0 +1,34 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .bg-soft-pink {
+    background-color: #FFDEE2;
+  }
+  
+  .bg-soft-yellow {
+    background-color: #FEF7CD;
+  }
+  
+  .bg-soft-green {
+    background-color: #F2FCE2;
+  }
+  
+  .bg-soft-blue {
+    background-color: #D3E4FD;
+  }
+  
+  .bg-soft-brown {
+    background-color: #FDE1D3;
+  }
+  
+  .bg-soft-gray {
+    background-color: #F1F0FB;
+  }
+  
+  .bg-soft-peach {
+    background-color: #FDE1D3;
+  }
+}

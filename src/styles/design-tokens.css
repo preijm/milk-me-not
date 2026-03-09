@@ -2,12 +2,55 @@
    DESIGN TOKENS - Single Source of Truth
    ============================================ */
 
-/* Note: These tokens are imported after tailwind base in index.css.
-   Color variables (score, status, brand, heatmap, surface) are defined
-   in index.css :root to avoid duplication. This file contains
-   typography, spacing, shadow, and transition tokens only. */
-
-:root {
+/* Note: These tokens are imported after tailwind base in index.css */
+  :root {
+    /* ========================================
+       SEMANTIC SCORE COLORS
+       ======================================== */
+    --score-excellent: 145 100% 37%;    /* #00bf63 - Green */
+    --score-good: 231 100% 63%;         /* #2144ff - Blue */
+    --score-fair: 38 92% 50%;           /* #f59e0b - Amber */
+    --score-poor: 0 100% 65%;           /* #ff4b51 - Red */
+    
+    /* ========================================
+       SEMANTIC STATUS COLORS
+       ======================================== */
+    --success: 145 100% 37%;            /* Same as score-excellent */
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;              /* Same as score-fair */
+    --warning-foreground: 0 0% 100%;
+    --error: 0 100% 65%;                /* Same as score-poor */
+    --error-foreground: 0 0% 100%;
+    --info: 231 100% 63%;               /* Same as score-good */
+    --info-foreground: 0 0% 100%;
+    
+    /* ========================================
+       BRAND COLORS
+       ======================================== */
+    --brand-primary: 145 100% 37%;      /* #00bf63 - Green */
+    --brand-primary-foreground: 0 0% 100%;
+    --brand-secondary: 231 100% 63%;    /* #2144ff - Blue */
+    --brand-secondary-foreground: 0 0% 100%;
+    --brand-tertiary: 38 92% 50%;       /* #f59e0b - Amber */
+    --brand-tertiary-foreground: 0 0% 100%;
+    
+    /* ========================================
+       HEATMAP COLORS (for map visualization)
+       ======================================== */
+    --heatmap-very-high: 0 84% 50%;     /* #dc2626 - Red */
+    --heatmap-high: 21 90% 48%;         /* #ea580c - Orange */
+    --heatmap-medium-high: 38 92% 50%;  /* #f59e0b - Amber */
+    --heatmap-medium: 48 96% 47%;       /* #eab308 - Yellow */
+    --heatmap-low-medium: 84 81% 44%;   /* #84cc16 - Lime */
+    --heatmap-low: 142 71% 45%;         /* #22c55e - Green */
+    --heatmap-none: 220 13% 91%;        /* #e5e7eb - Light gray */
+    
+    /* ========================================
+       SURFACE COLORS
+       ======================================== */
+    --surface-warm: 33 100% 97%;        /* #fff9f0 - Warm white */
+    --surface-cream: 33 100% 94%;       /* #fff3e0 - Cream */
+    
     /* ========================================
        TYPOGRAPHY SCALE (rem based)
        ======================================== */
@@ -20,17 +63,17 @@
     --font-size-3xl: 1.875rem;          /* 30px */
     --font-size-4xl: 2.25rem;           /* 36px */
     --font-size-5xl: 3rem;              /* 48px */
-
+    
     --line-height-tight: 1.25;
     --line-height-tighter: 1.1;
     --line-height-normal: 1.5;
     --line-height-relaxed: 1.75;
-
+    
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
-
+    
     /* ========================================
        SPACING SCALE
        ======================================== */
@@ -47,7 +90,7 @@
     --space-16: 4rem;                   /* 64px */
     --space-20: 5rem;                   /* 80px */
     --space-24: 6rem;                   /* 96px */
-
+    
     /* ========================================
        SHADOW SCALE
        ======================================== */
@@ -56,13 +99,13 @@
     --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
     --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
     --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.1), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
-
+    
     /* Score-specific shadows */
     --shadow-score-excellent: 0 4px 12px -2px hsl(var(--score-excellent) / 0.25);
     --shadow-score-good: 0 4px 12px -2px hsl(var(--score-good) / 0.25);
     --shadow-score-fair: 0 4px 12px -2px hsl(var(--score-fair) / 0.25);
     --shadow-score-poor: 0 4px 12px -2px hsl(var(--score-poor) / 0.25);
-
+    
     /* ========================================
        TRANSITION TOKENS
        ======================================== */
@@ -70,4 +113,17 @@
     --transition-base: 200ms ease;
     --transition-slow: 300ms ease;
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  }
+
+  .dark {
+    /* Score colors remain the same in dark mode for consistency */
+    --score-excellent: 145 100% 42%;    /* Slightly brighter for dark mode */
+    --score-good: 231 100% 68%;
+    --score-fair: 38 92% 55%;
+    --score-poor: 0 100% 70%;
+    
+    --success: 145 100% 42%;
+    --warning: 38 92% 55%;
+    --error: 0 100% 70%;
+    --info: 231 100% 68%;
+  }

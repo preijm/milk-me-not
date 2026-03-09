@@ -2,160 +2,166 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './styles/colors.css';
 @import './styles/design-tokens.css';
 
-/* ========================================
-   CSS VARIABLES
-   ======================================== */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 231 100% 56.4706%; /* #2144ff */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 240 9.0909% 97.8431%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 0 0% 85%; /* Light grey for borders */
+    --input: 0 0% 85%; /* Light grey for input borders */
+    --ring: 0 0% 75%; /* Light grey for focus rings */
+    --radius: 0.5rem;
+    
+    /* ========================================
+       SEMANTIC SCORE COLORS
+       ======================================== */
+    --score-excellent: 151 100% 37%;    /* #00bf63 - Green */
+    --score-good: 231 100% 63%;         /* #2144ff - Blue */
+    --score-fair: 38 92% 50%;           /* #f59e0b - Amber */
+    --score-poor: 0 100% 65%;           /* #ff4b51 - Red */
+    
+    /* ========================================
+       SEMANTIC STATUS COLORS
+       ======================================== */
+    --success: 151 100% 37%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --error: 0 100% 65%;
+    --error-foreground: 0 0% 100%;
+    --info: 231 100% 63%;
+    --info-foreground: 0 0% 100%;
+    
+    /* ========================================
+       BRAND COLORS
+       ======================================== */
+    --brand-primary: 151 100% 37%;      /* #00bf63 - Green */
+    --brand-primary-foreground: 0 0% 100%;
+    --brand-secondary: 231 100% 63%;    /* #2144ff - Blue */
+    --brand-secondary-foreground: 0 0% 100%;
+    --brand-tertiary: 38 92% 50%;       /* #f59e0b - Amber */
+    --brand-tertiary-foreground: 0 0% 100%;
+    
+    /* ========================================
+       HEATMAP COLORS (for map visualization)
+       ======================================== */
+    --heatmap-very-high: 0 84% 50%;
+    --heatmap-high: 21 90% 48%;
+    --heatmap-medium-high: 38 92% 50%;
+    --heatmap-medium: 48 96% 47%;
+    --heatmap-low-medium: 84 81% 44%;
+    --heatmap-low: 142 71% 45%;
+    --heatmap-none: 220 13% 91%;
+    
+    /* ========================================
+       SURFACE COLORS
+       ======================================== */
+    --surface-warm: 33 100% 97%;
+    --surface-cream: 33 100% 94%;
+    
+    /* Custom colors for milk app */
+    --milk-100: 0 0% 96%; /* #F5F5F5 */
+    --milk-200: 0 0% 90%; /* #E5E5E5 */
+    --milk-300: 0 0% 80%; /* #CCCCCC */
+    --milk-400: 0 0% 70%; /* #B3B3B3 */
+    --milk-500: 0 0% 30%; /* #4D4D4D */
+    
+    --cream-100: 40 100% 97%; /* #FFF9E5 */
+    --cream-200: 40 100% 94%; /* #FFF2CC */
+    --cream-300: 40 100% 91%; /* #FFEAB2 */
+    
+    /* Brand blue colors - Updated to match user specification */
+    --brand-blue: 225 94% 54%; /* #1f54f4 */
+    --brand-blue-hover: 225 89% 48%; /* Slightly darker for hover */
+    --brand-blue-disabled: 225 94% 82%; /* Lighter for disabled state */
+    
+    /* Rating color */
+    --rating-bg: 225 100% 91%; /* #D1DCFF */
+    
+    /* Enhanced gradient colors */
+    --gradient-primary: linear-gradient(135deg, hsl(151 100% 38%), hsl(151 100% 42%));
+    --gradient-hero: linear-gradient(135deg, hsl(151 100% 38% / 0.1), hsl(151 100% 42% / 0.05));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-stats: linear-gradient(135deg, hsl(151 100% 38% / 0.05), hsl(151 100% 42% / 0.02));
+    
+    /* Notification icon colors */
+    --notification-like: 0 65% 64%; /* #e45959 */
+    --notification-comment: 225 100% 63%; /* #2144ff */
+    --notification-newsletter: 151 100% 38%; /* #00bf63 */
+    
+    /* Badge category colors */
+    --badge-barista: 33 90% 50%; /* amber-600 */
+    --badge-barista-foreground: 0 0% 100%;
+    --badge-property: 215 16% 47%; /* slate-600 */
+    --badge-property-foreground: 0 0% 100%;
+    --badge-flavor: 271 70% 48%; /* purple-600 */
+    --badge-flavor-foreground: 0 0% 100%;
+    
+    /* Filter active color */
+    --filter-active: 225 100% 63%; /* #2144ff */
+    
+    /* Switch colors */
+    --switch-enabled: 225 100% 63%; /* #2144ff */
+    
+    /* Shadow colors */
+    --shadow-brand: 0 10px 30px -10px hsl(151 100% 38% / 0.2);
+    --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
+    --shadow-glow: 0 0 40px hsl(151 100% 42% / 0.15);
+  }
 
-:root {
-  --background: 0 0% 100%;
-  --foreground: 224 71.4% 4.1%;
-  --card: 0 0% 100%;
-  --card-foreground: 224 71.4% 4.1%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 224 71.4% 4.1%;
-  --primary: 231 100% 56.4706%;
-  --primary-foreground: 210 20% 98%;
-  --secondary: 240 9.0909% 97.8431%;
-  --secondary-foreground: 220.9 39.3% 11%;
-  --muted: 220 14.3% 95.9%;
-  --muted-foreground: 220 8.9% 46.1%;
-  --accent: 220 14.3% 95.9%;
-  --accent-foreground: 220.9 39.3% 11%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 20% 98%;
-  --border: 0 0% 85%;
-  --input: 0 0% 85%;
-  --ring: 0 0% 75%;
-  --radius: 0.5rem;
-
-  /* Score colors */
-  --score-excellent: 151 100% 37%;
-  --score-good: 231 100% 63%;
-  --score-fair: 38 92% 50%;
-  --score-poor: 0 100% 65%;
-
-  /* Status colors */
-  --success: 151 100% 37%;
-  --success-foreground: 0 0% 100%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 100%;
-  --error: 0 100% 65%;
-  --error-foreground: 0 0% 100%;
-  --info: 231 100% 63%;
-  --info-foreground: 0 0% 100%;
-
-  /* Brand colors */
-  --brand-primary: 151 100% 37%;
-  --brand-primary-foreground: 0 0% 100%;
-  --brand-secondary: 231 100% 63%;
-  --brand-secondary-foreground: 0 0% 100%;
-  --brand-tertiary: 38 92% 50%;
-  --brand-tertiary-foreground: 0 0% 100%;
-
-  /* Heatmap colors */
-  --heatmap-very-high: 0 84% 50%;
-  --heatmap-high: 21 90% 48%;
-  --heatmap-medium-high: 38 92% 50%;
-  --heatmap-medium: 48 96% 47%;
-  --heatmap-low-medium: 84 81% 44%;
-  --heatmap-low: 142 71% 45%;
-  --heatmap-none: 220 13% 91%;
-
-  /* Surface colors */
-  --surface-warm: 33 100% 97%;
-  --surface-cream: 33 100% 94%;
-
-  /* Custom milk colors */
-  --milk-100: 0 0% 96%;
-  --milk-200: 0 0% 90%;
-  --milk-300: 0 0% 80%;
-  --milk-400: 0 0% 70%;
-  --milk-500: 0 0% 30%;
-
-  --cream-100: 40 100% 97%;
-  --cream-200: 40 100% 94%;
-  --cream-300: 40 100% 91%;
-
-  /* Brand blue colors */
-  --brand-blue: 225 94% 54%;
-  --brand-blue-hover: 225 89% 48%;
-  --brand-blue-disabled: 225 94% 82%;
-
-  /* Rating color */
-  --rating-bg: 225 100% 91%;
-
-  /* Enhanced gradient colors */
-  --gradient-primary: linear-gradient(135deg, hsl(151 100% 38%), hsl(151 100% 42%));
-  --gradient-hero: linear-gradient(135deg, hsl(151 100% 38% / 0.1), hsl(151 100% 42% / 0.05));
-  --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 98%));
-  --gradient-stats: linear-gradient(135deg, hsl(151 100% 38% / 0.05), hsl(151 100% 42% / 0.02));
-
-  /* Notification icon colors */
-  --notification-like: 0 65% 64%;
-  --notification-comment: 225 100% 63%;
-  --notification-newsletter: 151 100% 38%;
-
-  /* Badge category colors */
-  --badge-barista: 33 90% 50%;
-  --badge-barista-foreground: 0 0% 100%;
-  --badge-property: 215 16% 47%;
-  --badge-property-foreground: 0 0% 100%;
-  --badge-flavor: 271 70% 48%;
-  --badge-flavor-foreground: 0 0% 100%;
-
-  /* Filter active color */
-  --filter-active: 225 100% 63%;
-
-  /* Switch colors */
-  --switch-enabled: 225 100% 63%;
-
-  /* Shadow colors */
-  --shadow-brand: 0 10px 30px -10px hsl(151 100% 38% / 0.2);
-  --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
-  --shadow-glow: 0 0 40px hsl(151 100% 42% / 0.15);
+  .dark {
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 225 100% 63%; /* #2144ff */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 0 0% 25%; /* Light grey for dark mode borders */
+    --input: 0 0% 25%; /* Light grey for dark mode input borders */
+    --ring: 0 0% 35%; /* Light grey for dark mode focus rings */
+    
+    /* Score colors - slightly brighter for dark mode */
+    --score-excellent: 151 100% 42%;
+    --score-good: 231 100% 68%;
+    --score-fair: 38 92% 55%;
+    --score-poor: 0 100% 70%;
+    
+    --success: 151 100% 42%;
+    --warning: 38 92% 55%;
+    --error: 0 100% 70%;
+    --info: 231 100% 68%;
+    
+    --brand-primary: 151 100% 42%;
+    --brand-secondary: 231 100% 68%;
+    --brand-tertiary: 38 92% 55%;
+  }
 }
-
-.dark {
-  --background: 224 71.4% 4.1%;
-  --foreground: 210 20% 98%;
-  --card: 224 71.4% 4.1%;
-  --card-foreground: 210 20% 98%;
-  --popover: 224 71.4% 4.1%;
-  --popover-foreground: 210 20% 98%;
-  --primary: 225 100% 63%;
-  --primary-foreground: 210 20% 98%;
-  --secondary: 215 27.9% 16.9%;
-  --secondary-foreground: 210 20% 98%;
-  --muted: 215 27.9% 16.9%;
-  --muted-foreground: 217.9 10.6% 64.9%;
-  --accent: 215 27.9% 16.9%;
-  --accent-foreground: 210 20% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 20% 98%;
-  --border: 0 0% 25%;
-  --input: 0 0% 25%;
-  --ring: 0 0% 35%;
-
-  --score-excellent: 151 100% 42%;
-  --score-good: 231 100% 68%;
-  --score-fair: 38 92% 55%;
-  --score-poor: 0 100% 70%;
-
-  --success: 151 100% 42%;
-  --warning: 38 92% 55%;
-  --error: 0 100% 70%;
-  --info: 231 100% 68%;
-
-  --brand-primary: 151 100% 42%;
-  --brand-secondary: 231 100% 68%;
-  --brand-tertiary: 38 92% 55%;
-}
-
-/* ========================================
-   BASE STYLES
-   ======================================== */
 
 @layer base {
   * {
@@ -170,52 +176,42 @@
   }
 }
 
-/* ========================================
-   COMPONENT STYLES
-   ======================================== */
-
 @layer components {
   .btn-brand {
     @apply bg-[hsl(var(--brand-blue))] text-white transition-all duration-200 ease-in-out rounded-lg py-3 px-6 font-medium;
   }
-
+  
   .btn-brand:hover:not(:disabled) {
     @apply bg-[hsl(var(--brand-blue-hover))] shadow-lg;
   }
-
+  
   .btn-brand:disabled {
-    background-color: #e5e7eb !important;
-    color: #6b7280 !important;
-    cursor: not-allowed !important;
-    opacity: 1 !important;
-    transform: none !important;
-    box-shadow: none !important;
+    @apply bg-gray-200 text-gray-500 cursor-not-allowed opacity-100 transform-none shadow-none !important;
   }
 
   /* Apply disabled color to all UI buttons */
   button:disabled,
   .inline-flex.items-center.justify-center:disabled,
   button[class*="inline-flex"]:disabled {
-    background-color: #e5e7eb !important;
-    color: #6b7280 !important;
+    @apply bg-gray-200 text-gray-500 !important;
   }
 
   /* Oat Milk Background Theme */
   .oat-milk {
     background: linear-gradient(135deg, #ffffff, #ffffff, rgba(0, 191, 99, 0.02), rgba(33, 68, 255, 0.015), #ffffff, #ffffff);
   }
-
+  
   .oat-grains {
     position: absolute;
     inset: 0;
-    background-image:
+    background-image: 
       radial-gradient(ellipse 3px 6px at 20% 30%, rgba(0, 191, 99, 0.2) 70%, transparent 71%),
       radial-gradient(ellipse 2px 5px at 60% 70%, rgba(0, 191, 99, 0.15) 70%, transparent 71%),
       radial-gradient(ellipse 4px 7px at 80% 20%, rgba(0, 191, 99, 0.18) 70%, transparent 71%);
     background-size: 180px 180px, 140px 140px, 220px 220px;
     opacity: 0.4;
   }
-
+  
   .milk-splash {
     position: absolute;
     top: 40%;
@@ -227,7 +223,7 @@
     opacity: 0.5;
     animation: gentle-pulse 4s ease-in-out infinite;
   }
-
+  
   .plant-stem {
     position: absolute;
     bottom: 25%;
@@ -242,21 +238,18 @@
     0%, 100% { transform: scale(1); opacity: 0.9; }
     50% { transform: scale(1.1); opacity: 0.6; }
   }
-
+  
   /* Disable hover effects on touch devices */
   @media (hover: none) {
     button:hover,
     .btn-brand:hover:not(:disabled) {
-      background-color: inherit;
-      box-shadow: none;
+      @apply bg-inherit shadow-none;
     }
   }
 }
 
-/* ========================================
-   MAPBOX STYLES
-   ======================================== */
 
+/* Mapbox popup custom styles */
 .mapboxgl-popup-close-button {
   font-size: 20px;
   padding: 4px 10px;
