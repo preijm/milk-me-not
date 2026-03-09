@@ -29,8 +29,14 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Setup Node.js for lockfile generation
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Generate package-lock.json for Dependabot
         run: |
+          rm -f package-lock.json
           npm install --package-lock-only --ignore-scripts --legacy-peer-deps
       
       - name: Commit updated lockfiles
