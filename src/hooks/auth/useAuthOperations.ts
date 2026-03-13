@@ -13,6 +13,7 @@ import {
   passwordResetRateLimit,
   logSecurityEvent
 } from '@/lib/security';
+import { checkServerRateLimit } from '@/lib/rateLimitCheck';
 
 export interface AuthFormData {
   email: string;
