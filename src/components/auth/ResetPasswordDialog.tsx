@@ -57,6 +57,19 @@ const ResetPasswordDialog = ({
     passwordResetRateLimit.recordAttempt(rateLimitKey);
     
     setResetInProgress(true);
+
+    // Server-side rate limit check
+    const serverCheck = await checkServerRateLimit('password_reset', sanitizedEmail);
+    if (!serverCheck.allowed) {
+      const retryMinutes = Math.ceil(serverCheck.retry_after_seconds / 60);
+      toast({
+        title: "Too many attempts",
+        description: `Please wait ${retryMinutes} minute${retryMinutes !== 1 ? 's' : ''} before trying again.`,
+        variant: "destructive"
+      });
+      setResetInProgress(false);
+      return;
+    }
     console.log("Starting password reset for email:", sanitizedEmail);
     try {
       // Use dynamic URL for password reset emails
