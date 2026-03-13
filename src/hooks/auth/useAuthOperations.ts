@@ -145,6 +145,18 @@ export const useAuthOperations = () => {
     setLoading(true);
     signupRateLimit.recordAttempt(rateLimitKey);
 
+    // Server-side rate limit check
+    const serverCheck = await checkServerRateLimit('signup', sanitizedEmail);
+    if (!serverCheck.allowed) {
+      const retryMinutes = Math.ceil(serverCheck.retry_after_seconds / 60);
+      toast({
+        title: "Too many attempts",
+        description: `Please wait ${retryMinutes} minute${retryMinutes !== 1 ? 's' : ''} before trying again.`,
+        variant: "destructive"
+      });
+      setLoading(false);
+      return { success: false };
+    }
     try {
       // Check if username is available using secure function
       const { data: usernameExists } = await supabase
