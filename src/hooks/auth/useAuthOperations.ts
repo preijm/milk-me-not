@@ -261,6 +261,18 @@ export const useAuthOperations = () => {
     passwordResetRateLimit.recordAttempt(rateLimitKey);
     setLoading(true);
 
+    // Server-side rate limit check
+    const serverCheck = await checkServerRateLimit('password_reset', sanitizedEmail);
+    if (!serverCheck.allowed) {
+      const retryMinutes = Math.ceil(serverCheck.retry_after_seconds / 60);
+      toast({
+        title: "Too many attempts",
+        description: `Please wait ${retryMinutes} minute${retryMinutes !== 1 ? 's' : ''} before trying again.`,
+        variant: "destructive"
+      });
+      setLoading(false);
+      return { success: false };
+    }
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(sanitizedEmail, {
         redirectTo: `${window.location.origin}/auth/reset-password`
