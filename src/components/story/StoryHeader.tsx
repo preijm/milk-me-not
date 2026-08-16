@@ -1,0 +1,236 @@
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import logoImg from "@/assets/logo-96.png";
+import { StoryButton, ArrowRight } from "./primitives";
+import { useRateCta } from "./useRateCta";
+
+const PUBLIC_LINKS = [
+  { to: "/results", label: "Discover" },
+  { to: "/feed", label: "Feed" },
+  { to: "/about", label: "About" },
+  { to: "/faq", label: "How it works" },
+];
+
+const MEMBER_LINKS = [
+  { to: "/profile", label: "My profile" },
+  { to: "/notifications", label: "Notifications" },
+  { to: "/account", label: "Account" },
+];
+
+const Wordmark = ({ tone }: { tone: "ink" | "light" }) => (
+  <Link to="/" className="flex items-center gap-2.5 no-underline" aria-label="Milk Me Not — home">
+    <img src={logoImg} alt="" className="h-9 w-9 rounded-[0.55rem] object-contain" width={36} height={36} />
+    <span
+      translate="no"
+      className={cn(
+        "font-display text-[1.15rem] font-extrabold tracking-[-0.03em] sm:text-[1.3rem]",
+        tone === "light" ? "text-white" : "text-story-ink",
+      )}
+    >
+      Milk Me Not
+    </span>
+  </Link>
+);
+
+const Burger = ({ open }: { open: boolean }) => (
+  <span className="relative block h-3.5 w-[18px]" aria-hidden>
+    <span
+      className={cn(
+        "absolute left-0 h-[1.8px] w-full rounded bg-current transition-transform duration-200",
+        open ? "top-[6px] rotate-45" : "top-0",
+      )}
+    />
+    <span
+      className={cn(
+        "absolute left-0 top-[6px] h-[1.8px] w-full rounded bg-current transition-opacity duration-150",
+        open && "opacity-0",
+      )}
+    />
+    <span
+      className={cn(
+        "absolute left-0 h-[1.8px] w-full rounded bg-current transition-transform duration-200",
+        open ? "top-[6px] -rotate-45" : "top-[12px]",
+      )}
+    />
+  </span>
+);
+
+/**
+ * The public site's header.
+ *
+ * One bar, two arrangements. Wide viewports get the nav inline; narrow ones get
+ * the logo, the CTA and a drawer — the pitch is never traded away for a
+ * navigation-first mobile view.
+ */
+export const StoryHeader = ({ transparent = false }: { transparent?: boolean }) => {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const { user } = useAuth();
+  const cta = useRateCta();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const solid = scrolled || !transparent;
+
+  return (
+    <>
+      <header
+        className={cn(
+          "sticky top-0 z-50 transition-colors duration-200",
+          solid ? "border-b border-story-ink/[0.07] bg-story-cream/90 backdrop-blur-xl" : "bg-transparent",
+        )}
+      >
+        <div className="mx-auto flex h-16 w-full max-w-[76rem] items-center gap-4 px-5 sm:px-8 lg:h-[4.5rem] lg:px-10">
+          <Wordmark tone="ink" />
+
+          <nav className="ml-6 hidden items-center gap-1 lg:flex" aria-label="Main">
+            {PUBLIC_LINKS.map((link) => {
+              const active = location.pathname === link.to;
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={cn(
+                    "rounded-full px-3.5 py-2 text-[0.875rem] font-bold no-underline transition-colors",
+                    active
+                      ? "bg-story-green-wash text-story-green-dark"
+                      : "text-story-ink-2 hover:bg-story-ink/[0.05]",
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="ml-auto flex items-center gap-2">
+            {!user && (
+              <Link
+                to="/auth"
+                className="hidden rounded-full px-4 py-2 text-[0.875rem] font-bold text-story-ink-2 no-underline transition-colors hover:bg-story-ink/[0.05] sm:inline-flex"
+              >
+                Log in
+              </Link>
+            )}
+            <StoryButton size="sm" onClick={cta.go} className="hidden sm:inline-flex">
+              {cta.shortLabel}
+              <ArrowRight />
+            </StoryButton>
+
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-label={open ? "Close menu" : "Open menu"}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-story-ink/10 bg-white text-story-ink transition-colors hover:bg-story-cream-2 lg:hidden"
+            >
+              <Burger open={open} />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Drawer — full-height on phones so the menu is a place, not a dropdown. */}
+      <div
+        className={cn(
+          "fixed inset-0 z-[60] lg:hidden",
+          open ? "pointer-events-auto" : "pointer-events-none",
+        )}
+        aria-hidden={!open}
+      >
+        <button
+          type="button"
+          tabIndex={open ? 0 : -1}
+          aria-label="Close menu"
+          onClick={() => setOpen(false)}
+          className={cn(
+            "absolute inset-0 bg-story-ink/45 transition-opacity duration-200",
+            open ? "opacity-100" : "opacity-0",
+          )}
+        />
+        <div
+          className={cn(
+            "absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col bg-story-cream shadow-[-30px_0_70px_rgba(27,36,33,0.25)] transition-transform duration-[250ms] ease-out",
+            open ? "translate-x-0" : "translate-x-full",
+          )}
+        >
+          <div className="flex h-16 items-center justify-between px-5">
+            <Wordmark tone="ink" />
+            <button
+              type="button"
+              tabIndex={open ? 0 : -1}
+              onClick={() => setOpen(false)}
+              aria-label="Close menu"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-story-ink/10 bg-white text-story-ink"
+            >
+              <Burger open />
+            </button>
+          </div>
+
+          <nav className="flex flex-col px-5 pt-4" aria-label="Mobile">
+            {PUBLIC_LINKS.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                tabIndex={open ? 0 : -1}
+                className="flex items-center justify-between border-t border-story-ink/[0.08] py-4 font-display text-[1.4rem] font-bold tracking-[-0.03em] text-story-ink no-underline"
+              >
+                {link.label}
+                <ArrowRight className="text-story-muted-2" />
+              </Link>
+            ))}
+            {user &&
+              MEMBER_LINKS.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  tabIndex={open ? 0 : -1}
+                  className="flex items-center justify-between border-t border-story-ink/[0.08] py-3.5 font-sans text-[0.9375rem] font-bold text-story-muted no-underline"
+                >
+                  {link.label}
+                  <ArrowRight className="text-story-muted-2" />
+                </Link>
+              ))}
+          </nav>
+
+          <div className="mt-auto flex flex-col gap-2.5 p-5 pb-8">
+            <StoryButton tabIndex={open ? 0 : -1} onClick={cta.go} className="w-full">
+              {cta.label}
+              <ArrowRight />
+            </StoryButton>
+            {!user && (
+              <Link
+                to="/auth"
+                tabIndex={open ? 0 : -1}
+                className="rounded-full border-[1.5px] border-story-ink/12 py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-ink no-underline"
+              >
+                Log in
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default StoryHeader;
