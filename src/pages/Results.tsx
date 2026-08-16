@@ -1,4 +1,5 @@
-import React, { useState, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
+import { Loader } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { useNavigate } from "react-router-dom";
 import { useAggregatedResults } from "@/hooks/useAggregatedResults";
@@ -6,18 +7,24 @@ import { useResultsUrlState, useResultsFiltering } from "@/hooks/useResultsState
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
-import MenuBar from "@/components/MenuBar";
-import BackgroundPattern from "@/components/BackgroundPattern";
-import MobileFooter from "@/components/MobileFooter";
-import { ResultsContainer } from "@/components/milk-test/ResultsContainer";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
+import { Band, SectionHead, StoryButton, StoryLayout } from "@/components/story";
 import { ResultsViewSwitcher } from "@/components/results/ResultsViewSwitcher";
 import { MapLoginOverlay } from "@/components/results/MapLoginOverlay";
 import { ChartComingSoon } from "@/components/results/ChartComingSoon";
-import { Loader } from "lucide-react";
+import { ResultsHero } from "@/components/results/ResultsHero";
+import { ResultsToolbarDesktop, ResultsToolbarMobile } from "@/components/results/ResultsToolbar";
+import { ResultsRankedList } from "@/components/results/ResultsRankedList";
+import { ResultsCardList } from "@/components/results/ResultsCardList";
+import { ResultsEmptyState } from "@/components/results/ResultsEmptyState";
+import { ResultsSkeleton } from "@/components/results/ResultsSkeleton";
+import { computeCatalogueStats } from "@/components/results/resultsStats";
 
 // Lazy-load heavy map component (~200KB+ mapbox-gl) - only needed when user clicks "map" view
 const MapboxWorldMap = lazy(() => import("@/components/MapboxWorldMap"));
+
+/** Rows revealed per batch. */
+const PAGE_SIZE = 40;
 
 const Results = () => {
   const {
@@ -35,17 +42,23 @@ const Results = () => {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [selectedProductName, setSelectedProductName] = useState("");
 
-  const { data: aggregatedResults = [], isLoading } =
-    useAggregatedResults(sortConfig);
-  const { filteredResults } = useResultsFiltering(
-    aggregatedResults,
-    searchTerm,
-    filters
-  );
+  const { data: aggregatedResults = [], isLoading } = useAggregatedResults(sortConfig);
+  const { filteredResults } = useResultsFiltering(aggregatedResults, searchTerm, filters);
+
+  // 220 rows at once makes a 23,000px page nobody reaches the bottom of, so the
+  // list arrives a screenful at a time. Any change to the query starts over.
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [searchTerm, filters, sortConfig]);
+  const visibleResults = filteredResults.slice(0, visibleCount);
+  const remaining = filteredResults.length - visibleResults.length;
 
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { user } = useAuth();
+
+  const stats = computeCatalogueStats(aggregatedResults);
 
   const navigateToProduct = async (productId: string) => {
     const {
@@ -54,9 +67,7 @@ const Results = () => {
 
     if (!session) {
       const product = aggregatedResults.find((r) => r.product_id === productId);
-      const productDisplayName = product
-        ? `${product.brand_name} ${product.product_name}`
-        : "";
+      const productDisplayName = product ? `${product.brand_name} ${product.product_name}` : "";
 
       setSelectedProductName(productDisplayName);
       setShowLoginPrompt(true);
@@ -66,23 +77,26 @@ const Results = () => {
     navigate(`/product/${productId}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen">
-        <MenuBar />
-        <BackgroundPattern>
-          <div className="container max-w-5xl mx-auto px-4 py-8 pt-24">
-            <div className="text-center mt-8">
-              <div className="text-xl text-muted-foreground">Loading...</div>
-            </div>
-          </div>
-        </BackgroundPattern>
-      </div>
-    );
-  }
+  const clearAllFilters = () => {
+    setSearchTerm("");
+    setFilters({ barista: false, properties: [], flavors: [], myResultsOnly: false });
+  };
+
+  const toolbarProps = {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    onFiltersChange: setFilters,
+    sortConfig,
+    onSetSort: handleSetSort,
+    onClearSort: handleClearSort,
+    showMyResults: !!user,
+    resultCount: filteredResults.length,
+    totalCount: aggregatedResults.length,
+  };
 
   return (
-    <div className="min-h-screen">
+    <StoryLayout mobileCtaHint="Add the one you tried today.">
       <Seo
         title="Results — Plant-milk ratings | Milk Me Not"
         description="Browse aggregated ratings of plant-based milks from the Milk Me Not community. Filter by brand, base type and barista performance."
@@ -94,41 +108,64 @@ const Results = () => {
           url: "https://milkmenot.com/results",
         }}
       />
-      <MenuBar />
-      <BackgroundPattern>
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-8 pt-24 pb-20 sm:pb-8 relative z-10">
-          {/* Desktop only: View switcher */}
-          {!isMobile && (
-            <ResultsViewSwitcher view={view} onViewChange={setView} />
-          )}
 
-          {/* Mobile: Always table view, Desktop: conditional view */}
-          {isMobile || view === "table" ? (
-            <ResultsContainer
-              filteredResults={filteredResults}
-              sortConfig={sortConfig}
-              handleSort={handleSort}
-              onSetSort={handleSetSort}
-              onClearSort={handleClearSort}
-              onProductClick={navigateToProduct}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              filters={filters}
-              onFiltersChange={setFilters}
-            />
+      <ResultsHero stats={stats} isLoading={isLoading} />
+
+      <Band ground="paper" size="lg">
+        <SectionHead
+          kicker="Browse everything"
+          title={<>Sort it your way</>}
+          size="md"
+          trailing={!isMobile && <ResultsViewSwitcher view={view} onViewChange={setView} />}
+        />
+
+        <div className="mt-7">
+          {isMobile ? <ResultsToolbarMobile {...toolbarProps} /> : <ResultsToolbarDesktop {...toolbarProps} />}
+        </div>
+
+        <div className="mt-8">
+          {isLoading ? (
+            <ResultsSkeleton />
+          ) : isMobile || view === "table" ? (
+            filteredResults.length === 0 ? (
+              <ResultsEmptyState onClear={clearAllFilters} />
+            ) : isMobile ? (
+              <ResultsCardList results={visibleResults} onProductClick={navigateToProduct} />
+            ) : (
+              <ResultsRankedList
+                results={visibleResults}
+                sortConfig={sortConfig}
+                onSort={handleSort}
+                onProductClick={navigateToProduct}
+              />
+            )
           ) : view === "charts" ? (
             <ChartComingSoon />
           ) : user ? (
-            <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><Loader className="h-8 w-8 animate-spin text-primary" /></div>}>
+            <Suspense
+              fallback={
+                <div className="flex min-h-[60vh] items-center justify-center">
+                  <Loader className="h-8 w-8 animate-spin text-story-green" />
+                </div>
+              }
+            >
               <MapboxWorldMap />
             </Suspense>
           ) : (
             <MapLoginOverlay />
           )}
+          {remaining > 0 && (isMobile || view === "table") && !isLoading && (
+            <div className="mt-10 flex flex-col items-center gap-3">
+              <StoryButton tone="outline" size="md" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
+                Show {Math.min(remaining, PAGE_SIZE)} more
+              </StoryButton>
+              <p className="text-[0.8125rem] font-medium text-story-muted-2">
+                {visibleResults.length} of {filteredResults.length} shown
+              </p>
+            </div>
+          )}
         </div>
-      </BackgroundPattern>
-
-      <MobileFooter />
+      </Band>
 
       {/* Login prompt modal */}
       <LoginPrompt
@@ -136,7 +173,7 @@ const Results = () => {
         onClose={() => setShowLoginPrompt(false)}
         productName={selectedProductName}
       />
-    </div>
+    </StoryLayout>
   );
 };
 

@@ -48,19 +48,28 @@ export const PRICE_QUALITY_TIERS: PriceQualityTier[] = [
   { key: "greatvalue", label: "Great value", color: "#00a455", light: "#d4f3e1" },
 ];
 
+/**
+ * The five values the database actually stores are `waste_of_money`,
+ * `not_worth_it`, `fair_price`, `good_deal` and `great_value`. Everything else
+ * here is a synonym kept so older or hand-entered rows still resolve rather
+ * than silently vanishing from a product's price-quality breakdown.
+ */
 const PRICE_QUALITY_ALIASES: Record<string, string> = {
+  "waste of money": "overpriced",
   overpriced: "overpriced",
+  "not worth it": "pricey",
   pricey: "pricey",
   expensive: "pricey",
-  fair: "fairprice",
-  fairprice: "fairprice",
   "fair price": "fairprice",
-  good: "goodvalue",
-  goodvalue: "goodvalue",
+  fairprice: "fairprice",
+  fair: "fairprice",
+  "good deal": "goodvalue",
   "good value": "goodvalue",
-  great: "greatvalue",
-  greatvalue: "greatvalue",
+  goodvalue: "goodvalue",
+  good: "goodvalue",
   "great value": "greatvalue",
+  greatvalue: "greatvalue",
+  great: "greatvalue",
   bargain: "greatvalue",
 };
 
