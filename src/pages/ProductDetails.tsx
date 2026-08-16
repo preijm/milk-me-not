@@ -1,176 +1,133 @@
-import React, { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import { useParams, useNavigate } from "react-router-dom";
-import MenuBar from "@/components/MenuBar";
-import MobileFooter from "@/components/MobileFooter";
-import BackgroundPattern from "@/components/BackgroundPattern";
-import { SortConfig, useProductTests } from "@/hooks/useProductTests";
-import { TestDetailsTable } from "@/components/milk-test/TestDetailsTable";
-import { ImageModal } from "@/components/milk-test/ImageModal";
-import { LoginPrompt } from "@/components/auth/LoginPrompt";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
-import { ProductPropertyBadges } from "@/components/milk-test/ProductPropertyBadges";
-import { useAuth } from "@/contexts/AuthContext";
-import { getScoreBadgeVariant } from "@/lib/scoreUtils";
-import { formatScore } from "@/lib/scoreFormatter";
-import { Badge } from "@/components/ui/badge";
+import { humanizeLabels } from "@/lib/labels";
+import {
+  ArrowRight,
+  Band,
+  Display,
+  Kicker,
+  Lede,
+  MilkDrop,
+  Pour,
+  ScoreMark,
+  SectionHead,
+  StoryButton,
+  StoryCard,
+  StoryLayout,
+  StoryLinkButton,
+  useRateCta,
+} from "@/components/story";
+import { useProductStory, type ProductStory, type PriceQualityBin } from "@/components/product/useProductStory";
+import { ScoreDistribution } from "@/components/product/ScoreDistribution";
+import { RatingsFeed } from "@/components/product/RatingsFeed";
 
-type ProductDetails = {
-  product_id: string;
-  brand_name: string;
-  product_name: string;
-  property_names: string[] | null;
-  is_barista: boolean;
-  flavor_names: string[] | null;
-  avg_rating: number;
-  count: number;
-}
+const BackLink = () => (
+  <Link
+    to="/results"
+    className="inline-flex items-center gap-2 text-[0.8125rem] font-bold uppercase tracking-[0.08em] text-story-muted-2 no-underline hover:text-story-ink"
+  >
+    <ArrowRight className="rotate-180" />
+    All ratings
+  </Link>
+);
 
 const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  // Set default sort to created_at in descending order to show latest tests first
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ column: 'created_at', direction: 'desc' });
+  const { story, isLoading, notFound } = useProductStory(productId);
+  const cta = useRateCta();
 
-  // Show login prompt if user is not authenticated
-  React.useEffect(() => {
-    if (!user) {
-      setShowLoginPrompt(true);
-    }
-  }, [user]);
-  
-  // Fetch product details using milk_tests_view to aggregate the data
-  const { data: product, isLoading: isLoadingProduct } = useQuery({
-    queryKey: ['product-details', productId],
-    queryFn: async () => {
-      if (!productId) return null;
-      
-      // Get all tests for this product
-      const { data: testData, error: testError } = await supabase
-        .from('milk_tests_view')
-        .select('product_id, brand_name, product_name, property_names, is_barista, flavor_names, rating')
-        .eq('product_id', productId);
-      
-      if (testError) throw testError;
-      if (!testData || testData.length === 0) return null;
-      
-      // Aggregate the data
-      const aggregatedData: ProductDetails = {
-        product_id: productId,
-        brand_name: testData[0].brand_name || '',
-        product_name: testData[0].product_name || '',
-        property_names: testData[0].property_names || null,
-        is_barista: testData[0].is_barista || false,
-        flavor_names: testData[0].flavor_names || null,
-        avg_rating: 0,
-        count: testData.length
-      };
-      
-      // Calculate average rating
-      const totalRating = testData.reduce((sum, test) => sum + (test.rating || 0), 0);
-      aggregatedData.avg_rating = totalRating / testData.length;
-      
-      return aggregatedData;
-    },
-    enabled: !!productId
-  });
-
-  // Fetch individual tests for the product (only if user is authenticated)
-  const { data: productTests = [], isLoading: isLoadingTests } = useProductTests(user ? productId : null, sortConfig);
-
-  const handleSort = (column: string) => {
-    setSortConfig(current => {
-      // If clicking on the same column, toggle direction
-      if (current.column === column) {
-        return {
-          column,
-          direction: current.direction === 'asc' ? 'desc' : 'asc'
-        };
-      }
-      
-      // If clicking on a different column, default to desc direction
-      return {
-        column,
-        direction: 'desc'
-      };
-    });
-  };
-
-  // Handle opening the image modal
-  const handleImageClick = (picturePath: string) => {
-    if (!picturePath) return;
-    
-    const imageUrl = supabase.storage.from('milk-pictures').getPublicUrl(picturePath).data.publicUrl;
-    setSelectedImage(imageUrl);
-  };
-
-  if (isLoadingProduct) {
+  if (notFound) {
     return (
-      <div className="min-h-screen">
-        <MenuBar />
-        <BackgroundPattern>
-          <div className="container max-w-5xl mx-auto px-4 py-8 pt-32 relative z-10">
-            <div className="flex items-center mb-6">
-              <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(sessionStorage.getItem('lastResultsUrl') || '/results')}>
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-            </div>
-            <div className="text-center py-12">Loading product details...</div>
+      <StoryLayout mobileCtaHint="90 seconds. No photo needed.">
+        <Seo
+          title="Carton not found — Milk Me Not"
+          description="We couldn't find that plant-milk product on Milk Me Not."
+          path={`/product/${productId ?? ""}`}
+          noindex
+        />
+        <Band ground="forest" size="md" className="flex min-h-[56vh] flex-col items-center justify-center text-center">
+          <div aria-hidden className="pointer-events-none absolute -bottom-10 left-1/2 -translate-x-1/2 text-story-green opacity-40">
+            <MilkDrop size={260} variant="solid" />
           </div>
-        </BackgroundPattern>
-      </div>
+          <div className="relative">
+            <Kicker tone="light" className="justify-center">Page not found</Kicker>
+            <Display size="xl" className="mt-5 text-white">
+              We don&apos;t have
+              <br />
+              that carton.
+            </Display>
+            <Lede tone="light" className="mx-auto mt-5 max-w-md">
+              It may have been renamed, merged with another listing, or never rated at all. Try the board — or be the
+              one who adds it.
+            </Lede>
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <StoryButton onClick={cta.go} tone="paper">
+                {cta.label}
+                <ArrowRight />
+              </StoryButton>
+              <StoryLinkButton to="/results" tone="outline-light">
+                See every product
+              </StoryLinkButton>
+            </div>
+          </div>
+        </Band>
+      </StoryLayout>
     );
   }
 
-  if (!product) {
+  if (isLoading || !story) {
     return (
-      <div className="min-h-screen">
-        <MenuBar />
-        <BackgroundPattern>
-          <div className="container max-w-5xl mx-auto px-4 py-8 pt-32 relative z-10">
-            <div className="flex items-center mb-6">
-              <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(sessionStorage.getItem('lastResultsUrl') || '/results')}>
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
+      <StoryLayout mobileCtaHint="90 seconds. No photo needed.">
+        <Seo
+          title="Loading — Milk Me Not"
+          description="Community reviews and ratings of plant-based milk products."
+          path={`/product/${productId ?? ""}`}
+          noindex
+        />
+        <Band ground="cream" size="hero" className="pt-6 sm:pt-10">
+          <div className="animate-pulse">
+            <div className="h-3 w-40 rounded-full bg-story-ink/10" />
+            <div className="mt-6 h-14 w-4/5 max-w-xl rounded-2xl bg-story-ink/10 sm:h-16" />
+            <div className="mt-4 h-14 w-3/5 max-w-lg rounded-2xl bg-story-ink/10 sm:h-16" />
+            <div className="mt-8 flex gap-2">
+              <div className="h-7 w-24 rounded-full bg-story-ink/10" />
+              <div className="h-7 w-20 rounded-full bg-story-ink/10" />
             </div>
-            <div className="text-center py-12">Product not found</div>
+            <div className="mt-8 h-40 max-w-md rounded-[1.25rem] bg-story-ink/[0.07]" />
           </div>
-        </BackgroundPattern>
-      </div>
+        </Band>
+      </StoryLayout>
     );
   }
 
-  const productTitle = product
-    ? `${product.brand_name} ${product.product_name} — Reviews | Milk Me Not`
-    : "Plant-milk product — Milk Me Not";
-  const productDescription = product
-    ? `See ${product.count} community review${product.count === 1 ? "" : "s"} of ${product.brand_name} ${product.product_name} on Milk Me Not — average rating ${product.avg_rating.toFixed(1)}/10.`
-    : "Community reviews and ratings of plant-based milk products.";
-  const productJsonLd = product
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        name: `${product.brand_name} ${product.product_name}`,
-        brand: { "@type": "Brand", name: product.brand_name },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: product.avg_rating.toFixed(2),
-          reviewCount: product.count,
-          bestRating: "10",
-          worstRating: "1",
-        },
-      }
-    : undefined;
+  const productTitle = `${story.brandName} ${story.productName} — Reviews | Milk Me Not`;
+  const productDescription = story.count
+    ? `See ${story.count} community rating${story.count === 1 ? "" : "s"} of ${story.brandName} ${story.productName} on Milk Me Not — average score ${
+        story.avgScore?.toFixed(1) ?? "—"
+      }/10, rated ${story.tier.name}.`
+    : `Be the first to rate ${story.brandName} ${story.productName} on Milk Me Not.`;
+  const productJsonLd =
+    story.count && story.avgScore
+      ? {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: `${story.brandName} ${story.productName}`,
+          brand: { "@type": "Brand", name: story.brandName },
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: story.avgScore.toFixed(2),
+            reviewCount: story.count,
+            bestRating: "10",
+            worstRating: "1",
+          },
+        }
+      : undefined;
+
+  const chips = [...humanizeLabels(story.properties), ...humanizeLabels(story.flavors)];
+  if (story.isBarista && !chips.includes("Barista")) chips.unshift("Barista");
 
   return (
-    <div className="min-h-screen">
+    <StoryLayout mobileCtaHint="90 seconds. No photo needed.">
       <Seo
         title={productTitle}
         description={productDescription}
@@ -178,86 +135,181 @@ const ProductDetails = () => {
         type="product"
         jsonLd={productJsonLd}
       />
-      <MenuBar />
-      <LoginPrompt 
-        isOpen={showLoginPrompt}
-        onClose={() => setShowLoginPrompt(false)}
-        productName={product?.product_name}
-      />
-      <BackgroundPattern>
-        <div className="container max-w-6xl mx-auto px-4 py-8 pt-32 relative z-10">
-          {/* Desktop: Show back button */}
-          <div className="hidden lg:flex items-center mb-6">
-            <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(sessionStorage.getItem('lastResultsUrl') || '/results')}>
-              <ArrowLeft className="h-4 w-4" /> Back
-            </Button>
+
+      {/* ── Hero: the verdict ────────────────────────────────────────── */}
+      <Band ground="cream" size="hero" className="pt-6 sm:pt-10">
+        <div aria-hidden className="pointer-events-none absolute -left-16 bottom-0 hidden text-story-green-dark opacity-[0.06] lg:block">
+          <Pour size={260} />
+        </div>
+
+        <BackLink />
+
+        <div className="relative mt-6 grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-14">
+          <div>
+            <Kicker>
+              {story.brandName}
+              {story.isBarista ? " · Barista blend" : ""}
+            </Kicker>
+
+            <Display as="h1" size="hero" className="mt-5 text-story-ink">
+              {story.productName}
+            </Display>
+
+            {chips.length > 0 && (
+              <ul className="mt-5 flex flex-wrap gap-2">
+                {chips.map((c) => (
+                  <li
+                    key={c}
+                    className="rounded-full border-[1.5px] border-story-ink/12 px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em] text-story-ink-2"
+                  >
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <Lede className="mt-6 max-w-[32rem]">
+              {story.count > 0
+                ? `${story.count} ${story.count === 1 ? "person has" : "people have"} rated this. Here's the verdict.`
+                : "Nobody has rated this one yet. Yours would be the first."}
+            </Lede>
+
+            {/* Phones get the score directly under the pitch, full width —
+                this page's entire job is selling this one number. */}
+            <VerdictCard story={story} className="mt-8 lg:hidden" />
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <StoryButton onClick={cta.go} className="w-full sm:w-auto">
+                Rate this one yourself
+                <ArrowRight />
+              </StoryButton>
+              <StoryLinkButton to="/results" tone="outline" className="w-full sm:w-auto">
+                See more ratings
+              </StoryLinkButton>
+            </div>
           </div>
 
-          {/* Combined comprehensive card */}
-          <Card className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg border border-border overflow-hidden animate-fade-in">
-            {/* Product header section */}
-            <CardHeader className="bg-card/50 backdrop-blur-sm pt-6 px-6 pb-4 border-b border-border">
-              <div className="space-y-2">
-                {/* Top row: Product name and Score badge */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <CardTitle className="text-xl font-semibold text-foreground m-0">
-                      <span translate="no">{product.brand_name}</span> - {product.product_name}
-                    </CardTitle>
-                    {/* Property badges directly below name */}
-                    {(product.is_barista || (product.property_names && product.property_names.length > 0) || (product.flavor_names && product.flavor_names.length > 0)) && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <ProductPropertyBadges 
-                          isBarista={product.is_barista}
-                          propertyNames={product.property_names}
-                          flavorNames={product.flavor_names}
-                          compact={true}
-                          displayType="all"
-                          inline={true}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  {/* Hide score badge on mobile/tablet (< 1024px) */}
-                  <Badge variant={getScoreBadgeVariant(Number(product.avg_rating))} className="flex-shrink-0 hidden lg:flex">
-                    {formatScore(Number(product.avg_rating))}
-                  </Badge>
-                </div>
-              </div>
-            </CardHeader>
-
-            {/* Individual tests section */}
-            <CardContent className="p-0">
-              <div className="px-6 pt-4 pb-2 hidden lg:block">
-                <h3 className="text-lg font-semibold text-foreground">Individual Tests</h3>
-              </div>
-              {isLoadingTests ? (
-                <div className="text-center py-8">Loading test results...</div>
-              ) : (
-                <TestDetailsTable 
-                  productTests={productTests} 
-                  handleImageClick={handleImageClick}
-                  sortConfig={sortConfig}
-                  handleSort={handleSort}
-                />
-              )}
-            </CardContent>
-          </Card>
+          <div className="relative hidden lg:block lg:min-h-[24rem]">
+            <div aria-hidden className="absolute -right-8 top-0 h-[24rem] w-[24rem] rounded-full" style={{ backgroundColor: story.tier.light }} />
+            <div aria-hidden className="pointer-events-none absolute right-[1rem] top-[3.25rem]" style={{ color: story.tier.color }}>
+              <MilkDrop size={190} variant="solid" />
+            </div>
+            <div className="absolute bottom-0 left-0 w-[22rem]">
+              <VerdictCard story={story} />
+            </div>
+          </div>
         </div>
-      </BackgroundPattern>
+      </Band>
 
-      <MobileFooter />
-
-      {/* Image modal */}
-      {selectedImage && (
-        <ImageModal 
-          imageUrl={selectedImage} 
-          isOpen={!!selectedImage} 
-          onClose={() => setSelectedImage(null)} 
+      {/* ── The spread ───────────────────────────────────────────────── */}
+      <Band ground="paper" size="lg">
+        <SectionHead
+          kicker="Not just an average"
+          title="Where the votes actually landed"
+          lede={
+            story.count > 0
+              ? "Every rating that built the number above, grouped into the same five tiers the whole site uses."
+              : "Once this one has ratings, the spread will show up here — tier by tier."
+          }
         />
-      )}
-    </div>
+
+        {story.count > 0 ? (
+          <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-10">
+            <StoryCard className="p-6 sm:p-8">
+              <ScoreDistribution bins={story.histogram} max={story.histogramMax} />
+            </StoryCard>
+
+            <PriceQualityPanel bins={story.priceQuality} top={story.topPriceQuality} />
+          </div>
+        ) : (
+          <StoryCard className="mt-10 flex flex-col items-start gap-4 p-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-md text-[0.9375rem] text-story-muted">
+              No scores yet for {story.brandName} {story.productName}.
+            </p>
+            <StoryButton onClick={cta.go} size="md" className="flex-shrink-0">
+              Be the first to rate it
+              <ArrowRight />
+            </StoryButton>
+          </StoryCard>
+        )}
+      </Band>
+
+      {/* ── The receipts ─────────────────────────────────────────────── */}
+      <Band ground="cream" size="lg">
+        <SectionHead
+          kicker="The receipts"
+          title="Every rating, unfiltered"
+          lede="Real scores from real tests. Names and notes are for members — everything else is open to anyone."
+        />
+
+        <StoryCard className="mt-10 p-5 sm:p-8">
+          <RatingsFeed ratings={story.ratings} isAuthed={story.isAuthed} onSignIn={cta.go} />
+        </StoryCard>
+      </Band>
+
+    </StoryLayout>
   );
 };
+
+/** The page's single biggest object: this product's score, at display scale. */
+const VerdictCard = ({ story, className }: { story: ProductStory; className?: string }) => (
+  <StoryCard className={`story-lift relative overflow-hidden p-7 sm:p-8 ${className ?? ""}`}>
+    <span aria-hidden className="absolute -right-8 -top-8 opacity-[0.10]" style={{ color: story.tier.color }}>
+      <MilkDrop size={200} />
+    </span>
+
+    <p className="story-kicker text-story-muted-2">The community verdict</p>
+
+    <div className="relative mt-5">
+      <ScoreMark score={story.avgScore} size="xl" />
+    </div>
+
+    <p className="relative mt-3 max-w-xs text-[0.9375rem] leading-snug text-story-muted">{story.tier.blurb}</p>
+
+    <div className="relative mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-story-ink/[0.08] pt-5">
+      <span className="text-[0.8125rem] font-bold text-story-ink">
+        {story.count > 0 ? `${story.count} ${story.count === 1 ? "rating" : "ratings"}` : "No ratings yet"}
+      </span>
+      {story.topPriceQuality && (
+        <span
+          className="rounded-full px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.06em]"
+          style={{ backgroundColor: story.topPriceQuality.light, color: story.topPriceQuality.color }}
+        >
+          {story.topPriceQuality.label}
+        </span>
+      )}
+    </div>
+  </StoryCard>
+);
+
+/** Price-to-quality, tracked separately from taste — a fair-priced Gem reads
+    differently from an overpriced one, even at the same score. */
+const PriceQualityPanel = ({ bins, top }: { bins: PriceQualityBin[]; top: PriceQualityBin | null }) => (
+  <StoryCard className="flex flex-col p-6 sm:p-8">
+    <p className="story-kicker text-story-muted-2">Price vs. quality</p>
+    {top ? (
+      <>
+        <p className="story-serif mt-4 text-[1.5rem] font-bold" style={{ color: top.color }}>
+          {top.label}
+        </p>
+        <p className="mt-1 text-[0.875rem] text-story-muted">
+          The most common call from people who priced this one.
+        </p>
+        <ul className="mt-6 flex flex-col gap-2.5">
+          {bins.map((b) => (
+            <li key={b.key} className="flex items-center justify-between gap-3 text-[0.875rem]">
+              <span className="font-medium" style={{ color: b.color }}>
+                {b.label}
+              </span>
+              <span className="story-num text-story-muted-2">{b.count}</span>
+            </li>
+          ))}
+        </ul>
+      </>
+    ) : (
+      <p className="mt-4 text-[0.9375rem] text-story-muted">Nobody has rated the price on this one yet.</p>
+    )}
+  </StoryCard>
+);
 
 export default ProductDetails;

@@ -28,8 +28,24 @@ export const SCORE_TIERS: ScoreTier[] = [
   { key: "gem", min: 8, max: 10.01, name: "Gem", blurb: "Buy two.", color: "#00a455", light: "#d4f3e1" },
 ];
 
+/**
+ * What an unrated product gets. Deliberately outside SCORE_TIERS so the scale
+ * still renders as five tiers — and deliberately grey and named, because
+ * falling back to "Fair" told visitors a middling verdict existed when nobody
+ * had voted at all.
+ */
+export const NO_SCORE_TIER: ScoreTier = {
+  key: "fair",
+  min: NaN,
+  max: NaN,
+  name: "Unrated",
+  blurb: "Nobody has scored this one yet.",
+  color: "#8a948f",
+  light: "#eef2ef",
+};
+
 export const getTier = (score: number | null | undefined): ScoreTier => {
-  if (score === null || score === undefined || Number.isNaN(score)) return SCORE_TIERS[2];
+  if (score === null || score === undefined || Number.isNaN(score)) return NO_SCORE_TIER;
   return SCORE_TIERS.find((t) => score >= t.min && score < t.max) ?? SCORE_TIERS[SCORE_TIERS.length - 1];
 };
 

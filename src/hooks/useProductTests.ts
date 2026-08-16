@@ -80,21 +80,23 @@ export const useProductTests = (productId: string | null, sortConfig: SortConfig
         
         return processedData as MilkTestResult[];
       } else {
-        // Unauthenticated users get anonymized aggregated data only
-        const { data, error } = await supabase
-          .from('milk_tests_aggregated_view')
-          .select('product_id, brand_name, product_name, rating, property_names, is_barista, flavor_names, price_quality_ratio, country_code, created_at')
-          .eq('product_id', productId);
-        
+        // Unauthenticated users get anonymized aggregated data only. Row-level
+        // security blocks a direct select on `milk_tests_aggregated_view` for
+        // the anon role, so this goes through the same security-definer RPC
+        // the public results/home pages already rely on, then filters to this
+        // product client-side.
+        const { data, error } = await supabase.rpc('get_aggregated_milk_tests');
+
         if (error) {
           console.error("Error fetching anonymized product data:", error);
           throw error;
         }
-        
-        console.log(`Retrieved ${data?.length || 0} anonymized results`);
-        
+
+        const filtered = (data || []).filter((item) => item.product_id === productId);
+        console.log(`Retrieved ${filtered.length} anonymized results`);
+
         // Process anonymized results - no user data exposed
-        const processedData = (data || []).map(item => {
+        const processedData = filtered.map(item => {
           const brandName = item.brand_name || "Unknown Brand";
           const productName = item.product_name || "Unknown Product";
           
