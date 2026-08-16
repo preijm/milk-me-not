@@ -1,6 +1,5 @@
 
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState } from "react";
 
 import AuthFormInputs from "./AuthFormInputs";
 import AuthFormButtons from "./AuthFormButtons";
@@ -12,33 +11,27 @@ interface AuthFormProps {
   isEmailConfirmed?: boolean;
   onEmailConfirmedDismiss?: () => void;
   onEmailPending?: (email: string) => void;
+  /** Owned by the page, so the copy beside the form matches the mode. */
+  isLogin: boolean;
+  onToggleMode: () => void;
 }
 
-const AuthForm = ({ 
-  onForgotPassword, 
-  isEmailConfirmed, 
+const AuthForm = ({
+  onForgotPassword,
+  isEmailConfirmed,
   onEmailConfirmedDismiss,
-  onEmailPending 
+  onEmailPending,
+  isLogin,
+  onToggleMode,
 }: AuthFormProps) => {
-  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [isLogin, setIsLogin] = useState(true);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   
   const { loading, signIn, signUp } = useAuthOperations();
-  
-
-  // Check if we should start in signup mode based on location state
-  useEffect(() => {
-    const state = location.state as { mode?: string } | null;
-    if (state?.mode === 'signup') {
-      setIsLogin(false);
-    }
-  }, [location]);
 
   const clearErrors = () => {
     setEmailError("");
@@ -52,6 +45,23 @@ const AuthForm = ({
     
     const sanitizedEmail = sanitizeInput(email).toLowerCase();
     const sanitizedUsername = sanitizeInput(username);
+
+    // The form is noValidate so blank fields surface in the same red inline
+    // pattern as a bad password, rather than a native browser tooltip.
+    let blank = false;
+    if (!isLogin && !sanitizedUsername) {
+      setUsernameError("Pick a username — it goes on your ratings");
+      blank = true;
+    }
+    if (!sanitizedEmail) {
+      setEmailError("We need an email address");
+      blank = true;
+    }
+    if (!password) {
+      setPasswordError(isLogin ? "Enter your password" : "Choose a password, at least 6 characters");
+      blank = true;
+    }
+    if (blank) return;
     
     if (isLogin) {
       const result = await signIn(sanitizedEmail, password);
@@ -77,33 +87,28 @@ const AuthForm = ({
   return (
     <>
       {isEmailConfirmed && (
-        <div className="bg-primary/[0.07] border border-primary/30 rounded-lg p-4 mb-6">
-          <div className="flex items-center">
-            <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-              <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="text-primary font-medium">Email verified successfully!</p>
-              <p className="text-primary text-sm opacity-80">You can now log in with your credentials.</p>
-            </div>
-            <button
-              type="button"
-              onClick={onEmailConfirmedDismiss}
-              className="text-primary/60 hover:text-primary"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+        <div className="mb-6 flex items-start gap-3 rounded-xl bg-story-green-wash p-4">
+          <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-story-green text-white">
+            <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </span>
+          <p className="flex-1 text-[0.875rem] font-medium leading-snug text-story-green-dark">
+            Email confirmed. Log in and your first rating is waiting.
+          </p>
+          <button
+            type="button"
+            onClick={onEmailConfirmedDismiss}
+            aria-label="Dismiss"
+            className="text-story-green-dark/60 transition-colors hover:text-story-green-dark"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
       )}
-      <h1 className="text-2xl md:text-4xl font-bold text-center mb-8 text-primary">
-        {isLogin ? "Welcome Back" : "Join Our Community"}
-      </h1>
-      <form onSubmit={handleAuth} className="space-y-6">
+      <form onSubmit={handleAuth} noValidate className="flex flex-col gap-6">
         <AuthFormInputs
           isLogin={isLogin}
           email={email}
@@ -131,7 +136,7 @@ const AuthForm = ({
           loading={loading}
           onForgotPassword={onForgotPassword}
           onToggleMode={() => {
-            setIsLogin(!isLogin);
+            onToggleMode();
             setUsername("");
             clearErrors();
           }}

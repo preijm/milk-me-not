@@ -1,44 +1,38 @@
-import { Button } from "@/components/ui/button";
+import { Display, MilkDrop, StoryButton } from "@/components/story";
 
 interface EmailConfirmationPendingProps {
   email: string;
   onBackToLogin: () => void;
 }
 
-const EmailConfirmationPending = ({ email, onBackToLogin }: EmailConfirmationPendingProps) => {
-  return (
-    <>
-      <h1 className="text-3xl font-bold text-center mb-8 text-brand-primary">
-        Thanks for signing up!
-      </h1>
-      <div className="space-y-6 text-center">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-semibold text-blue-800 mb-2">
-            Please check your email to confirm your account
-          </h2>
-          <p className="text-blue-700 mb-4">
-            We've sent a confirmation link to <strong>{email}</strong>. 
-            Please click the link in your email to activate your account before logging in.
-          </p>
-          <p className="text-sm text-blue-600">
-            Don't see the email? Check your spam folder or wait a few minutes for it to arrive.
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={onBackToLogin}
-        >
-          Back to Login
-        </Button>
-      </div>
-    </>
-  );
-};
+/**
+ * The gap between signing up and being able to rate anything. It should read as
+ * one more step, not as a dead stop — so it says exactly what to do and what is
+ * waiting on the other side.
+ */
+const EmailConfirmationPending = ({ email, onBackToLogin }: EmailConfirmationPendingProps) => (
+  <div className="text-center">
+    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-story-green-wash text-story-green">
+      <MilkDrop size={44} variant="solid" />
+    </div>
+
+    <Display size="md" className="mt-6">
+      Check your email.
+    </Display>
+
+    <p className="mt-3 text-[0.9375rem] leading-relaxed text-story-muted">
+      We sent a confirmation link to{" "}
+      <strong className="font-bold text-story-ink">{email}</strong>. Click it and your account is live.
+    </p>
+
+    <p className="mt-4 rounded-xl bg-story-cream-2 px-4 py-3 text-[0.8125rem] leading-relaxed text-story-muted">
+      Nothing yet? Give it a minute, then check spam — plant milk newsletters have ruined it for all of us.
+    </p>
+
+    <StoryButton tone="outline" size="md" onClick={onBackToLogin} className="mt-6 w-full">
+      Back to log in
+    </StoryButton>
+  </div>
+);
 
 export default EmailConfirmationPending;

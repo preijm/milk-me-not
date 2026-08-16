@@ -46,8 +46,13 @@ export const StoryLayout = ({
 }: StoryLayoutProps) => (
   <div className={cn("story-surface flex min-h-dvh flex-col", className)}>
     <StoryHeader transparent={transparentHeader} />
-    <main className={cn("flex-1", !hideMobileCta && "pb-[5.25rem] sm:pb-0")}>{children}</main>
-    <StoryFooter />
+    <main className="flex-1">{children}</main>
+    {/* The sticky bar is fixed, so the *last* thing on the page has to reserve
+        room for it — padding `main` left the footer's own tagline sitting
+        underneath the bar at the true bottom of the scroll. */}
+    <div className={cn(!hideMobileCta && "pb-[5.25rem] sm:pb-0")}>
+      <StoryFooter />
+    </div>
     {!hideMobileCta && <MobileCtaBar hint={mobileCtaHint} />}
   </div>
 );

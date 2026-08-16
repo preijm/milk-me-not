@@ -64,12 +64,20 @@ const Burger = ({ open }: { open: boolean }) => (
  * the logo, the CTA and a drawer — the pitch is never traded away for a
  * navigation-first mobile view.
  */
-export const StoryHeader = ({ transparent = false }: { transparent?: boolean }) => {
+export const StoryHeader = ({
+  transparent = false,
+  hideCta = false,
+}: {
+  transparent?: boolean;
+  /** For pages the CTA already leads to — pointing back at itself reads as a dead loop. */
+  hideCta?: boolean;
+}) => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { user } = useAuth();
   const cta = useRateCta();
+  const onAuthPage = location.pathname === "/auth";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -123,7 +131,7 @@ export const StoryHeader = ({ transparent = false }: { transparent?: boolean }) 
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            {!user && (
+            {!user && !onAuthPage && (
               <Link
                 to="/auth"
                 className="hidden rounded-full px-4 py-2 text-[0.875rem] font-bold text-story-ink-2 no-underline transition-colors hover:bg-story-ink/[0.05] sm:inline-flex"
@@ -131,10 +139,12 @@ export const StoryHeader = ({ transparent = false }: { transparent?: boolean }) 
                 Log in
               </Link>
             )}
-            <StoryButton size="sm" onClick={cta.go} className="hidden sm:inline-flex">
-              {cta.shortLabel}
-              <ArrowRight />
-            </StoryButton>
+            {!hideCta && (
+              <StoryButton size="sm" onClick={cta.go} className="hidden sm:inline-flex">
+                {cta.shortLabel}
+                <ArrowRight />
+              </StoryButton>
+            )}
 
             <button
               type="button"
@@ -213,11 +223,13 @@ export const StoryHeader = ({ transparent = false }: { transparent?: boolean }) 
           </nav>
 
           <div className="mt-auto flex flex-col gap-2.5 p-5 pb-8">
-            <StoryButton tabIndex={open ? 0 : -1} onClick={cta.go} className="w-full">
-              {cta.label}
-              <ArrowRight />
-            </StoryButton>
-            {!user && (
+            {!hideCta && (
+              <StoryButton tabIndex={open ? 0 : -1} onClick={cta.go} className="w-full">
+                {cta.label}
+                <ArrowRight />
+              </StoryButton>
+            )}
+            {!user && !onAuthPage && (
               <Link
                 to="/auth"
                 tabIndex={open ? 0 : -1}

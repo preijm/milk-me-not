@@ -1,7 +1,4 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { LogIn, UserPlus } from "lucide-react";
-
+import { ArrowRight, StoryButton } from "@/components/story";
 
 interface AuthFormButtonsProps {
   isLogin: boolean;
@@ -9,46 +6,40 @@ interface AuthFormButtonsProps {
   onForgotPassword: () => void;
   onToggleMode: () => void;
 }
-const AuthFormButtons = ({
-  isLogin,
-  loading,
-  onForgotPassword,
-  onToggleMode
-}: AuthFormButtonsProps) => {
-  
-  
-  // Check if device is mobile or tablet (up to 1024px)
-  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
 
-  return <>
-      {isLogin && <button type="button" onClick={onForgotPassword} className="text-sm text-muted-foreground hover:text-muted-foreground/80 transition-colors text-right w-full">
-          Forgot password?
-        </button>}
-
-      <Button 
-        type="submit" 
-        variant={isMobileOrTablet ? undefined : "brand"}
-        className={`w-full h-12 text-base font-medium rounded-lg ${
-          isMobileOrTablet 
-            ? "text-white shadow-lg md:hover:shadow-xl transition-all duration-300 bg-secondary hover:bg-secondary/90"
-            : ""
-        }`}
-        disabled={loading}
+/**
+ * The submit says what happens next, not what the form is called. Someone
+ * arrived here mid-intent from a "start rating" button; "Sign Up" loses the
+ * thread, "Create account & rate" keeps it.
+ */
+const AuthFormButtons = ({ isLogin, loading, onForgotPassword, onToggleMode }: AuthFormButtonsProps) => (
+  <div className="flex flex-col gap-4">
+    {isLogin && (
+      <button
+        type="button"
+        onClick={onForgotPassword}
+        className="-mt-1 self-end text-[0.8125rem] font-bold text-story-green-dark transition-colors hover:underline"
       >
-        {loading ? "Loading..." : isLogin ? <div className="flex items-center justify-center gap-2">
-            <LogIn className="w-5 h-5" />
-            <span>Log In</span>
-          </div> : <div className="flex items-center justify-center gap-2">
-            <UserPlus className="w-5 h-5" />
-            <span>Sign Up</span>
-          </div>}
-      </Button>
+        Forgot your password?
+      </button>
+    )}
 
-      <div className="text-center mt-6">
-        <button type="button" onClick={onToggleMode} className="text-primary hover:text-primary/80 transition-colors font-medium">
-          {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
-        </button>
-      </div>
-    </>;
-};
+    <StoryButton type="submit" disabled={loading} className="w-full">
+      {loading ? "One moment…" : isLogin ? "Log in and keep rating" : "Create account & rate"}
+      {!loading && <ArrowRight />}
+    </StoryButton>
+
+    <p className="text-center text-[0.875rem] text-story-muted">
+      {isLogin ? "First time here? " : "Already have an account? "}
+      <button
+        type="button"
+        onClick={onToggleMode}
+        className="font-bold text-story-green-dark transition-colors hover:underline"
+      >
+        {isLogin ? "Create an account" : "Log in instead"}
+      </button>
+    </p>
+  </div>
+);
+
 export default AuthFormButtons;
