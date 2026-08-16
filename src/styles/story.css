@@ -104,6 +104,20 @@
     box-shadow: 0 14px 30px -12px hsl(var(--story-green) / 0.5);
   }
 
+  /* index.css carries a sitewide `button:disabled { bg-gray-200 text-gray-500
+     !important }` that predates this work. It overrides every disabled button
+     on the public site with a blue-grey that belongs to no palette here — a
+     submitting form button, a "coming soon" pill. Rather than unpick a rule
+     the logged-in app may depend on, the story surface states its own disabled
+     look at higher specificity. */
+  .story-surface button:disabled,
+  .story-surface button[class*="inline-flex"]:disabled {
+    background-color: hsl(var(--story-cream-3)) !important;
+    color: hsl(var(--story-muted)) !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+  }
+
   /* Horizontal chip rails: hide the scrollbar, keep the affordance. */
   .story-rail {
     overflow-x: auto;
