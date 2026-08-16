@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { setPendingRating } from "@/lib/pendingRating";
 import { humanizeLabels } from "@/lib/labels";
 import logoImg from "@/assets/logo-96.png";
-import { ArrowRight, MilkDrop, StoryButton, TypeMark } from "@/components/story";
+import { ArrowRight, Carton, MilkDrop, StoryButton } from "@/components/story";
 
 /**
  * `/rate/:productId` — the shelf-QR entry point.
@@ -104,7 +104,6 @@ const RateDeepLink = () => {
     );
   }
 
-  const base = `${resolved.brand_name ?? ""} ${resolved.product_name ?? ""}`;
   const meta = humanizeLabels([
     resolved.is_barista ? "barista" : null,
     ...((resolved.property_names as string[] | null) ?? []),
@@ -130,7 +129,7 @@ const RateDeepLink = () => {
 
         <div className="relative mt-4 flex items-start gap-4">
           <span className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-story-green-wash text-story-green-dark">
-            <TypeMark base={base} size={44} />
+            <Carton size={36} />
           </span>
           <div className="min-w-0">
             <p className="text-[0.9375rem] font-medium text-story-muted">{resolved.brand_name}</p>

@@ -12,6 +12,7 @@ export type BandGround =
   | "wash"
   | "green"
   | "forest"
+  | "sky"
   | "blue"
   | "amber";
 
@@ -23,6 +24,7 @@ export const GROUND_CLASS: Record<BandGround, string> = {
   wash: "bg-story-green-wash text-story-ink",
   green: "bg-story-green text-white",
   forest: "bg-story-green-deep text-story-cream",
+  sky: "bg-story-blue-wash text-story-ink",
   blue: "bg-story-blue-deep text-story-cream",
   amber: "bg-story-amber-light text-story-ink",
 };
@@ -38,6 +40,7 @@ export const GROUND_FILL: Record<BandGround, string> = {
   wash: "text-story-green-wash",
   green: "text-story-green",
   forest: "text-story-green-deep",
+  sky: "text-story-blue-wash",
   blue: "text-story-blue-deep",
   amber: "text-story-amber-light",
 };

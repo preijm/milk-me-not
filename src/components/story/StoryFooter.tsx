@@ -52,7 +52,7 @@ export const StoryFooter = () => {
           <Display as="p" size="xl" className="text-white">
             Your turn.
             <br />
-            <span className="text-story-green-light">Rate the last one you drank.</span>
+            <span className="text-story-green-light">What did you drink this week?</span>
           </Display>
           <p className="mt-5 max-w-lg text-[1.0625rem] leading-relaxed text-white/70">
             Ninety seconds, no photo required. Every rating makes the next person's shopping trip less of a gamble.

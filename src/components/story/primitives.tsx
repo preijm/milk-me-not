@@ -58,7 +58,7 @@ export const Band = ({
 /* ── Type ──────────────────────────────────────────────────────────────── */
 
 const DISPLAY_SIZE = {
-  hero: "text-[clamp(2.85rem,10.5vw,5.75rem)]",
+  hero: "text-[clamp(2.85rem,7.6vw,4.9rem)]",
   xl: "text-[clamp(2.35rem,7.5vw,4.25rem)]",
   lg: "text-[clamp(1.95rem,5.6vw,3.15rem)]",
   md: "text-[clamp(1.5rem,4vw,2.25rem)]",

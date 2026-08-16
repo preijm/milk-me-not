@@ -123,6 +123,7 @@ export default {
 				blue: 'hsl(var(--story-blue) / <alpha-value>)',
 				'blue-dark': 'hsl(var(--story-blue-dark) / <alpha-value>)',
 				'blue-light': 'hsl(var(--story-blue-light) / <alpha-value>)',
+				'blue-wash': 'hsl(var(--story-blue-wash) / <alpha-value>)',
 				'blue-deep': 'hsl(var(--story-blue-deep) / <alpha-value>)',
 				amber: 'hsl(var(--story-amber) / <alpha-value>)',
 				'amber-dark': 'hsl(var(--story-amber-dark) / <alpha-value>)',

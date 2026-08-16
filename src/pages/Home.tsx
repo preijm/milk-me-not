@@ -14,23 +14,29 @@ import {
   ScoreMark,
   SectionHead,
   Sprig,
+  Carton,
   StoryButton,
   StoryCard,
   StoryLayout,
   StoryLinkButton,
-  TypeMark,
   getTier,
   MILK_BASES,
   useRateCta,
 } from "@/components/story";
-import { useStoryHome } from "@/components/home/useStoryHome";
+import { useStoryHome, type LeaderboardEntry } from "@/components/home/useStoryHome";
 
 const formatCount = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}K` : `${n}`);
 
+/**
+ * Saturated tile grounds. Pale tints read as near-white from a distance and
+ * flatten the whole section, so each tile commits to a full brand colour.
+ * Amber carries ink rather than white — white on amber fails contrast.
+ */
 const BASE_TONE = [
-  { bg: "bg-story-green-wash", fg: "text-story-green-dark" },
-  { bg: "bg-story-blue-light", fg: "text-story-blue-dark" },
-  { bg: "bg-story-amber-light", fg: "text-story-amber-dark" },
+  { bg: "bg-story-green", title: "text-white", sub: "text-white/70", wash: "text-white/[0.14]" },
+  { bg: "bg-story-blue", title: "text-white", sub: "text-white/70", wash: "text-white/[0.14]" },
+  { bg: "bg-story-amber", title: "text-story-ink", sub: "text-story-ink/65", wash: "text-story-ink/[0.10]" },
+  { bg: "bg-story-green-deep", title: "text-white", sub: "text-white/60", wash: "text-white/[0.09]" },
 ];
 
 const STEPS = [
@@ -88,21 +94,15 @@ const Home = () => {
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <Band ground="cream" size="hero" className="pt-6 sm:pt-10">
-        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 text-story-green opacity-90 sm:-right-16">
-          <MilkDrop size={420} className="hidden lg:block" />
-        </div>
-        <div aria-hidden className="pointer-events-none absolute -right-14 -top-10 text-story-green sm:hidden">
-          <MilkDrop size={210} />
-        </div>
         <div aria-hidden className="pointer-events-none absolute -left-16 bottom-0 hidden text-story-green-dark opacity-[0.06] lg:block">
           <Sprig size={260} />
         </div>
 
-        <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
+        <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
           <div>
             <Kicker>Independent · community scored · never sponsored</Kicker>
 
-            <Display as="h1" size="hero" className="mt-5 max-w-[13ch] text-story-ink">
+            <Display as="h1" size="hero" className="mt-5 text-story-ink">
               Ditch the Moo.
               <br />
               <span className="text-story-green">Find your new.</span>
@@ -123,7 +123,12 @@ const Home = () => {
               </StoryLinkButton>
             </div>
 
-            <dl className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-story-ink/[0.08] pt-8">
+            {/* Phones get the proof too, composed for a phone: one wide bar
+                rather than the desktop card, sitting directly under the CTA
+                where it does the most work. */}
+            <TopVerdictBar entry={leaderboard[0]} loading={isLoading} className="mt-8 lg:hidden" />
+
+            <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-story-ink/[0.08] pt-8 lg:mt-12">
               {stats.map((s) => (
                 <div key={s.label}>
                   <dd className="story-num text-[clamp(1.9rem,7vw,2.75rem)] leading-none text-story-ink">{s.value}</dd>
@@ -133,9 +138,18 @@ const Home = () => {
             </dl>
           </div>
 
-          {/* Desktop: the current top-scoring carton, as the product shot we do not have. */}
-          <div className="relative hidden lg:block">
-            <TopVerdictCard entry={leaderboard[0]} loading={isLoading} />
+          {/* Desktop: a solid green disc with the drop cropped across it is the
+              object this page has instead of a product photograph. The verdict
+              card overlaps it so the fold reads as one composition. */}
+          <div className="relative hidden lg:block lg:min-h-[26rem]">
+            <div aria-hidden className="absolute -right-8 top-0 h-[26rem] w-[26rem] rounded-full bg-story-green" />
+            <div aria-hidden className="pointer-events-none absolute right-[0.75rem] top-[3.5rem] text-story-green-light">
+              <MilkDrop size={215} variant="solid" />
+            </div>
+            <div aria-hidden className="absolute bottom-1 right-[24rem] h-16 w-16 rounded-full bg-story-blue" />
+            <div className="absolute bottom-0 left-0 w-[21rem]">
+              <TopVerdictCard entry={leaderboard[0]} loading={isLoading} />
+            </div>
           </div>
         </div>
       </Band>
@@ -188,7 +202,7 @@ const Home = () => {
                     className="hidden h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl sm:flex"
                     style={{ backgroundColor: tier.light, color: tier.color }}
                   >
-                    <TypeMark base={entry?.base ?? "blend"} size={38} />
+                    <Carton size={30} />
                   </span>
 
                   <span className="min-w-0 flex-1">
@@ -212,7 +226,7 @@ const Home = () => {
       </Band>
 
       {/* ── Browse by base ───────────────────────────────────────────── */}
-      <Band ground="cream-2" size="lg">
+      <Band ground="sky" size="lg">
         <SectionHead
           kicker="Start somewhere"
           title="Pick a plant"
@@ -227,18 +241,19 @@ const Home = () => {
               <li key={base.key}>
                 <Link
                   to={`/results?search=${encodeURIComponent(base.search)}`}
-                  className={`group flex h-full flex-col justify-between gap-6 rounded-[1.25rem] p-4 no-underline transition-transform duration-150 hover:-translate-y-0.5 sm:p-5 ${tone.bg}`}
+                  className={`group relative flex aspect-[4/3] flex-col justify-end overflow-hidden rounded-[1.25rem] p-4 no-underline transition-transform duration-150 hover:-translate-y-0.5 sm:aspect-square sm:p-5 ${tone.bg}`}
                 >
-                  <span className={tone.fg}>
-                    <TypeMark base={base.key} size={44} />
+                  <span
+                    aria-hidden
+                    className={`pointer-events-none absolute -right-16 -top-20 ${tone.wash}`}
+                  >
+                    <MilkDrop size={230} variant="solid" />
                   </span>
-                  <span>
-                    <span className={`block font-display text-[1.15rem] font-bold tracking-[-0.02em] sm:text-[1.35rem] ${tone.fg}`}>
-                      {base.label}
-                    </span>
-                    <span className={`mt-0.5 block text-[0.75rem] font-semibold opacity-70 ${tone.fg}`}>
-                      {count ? `${count} scored` : "Explore"}
-                    </span>
+                  <span className={`story-display relative block text-[clamp(1.6rem,6vw,2.35rem)] leading-[0.95] ${tone.title}`}>
+                    {base.label}
+                  </span>
+                  <span className={`relative mt-1.5 block text-[0.75rem] font-bold uppercase tracking-[0.1em] ${tone.sub}`}>
+                    {count ? `${count} scored` : "Explore"}
                   </span>
                 </Link>
               </li>
@@ -274,7 +289,7 @@ const Home = () => {
 
         <div className="relative mt-12 flex flex-col gap-3 sm:flex-row sm:items-center">
           <StoryButton onClick={cta.go} tone="paper" className="w-full sm:w-auto">
-            {cta.label}
+            Rate the last one you drank
             <ArrowRight />
           </StoryButton>
           <p className="text-sm font-medium text-white/55">Free forever. No brand deals. No spam.</p>
@@ -347,12 +362,49 @@ const Home = () => {
   );
 };
 
+/** The phone's version of the proof card: one wide bar, thumb-width, no chrome. */
+const TopVerdictBar = ({
+  entry,
+  loading,
+  className,
+}: {
+  entry?: LeaderboardEntry;
+  loading: boolean;
+  className?: string;
+}) => {
+  const tier = getTier(entry?.score);
+  return (
+    <Link
+      to={entry ? `/product/${entry.productId}` : "/results"}
+      className={`flex items-center gap-4 rounded-[1.25rem] bg-story-ink px-4 py-3.5 no-underline ${className ?? ""}`}
+    >
+      <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-white">
+        <Carton size={26} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="story-kicker block text-white/45">Top of the board</span>
+        <span className="mt-1 block truncate text-[0.9375rem] font-bold text-white">
+          {loading ? "Loading…" : `${entry?.brand ?? ""} · ${entry?.product ?? ""}`}
+        </span>
+      </span>
+      <span className="flex flex-col items-end leading-none">
+        <span className="story-num text-[1.6rem]" style={{ color: tier.color }}>
+          {entry ? entry.score.toFixed(1) : "—"}
+        </span>
+        <span className="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.14em]" style={{ color: tier.color }}>
+          {tier.name}
+        </span>
+      </span>
+    </Link>
+  );
+};
+
 /** The hero's stand-in for a product photograph: the current highest verdict. */
 const TopVerdictCard = ({
   entry,
   loading,
 }: {
-  entry?: { productId: string; brand: string; product: string; score: number; ratings: number; base: string };
+  entry?: LeaderboardEntry;
   loading: boolean;
 }) => {
   const tier = getTier(entry?.score);
@@ -369,7 +421,7 @@ const TopVerdictCard = ({
           className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-3xl"
           style={{ backgroundColor: tier.light, color: tier.color }}
         >
-          <TypeMark base={entry?.base ?? "blend"} size={54} />
+          <Carton size={44} />
         </span>
         <div className="min-w-0">
           <p className="text-sm font-medium text-story-muted">{loading ? "Loading" : entry?.brand}</p>

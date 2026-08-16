@@ -3,12 +3,10 @@
  *
  * The brand has no photography, so the milk drop from the logo does the work
  * photography would otherwise do: it is the hero shape, the section watermark,
- * the bullet, and the per-milk-type mark. Everything here is drawn in
+ * the bullet, and the product mark. Everything here is drawn in
  * `currentColor` with layered opacity so a single motif can sit on cream, on
  * brand green, or on a deep forest band without a second asset.
  */
-
-import type { ReactElement } from "react";
 
 type MotifProps = {
   className?: string;
@@ -19,8 +17,21 @@ type MotifProps = {
 
 const hidden = { "aria-hidden": true } as const;
 
-/** The signature shape: a milk drop with layered tints, a highlight and satellites. */
-export const MilkDrop = ({ className = "", size = 160, title }: MotifProps) => (
+/**
+ * The signature shape.
+ *
+ * `variant` decides how much of the page it is allowed to carry. `wash` is the
+ * faint layered version for backgrounds; `solid` is a flat, fully opaque shape
+ * meant to be used large and cropped, as the foreground object a product
+ * photograph would otherwise be. Reach for `solid` by default — a motif at 10%
+ * opacity adds nothing to a page that has to hold its own against photography.
+ */
+export const MilkDrop = ({
+  className = "",
+  size = 160,
+  title,
+  variant = "wash",
+}: MotifProps & { variant?: "wash" | "solid" }) => (
   <svg
     viewBox="0 0 158 218"
     width={size}
@@ -31,27 +42,43 @@ export const MilkDrop = ({ className = "", size = 160, title }: MotifProps) => (
     {...(title ? {} : hidden)}
   >
     {title ? <title>{title}</title> : null}
-    <path
-      d="M79 8C114 58 130 100 130 138c0 37-23 58-51 62-28-4-51-25-51-62C28 100 44 58 79 8Z"
-      fill="currentColor"
-      opacity="0.1"
-    />
-    <path
-      d="M79 22c31 44 45 82 45 114 0 34-21 53-45 57-24-4-45-23-45-57 0-32 14-70 45-114Z"
-      fill="currentColor"
-      opacity="0.2"
-    />
-    <path
-      d="M79 40c27 36 39 68 39 94 0 31-19 48-39 52-20-4-39-21-39-52 0-26 12-58 39-94Z"
-      fill="currentColor"
-      opacity="0.42"
-    />
-    <ellipse cx="64" cy="102" rx="7" ry="15" fill="#fff" opacity="0.5" transform="rotate(-14 64 102)" />
-    <ellipse cx="68" cy="80" rx="3" ry="5.5" fill="#fff" opacity="0.32" transform="rotate(-14 68 80)" />
-    <circle cx="136" cy="162" r="9" fill="currentColor" opacity="0.18" />
-    <circle cx="148" cy="146" r="5.5" fill="currentColor" opacity="0.3" />
-    <circle cx="20" cy="168" r="7" fill="currentColor" opacity="0.14" />
-    <circle cx="139" cy="179" r="3.5" fill="currentColor" opacity="0.26" />
+    {variant === "solid" ? (
+      <>
+        <path
+          d="M79 8C114 58 130 100 130 138c0 37-23 58-51 62-28-4-51-25-51-62C28 100 44 58 79 8Z"
+          fill="currentColor"
+        />
+        <ellipse cx="60" cy="118" rx="11" ry="24" fill="#fff" opacity="0.32" transform="rotate(-14 60 118)" />
+        <ellipse cx="66" cy="86" rx="4.5" ry="8" fill="#fff" opacity="0.22" transform="rotate(-14 66 86)" />
+        <circle cx="138" cy="168" r="11" fill="currentColor" />
+        <circle cx="152" cy="148" r="6" fill="currentColor" />
+        <circle cx="16" cy="176" r="8" fill="currentColor" />
+      </>
+    ) : (
+      <>
+        <path
+          d="M79 8C114 58 130 100 130 138c0 37-23 58-51 62-28-4-51-25-51-62C28 100 44 58 79 8Z"
+          fill="currentColor"
+          opacity="0.1"
+        />
+        <path
+          d="M79 22c31 44 45 82 45 114 0 34-21 53-45 57-24-4-45-23-45-57 0-32 14-70 45-114Z"
+          fill="currentColor"
+          opacity="0.2"
+        />
+        <path
+          d="M79 40c27 36 39 68 39 94 0 31-19 48-39 52-20-4-39-21-39-52 0-26 12-58 39-94Z"
+          fill="currentColor"
+          opacity="0.42"
+        />
+        <ellipse cx="64" cy="102" rx="7" ry="15" fill="#fff" opacity="0.5" transform="rotate(-14 64 102)" />
+        <ellipse cx="68" cy="80" rx="3" ry="5.5" fill="#fff" opacity="0.32" transform="rotate(-14 68 80)" />
+        <circle cx="136" cy="162" r="9" fill="currentColor" opacity="0.18" />
+        <circle cx="148" cy="146" r="5.5" fill="currentColor" opacity="0.3" />
+        <circle cx="20" cy="168" r="7" fill="currentColor" opacity="0.14" />
+        <circle cx="139" cy="179" r="3.5" fill="currentColor" opacity="0.26" />
+      </>
+    )}
   </svg>
 );
 
@@ -124,124 +151,13 @@ export const Bottle = ({ className = "", size = 72 }: MotifProps) => (
   </svg>
 );
 
-/* ── Per-milk-type marks ───────────────────────────────────────────────
-   One drawn mark per plant base. These replace the stock product photo on
-   category tiles, so each one has to read at 40px and at 160px. */
-
-const Oat = () => (
-  <g>
-    <path d="M32 58V16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    {[22, 31, 40, 49].map((y) =>
-      [-1, 1].map((s) => (
-        <ellipse
-          key={`${y}${s}`}
-          cx={32 + s * 8}
-          cy={y}
-          rx="7.5"
-          ry="3.6"
-          transform={`rotate(${s * 30} ${32 + s * 8} ${y})`}
-          fill="currentColor"
-          opacity="0.55"
-        />
-      )),
-    )}
-    <ellipse cx="32" cy="13" rx="3" ry="6" fill="currentColor" opacity="0.75" />
-  </g>
-);
-
-const Almond = () => (
-  <g>
-    <path d="M32 10c12 10 17 22 17 30 0 11-8 18-17 18s-17-7-17-18c0-8 5-20 17-30Z" fill="currentColor" opacity="0.55" />
-    <path d="M32 20c6 8 9 15 9 20" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" opacity="0.8" />
-  </g>
-);
-
-const Soy = () => (
-  <g>
-    <path d="M13 40c0-13 11-24 25-24 9 0 13 4 13 9 0 12-12 25-26 25-8 0-12-4-12-10Z" fill="currentColor" opacity="0.45" />
-    <circle cx="24" cy="36" r="5" fill="currentColor" opacity="0.85" />
-    <circle cx="37" cy="29" r="5" fill="currentColor" opacity="0.85" />
-    <path d="M13 44c-2 6 0 10 5 12" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" opacity="0.7" />
-  </g>
-);
-
-const Coconut = () => (
-  <g>
-    <circle cx="32" cy="34" r="21" fill="currentColor" opacity="0.5" />
-    <path d="M11 34a21 21 0 0 0 42 0c0-4-9-7-21-7s-21 3-21 7Z" fill="currentColor" opacity="0.75" />
-    <ellipse cx="32" cy="27" rx="21" ry="6" fill="#fff" opacity="0.55" />
-  </g>
-);
-
-const Rice = () => (
-  <g>
-    {[
-      [22, 20, -24],
-      [40, 24, 22],
-      [26, 38, 16],
-      [42, 44, -18],
-      [32, 52, 4],
-    ].map(([x, y, r], i) => (
-      <ellipse key={i} cx={x} cy={y} rx="5" ry="10" transform={`rotate(${r} ${x} ${y})`} fill="currentColor" opacity={0.45 + i * 0.08} />
-    ))}
-  </g>
-);
-
-const Hazelnut = () => (
-  <g>
-    <circle cx="32" cy="38" r="18" fill="currentColor" opacity="0.55" />
-    <path d="M14 30c4-9 11-14 18-14s14 5 18 14c-5 4-11 6-18 6s-13-2-18-6Z" fill="currentColor" opacity="0.8" />
-    <path d="M32 16v-6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.8" />
-  </g>
-);
-
-const Pea = () => (
-  <g>
-    <path d="M14 30c8-11 28-13 38-4 5 5 3 13-5 18-11 7-27 5-33-3-2-4-2-8 0-11Z" fill="currentColor" opacity="0.42" />
-    <circle cx="24" cy="34" r="6" fill="currentColor" opacity="0.85" />
-    <circle cx="36" cy="33" r="6" fill="currentColor" opacity="0.85" />
-    <circle cx="47" cy="30" r="5" fill="currentColor" opacity="0.85" />
-  </g>
-);
-
-const Cashew = () => (
-  <g>
-    <path d="M20 18c14-4 27 4 29 17 1 10-6 17-14 15-7-2-8-10-16-12-8-2-12-16 1-20Z" fill="currentColor" opacity="0.55" />
-    <path d="M27 26c8 0 13 5 15 12" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" opacity="0.8" />
-  </g>
-);
-
-const Blend = () => (
-  <g>
-    <circle cx="24" cy="28" r="12" fill="currentColor" opacity="0.4" />
-    <circle cx="40" cy="30" r="10" fill="currentColor" opacity="0.55" />
-    <circle cx="32" cy="44" r="11" fill="currentColor" opacity="0.7" />
-  </g>
-);
-
-const TYPE_MARKS: Record<string, () => ReactElement> = {
-  oat: Oat,
-  almond: Almond,
-  soy: Soy,
-  soya: Soy,
-  coconut: Coconut,
-  rice: Rice,
-  hazelnut: Hazelnut,
-  pea: Pea,
-  cashew: Cashew,
-  blend: Blend,
-};
-
-/** Look up the drawn mark for a plant base ("Oat", "almond", "Soya"…). */
-export const TypeMark = ({ base, className = "", size = 64 }: MotifProps & { base: string }) => {
-  const key = base.trim().toLowerCase();
-  const Mark = TYPE_MARKS[key] ?? TYPE_MARKS[Object.keys(TYPE_MARKS).find((k) => key.includes(k)) ?? "blend"] ?? Blend;
-  return (
-    <svg viewBox="0 0 64 64" width={size} height={size} fill="none" className={className} {...hidden}>
-      <Mark />
-    </svg>
-  );
-};
+/* ── Product mark ──────────────────────────────────────────────────────
+   One carton silhouette does the work a product photograph would, tinted to
+   the tier colour wherever a rating is shown. An earlier version of this file
+   carried a drawn mark per plant base — oat, almond, soy and the rest — but at
+   the ~32px they were used, half of them read as blobs and none of them read as
+   the ingredient. The category tiles are typographic instead, which the display
+   face carries far better than eight mediocre botanical glyphs did. */
 
 /* ── Section dividers ─────────────────────────────────────────────────── */
 
