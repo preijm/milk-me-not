@@ -1,9 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getScoreBadgeVariant } from "@/lib/scoreUtils";
 import { formatScore } from "@/lib/scoreFormatter";
+import { getTier } from "@/components/story";
 
 interface FeedHeaderProps {
   username?: string;
@@ -12,28 +10,34 @@ interface FeedHeaderProps {
   blurred?: boolean;
 }
 
+/**
+ * The verdict card's byline: who tasted it and when. The score already runs
+ * large at the top of the card, so this is a quiet signature, not a second
+ * hero — a small tier-coloured figure rather than a badge.
+ */
 export const FeedHeader = ({ username, createdAt, rating, blurred }: FeedHeaderProps) => {
-  const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true }).replace('about ', '');
-  
+  const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true }).replace("about ", "");
+  const tier = getTier(rating);
+
   return (
     <div className="flex items-center justify-between gap-3">
-      <div className="flex items-center gap-2 flex-1 min-w-0">
-        <Badge variant="category" className="w-8 h-8 rounded-full flex items-center justify-center p-0 font-semibold text-sm flex-shrink-0">
-          {username?.charAt(0).toUpperCase() || 'U'}
-        </Badge>
-        <div className="flex flex-col gap-0.5 min-w-0">
-          <span className={cn("font-semibold text-sm text-foreground", blurred && "blur-sm")} translate="no">
+      <div className="flex min-w-0 flex-1 items-center gap-2.5">
+        <span
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-story-ink text-sm font-bold text-story-cream"
+          aria-hidden
+        >
+          {username?.charAt(0).toUpperCase() || "U"}
+        </span>
+        <div className="flex min-w-0 flex-col">
+          <span className={cn("truncate text-sm font-bold text-story-ink", blurred && "blur-sm")} translate="no">
             {username}
           </span>
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Clock className="h-3 w-3" />
-            <span className="text-xs">{timeAgo}</span>
-          </div>
+          <span className="text-[0.75rem] font-medium text-story-muted-2">{timeAgo}</span>
         </div>
       </div>
-      <Badge variant={getScoreBadgeVariant(Number(rating))} className="flex-shrink-0">
+      <span className="story-num flex-shrink-0 text-[0.9375rem]" style={{ color: tier.color }}>
         {formatScore(Number(rating))}
-      </Badge>
+      </span>
     </div>
   );
 };

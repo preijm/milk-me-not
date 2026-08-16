@@ -1,41 +1,40 @@
-import React from "react";
+import { MilkDrop } from "@/components/story";
 
 interface FeedEmptyStateProps {
   isAuthenticated: boolean;
 }
 
+/** A designed empty state instead of a bare "no results" string, in either voice. */
 export const FeedEmptyState = ({ isAuthenticated }: FeedEmptyStateProps) => {
   if (isAuthenticated) {
     return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">
-          No milk tests to show yet. Be the first to share your tasting!
+      <div className="story-hairline flex flex-col items-center gap-4 rounded-[1.5rem] bg-white px-6 py-16 text-center">
+        <span className="text-story-green-light" aria-hidden>
+          <MilkDrop size={64} variant="solid" />
+        </span>
+        <p className="story-serif text-[1.35rem] font-bold text-story-ink">Nobody has poured yet.</p>
+        <p className="max-w-sm text-[0.9375rem] leading-relaxed text-story-muted">
+          Be the first to share your tasting — the whole feed starts with one honest verdict.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="text-center py-8">
-      <div className="max-w-md mx-auto space-y-4">
-        <div className="text-lg">🥛✨</div>
-        <h3 className="text-xl font-semibold text-foreground">
-          The community is buzzing with amazing milk alternative discoveries!
-        </h3>
-        <p className="text-muted-foreground leading-relaxed">
-          Members are sharing detailed reviews, uploading mouth-watering photos,
-          rating products out of 10, and having lively discussions in the
-          comments.
-        </p>
-        <p className="text-foreground font-medium">
-          Join our community to see what everyone's raving about, discover your
-          next favorite alternative, and share your own tastings!
-        </p>
-        <div className="text-lg">🚀</div>
-        <p className="text-sm text-muted-foreground font-medium">
-          Sign in now to unlock the full Moo'd Board experience
-        </p>
-      </div>
+    <div className="story-hairline flex flex-col items-center gap-4 rounded-[1.5rem] bg-white px-6 py-16 text-center">
+      <span className="text-story-green-light" aria-hidden>
+        <MilkDrop size={64} variant="solid" />
+      </span>
+      <p className="story-serif text-[1.35rem] font-bold text-story-ink">
+        The community is buzzing — you're just early to this page.
+      </p>
+      <p className="max-w-sm text-[0.9375rem] leading-relaxed text-story-muted">
+        Members are sharing real tastings, photos and honest scores most days. Nothing has landed in the last
+        stretch, but it will.
+      </p>
+      <p className="max-w-sm text-[0.9375rem] font-semibold text-story-ink">
+        Sign in now to see what everyone's rating, and add your own.
+      </p>
     </div>
   );
 };

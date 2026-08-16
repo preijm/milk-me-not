@@ -43,44 +43,39 @@ export const FeedEngagement = ({
 
 
   return (
-    <div className="flex items-center justify-between pt-3 border-t border-border/50">
-      <div className="flex items-center gap-2">
+    <div className="flex items-center justify-between border-t border-story-ink/[0.08] pt-3.5">
+      <div className="flex items-center gap-1">
         {/* Like button with count */}
         <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
           <div className="flex items-center">
             {isOwnPost ? (
               <PopoverTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => likes.length > 0 && setShowLikesPopover(true)}
-                  className="flex items-center gap-2.5 sm:gap-1.5 px-3 sm:px-2 py-1.5 rounded-full transition-all duration-200 hover:bg-muted"
+                  className="flex items-center gap-2 rounded-full px-3 py-1.5 font-bold text-story-muted transition-all duration-200 hover:bg-story-green/10 hover:text-story-ink"
                 >
-                  <Heart className={cn("h-4 w-4", likes.length > 0 && "text-destructive fill-current")} />
+                  <Heart className={cn("h-4 w-4", likes.length > 0 && "fill-current text-[#d8453a]")} />
                   <span className="text-sm">{likes.length}</span>
-                  <span className="text-sm hidden lg:inline">Likes</span>
+                  <span className="hidden text-sm lg:inline">Likes</span>
                 </Button>
               </PopoverTrigger>
             ) : (
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleLikeClick}
                 disabled={isLikePending}
                 className={cn(
-                  "flex items-center gap-2.5 sm:gap-1.5 px-3 sm:px-2 py-1.5 rounded-full transition-all duration-200",
-                  isLiked 
-                    ? "text-destructive hover:bg-destructive/10" 
-                    : "hover:bg-muted"
+                  "flex items-center gap-2 rounded-full px-3 py-1.5 font-bold transition-all duration-200",
+                  isLiked ? "text-[#d8453a] hover:bg-[#d8453a]/10" : "text-story-muted hover:bg-story-green/10 hover:text-story-ink",
                 )}
               >
                 <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
                 <PopoverTrigger asChild>
-                  <span 
-                    className={cn(
-                      "text-sm",
-                      likes.length > 0 && "cursor-pointer"
-                    )}
+                  <span
+                    className={cn("text-sm", likes.length > 0 && "cursor-pointer")}
                     onClick={(e) => {
                       if (likes.length > 0) {
                         e.stopPropagation();
@@ -91,29 +86,26 @@ export const FeedEngagement = ({
                     {likes.length}
                   </span>
                 </PopoverTrigger>
-                <span className="text-sm hidden lg:inline">Likes</span>
+                <span className="hidden text-sm lg:inline">Likes</span>
               </Button>
             )}
           </div>
-          
+
           {likes.length > 0 && (
-            <PopoverContent 
-              side="top" 
+            <PopoverContent
+              side="top"
               align="start"
-              className="p-0 w-36 bg-card border border-border shadow-lg rounded-lg overflow-hidden"
+              className="w-36 overflow-hidden rounded-xl border border-story-ink/10 bg-white p-0 shadow-lg"
             >
-              <div className="px-3 py-1.5 bg-muted/50 border-b border-border">
-                <p className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-                  <Heart className="h-3.5 w-3.5 text-destructive fill-destructive" />
+              <div className="border-b border-story-ink/10 bg-story-cream-2 px-3 py-1.5">
+                <p className="flex items-center gap-1.5 text-sm font-bold text-story-ink">
+                  <Heart className="h-3.5 w-3.5 fill-[#d8453a] text-[#d8453a]" />
                   Liked by
                 </p>
               </div>
-              <div className="py-1 max-h-36 overflow-y-auto">
-                {likes.map(like => (
-                  <div 
-                    key={like.id} 
-                    className="px-3 py-1.5 text-sm text-foreground hover:bg-muted/50 transition-colors"
-                  >
+              <div className="max-h-36 overflow-y-auto py-1">
+                {likes.map((like) => (
+                  <div key={like.id} className="px-3 py-1.5 text-sm text-story-ink transition-colors hover:bg-story-cream-2">
                     {like.username}
                   </div>
                 ))}
@@ -121,37 +113,37 @@ export const FeedEngagement = ({
             </PopoverContent>
           )}
         </Popover>
-        
+
         {/* Comments button */}
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={onToggleComments}
-          className="flex items-center gap-1.5 px-2 py-1.5 rounded-full hover:bg-muted transition-all duration-200"
+          className="flex items-center gap-2 rounded-full px-3 py-1.5 font-bold text-story-muted transition-all duration-200 hover:bg-story-green/10 hover:text-story-ink"
         >
           <MessageCircle className="h-4 w-4" />
           <span className="text-sm">{commentsCount}</span>
-          <span className="text-sm hidden lg:inline">Comments</span>
+          <span className="hidden text-sm lg:inline">Comments</span>
         </Button>
-        
+
         {/* View All button */}
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={onViewAllResults}
-          className="flex items-center gap-1.5 px-2 py-1.5 rounded-full hover:bg-muted transition-all duration-200"
+          className="flex items-center gap-2 rounded-full px-3 py-1.5 font-bold text-story-muted transition-all duration-200 hover:bg-story-green/10 hover:text-story-ink"
         >
           <BarChart3 className="h-4 w-4" />
-          <span className="text-sm hidden lg:inline">View All</span>
+          <span className="hidden text-sm lg:inline">View All</span>
         </Button>
       </div>
 
       {isOwnPost && (
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           onClick={onEdit}
-          className="rounded-full h-8 w-8 p-0"
+          className="h-8 w-8 rounded-full border-story-ink/15 p-0 text-story-ink hover:bg-story-green/10"
         >
           <Edit3 className="h-4 w-4" />
         </Button>

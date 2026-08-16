@@ -18,7 +18,7 @@ describe("FeedProductInfo", () => {
     expect(screen.queryByText("Barista")).not.toBeInTheDocument();
   });
 
-  it("renders property badges (max 2)", () => {
+  it("renders property badges (max 2), humanized", () => {
     render(
       <FeedProductInfo
         brandName="Oatly"
@@ -26,9 +26,9 @@ describe("FeedProductInfo", () => {
         propertyNames={["oat", "organic", "sugar_free"]}
       />
     );
-    expect(screen.getByText("oat")).toBeInTheDocument();
-    expect(screen.getByText("organic")).toBeInTheDocument();
-    expect(screen.queryByText("sugar free")).not.toBeInTheDocument();
+    expect(screen.getByText("Oat")).toBeInTheDocument();
+    expect(screen.getByText("Organic")).toBeInTheDocument();
+    expect(screen.queryByText("Sugar free")).not.toBeInTheDocument();
   });
 
   it("replaces underscores with spaces in property names", () => {
@@ -39,10 +39,10 @@ describe("FeedProductInfo", () => {
         propertyNames={["sugar_free"]}
       />
     );
-    expect(screen.getByText("sugar free")).toBeInTheDocument();
+    expect(screen.getByText("Sugar free")).toBeInTheDocument();
   });
 
-  it("renders flavor badge (max 1)", () => {
+  it("renders flavor badge (max 1), humanized", () => {
     render(
       <FeedProductInfo
         brandName="Oatly"
@@ -50,8 +50,8 @@ describe("FeedProductInfo", () => {
         flavorNames={["vanilla", "chocolate"]}
       />
     );
-    expect(screen.getByText("vanilla")).toBeInTheDocument();
-    expect(screen.queryByText("chocolate")).not.toBeInTheDocument();
+    expect(screen.getByText("Vanilla")).toBeInTheDocument();
+    expect(screen.queryByText("Chocolate")).not.toBeInTheDocument();
   });
 
   it("renders without optional props", () => {

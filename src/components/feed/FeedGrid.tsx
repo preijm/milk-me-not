@@ -1,44 +1,22 @@
-import React from "react";
 import Masonry from "react-masonry-css";
 import { FeedItem } from "./FeedItem";
 import { MilkTestResult } from "@/types/milk-test";
 
 interface FeedGridProps {
   items: MilkTestResult[];
-  isAuthenticated: boolean;
-  className?: string;
-  variant?: "mobile" | "desktop";
 }
 
-const breakpointColumns = {
-  default: 3,
-  1023: 2,
-  639: 1,
-};
+const breakpointColumns = { default: 3, 1279: 2 };
 
-export const FeedGrid = ({ items, isAuthenticated, className, variant = "desktop" }: FeedGridProps) => {
-  const masonryClassName = variant === "mobile" 
-    ? "flex w-full justify-center" 
-    : (className || "flex -ml-4 w-auto");
-  
-  const columnClass = variant === "mobile"
-    ? "space-y-4 w-full max-w-md mx-auto"
-    : "pl-4 space-y-4";
-
-  return (
-    <Masonry
-      breakpointCols={breakpointColumns}
-      className={masonryClassName}
-      columnClassName={columnClass}
-    >
-      {items.map((item) => (
-        <FeedItem
-          key={item.id}
-          item={item}
-          blurred={!isAuthenticated}
-          disabled={!isAuthenticated}
-        />
-      ))}
-    </Masonry>
-  );
-};
+/**
+ * Desktop composition: a masonry wall. Verdict cards vary in height — a
+ * photo, a note, a barista tag, all optional — so a rigid grid would either
+ * waste the width in gutters or force every card to the tallest one's height.
+ */
+export const FeedGrid = ({ items }: FeedGridProps) => (
+  <Masonry breakpointCols={breakpointColumns} className="flex -ml-5 w-auto" columnClassName="space-y-5 pl-5">
+    {items.map((item) => (
+      <FeedItem key={item.id} item={item} />
+    ))}
+  </Masonry>
+);

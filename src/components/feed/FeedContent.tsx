@@ -1,9 +1,10 @@
-import React from "react";
-import { Loader } from "lucide-react";
+import { useEffect, useState } from "react";
 import { MilkTestResult } from "@/types/milk-test";
+import { StoryButton } from "@/components/story";
 import { FeedGrid } from "./FeedGrid";
-import { FeedLoginPrompt } from "./FeedLoginPrompt";
+import { FeedMobileStream } from "./FeedMobileStream";
 import { FeedEmptyState } from "./FeedEmptyState";
+import { FeedSkeleton } from "./FeedSkeleton";
 
 interface FeedContentProps {
   items: MilkTestResult[];
@@ -12,34 +13,46 @@ interface FeedContentProps {
   variant: "mobile" | "desktop";
 }
 
-export const FeedContent = ({
-  items,
-  isLoading,
-  isAuthenticated,
-  variant,
-}: FeedContentProps) => {
+/** Verdicts revealed per batch — a long feed arrives a screenful at a time. */
+const PAGE_SIZE = 9;
+
+/**
+ * The card stream only. The sell to a signed-out visitor lives in
+ * `FeedHero`'s lede, not a second CTA band bolted on here — stacking that
+ * band against the footer's own close and the sticky mobile bar was three
+ * asks fighting for one screen.
+ */
+export const FeedContent = ({ items, isLoading, isAuthenticated, variant }: FeedContentProps) => {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [items.length]);
+
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-8">
-        <Loader className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
+    return <FeedSkeleton variant={variant} />;
   }
+
+  if (items.length === 0) {
+    return <FeedEmptyState isAuthenticated={isAuthenticated} />;
+  }
+
+  const visibleItems = items.slice(0, visibleCount);
+  const remaining = items.length - visibleItems.length;
 
   return (
     <>
-      {items.length > 0 ? (
-        <>
-          <FeedGrid
-            items={items}
-            isAuthenticated={isAuthenticated}
-            variant={variant}
-          />
+      {variant === "mobile" ? <FeedMobileStream items={visibleItems} /> : <FeedGrid items={visibleItems} />}
 
-          {!isAuthenticated && <FeedLoginPrompt className="mt-6" />}
-        </>
-      ) : (
-        <FeedEmptyState isAuthenticated={isAuthenticated} />
+      {remaining > 0 && (
+        <div className="mt-8 flex flex-col items-center gap-3">
+          <StoryButton tone="outline" size="md" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
+            Show {Math.min(remaining, PAGE_SIZE)} more
+          </StoryButton>
+          <p className="text-[0.8125rem] font-medium text-story-muted-2">
+            {visibleItems.length} of {items.length} shown
+          </p>
+        </div>
       )}
     </>
   );
