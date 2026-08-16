@@ -1,6 +1,4 @@
-import { ScoreMark, getTier } from "@/components/story";
-import { inferPlantBase } from "@/lib/plantBase";
-import { cn } from "@/lib/utils";
+import { BrandMark, ScoreMark, getTier } from "@/components/story";
 import { humanizeLabels } from "@/lib/labels";
 import type { AggregatedResult } from "@/hooks/useAggregatedResults";
 
@@ -18,7 +16,6 @@ export const ResultsCardList = ({ results, onProductClick }: ResultsCardListProp
   <ol className="flex flex-col gap-3">
     {results.map((r, i) => {
       const tier = getTier(r.avg_rating);
-      const base = inferPlantBase(`${r.brand_name} ${r.product_name} ${(r.property_names ?? []).join(" ")} ${(r.flavor_names ?? []).join(" ")}`);
       const tags = [
         ...(r.is_barista ? ["Barista"] : []),
         ...humanizeLabels(r.property_names),
@@ -32,16 +29,12 @@ export const ResultsCardList = ({ results, onProductClick }: ResultsCardListProp
             className="story-hairline flex w-full items-center gap-3.5 rounded-[1.25rem] bg-white p-4 text-left"
           >
             <span className="story-num flex-shrink-0 text-[1.05rem] leading-none text-story-muted-2">{i + 1}</span>
-            <span
-              className={cn(
-                "story-serif flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl text-[0.75rem] font-extrabold tracking-[0.02em]",
-                base.bg,
-                base.fg,
-              )}
-              title={base.label}
-            >
-              {base.abbr}
-            </span>
+            <BrandMark
+              brand={r.brand_name}
+              product={r.product_name}
+              hint={`${(r.property_names ?? []).join(" ")} ${(r.flavor_names ?? []).join(" ")}`}
+              className="h-12 w-12 text-[0.75rem]"
+            />
 
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-story-muted-2">

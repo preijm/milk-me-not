@@ -4,11 +4,10 @@ import { Loader } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { usePublicProfile, type PublicRating } from "@/hooks/usePublicProfile";
 import { humanizeLabel } from "@/lib/labels";
-import { inferPlantBase } from "@/lib/plantBase";
-import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   Band,
+  BrandMark,
   CrestDivider,
   Display,
   Kicker,
@@ -31,7 +30,6 @@ const relativeDate = (iso: string) =>
 
 const RatingRow = ({ rating }: { rating: PublicRating }) => {
   const tier = getTier(rating.rating);
-  const base = inferPlantBase(`${rating.brand} ${rating.product}`);
   const pq = getPriceQuality(rating.priceQuality);
 
   return (
@@ -40,16 +38,12 @@ const RatingRow = ({ rating }: { rating: PublicRating }) => {
         to={rating.productId ? `/product/${rating.productId}` : "/results"}
         className="group flex items-start gap-4 py-5 no-underline"
       >
-        <span
-          className={cn(
-            "story-serif mt-0.5 flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl text-[0.7rem] font-extrabold",
-            base.bg,
-            base.fg,
-          )}
-          title={base.label}
-        >
-          {base.abbr}
-        </span>
+        <BrandMark
+          brand={rating.brand}
+          product={rating.product}
+          className="mt-0.5 h-11 w-11 text-[0.7rem]"
+          radius="rounded-xl"
+        />
 
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[0.9375rem]">

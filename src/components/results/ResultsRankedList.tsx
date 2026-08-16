@@ -1,5 +1,4 @@
-import { ArrowRight, ScoreMark } from "@/components/story";
-import { inferPlantBase } from "@/lib/plantBase";
+import { ArrowRight, BrandMark, ScoreMark } from "@/components/story";
 import { humanizeLabels } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import type { AggregatedResult, SortConfig } from "@/hooks/useAggregatedResults";
@@ -42,7 +41,6 @@ export const ResultsRankedList = ({ results, sortConfig, onSort, onProductClick 
 
     <ol className="flex flex-col">
       {results.map((r, i) => {
-        const base = inferPlantBase(`${r.brand_name} ${r.product_name} ${(r.property_names ?? []).join(" ")} ${(r.flavor_names ?? []).join(" ")}`);
         const tags = [...(r.is_barista ? ["Barista"] : []), ...humanizeLabels(r.property_names)].slice(0, 3);
         return (
           <li key={r.product_id} className="border-b border-story-ink/[0.08]">
@@ -52,19 +50,12 @@ export const ResultsRankedList = ({ results, sortConfig, onSort, onProductClick 
               className="group flex w-full items-center gap-4 py-5 text-left"
             >
               <span className="story-num w-10 flex-shrink-0 text-[1.35rem] leading-none text-story-muted-2">{i + 1}</span>
-              {/* The plant base set as three letters. A drawn icon repeated
-                  across 200 rows reads as one stamp; the abbreviation and its
-                  colour give the list actual row-to-row variety. */}
-              <span
-                className={cn(
-                  "story-serif flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl text-[0.8125rem] font-extrabold tracking-[0.02em]",
-                  base.bg,
-                  base.fg,
-                )}
-                title={base.label}
-              >
-                {base.abbr}
-              </span>
+                            <BrandMark
+                brand={r.brand_name}
+                product={r.product_name}
+                hint={`${(r.property_names ?? []).join(" ")} ${(r.flavor_names ?? []).join(" ")}`}
+                className="h-14 w-14 text-[0.8125rem]"
+              />
 
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-sans text-base">
