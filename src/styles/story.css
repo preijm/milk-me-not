@@ -38,6 +38,14 @@
   --story-amber-dark: 35 83% 38%;    /* #b06d10 */
   --story-amber-light: 40 100% 92%;  /* #fff1d6 */
 
+  /* Soft tile tints — the category tiles want eight distinct grounds, and the
+     brand's three washes only get us halfway. These stay in the same low-
+     saturation register so the grid reads as one set. */
+  --story-tint-sand: 38 62% 91%;
+  --story-tint-clay: 22 48% 90%;
+  --story-tint-mint: 158 45% 90%;
+  --story-tint-sky: 205 62% 91%;
+
   /* Hairlines */
   --story-line: 167 9% 19% / 0.08;
   --story-line-strong: 167 9% 19% / 0.16;
