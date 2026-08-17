@@ -88,15 +88,23 @@ export const getBrandLogo = (brandName: string | null | undefined): string | nul
 
 /**
  * Logos that carry their own background — a coloured panel rather than a mark
- * on transparency. They must fill the tile edge to edge; padding them onto a
- * white ground puts a white ring around a logo that already has its own, which
- * reads as a picture inside a picture.
+ * on transparency. These skip the white ground, which would otherwise put a
+ * white ring around a logo that already has its own edge and read as a picture
+ * inside a picture.
  *
- * Only list a logo here if it is roughly square. A wide panel logo cropped to
- * a square tile loses its wordmark — `kara.jpg` is a blue panel but far wider
- * than it is tall, so it stays on the default treatment.
+ * Aspect ratio does not matter here: nothing is cropped, so a wide panel keeps
+ * its wordmark and simply sits centred in the tile.
  */
-const FULL_BLEED = new Set(["friesche-vlag", "isola", "aldi", "edeka", "lidl", "picnic"]);
+const FULL_BLEED = new Set([
+  "friesche-vlag",
+  "isola",
+  "aldi",
+  "edeka",
+  "lidl",
+  "picnic",
+  "kara",
+  "jumbo",
+]);
 
 /** Does this brand's logo bring its own background? */
 export const isFullBleedLogo = (brandName: string | null | undefined): boolean => {

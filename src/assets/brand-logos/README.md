@@ -53,6 +53,11 @@ Logos render inside a small square tile on a white ground, scaled to fit with
   small next to its neighbours.
 - **Wordmarks beat lockups.** A tall logo with a tagline underneath becomes
   illegible at 32px. Crop to the mark or the wordmark alone.
+- **Square beats wide.** The tile is square and nothing is cropped, so a wide
+  logo can only ever be as tall as its ratio allows: a 5:1 wordmark lands about
+  9px tall in a 48px tile, whatever else you do. Where a brand publishes a
+  square variant — usually its app icon at `/apple-touch-icon.png` — prefer
+  that over the horizontal wordmark. Jumbo's tile comes from exactly that.
 - **Avoid white-on-transparent.** It disappears on the tile. Use the dark or
   full-colour variant — most brands publish both, usually with `-dark` or
   `-black` in the filename.

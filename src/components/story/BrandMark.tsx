@@ -29,9 +29,14 @@ export const BrandMark = ({ brand, product, hint, className, radius = "rounded-2
   const logo = getBrandLogo(brand);
 
   if (logo) {
-    // A logo that brings its own coloured panel fills the tile; a mark on
-    // transparency gets a white ground so it still reads on a dark row, and a
-    // little air so it is not jammed against the corners.
+    // A logo that brings its own coloured panel goes edge to edge, with no
+    // white ground to ring it; a mark on transparency gets that ground so it
+    // still reads on a dark row, and a little air off the corners.
+    //
+    // Both scale with object-contain. Cropping a panel to fill the tile only
+    // works when it is exactly square, and most are not — Edeka's roundel is
+    // taller than it is wide, so covering the tile pushed its wordmark out of
+    // the bottom edge.
     const fullBleed = isFullBleedLogo(brand);
     return (
       <span
@@ -47,7 +52,7 @@ export const BrandMark = ({ brand, product, hint, className, radius = "rounded-2
           alt=""
           loading="lazy"
           decoding="async"
-          className={cn("h-full w-full", fullBleed ? "object-cover" : "object-contain")}
+          className="h-full w-full object-contain"
         />
       </span>
     );
