@@ -89,24 +89,37 @@ export const priceQualityBins = (facts: RatingFact[]): PriceQualityBin[] => {
 export const withPriceVerdict = (facts: RatingFact[]): number =>
   facts.filter((f) => getPriceQuality(f.price_quality_ratio)).length;
 
-export type CountryCount = { country_code: string; test_count: number };
+export type CountryStat = {
+  country_code: string;
+  /** Kept as `test_count` because the map's fill expression reads it. */
+  test_count: number;
+  avg: number;
+};
 
 /**
- * Ratings per country, busiest first.
+ * How much each country has rated, and how generously, busiest first.
  *
  * The map used to run its own query straight at `milk_tests`, which is why it
  * sat behind the same search and filters as everything else and quietly
  * ignored them. Counting the same rows the rest of the page is looking at
  * keeps all three views describing one slice.
  */
-export const countryCounts = (facts: RatingFact[]): CountryCount[] => {
-  const counts = new Map<string, number>();
-  for (const fact of facts) {
-    const code = fact.country_code?.trim();
-    if (!code) continue;
-    counts.set(code, (counts.get(code) ?? 0) + 1);
-  }
-  return [...counts]
-    .map(([country_code, test_count]) => ({ country_code, test_count }))
+export const countryStats = (facts: RatingFact[]): CountryStat[] => {
+  const groups = groupRatings(facts, (f) => f.country_code?.trim() || null);
+  return [...groups]
+    .map(([country_code, ratings]) => ({
+      country_code,
+      test_count: ratings.length,
+      avg: mean(ratings),
+    }))
     .sort((a, b) => b.test_count - a.test_count || a.country_code.localeCompare(b.country_code));
 };
+
+/**
+ * A country needs this many ratings before its average is worth quoting.
+ *
+ * Every country still gets a row — the list is about who is reporting back —
+ * but calling somewhere the harshest crowd on the strength of three ratings
+ * would be inventing a national character out of one person's afternoon.
+ */
+export const MIN_RATINGS_PER_COUNTRY = 10;

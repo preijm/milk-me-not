@@ -4,16 +4,19 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
-import { StoryButton, StoryCard } from '@/components/story';
+import { StoryButton } from '@/components/story';
 import { prefersReducedMotion } from '@/lib/motion';
 import { useRatingFacts } from '@/hooks/useRatingFacts';
-import { countryCounts } from '@/components/results/chartData';
+import { countryStats, MIN_RATINGS_PER_COUNTRY, type CountryStat } from '@/components/results/chartData';
 import { ResultsPanel } from '@/components/results/ResultsPanel';
 
-interface CountryTestCount {
-  country_code: string;
-  test_count: number;
-}
+/**
+ * The distance between two averages, measured on the numbers as printed.
+ *
+ * Subtracting first and rounding after gives a sentence that argues with the
+ * figures beside it — 7.75 and 7.33 show as 7.8 and 7.3 but read as 0.4 apart.
+ */
+const gap = (low: number, high: number) => (Number(high.toFixed(1)) - Number(low.toFixed(1))).toFixed(1);
 
 const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -28,9 +31,15 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
   // Counted from the same ratings the ranking and the charts are showing, so
   // search and the filters reach the map too.
   const { data: facts = [], isLoading } = useRatingFacts();
-  const countryData: CountryTestCount[] = useMemo(
-    () => countryCounts(facts.filter((f) => f.product_id && visibleProductIds.has(f.product_id))),
+  const countryData: CountryStat[] = useMemo(
+    () => countryStats(facts.filter((f) => f.product_id && visibleProductIds.has(f.product_id))),
     [facts, visibleProductIds],
+  );
+
+  // Only countries with enough ratings get to stand for a national palate.
+  const judged = useMemo(
+    () => [...countryData].filter((c) => c.test_count >= MIN_RATINGS_PER_COUNTRY).sort((a, b) => a.avg - b.avg),
+    [countryData],
   );
 
   // Fetch countries with names for display
@@ -48,6 +57,8 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
 
   // Create a map from country code to country name
   const countryCodeToName = new Map(countriesData.map(c => [c.code, c.name]));
+  /** The country list may not have loaded yet, so the code stands in. */
+  const countryName = (code: string) => countryCodeToName.get(code) || code;
   const totalCountries = countriesData.length || 195;
 
   // Read Mapbox public token from environment variable
@@ -484,13 +495,33 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
 
       {/* Country rankings. Separated by spacing and a tinted bar rather than
           divider rules, which the rest of the site does not use. */}
-      <StoryCard className="px-5 py-6 sm:px-7 sm:py-7">
-        <div className="flex items-baseline justify-between gap-4">
-          <h3 className="story-serif text-[1.125rem] font-bold text-story-ink">Who is reporting back</h3>
-          <span className="text-[0.8125rem] font-medium text-story-muted-2">{countryData.length} countries</span>
-        </div>
-
-        <ol className="mt-5 flex flex-col gap-1.5">
+      <ResultsPanel
+        kicker="Who is reporting back"
+        title={
+          judged.length >= 2
+            ? `${countryName(judged[judged.length - 1].country_code)} is the softest touch`
+            : "Where the ratings come from"
+        }
+        lede={
+          judged.length >= 2 ? (
+            <>
+              The bar is each country's share of the ratings; the number beside it is what they score on average. Of
+              the countries with at least {MIN_RATINGS_PER_COUNTRY} ratings,{" "}
+              <strong className="font-bold text-story-ink">{countryName(judged[judged.length - 1].country_code)}</strong>{" "}
+              averages {judged[judged.length - 1].avg.toFixed(1)} and{" "}
+              <strong className="font-bold text-story-ink">{countryName(judged[0].country_code)}</strong>{" "}
+              {judged[0].avg.toFixed(1)} — {gap(judged[0].avg, judged[judged.length - 1].avg)} of a point between the
+              kindest crowd and the toughest.
+            </>
+          ) : (
+            <>
+              The bar is each country's share of the ratings; the number beside it is what they score on average. Too
+              few countries have {MIN_RATINGS_PER_COUNTRY} ratings in this slice to compare palates yet.
+            </>
+          )
+        }
+      >
+        <ol className="flex flex-col gap-1.5">
           {[...countryData]
             .sort((a, b) => b.test_count - a.test_count)
             .map((country, index) => {
@@ -510,20 +541,33 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
                       {index + 1}
                     </span>
                     <span className="truncate text-[0.9375rem] font-bold text-story-ink">
-                      {countryCodeToName.get(country.country_code) || country.country_code}
+                      {countryName(country.country_code)}
                     </span>
                   </span>
-                  <span className="story-num relative flex-shrink-0 pl-3 text-[1rem] tabular-nums text-story-ink">
-                    {country.test_count}
-                    <span className="ml-1.5 text-[0.75rem] font-medium text-story-muted-2">
-                      {Math.round(percentage)}%
+                  <span className="relative flex flex-shrink-0 items-baseline gap-4 pl-3 sm:gap-6">
+                    <span className="story-num w-10 text-right text-[0.9375rem] tabular-nums text-story-muted sm:w-12">
+                      {country.test_count}
+                    </span>
+                    {/* Dimmed below the threshold: a mean of two ratings is a
+                        number, not a verdict. */}
+                    <span
+                      className={`story-num w-9 text-right text-[1rem] tabular-nums sm:w-11 ${
+                        country.test_count >= MIN_RATINGS_PER_COUNTRY ? "text-story-ink" : "text-story-muted-2"
+                      }`}
+                    >
+                      {country.avg.toFixed(1)}
                     </span>
                   </span>
                 </li>
               );
             })}
         </ol>
-      </StoryCard>
+
+        <p className="mt-4 text-[0.8125rem] leading-relaxed text-story-muted">
+          Ratings, then average score. Averages from fewer than {MIN_RATINGS_PER_COUNTRY} ratings are greyed — they
+          move too much to mean anything yet.
+        </p>
+      </ResultsPanel>
     </div>
   );
 };

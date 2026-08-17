@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { brandRanges, tierBins, priceQualityBins, withPriceVerdict, countryCounts } from "./chartData";
+import { brandRanges, tierBins, priceQualityBins, withPriceVerdict, countryStats } from "./chartData";
 import type { RatingFact } from "@/hooks/useRatingFacts";
 
 const fact = (over: Partial<RatingFact> & { rating: number }): RatingFact => ({
@@ -87,25 +87,36 @@ describe("withPriceVerdict", () => {
   });
 });
 
-describe("countryCounts", () => {
+describe("countryStats", () => {
   it("counts ratings per country, busiest first", () => {
     const facts = [
       fact({ rating: 8, country_code: "NL" }),
       fact({ rating: 7, country_code: "DE" }),
       fact({ rating: 9, country_code: "NL" }),
     ];
-    expect(countryCounts(facts)).toEqual([
-      { country_code: "NL", test_count: 2 },
-      { country_code: "DE", test_count: 1 },
+    expect(countryStats(facts).map((c) => [c.country_code, c.test_count])).toEqual([
+      ["NL", 2],
+      ["DE", 1],
     ]);
+  });
+
+  it("averages the score each country gave", () => {
+    const facts = [
+      fact({ rating: 6, country_code: "NL" }),
+      fact({ rating: 9, country_code: "NL" }),
+      fact({ rating: 7.5, country_code: "DE" }),
+    ];
+    const [nl, de] = countryStats(facts);
+    expect(nl.avg).toBeCloseTo(7.5);
+    expect(de.avg).toBeCloseTo(7.5);
   });
 
   it("leaves out ratings with no country, so the map never counts a blank one", () => {
     const facts = [fact({ rating: 8, country_code: null }), fact({ rating: 8, country_code: "  " }), fact({ rating: 7, country_code: "NL" })];
-    expect(countryCounts(facts)).toEqual([{ country_code: "NL", test_count: 1 }]);
+    expect(countryStats(facts).map((c) => c.country_code)).toEqual(["NL"]);
   });
 
   it("is empty when the current filter leaves nothing", () => {
-    expect(countryCounts([])).toEqual([]);
+    expect(countryStats([])).toEqual([]);
   });
 });
