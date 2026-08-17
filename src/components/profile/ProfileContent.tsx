@@ -1,13 +1,7 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, TrendingUp, Star, Calendar, ListPlus, PlusCircle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ProfileHeader } from "./ProfileHeader";
-import { ProfileStats } from "./ProfileStats";
-import { ProfileActions } from "./ProfileActions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User } from "lucide-react";
+import { StoryButton, ArrowRight } from "@/components/story/primitives";
+import { DropGlyph } from "@/components/story/motifs";
 
 interface ProfileContentProps {
   username: string;
@@ -19,9 +13,23 @@ interface ProfileContentProps {
   memberSince: string;
   onEditClick: () => void;
   onSignOut: () => void;
-  variant: "mobile" | "desktop";
 }
 
+const Figure = ({ label, value }: { label: string; value: string }) => (
+  <div className="story-hairline rounded-2xl bg-white p-4">
+    <p className="story-kicker text-story-muted-2">{label}</p>
+    <p className="story-num mt-1.5 text-[1.75rem] leading-none text-story-ink">{value}</p>
+  </div>
+);
+
+/**
+ * One responsive implementation, not two.
+ *
+ * This previously branched on a `variant` prop into a card grid for phones and
+ * an entirely separate desktop arm built from ProfileHeader / ProfileStats /
+ * ProfileActions — the same information twice, drifting apart, with the desktop
+ * sign-out styled as a destructive red button as though leaving were dangerous.
+ */
 export const ProfileContent = ({
   username,
   email,
@@ -32,158 +40,74 @@ export const ProfileContent = ({
   memberSince,
   onEditClick,
   onSignOut,
-  variant,
 }: ProfileContentProps) => {
   const navigate = useNavigate();
-  
-  if (variant === "mobile") {
-    return (
-      <div className="space-y-6">
-        {/* Profile Header Card */}
-        <Card className="overflow-hidden">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <button onClick={onEditClick} className="relative group flex-shrink-0">
-                <Avatar className="h-16 w-16 ring-2 ring-background shadow-md">
-                  <AvatarImage src={avatarUrl || undefined} />
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80">
-                    <User className="w-8 h-8 text-primary-foreground" />
-                  </AvatarFallback>
-                </Avatar>
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-white text-[10px] font-medium">Edit</span>
-                </div>
-              </button>
-              <div className="text-left min-w-0">
-                <h1 className="text-xl font-semibold text-foreground truncate">{username}</h1>
-                <p className="text-sm text-muted-foreground truncate">{email}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Activity Stats Section - Compact Grid */}
-        <div>
-          <h3 className="text-sm font-medium text-muted-foreground uppercase mb-4 px-1 tracking-wide">
-            Your Activity
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">Tests</span>
-              </div>
-              <p className="text-2xl font-semibold text-foreground">{totalTests}</p>
-            </div>
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-1">
-                <Star className="w-4 h-4 text-score-fair" />
-                <span className="text-xs text-muted-foreground">Avg Rating</span>
-              </div>
-              <p className="text-2xl font-semibold text-foreground">{avgRating}</p>
-            </div>
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">Best Score</span>
-              </div>
-              <p className="text-2xl font-semibold text-foreground">{bestScore > 0 ? bestScore : "—"}</p>
-            </div>
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex items-center gap-2 mb-1">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Joined</span>
-              </div>
-              <p className="text-lg font-semibold text-foreground mt-1">{memberSince}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions Section */}
-        <div>
-          <h3 className="text-sm font-medium text-muted-foreground uppercase mb-4 px-1 tracking-wide">
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => navigate("/results", { state: { myResultsOnly: true } })}
-              className="bg-card rounded-2xl p-4 shadow-sm border border-border text-left hover:bg-muted/50 transition-colors"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <ListPlus className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">Browse</span>
-              </div>
-              <p className="text-sm font-semibold text-foreground">My Results</p>
-            </button>
-            <button
-              onClick={() => navigate("/add")}
-              className="bg-card rounded-2xl p-4 shadow-sm border border-border text-left hover:bg-muted/50 transition-colors"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <PlusCircle className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">New</span>
-              </div>
-              <p className="text-sm font-semibold text-foreground">Add Test</p>
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
-      {/* Profile Header - Desktop horizontal layout */}
-      <Card>
-        <CardContent className="p-8">
-          <div className="flex items-center gap-6">
-            <ProfileHeader
-              username={username}
-              email={email}
-              avatarUrl={avatarUrl}
-              memberSince={memberSince}
-              onEditClick={onEditClick}
-              variant="desktop"
-            />
-            <Button
-              variant="destructive"
-              onClick={onSignOut}
-              className="flex-shrink-0"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <section className="story-hairline flex flex-col gap-5 rounded-3xl bg-white p-5 sm:flex-row sm:items-center sm:p-7">
+        <button
+          onClick={onEditClick}
+          className="group relative shrink-0 self-start rounded-full sm:self-auto"
+          aria-label="Change your picture"
+        >
+          <Avatar className="h-20 w-20 ring-1 ring-story-ink/10">
+            <AvatarImage src={avatarUrl || undefined} />
+            <AvatarFallback className="bg-story-green-wash">
+              <DropGlyph className="h-8 w-8 text-story-green-dark" />
+            </AvatarFallback>
+          </Avatar>
+          <span className="absolute inset-0 flex items-center justify-center rounded-full bg-story-ink/50 text-[0.6875rem] font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
+            Change
+          </span>
+        </button>
 
-      {/* Stats and Quick Actions - Side by side */}
-      <div className="grid grid-cols-2 gap-6">
-        {/* User Stats */}
-        <Card>
-          <CardContent className="p-6">
-            <h2 className="text-xl font-semibold mb-6 text-foreground">
-              Your Activity
-            </h2>
-            <ProfileStats
-              totalTests={totalTests}
-              avgRating={avgRating}
-              memberSince={memberSince}
-              variant="desktop"
-            />
-          </CardContent>
-        </Card>
+        <div className="min-w-0 flex-1">
+          <h2 className="story-display truncate text-[1.6rem] text-story-ink">{username}</h2>
+          <p className="truncate text-[0.875rem] text-story-muted">{email}</p>
+          <p className="mt-1 text-[0.8125rem] text-story-muted-2">Rating since {memberSince}</p>
+        </div>
 
-        {/* Quick Actions */}
-        <Card>
-          <CardContent className="p-6">
-            <h2 className="text-xl font-semibold mb-6 text-foreground">
-              Quick Actions
-            </h2>
-            <ProfileActions variant="desktop" />
-          </CardContent>
-        </Card>
-      </div>
+        <StoryButton tone="outline" size="sm" onClick={onSignOut} className="shrink-0 self-start sm:self-auto">
+          Sign out
+        </StoryButton>
+      </section>
+
+      <section>
+        <h3 className="story-kicker mb-3 px-1 text-story-muted-2">What you have poured</h3>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <Figure label="Ratings" value={String(totalTests)} />
+          <Figure label="Your average" value={totalTests > 0 ? avgRating : "—"} />
+          <Figure label="Best score" value={bestScore > 0 ? String(bestScore) : "—"} />
+          <Figure label="Joined" value={memberSince} />
+        </div>
+      </section>
+
+      <section>
+        <h3 className="story-kicker mb-3 px-1 text-story-muted-2">Carry on</h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <button
+            onClick={() => navigate("/results", { state: { myResultsOnly: true } })}
+            className="story-hairline group flex items-center justify-between rounded-2xl bg-white p-4 text-left transition-colors hover:bg-story-cream-2"
+          >
+            <span>
+              <span className="block text-[0.9375rem] font-bold text-story-ink">Everything you rated</span>
+              <span className="block text-[0.8125rem] text-story-muted">Your scores on the board</span>
+            </span>
+            <ArrowRight className="shrink-0 text-story-muted-2 transition-colors group-hover:text-story-green-dark" />
+          </button>
+          <button
+            onClick={() => navigate("/add")}
+            className="group flex items-center justify-between rounded-2xl bg-story-green p-4 text-left text-white story-lift-green transition-transform hover:brightness-[1.07]"
+          >
+            <span>
+              <span className="block text-[0.9375rem] font-bold">Rate another milk</span>
+              <span className="block text-[0.8125rem] text-white/80">Takes about a minute</span>
+            </span>
+            <ArrowRight className="shrink-0" />
+          </button>
+        </div>
+      </section>
     </div>
   );
 };

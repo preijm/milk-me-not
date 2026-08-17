@@ -6,7 +6,6 @@ import { useUserMilkTests } from "@/hooks/useUserMilkTests";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useIsMobileOrTablet } from "@/hooks/use-mobile";
 import { useProfileStats } from "@/hooks/useProfileStats";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
 import { ProfileContent } from "@/components/profile/ProfileContent";
@@ -22,7 +21,6 @@ const Profile = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
-  const isMobileOrTablet = useIsMobileOrTablet();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   
   const { totalTests, avgRating, bestScore, memberSince } = useProfileStats(milkTests, profile);
@@ -67,7 +65,7 @@ const Profile = () => {
       lede="Everything you have scored, and what it adds up to."
       width="wide"
     >
-      <ProfileContent {...profileProps} variant={isMobileOrTablet ? "mobile" : "desktop"} />
+      <ProfileContent {...profileProps} />
 
       {profile && user && (
         <ProfileEditDialog

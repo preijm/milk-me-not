@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { StoryButton } from "@/components/story/primitives";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Save } from "lucide-react";
@@ -75,10 +75,10 @@ export default function CountrySettings() {
             </p>
           </div>
           
-          <Button type="submit" variant="brand" disabled={loading}>
+          <StoryButton type="submit" disabled={loading}>
             <Save className="w-4 h-4 mr-2" />
             {loading ? "Saving..." : "Save Country"}
-          </Button>
+          </StoryButton>
         </form>
       </div>
     </div>;

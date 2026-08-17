@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { StoryButton } from "@/components/story/primitives";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,10 +63,10 @@ export default function SecuritySettings() {
               <Input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={6} showPasswordToggle className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm" />
             </div>
             
-            <Button type="submit" variant="brand" disabled={isChangingPassword || !newPassword || !confirmPassword}>
+            <StoryButton type="submit" disabled={isChangingPassword || !newPassword || !confirmPassword}>
               <Lock className="w-4 h-4 mr-2" />
               {isChangingPassword ? "Updating..." : "Update Password"}
-            </Button>
+            </StoryButton>
           </form>
       </div>
     </div>;

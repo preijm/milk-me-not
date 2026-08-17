@@ -131,13 +131,13 @@ export const StoryHeader = ({
             {!user && !onAuthPage && (
               <Link
                 to="/auth"
-                className="hidden rounded-full px-4 py-2 text-[0.875rem] font-bold text-story-ink-2 no-underline transition-colors hover:bg-story-ink/[0.05] sm:inline-flex"
+                className="hidden rounded-full px-4 py-2 text-[0.875rem] font-bold text-story-ink-2 no-underline transition-colors hover:bg-story-ink/[0.05] lg:inline-flex"
               >
                 Log in
               </Link>
             )}
             {!hideCta && (
-              <StoryButton size="sm" onClick={cta.go} className="hidden sm:inline-flex">
+              <StoryButton size="sm" onClick={cta.go} className="hidden lg:inline-flex">
                 {cta.shortLabel}
                 <ArrowRight />
               </StoryButton>
