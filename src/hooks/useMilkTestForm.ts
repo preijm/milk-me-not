@@ -10,7 +10,16 @@ import { validateMilkTestInput, sanitizeInput, sanitizeForDatabase } from "@/lib
 import { MilkTestResult } from "@/types/milk-test";
 import { useAuth } from "@/contexts/AuthContext";
 
-export const useMilkTestForm = (editTest?: MilkTestResult) => {
+type MilkTestFormOptions = {
+  /**
+   * Called instead of navigating to /feed once a rating is saved. The full-page
+   * form wants the redirect; the quick-rate sheet wants to stay exactly where
+   * the reader already was, which is the entire point of it.
+   */
+  onSaved?: () => void;
+};
+
+export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFormOptions) => {
   const [testId] = useState<string | undefined>(editTest?.id);
   const [rating, setRating] = useState(editTest?.rating || 0);
   const [productId, setProductId] = useState(editTest?.product_id || "");
@@ -245,7 +254,11 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
       await queryClient.invalidateQueries({ queryKey: ['my-milk-tests'] });
       await queryClient.invalidateQueries({ queryKey: ['feed'] });
 
-      navigate("/feed");
+      if (options?.onSaved) {
+        options.onSaved();
+      } else {
+        navigate("/feed");
+      }
     } catch (error) {
       console.error('Error adding milk test:', error);
       toast({
