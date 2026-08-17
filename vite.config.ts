@@ -4,11 +4,10 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default (defineConfig as any)(({ mode }: { mode: string }) => ({
   server: {
     host: "::",
-    port: 8080,
+    port: Number(process.env.PORT) || 8080,
   },
   oxc: {
     transform: {
