@@ -8,6 +8,8 @@
  * brand green, or on a deep forest band without a second asset.
  */
 
+import type { ReactElement } from "react";
+
 type MotifProps = {
   className?: string;
   /** Rendered size in px; motifs keep their own aspect ratio. */

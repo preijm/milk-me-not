@@ -18,8 +18,10 @@ npm run build:dev    # Development build with full debugging
 # Lint (max-warnings=0)
 npm run lint
 
-# Type check
-bunx tsc --noEmit
+# Type check — build mode, NOT `tsc --noEmit`.
+# The root tsconfig is "files": [] plus project references, so plain tsc
+# resolves zero files and passes without checking anything.
+bunx tsc --build
 
 # Tests
 bunx vitest run      # Run once
