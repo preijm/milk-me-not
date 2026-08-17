@@ -18,6 +18,10 @@ interface ProductWithName {
   name: string;
 }
 
+// Stable reference for the loading/error case — see NO_COUNTRIES in
+// CountrySelect for why a `[]` literal default loops here.
+const NO_PRODUCTS: ProductWithName[] = [];
+
 export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelectProps) => {
   const [suggestions, setSuggestions] = useState<ProductWithName[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -26,7 +30,7 @@ export const ProductSelect = ({ brandId, productId, setProductId }: ProductSelec
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { toast } = useToast();
 
-  const { data: products = [], isLoading } = useQuery({
+  const { data: products = NO_PRODUCTS, isLoading } = useQuery({
     queryKey: ['products', brandId],
     queryFn: async () => {
       if (!brandId) return [];

@@ -10,6 +10,10 @@ export interface Brand {
   name: string;
 }
 
+// Stable reference for the loading/error case — see NO_COUNTRIES in
+// CountrySelect for why a `[]` literal default loops here.
+const NO_BRANDS: Brand[] = [];
+
 export const useBrandData = (inputValue: string, brandId: string, setBrandId: (id: string) => void) => {
   const [suggestions, setSuggestions] = useState<Brand[]>([]);
   const [showAddNew, setShowAddNew] = useState(false);
@@ -18,7 +22,7 @@ export const useBrandData = (inputValue: string, brandId: string, setBrandId: (i
   const queryClient = useQueryClient();
 
   // Fetch brands from Supabase
-  const { data: brands = [], isLoading } = useQuery({
+  const { data: brands = NO_BRANDS, isLoading } = useQuery({
     queryKey: ['brands'],
     queryFn: async () => {
       const { data, error } = await supabase

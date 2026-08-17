@@ -8,6 +8,13 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  /**
+   * False until the initial getSession() has resolved. `user` is null before
+   * that point regardless of whether a session exists, so anything that turns
+   * a null user into a redirect must wait for this rather than reading
+   * `loading` — which starts false so the header doesn't flash on every load.
+   */
+  initialized: boolean;
   signOut: () => Promise<void>;
   refreshAuth: () => Promise<void>;
 }
@@ -118,6 +125,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     session,
     loading,
+    initialized,
     signOut,
     refreshAuth,
   };
