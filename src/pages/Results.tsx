@@ -148,9 +148,14 @@ const Results = () => {
           />
         )}
 
-        <div className="mt-7">
-          {isMobile ? <ResultsToolbarMobile {...toolbarProps} /> : <ResultsToolbarDesktop {...toolbarProps} />}
-        </div>
+        {/* The map runs its own country query and ignores search, sort and
+            filter entirely, so it gets no toolbar — controls that silently do
+            nothing are worse than controls that are absent. */}
+        {view !== "map" && (
+          <div className="mt-7">
+            {isMobile ? <ResultsToolbarMobile {...toolbarProps} /> : <ResultsToolbarDesktop {...toolbarProps} />}
+          </div>
+        )}
 
         <div className="mt-8">
           {isLoading ? (
