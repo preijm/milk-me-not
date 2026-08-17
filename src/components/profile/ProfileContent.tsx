@@ -1,7 +1,12 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StoryButton, ArrowRight } from "@/components/story/primitives";
 import { DropGlyph } from "@/components/story/motifs";
+import { BrandMark } from "@/components/story/BrandMark";
+import { QuickRateSheet } from "@/components/story/QuickRateSheet";
+import { getTier } from "@/components/story/tiers";
+import type { MilkTestResult } from "@/types/milk-test";
 
 interface ProfileContentProps {
   username: string;
@@ -13,6 +18,8 @@ interface ProfileContentProps {
   memberSince: string;
   onEditClick: () => void;
   onSignOut: () => void;
+  /** The reader's own ratings, so they can revisit or retract one. */
+  ratings?: MilkTestResult[];
 }
 
 const Figure = ({ label, value }: { label: string; value: string }) => (
@@ -40,8 +47,10 @@ export const ProfileContent = ({
   memberSince,
   onEditClick,
   onSignOut,
+  ratings = [],
 }: ProfileContentProps) => {
   const navigate = useNavigate();
+  const [editing, setEditing] = useState<MilkTestResult | null>(null);
 
   return (
     <div className="space-y-6">
@@ -108,6 +117,70 @@ export const ProfileContent = ({
           </button>
         </div>
       </section>
+
+      {/* Until now there was no route to your own ratings at all: the components
+          for editing one existed but nothing imported them, so a rating could be
+          posted and never corrected or withdrawn. */}
+      <section>
+        <h3 className="story-kicker mb-3 px-1 text-story-muted-2">
+          {ratings.length > 0 ? "Every one you have posted" : "Nothing rated yet"}
+        </h3>
+
+        {ratings.length === 0 ? (
+          <div className="story-hairline rounded-2xl bg-white p-5 text-center">
+            <p className="text-[0.9375rem] text-story-muted">
+              Rate your first carton and it will show up here, where you can change your mind later.
+            </p>
+          </div>
+        ) : (
+          <ul className="space-y-2">
+            {ratings.map((r) => {
+              const tier = getTier(r.rating);
+              return (
+                <li key={r.id}>
+                  <button
+                    onClick={() => setEditing(r)}
+                    className="story-hairline flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left transition-colors hover:bg-story-cream-2"
+                  >
+                    <BrandMark
+                      brand={r.brand_name}
+                      product={r.product_name}
+                      className="h-11 w-11 shrink-0"
+                      radius="rounded-xl"
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[0.9375rem] font-bold text-story-ink">
+                        {r.product_name || "Unknown product"}
+                      </span>
+                      <span className="block truncate text-[0.8125rem] text-story-muted">
+                        {r.brand_name || "Unknown brand"}
+                        {r.notes ? ` — ${r.notes}` : ""}
+                      </span>
+                    </span>
+                    <span
+                      className="story-num shrink-0 rounded-lg px-2.5 py-1 text-[0.9375rem] text-white"
+                      style={{ backgroundColor: tier.color }}
+                    >
+                      {r.rating}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      {editing?.product_id && (
+        <QuickRateSheet
+          open
+          onOpenChange={(next) => !next && setEditing(null)}
+          productId={editing.product_id}
+          productName={editing.product_name || "This milk"}
+          brandName={editing.brand_name}
+          onSaved={() => setEditing(null)}
+        />
+      )}
     </div>
   );
 };

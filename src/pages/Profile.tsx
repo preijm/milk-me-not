@@ -65,7 +65,7 @@ const Profile = () => {
       lede="Everything you have scored, and what it adds up to."
       width="wide"
     >
-      <ProfileContent {...profileProps} />
+      <ProfileContent {...profileProps} ratings={milkTests} />
 
       {profile && user && (
         <ProfileEditDialog

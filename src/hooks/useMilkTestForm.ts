@@ -10,6 +10,7 @@ import { validateMilkTestInput, sanitizeInput, sanitizeForDatabase } from "@/lib
 import { MilkTestResult } from "@/types/milk-test";
 import { useAuth } from "@/contexts/AuthContext";
 import { RATING_FACTS_KEY } from "./useRatingFacts";
+import { MY_RATING_KEY } from "./useMyRatingForProduct";
 
 /**
  * Every cached view a rating can appear in.
@@ -30,6 +31,7 @@ const invalidateRatingViews = async (queryClient: QueryClient) => {
       ['milk-tests-details'],
       ['product-test-count'],
       RATING_FACTS_KEY,
+      [MY_RATING_KEY],
     ].map((queryKey) => queryClient.invalidateQueries({ queryKey })),
   );
 };
@@ -41,6 +43,8 @@ type MilkTestFormOptions = {
    * the reader already was, which is the entire point of it.
    */
   onSaved?: () => void;
+  /** Same, for the delete path. */
+  onDeleted?: () => void;
 };
 
 export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFormOptions) => {
@@ -334,7 +338,11 @@ export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFor
       // Invalidate relevant queries
       await invalidateRatingViews(queryClient);
 
-      navigate("/feed");
+      if (options?.onDeleted) {
+        options.onDeleted();
+      } else {
+        navigate("/feed");
+      }
     } catch (error) {
       console.error('Error deleting milk test:', error);
       toast({
