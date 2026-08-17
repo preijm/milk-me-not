@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface DrinkPreferenceProps {
   preference: string;
@@ -83,52 +83,40 @@ const HotIcon = ({ className }: { className?: string }) => (
 );
 
 export const DrinkPreference = ({ preference, setPreference }: DrinkPreferenceProps) => {
-  const isMobile = useIsMobile();
 
+  // These are four ways to drink the same milk, not a scale, so they get one
+  // selected treatment rather than four unrelated colours borrowed from the
+  // score palette — "hot" was tinted with the red that means a bad rating.
   const buttons = [
-    {
-      value: "cold",
-      icon: ColdIcon,
-      label: "Cold",
-      activeClass: "bg-white text-score-good border-score-good",
-    },
-    {
-      value: "hot",
-      icon: HotIcon,
-      label: "Hot",
-      activeClass: "bg-white text-score-poor border-score-poor",
-    },
-    {
-      value: "coffee",
-      icon: CoffeeIcon,
-      label: "Coffee",
-      activeClass: "bg-white text-amber-800 border-amber-800",
-    },
-    {
-      value: "tea",
-      icon: TeaCup,
-      label: "Tea",
-      activeClass: "bg-white text-score-fair border-score-fair",
-    },
+    { value: "cold", icon: ColdIcon, label: "Cold" },
+    { value: "hot", icon: HotIcon, label: "Hot" },
+    { value: "coffee", icon: CoffeeIcon, label: "Coffee" },
+    { value: "tea", icon: TeaCup, label: "Tea" },
   ];
 
   return (
-    <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-4`}>
-      {buttons.map(({ value, icon: Icon, label, activeClass }) => (
-        <button
-          key={value}
-          type="button"
-          onClick={() => setPreference(value)}
-          className={`flex flex-col items-center p-3 rounded-lg border transition-all ${
-            preference === value
-              ? `${activeClass} shadow-sm`
-              : "bg-card border-border text-muted-foreground hover:border-muted-foreground/50"
-          }`}
-        >
-          <Icon className="w-8 h-8 mb-1" />
-          <span className="text-sm">{label}</span>
-        </button>
-      ))}
+    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      {buttons.map(({ value, icon: Icon, label }) => {
+        const active = preference === value;
+        return (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setPreference(value)}
+            aria-pressed={active}
+            className={cn(
+              "flex min-h-[5rem] flex-col items-center justify-center gap-1 rounded-xl p-3 transition-colors",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
+              active
+                ? "bg-story-green-wash text-story-green-dark shadow-[inset_0_0_0_1.5px_hsl(var(--story-green))]"
+                : "story-hairline bg-white text-story-muted hover:bg-story-cream-2",
+            )}
+          >
+            <Icon className="mb-0.5 h-7 w-7" />
+            <span className="text-[0.8125rem] font-bold">{label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 };

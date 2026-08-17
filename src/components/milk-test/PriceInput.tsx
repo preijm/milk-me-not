@@ -1,5 +1,6 @@
-
 import React from "react";
+import { getPriceQuality } from "@/components/story/tiers";
+import { cn } from "@/lib/utils";
 
 interface PriceInputProps {
   price: string;
@@ -8,95 +9,68 @@ interface PriceInputProps {
   setHasChanged: (hasChanged: boolean) => void;
 }
 
-export const PriceInput = ({
-  price,
-  setPrice,
-  hasChanged,
-  setHasChanged
-}: PriceInputProps) => {
-  // Ensure price is a string and default to empty string if null/undefined
+/**
+ * The five values the database stores, in order, worst to best.
+ *
+ * The colours come from the shared price-quality scale rather than being
+ * restated here — the old buttons had drifted out of order, tinting "good deal"
+ * with the same amber as "not worth it" and "fair price" with the strongest
+ * green on the scale, so the row read as no scale at all.
+ */
+const CHOICES = [
+  { value: "waste_of_money", short: "Waste", label: "Total waste of money" },
+  { value: "not_worth_it", short: "Poor", label: "Not worth it" },
+  { value: "fair_price", short: "Fair", label: "Fair price" },
+  { value: "good_deal", short: "Good", label: "Good deal" },
+  { value: "great_value", short: "Gem", label: "Great value for money" },
+];
+
+/** A five-bar meter: each step is one bar taller than the last. */
+const Meter = ({ step, active }: { step: number; active: boolean }) => (
+  <span className="flex h-5 items-end gap-[2px]" aria-hidden>
+    {[0, 1, 2, 3, 4].map((i) => (
+      <span
+        key={i}
+        className={cn("w-[3px] rounded-[1px] transition-colors", i <= step ? "opacity-100" : "opacity-25")}
+        style={{ height: `${6 + i * 3}px`, backgroundColor: active ? "currentColor" : "hsl(var(--story-muted-2))" }}
+      />
+    ))}
+  </span>
+);
+
+export const PriceInput = ({ price, setPrice, hasChanged, setHasChanged }: PriceInputProps) => {
   const priceValue = price || "";
 
   const handlePriceChange = (value: string) => {
-    // If the button is already selected, unselect it by setting empty string
-    const newValue = value === priceValue ? "" : value;
-    
-    // Update the price with new value or empty string if unselecting
-    setPrice(newValue);
-    
-    // Mark as changed if not already changed
-    if (!hasChanged) {
-      setHasChanged(true);
-    }
-    
-    // For debugging
-    console.log('Price quality ratio selected:', newValue);
+    // Tapping the selected option again clears it — this is an optional field.
+    setPrice(value === priceValue ? "" : value);
+    if (!hasChanged) setHasChanged(true);
   };
-
-  const buttons = [
-    {
-      value: "waste_of_money",
-      emoji: "🚫",
-      label: "Total waste of money",
-      shortLabel: "Waste",
-      activeClass: "bg-white text-score-poor border-score-poor",
-    },
-    {
-      value: "not_worth_it",
-      emoji: "⚠️",
-      label: "Not worth it",
-      shortLabel: "Poor",
-      activeClass: "bg-white text-score-fair border-score-fair",
-    },
-    {
-      value: "fair_price",
-      emoji: "✅",
-      label: "Fair price",
-      shortLabel: "Fair",
-      activeClass: "bg-white text-score-excellent border-score-excellent",
-    },
-    {
-      value: "good_deal",
-      emoji: "🏆",
-      label: "Good deal",
-      shortLabel: "Good",
-      activeClass: "bg-white text-score-fair border-score-fair",
-    },
-    {
-      value: "great_value",
-      emoji: "💎",
-      label: "Great value for money",
-      shortLabel: "Gem",
-      activeClass: "bg-white text-score-good border-score-good",
-    },
-  ];
-
-  // For debugging
-  console.log('Price quality ratio value in PriceInput:', priceValue);
 
   return (
     <div className="grid grid-cols-5 gap-2">
-      {buttons.map(({ value, emoji, label, shortLabel, activeClass }) => (
-        <div key={value} className="flex flex-col items-center gap-2">
+      {CHOICES.map(({ value, short, label }, i) => {
+        const active = priceValue === value;
+        const tier = getPriceQuality(value);
+        return (
           <button
+            key={value}
             type="button"
             onClick={() => handlePriceChange(value)}
-            className={`flex items-center justify-center py-3 px-2 rounded-lg border transition-all w-full ${
-              priceValue === value
-                ? `${activeClass} shadow-sm`
-                : "bg-white border-gray-200 hover:border-gray-300"
-            }`}
             aria-label={label}
+            aria-pressed={active}
+            style={active && tier ? { backgroundColor: tier.light, color: tier.color, boxShadow: `inset 0 0 0 1.5px ${tier.color}` } : undefined}
+            className={cn(
+              "flex min-h-[4.25rem] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2.5 transition-colors",
+              "focus:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
+              !active && "story-hairline bg-white text-story-muted hover:bg-story-cream-2",
+            )}
           >
-            <span className="text-xl">{emoji}</span>
+            <Meter step={i} active={active} />
+            <span className={cn("text-[0.6875rem] font-bold", !active && "text-story-muted")}>{short}</span>
           </button>
-          <span className={`text-xs font-medium text-center ${
-            priceValue === value ? "text-gray-900" : "text-gray-500"
-          }`}>
-            {shortLabel}
-          </span>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
