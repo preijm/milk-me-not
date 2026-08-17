@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import MenuBar from "@/components/MenuBar";
-import MobileFooter from "@/components/MobileFooter";
-import BackgroundPattern from "@/components/BackgroundPattern";
+import { StoryAppLayout } from "@/components/story/StoryAppLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useUserMilkTests } from "@/hooks/useUserMilkTests";
@@ -60,49 +58,17 @@ const Profile = () => {
     return <PublicProfile userId={userId} />;
   }
 
-  // Mobile/Tablet layout
-  if (isMobileOrTablet) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-        <MenuBar />
-        <BackgroundPattern>
-          <div className="min-h-screen pt-16 pb-24 lg:pb-12">
-            <div className="container max-w-6xl mx-auto px-4 py-6 sm:py-8 relative z-10">
-              <ProfileContent {...profileProps} variant="mobile" />
-            </div>
-          </div>
-        </BackgroundPattern>
-        <MobileFooter />
-
-        {/* Profile Edit Dialog */}
-        {profile && user && (
-          <ProfileEditDialog
-            open={editDialogOpen}
-            onOpenChange={setEditDialogOpen}
-            currentUsername={profile.username}
-            currentAvatarUrl={profile.avatar_url}
-            userId={user.id}
-            onSuccess={refetchProfile}
-          />
-        )}
-      </div>
-    );
-  }
-
-  // Desktop layout
+  // One shell, one branch: the two layouts differed only in the `variant` the
+  // content component received, but each carried its own copy of the page
+  // chrome and edit dialog.
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <MenuBar />
-      <BackgroundPattern>
-        <div className="min-h-screen pt-16 pb-24 lg:pb-12">
-          <div className="container max-w-6xl mx-auto px-4 py-6 sm:py-8 relative z-10">
-            <ProfileContent {...profileProps} variant="desktop" />
-          </div>
-        </div>
-      </BackgroundPattern>
-      <MobileFooter />
+    <StoryAppLayout
+      title="Your ratings"
+      lede="Everything you have scored, and what it adds up to."
+      width="wide"
+    >
+      <ProfileContent {...profileProps} variant={isMobileOrTablet ? "mobile" : "desktop"} />
 
-      {/* Profile Edit Dialog */}
       {profile && user && (
         <ProfileEditDialog
           open={editDialogOpen}
@@ -113,7 +79,7 @@ const Profile = () => {
           onSuccess={refetchProfile}
         />
       )}
-    </div>
+    </StoryAppLayout>
   );
 };
 

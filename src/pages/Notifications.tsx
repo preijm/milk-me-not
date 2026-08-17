@@ -1,63 +1,44 @@
-import React from "react";
-import MenuBar from "@/components/MenuBar";
-import MobileFooter from "@/components/MobileFooter";
-import { Bell } from "lucide-react";
-import BackgroundPattern from "@/components/BackgroundPattern";
 import { useNotifications } from "@/hooks/useNotifications";
+import { StoryAppLayout } from "@/components/story/StoryAppLayout";
 import { NotificationList } from "@/components/notifications/NotificationList";
 import { MobileNotificationList } from "@/components/notifications/MobileNotificationList";
+
 const Notifications = () => {
-  const {
-    notifications,
-    unreadCount,
-    markAllAsRead
-  } = useNotifications();
+  const { notifications, unreadCount, markAllAsRead } = useNotifications();
 
-  // Check if device is mobile or tablet (up to 1024px)
-  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
-
-  // Mobile/Tablet full-screen layout
-  if (isMobileOrTablet) {
-    return <div className="min-h-screen bg-white">
-        <MenuBar />
-        <div className="pt-14 pb-20 min-h-screen">
-          <div className="bg-white">
-            <MobileNotificationList />
+  return (
+    <StoryAppLayout
+      title="Notifications"
+      lede={
+        unreadCount > 0
+          ? `${unreadCount} thing${unreadCount === 1 ? "" : "s"} you have not read yet.`
+          : "Replies, likes and news about the milks you rated."
+      }
+    >
+      <div className="story-hairline overflow-hidden rounded-3xl bg-white">
+        {notifications.length > 0 && unreadCount > 0 && (
+          <div className="flex justify-end border-b border-story-ink/[0.07] px-5 py-3">
+            <button
+              type="button"
+              onClick={markAllAsRead}
+              className="text-[0.8125rem] font-bold text-story-green-dark transition-opacity md:hover:opacity-70"
+            >
+              Mark all read
+            </button>
           </div>
+        )}
+        {/* Two lists, chosen by CSS rather than a `window.innerWidth` read at
+            first render — the narrow one groups older items behind a
+            collapsible, which the wide one does not. */}
+        <div className="lg:hidden">
+          <MobileNotificationList />
         </div>
-        <MobileFooter />
-      </div>;
-  }
-
-  // Desktop layout
-  return <div className="min-h-screen">
-      <MenuBar />
-      <BackgroundPattern>
-        <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
-          <div className="container max-w-4xl mx-auto px-4 py-4 sm:py-8 relative z-10">
-            <div className="bg-card rounded-lg shadow-md overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-border">
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full flex items-center justify-center bg-primary">
-                    <Bell className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl font-semibold text-foreground">Notifications</h1>
-                    {unreadCount > 0 && <p className="text-sm text-muted-foreground">{unreadCount} unread</p>}
-                  </div>
-                </div>
-                {notifications.length > 0 && unreadCount > 0 && <button onClick={markAllAsRead} className="text-sm font-medium md:hover:opacity-80 transition-opacity text-primary">
-                    Mark all read
-                  </button>}
-              </div>
-              
-              <NotificationList />
-            </div>
-          </div>
+        <div className="hidden lg:block">
+          <NotificationList />
         </div>
-      </BackgroundPattern>
-      <MobileFooter />
-    </div>;
+      </div>
+    </StoryAppLayout>
+  );
 };
+
 export default Notifications;

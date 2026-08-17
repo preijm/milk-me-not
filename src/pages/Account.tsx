@@ -1,13 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { LogOut, User, Shield, Bell, Globe, HelpCircle } from "lucide-react";
-import MenuBar from "@/components/MenuBar";
-import MobileFooter from "@/components/MobileFooter";
-import BackgroundPattern from "@/components/BackgroundPattern";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { StoryAppLayout } from "@/components/story/StoryAppLayout";
+import { StoryButton } from "@/components/story/primitives";
 import { MobileSettingsMenu, MenuSection } from "@/components/account/MobileSettingsMenu";
 import { DesktopAccountTabs } from "@/components/account/DesktopAccountTabs";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
@@ -29,7 +26,6 @@ const Account = () => {
   const [securityDialogOpen, setSecurityDialogOpen] = useState(false);
   const [notificationDialogOpen, setNotificationDialogOpen] = useState(false);
   const [countryDialogOpen, setCountryDialogOpen] = useState(false);
-  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { profile, refetchProfile } = useUserProfile();
@@ -213,94 +209,58 @@ const Account = () => {
     navigate("/auth");
   };
 
-  // Mobile view
-  if (isMobile) {
-    return (
-      <div className="min-h-screen bg-background">
-        <MenuBar />
-
-        <div className="px-4 py-6 pb-24 pt-24">
-          <MobileSettingsMenu sections={accountMenuSections} />
-
-          <Button
-            onClick={handleLogout}
-            variant="destructive"
-            className="w-full mt-8 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
-          >
-            <LogOut className="w-6 h-6 mr-2 group-hover:rotate-12 transition-transform duration-300" />
-            Log Out
-          </Button>
-        </div>
-
-        {/* Dialogs */}
-        {profile && userId && (
-          <ProfileEditDialog
-            open={editDialogOpen}
-            onOpenChange={setEditDialogOpen}
-            currentUsername={profile.username}
-            currentAvatarUrl={profile.avatar_url}
-            userId={userId}
-            onSuccess={refetchProfile}
-          />
-        )}
-        <SecurityDialog
-          open={securityDialogOpen}
-          onOpenChange={setSecurityDialogOpen}
-        />
-        <NotificationDialog
-          open={notificationDialogOpen}
-          onOpenChange={setNotificationDialogOpen}
-        />
-        <CountryDialog
-          open={countryDialogOpen}
-          onOpenChange={setCountryDialogOpen}
-        />
-
-        <MobileFooter />
-      </div>
-    );
-  }
-
-  // Desktop view
+  // One shell for both. The mobile arm listed its settings as a tapped menu of
+  // dialogs and the desktop arm as tabs; both are kept, chosen by CSS rather
+  // than by a breakpoint read in JS.
   return (
-    <div className="min-h-screen">
-      <MenuBar />
-      <BackgroundPattern>
-        <div className="flex items-center justify-center min-h-screen py-8 pt-20 pb-24 md:pb-8">
-          <div className="container max-w-4xl mx-auto px-4 relative z-10">
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden border border-white/20 animate-fade-up">
-              {/* Header Section */}
-              <div className="bg-muted px-8 py-6">
-                <h1 className="text-3xl font-bold mb-2 text-[hsl(var(--brand-primary))]">
-                  Account Settings
-                </h1>
-                <p className="text-gray-600">
-                  Manage your account preferences and security
-                </p>
-              </div>
+    <StoryAppLayout
+      title="Account"
+      lede="Your details, your password, and what we are allowed to email you about."
+      width="wide"
+    >
+      <div className="lg:hidden">
+        <MobileSettingsMenu sections={accountMenuSections} />
+        <StoryButton tone="outline" onClick={handleLogout} className="mt-7 w-full">
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign out
+        </StoryButton>
+      </div>
 
-              <div className="p-8">
-                <DesktopAccountTabs
-                  username={username}
-                  setUsername={setUsername}
-                  defaultCountry={defaultCountry}
-                  setDefaultCountry={setDefaultCountry}
-                  newPassword={newPassword}
-                  setNewPassword={setNewPassword}
-                  confirmPassword={confirmPassword}
-                  setConfirmPassword={setConfirmPassword}
-                  loading={loading}
-                  isChangingPassword={isChangingPassword}
-                  onUpdateProfile={handleUpdateProfile}
-                  onUpdatePassword={handleUpdatePassword}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </BackgroundPattern>
-      <MobileFooter />
-    </div>
+      <div className="story-hairline hidden rounded-3xl bg-white p-7 lg:block">
+        <DesktopAccountTabs
+          username={username}
+          setUsername={setUsername}
+          defaultCountry={defaultCountry}
+          setDefaultCountry={setDefaultCountry}
+          newPassword={newPassword}
+          setNewPassword={setNewPassword}
+          confirmPassword={confirmPassword}
+          setConfirmPassword={setConfirmPassword}
+          loading={loading}
+          isChangingPassword={isChangingPassword}
+          onUpdateProfile={handleUpdateProfile}
+          onUpdatePassword={handleUpdatePassword}
+        />
+        <StoryButton tone="outline" onClick={handleLogout} className="mt-7">
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign out
+        </StoryButton>
+      </div>
+
+      {profile && userId && (
+        <ProfileEditDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          currentUsername={profile.username}
+          currentAvatarUrl={profile.avatar_url}
+          userId={userId}
+          onSuccess={refetchProfile}
+        />
+      )}
+      <SecurityDialog open={securityDialogOpen} onOpenChange={setSecurityDialogOpen} />
+      <NotificationDialog open={notificationDialogOpen} onOpenChange={setNotificationDialogOpen} />
+      <CountryDialog open={countryDialogOpen} onOpenChange={setCountryDialogOpen} />
+    </StoryAppLayout>
   );
 };
 

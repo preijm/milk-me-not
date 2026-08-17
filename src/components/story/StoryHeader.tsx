@@ -1,22 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import logoImg from "@/assets/logo-96.png";
 import { StoryButton, ArrowRight } from "./primitives";
 import { useRateCta } from "./useRateCta";
+import { StoryAccountMenu } from "./StoryAccountMenu";
+import { MEMBER_LINKS } from "./memberNav";
 
 const PUBLIC_LINKS = [
   { to: "/results", label: "Discover" },
   { to: "/feed", label: "Feed" },
   { to: "/about", label: "About" },
   { to: "/faq", label: "How it works" },
-];
-
-const MEMBER_LINKS = [
-  { to: "/profile", label: "My profile" },
-  { to: "/notifications", label: "Notifications" },
-  { to: "/account", label: "Account" },
 ];
 
 const Wordmark = ({ tone }: { tone: "ink" | "light" }) => (
@@ -75,7 +71,8 @@ export const StoryHeader = ({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const cta = useRateCta();
   const onAuthPage = location.pathname === "/auth";
 
@@ -145,6 +142,7 @@ export const StoryHeader = ({
                 <ArrowRight />
               </StoryButton>
             )}
+            {user && <StoryAccountMenu className="hidden lg:flex" />}
 
             <button
               type="button"
@@ -237,6 +235,19 @@ export const StoryHeader = ({
               >
                 Log in
               </Link>
+            )}
+            {user && (
+              <button
+                type="button"
+                tabIndex={open ? 0 : -1}
+                onClick={async () => {
+                  await signOut();
+                  navigate("/");
+                }}
+                className="rounded-full border-[1.5px] border-story-ink/12 py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-muted"
+              >
+                Sign out
+              </button>
             )}
           </div>
         </div>
