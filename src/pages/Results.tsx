@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { Loader } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Band, SectionHead, StoryButton, StoryLayout } from "@/components/story";
 import { ResultsViewSwitcher } from "@/components/results/ResultsViewSwitcher";
 import { MapLoginOverlay } from "@/components/results/MapLoginOverlay";
-import { ChartComingSoon } from "@/components/results/ChartComingSoon";
+import { ResultsCharts } from "@/components/results/ResultsCharts";
 import { ResultsHero } from "@/components/results/ResultsHero";
 import { ResultsToolbarDesktop, ResultsToolbarMobile } from "@/components/results/ResultsToolbar";
 import { ResultsRankedList } from "@/components/results/ResultsRankedList";
@@ -54,6 +54,14 @@ const Results = () => {
   const visibleResults = filteredResults.slice(0, visibleCount);
   const remaining = filteredResults.length - visibleResults.length;
 
+  // The charts read raw ratings, but must show the same slice as the ranking —
+  // so they follow the products that survived filtering rather than filtering
+  // twice against two different grains.
+  const visibleProductIds = useMemo(
+    () => new Set(filteredResults.map((r) => r.product_id)),
+    [filteredResults],
+  );
+
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { user } = useAuth();
@@ -82,6 +90,13 @@ const Results = () => {
     setFilters({ barista: false, properties: [], flavors: [], myResultsOnly: false });
   };
 
+  // Charts aggregate ratings rather than products, so the toolbar counts what
+  // the view underneath is actually made of. Every rating belongs to a product,
+  // so the slice's rating total is just the surviving products' counts summed.
+  const chartsView = !isMobile && view === "charts";
+  const ratingCount = filteredResults.reduce((sum, r) => sum + r.count, 0);
+  const totalRatings = aggregatedResults.reduce((sum, r) => sum + r.count, 0);
+
   const toolbarProps = {
     searchTerm,
     setSearchTerm,
@@ -91,8 +106,10 @@ const Results = () => {
     onSetSort: handleSetSort,
     onClearSort: handleClearSort,
     showMyResults: !!user,
-    resultCount: filteredResults.length,
-    totalCount: aggregatedResults.length,
+    resultCount: chartsView ? ratingCount : filteredResults.length,
+    totalCount: chartsView ? totalRatings : aggregatedResults.length,
+    countNoun: chartsView ? "ratings" : "products",
+    showSort: !chartsView,
   };
 
   return (
@@ -140,7 +157,7 @@ const Results = () => {
               />
             )
           ) : view === "charts" ? (
-            <ChartComingSoon />
+            <ResultsCharts visibleProductIds={visibleProductIds} />
           ) : user ? (
             <Suspense
               fallback={
