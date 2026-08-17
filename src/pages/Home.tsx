@@ -14,6 +14,7 @@ import {
   ScoreMark,
   SectionHead,
   Sprig,
+  TypeMark,
   BrandMark,
   StoryButton,
   StoryCard,
@@ -28,16 +29,20 @@ import { useStoryHome, type LeaderboardEntry } from "@/components/home/useStoryH
 const formatCount = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}K` : `${n}`);
 
 /**
- * Saturated tile grounds. Pale tints read as near-white from a distance and
- * flatten the whole section, so each tile commits to a full brand colour.
- * Amber carries ink rather than white — white on amber fails contrast.
+ * A soft ground per plant base, each one different, with the drawn mark for
+ * that base sitting on it. Eight tints in the same low-saturation register so
+ * the grid reads as a set rather than eight unrelated swatches.
  */
-const BASE_TONE = [
-  { bg: "bg-story-green", title: "text-white", sub: "text-white/70", wash: "text-white/[0.14]" },
-  { bg: "bg-story-blue", title: "text-white", sub: "text-white/70", wash: "text-white/[0.14]" },
-  { bg: "bg-story-amber", title: "text-story-ink", sub: "text-story-ink/65", wash: "text-story-ink/[0.10]" },
-  { bg: "bg-story-green-deep", title: "text-white", sub: "text-white/60", wash: "text-white/[0.09]" },
-];
+const BASE_TONE: Record<string, { bg: string; fg: string }> = {
+  oat: { bg: "bg-story-tint-sand", fg: "text-story-amber-dark" },
+  almond: { bg: "bg-story-blue-light", fg: "text-story-blue-dark" },
+  soy: { bg: "bg-story-green-wash", fg: "text-story-green-dark" },
+  coconut: { bg: "bg-story-cream-2", fg: "text-story-ink-2" },
+  rice: { bg: "bg-story-tint-sky", fg: "text-story-blue-dark" },
+  hazelnut: { bg: "bg-story-tint-clay", fg: "text-story-amber-dark" },
+  pea: { bg: "bg-story-tint-mint", fg: "text-story-green-dark" },
+  cashew: { bg: "bg-story-amber-light", fg: "text-story-amber-dark" },
+};
 
 const STEPS = [
   {
@@ -233,26 +238,23 @@ const Home = () => {
         />
 
         <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-          {MILK_BASES.map((base, i) => {
-            const tone = BASE_TONE[i % BASE_TONE.length];
+          {MILK_BASES.map((base) => {
+            const tone = BASE_TONE[base.key] ?? BASE_TONE.coconut;
             const count = data?.baseCounts?.[base.key];
             return (
               <li key={base.key}>
                 <Link
                   to={`/results?search=${encodeURIComponent(base.search)}`}
-                  className={`group relative flex aspect-[4/3] flex-col justify-end overflow-hidden rounded-[1.25rem] p-4 no-underline transition-transform duration-150 hover:-translate-y-0.5 sm:aspect-square sm:p-5 ${tone.bg}`}
+                  className={`group flex h-full flex-col justify-between gap-7 rounded-[1.25rem] p-4 no-underline transition-transform duration-150 hover:-translate-y-0.5 sm:p-5 ${tone.bg}`}
                 >
-                  <span
-                    aria-hidden
-                    className={`pointer-events-none absolute -right-16 -top-20 ${tone.wash}`}
-                  >
-                    <MilkDrop size={230} variant="solid" />
-                  </span>
-                  <span className={`story-display relative block text-[clamp(1.6rem,6vw,2.35rem)] leading-[0.95] ${tone.title}`}>
-                    {base.label}
-                  </span>
-                  <span className={`relative mt-1.5 block text-[0.75rem] font-bold uppercase tracking-[0.1em] ${tone.sub}`}>
-                    {count ? `${count} scored` : "Explore"}
+                  <TypeMark base={base.key} size={46} className={tone.fg} />
+                  <span>
+                    <span className={`block font-display text-[1.3rem] font-bold tracking-[-0.02em] sm:text-[1.5rem] ${tone.fg}`}>
+                      {base.label}
+                    </span>
+                    <span className={`mt-0.5 block text-[0.75rem] font-bold uppercase tracking-[0.08em] opacity-70 ${tone.fg}`}>
+                      {count ? `${count} scored` : "Explore"}
+                    </span>
                   </span>
                 </Link>
               </li>
@@ -375,12 +377,12 @@ const TopVerdictBar = ({
   return (
     <Link
       to={entry ? `/product/${entry.productId}` : "/results"}
-      className={`flex items-center gap-4 rounded-[1.25rem] bg-story-ink px-4 py-3.5 no-underline ${className ?? ""}`}
+      className={`story-hairline flex items-center gap-4 rounded-[1.25rem] bg-white px-4 py-3.5 no-underline ${className ?? ""}`}
     >
       <BrandMark brand={entry?.brand} product={entry?.product} className="h-11 w-11 text-[0.7rem]" radius="rounded-xl" />
       <span className="min-w-0 flex-1">
-        <span className="story-kicker block text-white/45">Top of the board</span>
-        <span className="mt-1 block truncate text-[0.9375rem] font-bold text-white">
+        <span className="story-kicker block text-story-muted-2">Top of the board</span>
+        <span className="mt-1 block truncate text-[0.9375rem] font-bold text-story-ink">
           {loading ? "Loading…" : `${entry?.brand ?? ""} · ${entry?.product ?? ""}`}
         </span>
       </span>
