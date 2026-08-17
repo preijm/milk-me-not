@@ -35,9 +35,16 @@ export const PriceLadderChart = ({
     <figure className="m-0">
       <ol className="flex flex-col gap-2.5">
         {bins.map((bin) => (
-          <li key={bin.tier.key} className="flex items-center gap-3 sm:gap-4">
-            <span className="w-[5.5rem] flex-shrink-0 text-[0.8125rem] font-bold leading-tight text-story-ink sm:w-28 sm:text-sm">
-              {bin.tier.label}
+          <li key={bin.tier.key} className="flex items-center gap-2 sm:gap-4">
+            {/* Four columns do not fit a phone, so the sample size tucks under
+                the label rather than claiming one of its own. */}
+            <span className="w-[5.25rem] flex-shrink-0 sm:w-28">
+              <span className="block text-[0.8125rem] font-bold leading-tight text-story-ink sm:text-sm">
+                {bin.tier.label}
+              </span>
+              <span className="block text-[0.6875rem] font-medium tabular-nums text-story-muted-2 sm:hidden">
+                {bin.n} {bin.n === 1 ? "rating" : "ratings"}
+              </span>
             </span>
             <span className="h-7 min-w-0 flex-1 overflow-hidden rounded-full bg-story-ink/[0.06] sm:h-8">
               <span
@@ -45,10 +52,10 @@ export const PriceLadderChart = ({
                 style={{ width: `${(bin.avg / SCALE_MAX) * 100}%` }}
               />
             </span>
-            <span className="story-num w-11 flex-shrink-0 text-right text-[1.0625rem] tabular-nums text-story-ink sm:w-12">
+            <span className="story-num w-8 flex-shrink-0 text-right text-[0.9375rem] tabular-nums text-story-ink sm:w-12 sm:text-[1.0625rem]">
               {bin.avg.toFixed(1)}
             </span>
-            <span className="w-12 flex-shrink-0 text-right text-[0.6875rem] font-medium tabular-nums text-story-muted-2 sm:w-14">
+            <span className="hidden w-14 flex-shrink-0 text-right text-[0.6875rem] font-medium tabular-nums text-story-muted-2 sm:block">
               {bin.n} {bin.n === 1 ? "rating" : "ratings"}
             </span>
           </li>

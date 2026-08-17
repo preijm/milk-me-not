@@ -6,6 +6,9 @@ type ViewType = "table" | "charts" | "map";
 interface ResultsViewSwitcherProps {
   view: ViewType;
   onViewChange: (view: ViewType) => void;
+  /** Which views to offer. Defaults to all of them. */
+  available?: ViewType[];
+  className?: string;
 }
 
 const VIEWS: { key: ViewType; label: string; icon: LucideIcon }[] = [
@@ -14,13 +17,16 @@ const VIEWS: { key: ViewType; label: string; icon: LucideIcon }[] = [
   { key: "map", label: "Map", icon: MapPin },
 ];
 
-export const ResultsViewSwitcher = ({ view, onViewChange }: ResultsViewSwitcherProps) => (
+export const ResultsViewSwitcher = ({ view, onViewChange, available, className }: ResultsViewSwitcherProps) => (
   <div
     role="tablist"
     aria-label="Results view"
-    className="inline-flex flex-shrink-0 items-center gap-1 rounded-full border-[1.5px] border-story-ink/10 bg-white p-1"
+    className={cn(
+      "inline-flex flex-shrink-0 items-center gap-1 rounded-full border-[1.5px] border-story-ink/10 bg-white p-1",
+      className,
+    )}
   >
-    {VIEWS.map((v) => (
+    {VIEWS.filter((v) => !available || available.includes(v.key)).map((v) => (
       <button
         key={v.key}
         type="button"

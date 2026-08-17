@@ -93,7 +93,7 @@ const Results = () => {
   // Charts aggregate ratings rather than products, so the toolbar counts what
   // the view underneath is actually made of. Every rating belongs to a product,
   // so the slice's rating total is just the surviving products' counts summed.
-  const chartsView = !isMobile && view === "charts";
+  const chartsView = view === "charts";
   const ratingCount = filteredResults.reduce((sum, r) => sum + r.count, 0);
   const totalRatings = aggregatedResults.reduce((sum, r) => sum + r.count, 0);
 
@@ -136,6 +136,18 @@ const Results = () => {
           trailing={!isMobile && <ResultsViewSwitcher view={view} onViewChange={setView} />}
         />
 
+        {/* On a phone the switcher gets its own full-width row — beside the
+            heading it would either wrap or squeeze the title. The map stays off
+            the phone, as it always has, so it is not offered there. */}
+        {isMobile && (
+          <ResultsViewSwitcher
+            view={view}
+            onViewChange={setView}
+            available={["table", "charts"]}
+            className="mt-6 flex w-full"
+          />
+        )}
+
         <div className="mt-7">
           {isMobile ? <ResultsToolbarMobile {...toolbarProps} /> : <ResultsToolbarDesktop {...toolbarProps} />}
         </div>
@@ -143,7 +155,7 @@ const Results = () => {
         <div className="mt-8">
           {isLoading ? (
             <ResultsSkeleton />
-          ) : isMobile || view === "table" ? (
+          ) : view === "table" ? (
             filteredResults.length === 0 ? (
               <ResultsEmptyState onClear={clearAllFilters} />
             ) : isMobile ? (
@@ -171,7 +183,7 @@ const Results = () => {
           ) : (
             <MapLoginOverlay />
           )}
-          {remaining > 0 && (isMobile || view === "table") && !isLoading && (
+          {remaining > 0 && view === "table" && !isLoading && (
             <div className="mt-10 flex flex-col items-center gap-3">
               <StoryButton tone="outline" size="md" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
                 Show {Math.min(remaining, PAGE_SIZE)} more

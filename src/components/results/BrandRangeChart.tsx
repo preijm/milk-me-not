@@ -20,15 +20,19 @@ const TICKS = [0, 2, 4, 6, 8, 10];
 
 const pct = (value: number) => (value / SCALE_MAX) * 100;
 
-/** Label column width, shared by the rows and the axis so ticks line up. */
-const LABEL_COL = "w-[7.5rem] flex-shrink-0 sm:w-[11rem]";
-const VALUE_COL = "w-11 flex-shrink-0 text-right sm:w-12";
+/**
+ * Column widths, shared by the rows and the axis so the ticks line up under
+ * the plot. Narrow on a phone: the plot is the chart, so the name and the
+ * number give up what they can spare.
+ */
+const LABEL_COL = "w-[5.75rem] flex-shrink-0 sm:w-[11rem]";
+const VALUE_COL = "w-8 flex-shrink-0 text-right sm:w-12";
 
 const BrandRangeRow = ({ row }: { row: BrandRange }) => {
   const left = pct(row.min);
   const width = Math.max(pct(row.max) - left, 1.5);
   return (
-    <li className="group flex items-center gap-3 sm:gap-4">
+    <li className="group flex items-center gap-2 sm:gap-4">
       <span className={`${LABEL_COL} flex items-center gap-2 sm:gap-2.5`}>
         <BrandMark brand={row.brand} className="hidden h-7 w-7 text-[0.5rem] sm:flex" radius="rounded-lg" />
         <span className="min-w-0">
@@ -67,7 +71,9 @@ const BrandRangeRow = ({ row }: { row: BrandRange }) => {
         </span>
       </span>
 
-      <span className={`${VALUE_COL} story-num text-[1.0625rem] tabular-nums text-story-ink`}>{row.avg.toFixed(1)}</span>
+      <span className={`${VALUE_COL} story-num text-[0.9375rem] tabular-nums text-story-ink sm:text-[1.0625rem]`}>
+        {row.avg.toFixed(1)}
+      </span>
     </li>
   );
 };
@@ -92,7 +98,7 @@ export const BrandRangeChart = ({ rows, minRatings }: { rows: BrandRange[]; minR
       </ol>
 
       {/* Axis. Ticks sit under the plot column, so the label and value columns are matched by empty spacers. */}
-      <div aria-hidden className="mt-3 flex items-center gap-3 sm:gap-4">
+      <div aria-hidden className="mt-3 flex items-center gap-2 sm:gap-4">
         <span className={LABEL_COL} />
         <span className="relative h-4 min-w-0 flex-1">
           {TICKS.map((tick) => (

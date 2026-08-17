@@ -155,6 +155,8 @@ export const ResultsToolbarMobile = ({
   showMyResults,
   resultCount,
   totalCount,
+  countNoun = "products",
+  showSort = true,
 }: ToolbarProps) => {
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -165,11 +167,15 @@ export const ResultsToolbarMobile = ({
       <SearchField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <div className="story-rail flex items-center gap-2">
-        <Sheet open={sortOpen} onOpenChange={setSortOpen}>
+        <Sheet open={sortOpen && showSort} onOpenChange={setSortOpen}>
           <SheetTrigger asChild>
             <button
               type="button"
-              className="flex h-10 flex-shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-story-ink/12 bg-white px-3.5 text-[0.8125rem] font-bold text-story-ink-2"
+              hidden={!showSort}
+              className={cn(
+                "h-10 flex-shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-story-ink/12 bg-white px-3.5 text-[0.8125rem] font-bold text-story-ink-2",
+                showSort ? "flex" : "hidden",
+              )}
             >
               <ArrowUpDown className="h-3.5 w-3.5" aria-hidden />
               {findSortLabel(sortConfig)}
@@ -227,7 +233,7 @@ export const ResultsToolbarMobile = ({
                 onClick={() => setFilterOpen(false)}
                 className="w-full rounded-full bg-story-green py-3.5 text-[0.9375rem] font-bold text-white"
               >
-                Show {resultCount} products
+                Show {resultCount} {countNoun}
               </button>
             </SheetFooter>
           </SheetContent>
@@ -235,7 +241,7 @@ export const ResultsToolbarMobile = ({
       </div>
 
       <p className="text-[0.75rem] font-medium text-story-muted-2">
-        {resultCount} of {totalCount} products
+        {resultCount} of {totalCount} {countNoun}
       </p>
     </div>
   );
