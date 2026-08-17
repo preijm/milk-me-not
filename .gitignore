@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Local environment. Values belong on the machine, not in a public repo —
+# see .env.example for the names.
+.env
+.env.*
+!.env.example
+
 # Incremental state written by `tsc --build`
 *.tsbuildinfo
 
