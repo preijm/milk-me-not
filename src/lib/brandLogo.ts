@@ -71,6 +71,12 @@ const ALIASES: Record<string, string> = {
   "edeka-bio-my-veggie": "edeka",
   "dmbio": "dmbio",
   "dm-bio": "dmbio",
+  // Supermarket own-brands carry the retailer's mark: the carton says Vemondo,
+  // but the only logo that brand has ever had is Lidl's.
+  "vemondo": "lidl",
+  "my-vay": "aldi",
+  "biobio": "netto",
+  "bio-bio": "netto",
 };
 
 /** The logo URL for a brand, or null when we do not have one. */
@@ -90,7 +96,7 @@ export const getBrandLogo = (brandName: string | null | undefined): string | nul
  * a square tile loses its wordmark — `kara.jpg` is a blue panel but far wider
  * than it is tall, so it stays on the default treatment.
  */
-const FULL_BLEED = new Set(["friesche-vlag", "isola"]);
+const FULL_BLEED = new Set(["friesche-vlag", "isola", "aldi", "edeka", "lidl", "picnic"]);
 
 /** Does this brand's logo bring its own background? */
 export const isFullBleedLogo = (brandName: string | null | undefined): boolean => {
