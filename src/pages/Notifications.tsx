@@ -8,7 +8,9 @@ const Notifications = () => {
 
   return (
     <StoryAppLayout
-      title="Notifications"
+      kicker="Your inbox"
+      title="Who replied,"
+      accent="who agreed."
       lede={
         unreadCount > 0
           ? `${unreadCount} thing${unreadCount === 1 ? "" : "s"} you have not read yet.`

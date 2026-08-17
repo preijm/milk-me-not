@@ -61,8 +61,10 @@ const Profile = () => {
   // chrome and edit dialog.
   return (
     <StoryAppLayout
-      title="Your ratings"
-      lede="Everything you have scored, and what it adds up to."
+      kicker="Your shelf"
+      title="Everything"
+      accent="you have poured."
+      lede="Every score you have left, and what it adds up to."
       width="wide"
     >
       <ProfileContent {...profileProps} ratings={milkTests} />

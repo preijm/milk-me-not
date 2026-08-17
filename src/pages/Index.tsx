@@ -26,11 +26,13 @@ const Index = () => {
 
   return (
     <StoryAppLayout
-      title={isEditMode ? "Change your mind?" : "Moo-ment of truth"}
+      kicker={isEditMode ? "Editing your rating" : "One carton, one score"}
+      title={isEditMode ? "Changed" : "Moo-ment"}
+      accent={isEditMode ? "your mind?" : "of truth."}
       lede={
         isEditMode
           ? "Update what you said about this carton."
-          : "One carton, one honest score. Takes about a minute."
+          : "Honest beats generous. Takes about a minute."
       }
     >
       <AddMilkTest />

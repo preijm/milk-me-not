@@ -25,14 +25,21 @@ const CHOICES = [
   { value: "great_value", short: "Gem", label: "Great value for money" },
 ];
 
-/** A five-bar meter: each step is one bar taller than the last. */
-const Meter = ({ step, active }: { step: number; active: boolean }) => (
+/**
+ * A five-bar meter, always in its own tier colour.
+ *
+ * These were grey until selected, which meant the row a reader actually arrives
+ * at was five identical grey blocks — throwing away the red-to-green scale that
+ * every other screen uses to make a score legible at a glance. Selection now
+ * changes weight, not whether the scale exists.
+ */
+const Meter = ({ step, colour, active }: { step: number; colour: string; active: boolean }) => (
   <span className="flex h-5 items-end gap-[2px]" aria-hidden>
     {[0, 1, 2, 3, 4].map((i) => (
       <span
         key={i}
-        className={cn("w-[3px] rounded-[1px] transition-colors", i <= step ? "opacity-100" : "opacity-25")}
-        style={{ height: `${6 + i * 3}px`, backgroundColor: active ? "currentColor" : "hsl(var(--story-muted-2))" }}
+        className={cn("w-[3px] rounded-[1px] transition-opacity", i <= step ? "" : "opacity-20")}
+        style={{ height: `${6 + i * 3}px`, backgroundColor: colour, opacity: i <= step ? (active ? 1 : 0.62) : undefined }}
       />
     ))}
   </span>
@@ -66,7 +73,7 @@ export const PriceInput = ({ price, setPrice, hasChanged, setHasChanged }: Price
               !active && "story-hairline bg-white text-story-muted hover:bg-story-cream-2",
             )}
           >
-            <Meter step={i} active={active} />
+            <Meter step={i} colour={tier?.color ?? "hsl(var(--story-muted-2))"} active={active} />
             <span className={cn("text-[0.6875rem] font-bold", !active && "text-story-muted")}>{short}</span>
           </button>
         );

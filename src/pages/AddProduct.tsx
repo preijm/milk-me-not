@@ -72,8 +72,10 @@ const AddProduct = () => {
 
   return (
     <StoryAppLayout
-      title={editProductId ? "Edit product" : "Add a product"}
-      lede="Not on the shelf yet? Add it here, then rate it."
+      kicker="New to the board"
+      title={editProductId ? "Fix this" : "Add a"}
+      accent={editProductId ? "carton." : "carton."}
+      lede="Not on the board yet? Put it there, then rate it."
       back={{ to: "/add", label: "Back to rating" }}
     >
       <div className="story-hairline rounded-3xl bg-white p-5 md:p-7">

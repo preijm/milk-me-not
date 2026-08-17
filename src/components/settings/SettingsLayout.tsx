@@ -54,7 +54,12 @@ interface SettingsLayoutProps {
 
 export default function SettingsLayout({ children, title }: SettingsLayoutProps) {
   return (
-    <StoryAppLayout title={title} lede="Manage your account and how Milk Me Not reaches you." width="wide">
+    <StoryAppLayout
+      kicker="Your account"
+      title={title}
+      lede="Manage your details and how Milk Me Not reaches you."
+      width="wide"
+    >
       <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
         <SettingsNav />
         <div className="story-hairline min-w-0 flex-1 rounded-3xl bg-white p-5 md:p-7">{children}</div>

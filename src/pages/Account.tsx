@@ -61,16 +61,12 @@ const Account = () => {
       items: [
         {
           icon: User,
-          iconBgColor: "#dbeafe",
-          iconColor: "#2563eb",
           title: "Profile",
           description: "Edit your personal information",
           onClick: () => setEditDialogOpen(true),
         },
         {
           icon: Shield,
-          iconBgColor: "#f3e8ff",
-          iconColor: "#9333ea",
           title: "Security",
           description: "Password and authentication",
           onClick: () => setSecurityDialogOpen(true),
@@ -82,16 +78,12 @@ const Account = () => {
       items: [
         {
           icon: Bell,
-          iconBgColor: "#ffedd5",
-          iconColor: "#ea580c",
           title: "Notifications",
           description: "Manage your alerts",
           onClick: () => setNotificationDialogOpen(true),
         },
         {
           icon: Globe,
-          iconBgColor: "#dcfce7",
-          iconColor: "#16a34a",
           title: "Country",
           description: "Set your default location",
           onClick: () => setCountryDialogOpen(true),
@@ -103,24 +95,18 @@ const Account = () => {
       items: [
         {
           icon: HelpCircle,
-          iconBgColor: "#fef9c3",
-          iconColor: "#ca8a04",
           title: "Contact",
           description: "Reach out to our team",
           path: "/contact",
         },
         {
           icon: HelpCircle,
-          iconBgColor: "#e0e7ff",
-          iconColor: "#4f46e5",
           title: "FAQ",
           description: "Frequently asked questions",
           path: "/faq",
         },
         {
           icon: HelpCircle,
-          iconBgColor: "#dcfce7",
-          iconColor: "#16a34a",
           title: "About",
           description: "Learn about our story",
           path: "/about",
@@ -214,8 +200,10 @@ const Account = () => {
   // than by a breakpoint read in JS.
   return (
     <StoryAppLayout
-      title="Account"
-      lede="Your details, your password, and what we are allowed to email you about."
+      kicker="Your account"
+      title="Details, password,"
+      accent="and your inbox."
+      lede="What we know about you, and what we are allowed to send you."
       width="wide"
     >
       <div className="lg:hidden">
