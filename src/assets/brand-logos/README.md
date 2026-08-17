@@ -27,6 +27,23 @@ duplicating the file.
 `.svg`, `.png`, `.webp`, `.jpg` and `.avif` all work. SVG is best where you
 can get it.
 
+## Two kinds of logo
+
+**A mark on transparency** — a wordmark or symbol with no background of its
+own. This is the default. It sits on a white tile with a little padding, which
+is what keeps a dark logo readable when the row itself is dark.
+
+**A panel** — a logo that already carries its own coloured background, like
+Friesche Vlag's blue shield or Isola's yellow block. These must fill the tile
+edge to edge; putting them on a white tile with padding draws a white ring
+around a logo that already has its own edge, and it reads as a picture inside
+a picture.
+
+Panels are declared in `FULL_BLEED` in `src/lib/brandLogo.ts` — add the slug
+and it fills. Only do this for a **roughly square** panel: a wide one cropped
+to a square tile loses its wordmark, which is why `kara.jpg` stays on the
+default treatment despite being a blue panel.
+
 ## What makes a good file
 
 Logos render inside a small square tile on a white ground, scaled to fit with
@@ -37,7 +54,8 @@ Logos render inside a small square tile on a white ground, scaled to fit with
 - **Wordmarks beat lockups.** A tall logo with a tagline underneath becomes
   illegible at 32px. Crop to the mark or the wordmark alone.
 - **Avoid white-on-transparent.** It disappears on the tile. Use the dark or
-  full-colour variant.
+  full-colour variant. (`rice-dream.png` currently has this problem — it
+  renders as an empty tile.)
 
 ## Which brands are worth it
 

@@ -80,5 +80,23 @@ export const getBrandLogo = (brandName: string | null | undefined): string | nul
   return LOGOS[slug] ?? LOGOS[ALIASES[slug] ?? ""] ?? null;
 };
 
+/**
+ * Logos that carry their own background — a coloured panel rather than a mark
+ * on transparency. They must fill the tile edge to edge; padding them onto a
+ * white ground puts a white ring around a logo that already has its own, which
+ * reads as a picture inside a picture.
+ *
+ * Only list a logo here if it is roughly square. A wide panel logo cropped to
+ * a square tile loses its wordmark — `kara.jpg` is a blue panel but far wider
+ * than it is tall, so it stays on the default treatment.
+ */
+const FULL_BLEED = new Set(["friesche-vlag", "isola"]);
+
+/** Does this brand's logo bring its own background? */
+export const isFullBleedLogo = (brandName: string | null | undefined): boolean => {
+  const slug = brandSlug(brandName);
+  return FULL_BLEED.has(ALIASES[slug] ?? slug);
+};
+
 /** How many logos are currently bundled — used by the design-system page. */
 export const brandLogoCount = (): number => Object.keys(LOGOS).length;

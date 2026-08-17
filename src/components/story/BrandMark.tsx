@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { getBrandLogo } from "@/lib/brandLogo";
+import { getBrandLogo, isFullBleedLogo } from "@/lib/brandLogo";
 import { inferPlantBase } from "@/lib/plantBase";
 
 type BrandMarkProps = {
@@ -29,10 +29,15 @@ export const BrandMark = ({ brand, product, hint, className, radius = "rounded-2
   const logo = getBrandLogo(brand);
 
   if (logo) {
+    // A logo that brings its own coloured panel fills the tile; a mark on
+    // transparency gets a white ground so it still reads on a dark row, and a
+    // little air so it is not jammed against the corners.
+    const fullBleed = isFullBleedLogo(brand);
     return (
       <span
         className={cn(
-          "story-hairline flex flex-shrink-0 items-center justify-center overflow-hidden bg-white p-1.5",
+          "flex flex-shrink-0 items-center justify-center overflow-hidden",
+          fullBleed ? "" : "story-hairline bg-white p-1",
           radius,
           className,
         )}
@@ -42,7 +47,7 @@ export const BrandMark = ({ brand, product, hint, className, radius = "rounded-2
           alt=""
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-contain"
+          className={cn("h-full w-full", fullBleed ? "object-cover" : "object-contain")}
         />
       </span>
     );
