@@ -105,6 +105,30 @@ export default {
 			'on-surface': 'hsl(var(--on-surface))',
 			'outline-variant': 'hsl(var(--outline-variant))',
 			'primary-container': 'hsl(var(--primary-container))',
+			// Story design language — the public, story-first marketing surface.
+			story: {
+				ink: 'hsl(var(--story-ink) / <alpha-value>)',
+				'ink-2': 'hsl(var(--story-ink-2) / <alpha-value>)',
+				muted: 'hsl(var(--story-muted) / <alpha-value>)',
+				'muted-2': 'hsl(var(--story-muted-2) / <alpha-value>)',
+				paper: 'hsl(var(--story-paper) / <alpha-value>)',
+				cream: 'hsl(var(--story-cream) / <alpha-value>)',
+				'cream-2': 'hsl(var(--story-cream-2) / <alpha-value>)',
+				'cream-3': 'hsl(var(--story-cream-3) / <alpha-value>)',
+				green: 'hsl(var(--story-green) / <alpha-value>)',
+				'green-dark': 'hsl(var(--story-green-dark) / <alpha-value>)',
+				'green-deep': 'hsl(var(--story-green-deep) / <alpha-value>)',
+				'green-light': 'hsl(var(--story-green-light) / <alpha-value>)',
+				'green-wash': 'hsl(var(--story-green-wash) / <alpha-value>)',
+				blue: 'hsl(var(--story-blue) / <alpha-value>)',
+				'blue-dark': 'hsl(var(--story-blue-dark) / <alpha-value>)',
+				'blue-light': 'hsl(var(--story-blue-light) / <alpha-value>)',
+				'blue-wash': 'hsl(var(--story-blue-wash) / <alpha-value>)',
+				'blue-deep': 'hsl(var(--story-blue-deep) / <alpha-value>)',
+				amber: 'hsl(var(--story-amber) / <alpha-value>)',
+				'amber-dark': 'hsl(var(--story-amber-dark) / <alpha-value>)',
+				'amber-light': 'hsl(var(--story-amber-light) / <alpha-value>)',
+			},
 		},
 		// Typography scale
 		fontSize: {
@@ -207,13 +231,13 @@ export default {
   		},
   		fontFamily: {
   			display: [
-  				'Plus Jakarta Sans',
-  				'ui-sans-serif',
-  				'system-ui',
-  				'sans-serif'
+  				'Epilogue',
+  				'Georgia',
+  				'ui-serif',
+  				'serif'
   			],
   			sans: [
-  				'DM Sans',
+  				'Manrope',
   				'ui-sans-serif',
   				'system-ui',
   				'sans-serif',

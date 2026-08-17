@@ -1,218 +1,276 @@
 import { Seo } from "@/components/Seo";
-import MenuBar from "@/components/MenuBar";
-import MobileFooter from "@/components/MobileFooter";
-import BackgroundPattern from "@/components/BackgroundPattern";
-import { Heading, Text } from "@/components/ui/typography";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { 
-  Download, 
-  Settings, 
-  ShieldCheck, 
-  Package, 
-  CheckCircle2,
-  ArrowLeft,
-  AlertTriangle,
-  Smartphone
-} from "lucide-react";
+import {
+  ArrowRight,
+  Band,
+  CrestDivider,
+  Display,
+  DropList,
+  Kicker,
+  Lede,
+  MilkDrop,
+  StoryCard,
+  StoryLayout,
+  StoryLinkButton,
+} from "@/components/story";
+import { AlertTriangle, CircleCheckBig, Download, FolderOpen, ShieldAlert, ShieldCheck, Smartphone } from "lucide-react";
 import { FaAndroid } from "react-icons/fa";
 
-// Step illustrations
-import step1Download from "@/assets/install-guide/step-1-download.png";
-import step2Settings from "@/assets/install-guide/step-2-settings.png";
-import step3Open from "@/assets/install-guide/step-3-open.png";
-import step4Install from "@/assets/install-guide/step-4-install.png";
-import step5Success from "@/assets/install-guide/step-5-success.png";
+const ANDROID_DOWNLOAD_URL = "https://median.co/share/nmxqdbd#apk";
+
+/**
+ * No screenshots here on purpose — the real assets in `src/assets/install-guide/`
+ * are placeholder illustrations (an iPhone in an Android guide, unrelated
+ * sliders, a typo'd dialog) that would misrepresent what installing actually
+ * looks like. A confident numbered sequence, plus the exact wording of the one
+ * screen that alarms people, is the honest version of this page until real
+ * captures exist.
+ */
+const STEPS: {
+  icon: typeof Download;
+  tone: "green" | "amber";
+  title: string;
+  body: string;
+  quote?: string;
+}[] = [
+  {
+    icon: Download,
+    tone: "green",
+    title: "Download the APK",
+    body: "Tap the download button below. Your browser will likely flag the file as unrecognised — that's normal for anything that isn't from the Play Store.",
+  },
+  {
+    icon: ShieldAlert,
+    tone: "amber",
+    title: "Allow this source once",
+    body: 'Android interrupts the install with a warning like the one below. Tap Settings, then switch on "Allow from this source" for your browser or file manager — a one-time toggle.',
+    quote: "For your security, your phone is not allowed to install unknown apps from this source.",
+  },
+  {
+    icon: FolderOpen,
+    tone: "green",
+    title: "Open the downloaded file",
+    body: "Pull down your notifications or open Downloads and tap the file named milk-me-not.apk to start installing.",
+  },
+  {
+    icon: ShieldCheck,
+    tone: "green",
+    title: "Confirm the install",
+    body: "Android shows a final check screen naming the app and what it can access. Tap Install and give it a few seconds.",
+  },
+  {
+    icon: CircleCheckBig,
+    tone: "green",
+    title: "Open it and sign in",
+    body: "Tap Open, or find Milk Me Not in your app drawer. Sign in and every rating you've made on the website is already there.",
+  },
+];
+
+const ICON_TONE = {
+  green: "bg-story-green-wash text-story-green-dark",
+  amber: "bg-story-amber-light text-story-amber-dark",
+} as const;
 
 const InstallGuide = () => {
-  const androidDownloadUrl = "https://median.co/share/nmxqdbd#apk";
-
-  const steps = [
-    {
-      icon: Download,
-      title: "Download the APK",
-      description: "Tap the download button to get the APK file. Your browser may show a warning — this is normal for apps outside the Play Store.",
-      note: "The file will be saved to your Downloads folder.",
-      image: step1Download
-    },
-    {
-      icon: Settings,
-      title: "Enable Unknown Sources",
-      description: "Go to Settings → Security (or Privacy) → Enable 'Install unknown apps' for your browser or file manager.",
-      note: "This allows installation of apps from outside the Play Store.",
-      image: step2Settings
-    },
-    {
-      icon: Package,
-      title: "Open the APK File",
-      description: "Find the downloaded APK in your Downloads folder or notification bar and tap it to start installation.",
-      note: "You may need to use a file manager app.",
-      image: step3Open
-    },
-    {
-      icon: ShieldCheck,
-      title: "Confirm Installation",
-      description: "When prompted, tap 'Install' to proceed. Android will verify the app and install it on your device.",
-      note: "This may take a few seconds.",
-      image: step4Install
-    },
-    {
-      icon: CheckCircle2,
-      title: "Open & Enjoy!",
-      description: "Once installed, tap 'Open' or find the app in your app drawer. Sign in with your account to sync your reviews.",
-      note: "You're all set!",
-      image: step5Success
-    }
-  ];
-
   return (
-    <div className="min-h-screen">
+    <StoryLayout mobileCtaHint="Five steps. One expected warning.">
       <Seo
         title="Install guide — Milk Me Not"
-        description="Step-by-step guide to installing the Milk Me Not Android app on your phone."
+        description="A step-by-step guide to installing the Milk Me Not Android APK, including the unknown-source warning Android shows and why it's expected."
         path="/install-guide"
       />
-      <MenuBar />
-      <BackgroundPattern>
-        <div className="pt-16 pb-20 sm:pb-8">
-          <div className="container max-w-3xl mx-auto px-4 py-8 relative z-10">
-            {/* Back Link */}
-            <Link 
-              to="/mobile-app" 
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Mobile App</span>
-            </Link>
 
-            {/* Header */}
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-[#3DDC84] mb-4">
-                <FaAndroid className="w-10 h-10 text-white" />
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <Band ground="cream" size="hero">
+        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-14">
+          <div>
+            <StoryLinkButton to="/mobile-app" tone="outline" size="sm" className="mb-6">
+              <ArrowRight className="rotate-180" />
+              Back to the app page
+            </StoryLinkButton>
+
+            <Kicker>Installing on Android</Kicker>
+            <Display as="h1" size="hero" className="mt-5 text-story-ink">
+              Five taps, and one
+              <br />
+              <span className="text-story-green">warning you should expect.</span>
+            </Display>
+            <Lede className="mt-6 max-w-[34rem]">
+              The whole thing takes about a minute. Here is every screen you will pass through, in order.
+            </Lede>
+
+            {/* The scary moment, named before it happens — and before the
+                button. On a phone the grid collapses in DOM order, so this has
+                to sit above the download or the warning arrives too late. */}
+            <div className="story-hairline mt-8 flex gap-4 rounded-[1.25rem] bg-story-amber p-5 sm:p-6 lg:hidden">
+              <AlertTriangle className="h-6 w-6 flex-shrink-0 text-story-ink" strokeWidth={2.2} aria-hidden />
+              <div>
+                <h2 className="story-serif text-[1.15rem] font-bold text-story-ink">Expect this screen</h2>
+                <p className="mt-2 text-[0.9375rem] leading-relaxed text-story-ink/75">
+                  Android will stop partway to ask whether you trust the source. That is step 2 below, not a
+                  sign to stop.
+                </p>
               </div>
-              <Heading level="h1" className="text-brand-primary mb-3">
-                Android Installation Guide
-              </Heading>
-              <Text size="lg" variant="muted" className="max-w-xl mx-auto">
-                Follow these simple steps to install the Milk Me Not app on your Android device.
-              </Text>
             </div>
 
-            {/* Download Button */}
-            <div className="flex justify-center mb-10">
-              <Button 
-                asChild 
-                className="bg-brand-primary hover:bg-brand-primary/90 text-white" 
-                size="lg"
+            <div className="mt-8">
+              <a
+                href={ANDROID_DOWNLOAD_URL}
+                download
+                className="story-lift-green inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-story-green px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] text-white no-underline transition-[filter] duration-150 hover:brightness-[1.07] active:scale-[0.985] sm:w-auto"
               >
-                <a href={androidDownloadUrl} download>
-                  <Download className="mr-2 h-5 w-5" />
-                  Download APK
-                </a>
-              </Button>
-            </div>
-
-            {/* Steps */}
-            <div className="space-y-6">
-              {steps.map((step, index) => (
-                <Card key={index} className="border-border overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="flex flex-col md:flex-row">
-                      {/* Image */}
-                      <div className="md:w-48 flex-shrink-0 bg-muted/30 flex items-center justify-center p-4">
-                        <img 
-                          src={step.image} 
-                          alt={step.title}
-                          className="w-32 h-32 object-contain"
-                        />
-                      </div>
-                      
-                      {/* Content */}
-                      <div className="flex-1 p-6">
-                        <div className="flex items-start gap-4">
-                          <div className="flex-shrink-0">
-                            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-brand-primary/10 text-brand-primary font-bold text-lg">
-                              {index + 1}
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
-                              <step.icon className="h-5 w-5 text-brand-primary flex-shrink-0" />
-                              <Heading level="h4" className="text-foreground">
-                                {step.title}
-                              </Heading>
-                            </div>
-                            <Text variant="muted" className="mb-2">
-                              {step.description}
-                            </Text>
-                            <Text size="sm" className="text-brand-primary">
-                              {step.note}
-                            </Text>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Security Notice */}
-            <Card className="mt-8 border-warning/30 bg-warning/5">
-              <CardContent className="p-6">
-                <div className="flex gap-4">
-                  <AlertTriangle className="h-6 w-6 text-warning flex-shrink-0" />
-                  <div>
-                    <Heading level="h5" className="text-foreground mb-2">
-                      Is this safe?
-                    </Heading>
-                    <Text size="sm" variant="muted">
-                      Yes! Our APK is the same app we publish — just distributed directly to you. 
-                      Android shows warnings for any app installed outside the Play Store, but this 
-                      is standard practice. We recommend only downloading from our official website.
-                    </Text>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* iPhone Notice */}
-            <Card className="mt-4 border-border bg-muted/30">
-              <CardContent className="p-6">
-                <div className="flex gap-4">
-                  <Smartphone className="h-6 w-6 text-muted-foreground flex-shrink-0" />
-                  <div>
-                    <Heading level="h5" className="text-foreground mb-2">
-                      Using an iPhone?
-                    </Heading>
-                    <Text size="sm" variant="muted">
-                      An iOS app isn't available yet, but our website works great on mobile! 
-                      Just visit milkmenot.com in Safari and use it like an app. You can even 
-                      add it to your home screen for quick access.
-                    </Text>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Help */}
-            <div className="text-center mt-10">
-              <Text variant="muted" className="mb-4">
-                Still having trouble? We're here to help.
-              </Text>
-              <Button asChild variant="outline" className="border-brand-primary text-brand-primary hover:bg-brand-primary/5">
-                <Link to="/contact">
-                  Contact Support
-                </Link>
-              </Button>
+                <Download className="h-[18px] w-[18px]" strokeWidth={2.4} aria-hidden />
+                Download the APK
+              </a>
             </div>
           </div>
+
+          <div className="hidden lg:block">
+            <div className="story-hairline flex gap-4 rounded-[1.25rem] bg-story-amber p-6">
+              <AlertTriangle className="h-6 w-6 flex-shrink-0 text-story-ink" strokeWidth={2.2} aria-hidden />
+              <div>
+                <h2 className="story-serif text-[1.15rem] font-bold text-story-ink">Expect this screen</h2>
+                <p className="mt-2 text-[0.9375rem] leading-relaxed text-story-ink/75">
+                  Partway through, Android will block the install and name the source it doesn't recognise yet.
+                  That is the phone's standard reaction to any app from outside the Play Store — it's step 2
+                  below, not a sign to stop.
+                </p>
+              </div>
+            </div>
+
+            {/* Without this the right column stopped at a third of the left
+                column's height and the fold read as unfinished. */}
+            <div className="relative mt-6 overflow-hidden rounded-[1.25rem] bg-story-green-deep px-6 py-7">
+              <div aria-hidden className="pointer-events-none absolute -right-8 -top-10 text-story-green">
+                <MilkDrop size={170} variant="solid" />
+              </div>
+              <p className="story-kicker relative text-white/50">Once it's on</p>
+              <p className="story-serif relative mt-2 max-w-[16rem] text-[1.25rem] font-bold leading-snug text-white">
+                Scan a barcode in the aisle and rate it before you reach the till.
+              </p>
+            </div>
+          </div>
+
         </div>
-      </BackgroundPattern>
-      <MobileFooter />
-    </div>
+      </Band>
+
+      <div className="text-story-paper">
+        <CrestDivider className="block h-12 w-full sm:h-20" />
+      </div>
+
+      {/* ── The steps ────────────────────────────────────────────────── */}
+      <Band ground="paper" size="lg" width="prose">
+        <Kicker>The install, step by step</Kicker>
+        <Display size="lg" className="mt-4 max-w-xl">
+          Same five steps, every time
+        </Display>
+
+        <ol className="mt-12 flex flex-col">
+          {STEPS.map((step, i) => (
+            <li key={step.title} className="relative flex gap-5 sm:gap-8">
+              <div className="flex flex-shrink-0 flex-col items-center">
+                <span className="story-num flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-story-ink text-[1.05rem] text-story-cream sm:h-12 sm:w-12 sm:text-[1.15rem]">
+                  {i + 1}
+                </span>
+                {i < STEPS.length - 1 && <span aria-hidden className="mt-2 w-px flex-1 bg-story-ink/15" />}
+              </div>
+
+              <div className={cnStep(i === STEPS.length - 1)}>
+                <div className="flex items-start gap-4 sm:gap-5">
+                  <span
+                    className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl ${ICON_TONE[step.tone]}`}
+                  >
+                    <step.icon className="h-6 w-6" strokeWidth={2.2} aria-hidden />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="story-serif text-[1.35rem] font-bold text-story-ink">{step.title}</h3>
+                    <p className="mt-2 max-w-lg text-[0.9375rem] leading-relaxed text-story-muted">{step.body}</p>
+
+                    {step.quote && (
+                      <div className="mt-4 max-w-lg rounded-xl border-l-4 border-story-amber-dark bg-story-amber-light py-3 pl-4 pr-4">
+                        <p className="story-kicker text-story-amber-dark">What the screen says</p>
+                        <p className="story-serif mt-1.5 text-[0.9375rem] italic leading-snug text-story-ink">
+                          "{step.quote}"
+                        </p>
+                        {/* Stock Android's wording. Samsung and other skins phrase
+                            it differently, so we say so rather than overclaim. */}
+                        <p className="mt-2 text-[0.75rem] font-medium text-story-amber-dark/80">
+                          Wording varies a little between phone makers.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </Band>
+
+      {/* ── Is this safe ─────────────────────────────────────────────── */}
+      <Band ground="forest" size="lg">
+        <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 hidden text-story-green lg:block">
+          <MilkDrop size={280} variant="solid" />
+        </div>
+        <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-16">
+          <div>
+            <Kicker tone="light">The honest answer</Kicker>
+            <Display size="xl" className="mt-5 text-white">
+              Yes, it's safe.
+              <br />
+              <span className="text-story-green-light">Here's why we're sure.</span>
+            </Display>
+            <p className="mt-5 max-w-lg text-[1.0625rem] leading-relaxed text-white/70">
+              The warning you saw in step 2 is Android protecting you from apps it knows nothing about. This one
+              it just hasn't met yet — not because anything is wrong with it.
+            </p>
+          </div>
+
+          <DropList
+            tone="light"
+            className="lg:mt-2"
+            items={[
+              "The APK is built from the exact code we publish, signed by us — nothing is repackaged.",
+              "It only ever comes from this page. We will never ask you to install it from a link elsewhere.",
+              "Uninstalling it later is exactly like uninstalling any other app — long-press, remove.",
+            ]}
+          />
+        </div>
+      </Band>
+
+      {/* ── iPhone + help ────────────────────────────────────────────── */}
+      <Band ground="cream-2" size="lg">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <StoryCard className="story-lift p-7">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-story-green-wash text-story-green-dark">
+              <Smartphone className="h-6 w-6" strokeWidth={2.2} aria-hidden />
+            </span>
+            <h3 className="story-serif mt-4 text-[1.25rem] font-bold text-story-ink">Using an iPhone?</h3>
+            <p className="mt-2 text-[0.9375rem] leading-relaxed text-story-muted">
+              There's no iOS app to install yet. Open milkmenot.com in Safari and add it to your home screen —
+              scanning and rating both work there already.
+            </p>
+          </StoryCard>
+
+          <StoryCard className="story-lift p-7">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-story-green-wash text-story-green-dark">
+              <FaAndroid className="h-6 w-6" />
+            </span>
+            <h3 className="story-serif mt-4 text-[1.25rem] font-bold text-story-ink">Still stuck?</h3>
+            <p className="mt-2 text-[0.9375rem] leading-relaxed text-story-muted">
+              If the install won't go through, tell us where it stopped and we'll sort it out.
+            </p>
+            <StoryLinkButton to="/contact" tone="outline" size="md" className="mt-5">
+              Contact support
+              <ArrowRight />
+            </StoryLinkButton>
+          </StoryCard>
+        </div>
+      </Band>
+    </StoryLayout>
   );
 };
+
+/** Keeps the timeline's last item from trailing extra padding under the footer. */
+const cnStep = (isLast: boolean) => `min-w-0 flex-1 pb-10 sm:pb-12 ${isLast ? "pb-2 sm:pb-2" : ""}`;
 
 export default InstallGuide;

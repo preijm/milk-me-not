@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Lock } from "lucide-react";
+import { ArrowRight, Kicker, StoryButton } from "@/components/story";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { sanitizeInput, validateEmail, passwordResetRateLimit } from "@/lib/security";
@@ -107,24 +106,56 @@ const ResetPasswordDialog = ({
       setResetInProgress(false);
     }
   };
+  // The one dialog reachable from the public site, so it stays inside the
+  // story language rather than dropping the visitor into default chrome.
   return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Reset Password</DialogTitle>
-          
+      <DialogContent className="story-surface gap-0 rounded-[1.5rem] border-story-ink/10 p-6 sm:max-w-md sm:p-8">
+        <DialogHeader className="space-y-0 text-left">
+          <Kicker>Password reset</Kicker>
+          <DialogTitle className="story-display pt-3 text-[1.75rem] leading-tight text-story-ink">
+            We'll email you a link.
+          </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <Input type="email" placeholder="Enter your email" value={resetEmail} onChange={e => setResetEmail(e.target.value)} className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm" />
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={resetInProgress}>
-              Cancel
-            </Button>
-            <Button onClick={handleForgotPassword} disabled={resetInProgress} variant="brand">
-              <Lock className="w-4 h-4 mr-2" />
-              {resetInProgress ? "Sending..." : "Send Instructions"}
-            </Button>
+
+        <p className="mt-3 text-[0.9375rem] leading-relaxed text-story-muted">
+          Enter the address you signed up with. If we have an account for it, the link lands in a minute or two.
+        </p>
+
+        <form
+          className="mt-6 flex flex-col gap-4"
+          onSubmit={e => {
+            e.preventDefault();
+            handleForgotPassword();
+          }}
+        >
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[0.8125rem] font-bold text-story-ink-2">Email</span>
+            <Input
+              type="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              value={resetEmail}
+              onChange={e => setResetEmail(e.target.value)}
+              className="h-12 rounded-xl border-[1.5px] border-story-ink/12 bg-white px-4 font-sans text-[0.9375rem] text-story-ink placeholder:text-story-muted-2 focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-0"
+            />
           </div>
-        </div>
+
+          <div className="flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
+            <StoryButton
+              type="button"
+              tone="outline"
+              size="md"
+              onClick={() => onOpenChange(false)}
+              disabled={resetInProgress}
+            >
+              Cancel
+            </StoryButton>
+            <StoryButton type="submit" size="md" disabled={resetInProgress}>
+              {resetInProgress ? "Sending…" : "Send the link"}
+              {!resetInProgress && <ArrowRight />}
+            </StoryButton>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>;
 };

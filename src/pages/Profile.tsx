@@ -5,15 +5,17 @@ import BackgroundPattern from "@/components/BackgroundPattern";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useUserMilkTests } from "@/hooks/useUserMilkTests";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobileOrTablet } from "@/hooks/use-mobile";
 import { useProfileStats } from "@/hooks/useProfileStats";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
 import { ProfileContent } from "@/components/profile/ProfileContent";
+import { PublicProfile } from "@/components/profile/PublicProfile";
 
 const Profile = () => {
+  const { userId } = useParams<{ userId?: string }>();
   const { user } = useAuth();
   const { profile, refetchProfile } = useUserProfile();
   const { data: milkTests = [] } = useUserMilkTests({
@@ -26,6 +28,11 @@ const Profile = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   
   const { totalTests, avgRating, bestScore, memberSince } = useProfileStats(milkTests, profile);
+
+  // /profile/:userId is a public page — a link someone shares. It used to fall
+  // through to the signed-in user's own profile, so it showed the wrong person
+  // (or nothing at all to a stranger).
+  const isSomeoneElse = !!userId && userId !== user?.id;
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -48,6 +55,10 @@ const Profile = () => {
     onEditClick: () => setEditDialogOpen(true),
     onSignOut: handleSignOut,
   };
+
+  if (isSomeoneElse) {
+    return <PublicProfile userId={userId} />;
+  }
 
   // Mobile/Tablet layout
   if (isMobileOrTablet) {

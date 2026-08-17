@@ -36,6 +36,7 @@ const AddProduct = lazy(() => import("./pages/AddProduct"));
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 const InstallGuide = lazy(() => import("./pages/InstallGuide"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+const RateDeepLink = lazy(() => import("./pages/RateDeepLink"));
 
 const PageFallback = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -85,6 +86,8 @@ const App = () => {
                 <Route path="/install-guide" element={<InstallGuide />} />
                 <Route path="/design-system" element={<DesignSystem />} />
                 <Route path="/product/:productId" element={<ProductDetails />} />
+                {/* Shelf-QR deep link: skips the pitch, lands on the rating flow. */}
+                <Route path="/rate/:productId" element={<RateDeepLink />} />
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/profile/:userId" element={<Profile />} />
                 <Route path="/add" element={<ProtectedRoute><Index /></ProtectedRoute>} />

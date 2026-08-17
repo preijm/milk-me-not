@@ -1,12 +1,6 @@
-import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { MilkTestResult } from "@/types/milk-test";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { ScoreMark, getTier } from "@/components/story";
+import { useFeedItemState } from "./useFeedItemState";
 import { FeedHeader } from "./FeedHeader";
 import { FeedProductInfo } from "./FeedProductInfo";
 import { FeedImage } from "./FeedImage";
@@ -15,238 +9,85 @@ import { FeedComments } from "./FeedComments";
 
 interface FeedItemProps {
   item: MilkTestResult;
-  blurred?: boolean;
-  disabled?: boolean;
 }
 
-interface Like {
-  id: string;
-  user_id: string;
-  username?: string;
-}
+/**
+ * The desktop verdict card, read top to bottom the way the brief wants it:
+ * the score at scale with its named tier, the product, the note, then who
+ * and when. Behaviour (likes, comments, edit) comes from `useFeedItemState`,
+ * shared with the mobile card so the two layouts never disagree on function.
+ */
+export const FeedItem = ({ item }: FeedItemProps) => {
+  const {
+    user,
+    isOwnPost,
+    likes,
+    comments,
+    isLiked,
+    showComments,
+    setShowComments,
+    likeMutation,
+    commentMutation,
+    handleLike,
+    handleComment,
+    handleViewAllResults,
+    handleEdit,
+  } = useFeedItemState(item);
 
-interface Comment {
-  id: string;
-  user_id: string;
-  content: string;
-  created_at: string;
-  username?: string;
-}
-
-export const FeedItem = ({ item, blurred = false, disabled = false }: FeedItemProps) => {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [showComments, setShowComments] = useState(false);
-
-  const isOwnPost = user?.id === item.user_id;
-
-  // Fetch likes
-  const { data: likes = [] } = useQuery({
-    queryKey: ['likes', item.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('likes')
-        .select('id, user_id')
-        .eq('milk_test_id', item.id);
-      
-      if (error) throw error;
-
-      const likesWithUsernames = await Promise.all(
-        (data || []).map(async (like) => {
-          const { data: profile } = await supabase
-            .from('profiles_public')
-            .select('username')
-            .eq('id', like.user_id)
-            .maybeSingle();
-          
-          return { ...like, username: profile?.username || 'Anonymous' };
-        })
-      );
-      
-      return likesWithUsernames as Like[];
-    }
-  });
-
-  // Fetch comments
-  const { data: comments = [] } = useQuery({
-    queryKey: ['comments', item.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('comments')
-        .select('id, user_id, content, created_at')
-        .eq('milk_test_id', item.id)
-        .order('created_at', { ascending: true });
-      
-      if (error) throw error;
-
-      const commentsWithUsernames = await Promise.all(
-        (data || []).map(async (comment) => {
-          const { data: profile } = await supabase
-            .from('profiles_public')
-            .select('username')
-            .eq('id', comment.user_id)
-            .maybeSingle();
-          
-          return { ...comment, username: profile?.username || 'Anonymous' };
-        })
-      );
-      
-      return commentsWithUsernames as Comment[];
-    }
-  });
-
-  const isLiked = likes.some(like => like.user_id === user?.id);
-
-  // Like/unlike mutation
-  const likeMutation = useMutation({
-    mutationFn: async () => {
-      if (!user) throw new Error('Not authenticated');
-      
-      if (isLiked) {
-        const { error } = await supabase
-          .from('likes')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('milk_test_id', item.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('likes')
-          .insert({ user_id: user.id, milk_test_id: item.id });
-        if (error) throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['likes', item.id] });
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to update like status",
-        variant: "destructive"
-      });
-    }
-  });
-
-  // Add comment mutation
-  const commentMutation = useMutation({
-    mutationFn: async (content: string) => {
-      if (!user) throw new Error('Not authenticated');
-      
-      const { error } = await supabase
-        .from('comments')
-        .insert({
-          user_id: user.id,
-          milk_test_id: item.id,
-          content: content.trim()
-        });
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', item.id] });
-      setShowComments(true);
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to add comment",
-        variant: "destructive"
-      });
-    }
-  });
-
-  const handleLike = () => {
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to like posts",
-        variant: "destructive"
-      });
-      return;
-    }
-    likeMutation.mutate();
-  };
-
-  const handleComment = (content: string) => {
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to comment",
-        variant: "destructive"
-      });
-      return;
-    }
-    commentMutation.mutate(content);
-  };
-
-  const handleViewAllResults = () => {
-    navigate(`/product/${item.product_id}`);
-  };
-
-  const handleEdit = () => {
-    navigate('/add', { state: { editTest: item } });
-  };
+  const tier = getTier(item.rating);
 
   return (
-    <div className={cn("w-full", disabled && "pointer-events-none")}>
-      <Card id={`test-${item.id}`} className="w-full shadow-lg hover:shadow-xl transition-shadow duration-300 hover-scale">
-        <CardHeader className="pb-2 pt-3 px-4">
-          <FeedHeader
-            username={item.username}
-            createdAt={item.created_at}
-            rating={item.rating}
-            blurred={blurred}
-          />
-        </CardHeader>
+    <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-4 rounded-[1.25rem] bg-white p-5">
+      <div className="flex items-end justify-between gap-4">
+        <ScoreMark score={item.rating} size="lg" />
+        <span className="text-right text-[0.8125rem] font-medium italic leading-snug text-story-muted-2">
+          {tier.blurb}
+        </span>
+      </div>
 
-        <CardContent className="space-y-3 pt-0 px-4 pb-3">
-          <FeedProductInfo
-            brandName={item.brand_name}
-            productName={item.product_name}
-            isBarista={item.is_barista}
-            propertyNames={item.property_names}
-            flavorNames={item.flavor_names}
-          />
+      <FeedProductInfo
+        brandName={item.brand_name ?? "Unknown brand"}
+        productName={item.product_name ?? "Unknown product"}
+        isBarista={item.is_barista ?? undefined}
+        propertyNames={item.property_names ?? undefined}
+        flavorNames={item.flavor_names ?? undefined}
+      />
 
-          <FeedImage
-            picturePath={item.picture_path}
-            brandName={item.brand_name}
-            productName={item.product_name}
-            blurred={blurred}
-          />
+      <FeedImage
+        picturePath={item.picture_path}
+        brandName={item.brand_name ?? "Unknown brand"}
+        productName={item.product_name ?? "Unknown product"}
+      />
 
-          {item.notes && (
-            <div className="bg-muted/30 rounded-lg p-3 border-l-4 border-primary">
-              <p className="text-sm text-foreground font-medium italic whitespace-pre-wrap">"{item.notes}"</p>
-            </div>
-          )}
+      {item.notes && (
+        <p className="story-serif rounded-xl bg-story-cream px-4 py-3 text-[0.9375rem] italic leading-relaxed text-story-ink-2">
+          &ldquo;{item.notes}&rdquo;
+        </p>
+      )}
 
-          <FeedEngagement
-            likes={likes}
-            commentsCount={comments.length}
-            isLiked={isLiked}
-            isOwnPost={isOwnPost}
-            isLikePending={likeMutation.isPending}
-            showComments={showComments}
-            onLike={handleLike}
-            onToggleComments={() => setShowComments(!showComments)}
-            onViewAllResults={handleViewAllResults}
-            onEdit={handleEdit}
-          />
+      <FeedHeader username={item.username ?? undefined} createdAt={item.created_at} rating={item.rating} />
 
-          {showComments && (
-            <FeedComments
-              comments={comments}
-              userEmail={user?.email}
-              isCommentPending={commentMutation.isPending}
-              onAddComment={handleComment}
-            />
-          )}
-        </CardContent>
-      </Card>
-    </div>
+      <FeedEngagement
+        likes={likes}
+        commentsCount={comments.length}
+        isLiked={isLiked}
+        isOwnPost={isOwnPost}
+        isLikePending={likeMutation.isPending}
+        showComments={showComments}
+        onLike={handleLike}
+        onToggleComments={() => setShowComments(!showComments)}
+        onViewAllResults={handleViewAllResults}
+        onEdit={handleEdit}
+      />
+
+      {showComments && (
+        <FeedComments
+          comments={comments}
+          userEmail={user?.email}
+          isCommentPending={commentMutation.isPending}
+          onAddComment={handleComment}
+        />
+      )}
+    </article>
   );
 };

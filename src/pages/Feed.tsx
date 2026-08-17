@@ -1,26 +1,29 @@
-import { Seo } from "@/components/Seo";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
+import { Seo } from "@/components/Seo";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSearchParams } from "react-router-dom";
-import MenuBar from "@/components/MenuBar";
-import MobileFooter from "@/components/MobileFooter";
-import BackgroundPattern from "@/components/BackgroundPattern";
-import { FeedContent } from "@/components/feed/FeedContent";
-import { MilkTestResult } from "@/types/milk-test";
 import { useIsMobileOrTablet } from "@/hooks/use-mobile";
 import { useHighlightScroll } from "@/hooks/useHighlightScroll";
+import { Band, SectionHead, StoryLayout } from "@/components/story";
+import { FeedHero } from "@/components/feed/FeedHero";
+import { FeedPullQuote } from "@/components/feed/FeedPullQuote";
+import { FeedContent } from "@/components/feed/FeedContent";
+import { MilkTestResult } from "@/types/milk-test";
 
 const Feed = () => {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const highlightTestId = searchParams.get("testId");
+  const isMobileOrTablet = useIsMobileOrTablet();
 
   const { data: feedItems = [], isLoading } = useQuery({
     queryKey: ["feed", user?.id || "anonymous"],
     queryFn: async () => {
-      const limit = user ? 50 : 6;
+      // Signed-in readers get the full recent stream; strangers get enough of
+      // it to be sold on the community without the query becoming unbounded.
+      const limit = user ? 50 : 12;
       const { data, error } = await supabase.rpc("get_all_milk_tests", {
         page_limit: limit,
         page_offset: 0,
@@ -44,8 +47,6 @@ const Feed = () => {
     enabled: feedItems.length > 0,
   });
 
-  const isMobileOrTablet = useIsMobileOrTablet();
-
   // Preload feed images so full-page screenshots (Edge) capture already-loaded assets.
   useEffect(() => {
     const picturePaths = feedItems
@@ -63,47 +64,36 @@ const Feed = () => {
     });
   }, [feedItems]);
 
-  // Mobile/Tablet layout with white background
-  if (isMobileOrTablet) {
-    return (
-      <div className="min-h-screen bg-white">
-        <MenuBar />
-        <div className="pt-16 pb-28 min-h-screen">
-          <div className="container max-w-7xl mx-auto px-4 py-6">
-            <FeedContent
-              items={feedItems}
-              isLoading={isLoading}
-              isAuthenticated={!!user}
-              variant="mobile"
-            />
-          </div>
-        </div>
-        <MobileFooter />
-      </div>
-    );
-  }
-
-  // Desktop layout with BackgroundPattern
   return (
-    <div className="min-h-screen relative">
+    <StoryLayout mobileCtaHint="Add the one you tried today.">
       <Seo
         title="Feed — Latest plant-milk reviews | Milk Me Not"
         description="The latest community taste tests of plant-based milks — photos, ratings and notes from real reviewers."
         path="/feed"
       />
-      <MenuBar />
-      <BackgroundPattern>
-        <div className="container max-w-7xl mx-auto px-4 py-6 md:py-8 pt-24 md:pt-32 pb-20 sm:pb-6 md:pb-8 relative z-10 transition-all duration-300">
+
+      <FeedHero items={feedItems} isLoading={isLoading} isAuthenticated={!!user} />
+
+      {!isLoading && feedItems.length > 0 && <FeedPullQuote items={feedItems} />}
+
+      <Band ground="paper" size="lg">
+        <SectionHead
+          kicker="The stream"
+          title="Every carton, in the order it was opened"
+          lede="No filters, no curation — this is what the community is actually drinking, right now."
+          size="md"
+        />
+
+        <div className="mt-8">
           <FeedContent
             items={feedItems}
             isLoading={isLoading}
             isAuthenticated={!!user}
-            variant="desktop"
+            variant={isMobileOrTablet ? "mobile" : "desktop"}
           />
         </div>
-      </BackgroundPattern>
-      <MobileFooter />
-    </div>
+      </Band>
+    </StoryLayout>
   );
 };
 

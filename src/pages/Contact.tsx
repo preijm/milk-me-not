@@ -1,51 +1,46 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
-import MenuBar from "@/components/MenuBar";
-import MobileFooter from "@/components/MobileFooter";
 import { Phone, Mail, MessageSquare, Bird } from "lucide-react";
-import BackgroundPattern from "@/components/BackgroundPattern";
+import {
+  ArrowRight,
+  Band,
+  Display,
+  DropList,
+  Kicker,
+  Lede,
+  MilkDrop,
+  SectionHead,
+  StoryCard,
+  StoryLayout,
+} from "@/components/story";
 import { ContactCard } from "@/components/contact/ContactCard";
 import { FlyingBird } from "@/components/contact/FlyingBird";
 import { FAQSection } from "@/components/contact/FAQSection";
-import { Heading } from "@/components/ui/typography";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const faqItems = [
   {
-    question: "What is Milk Me Not?",
+    question: "Will a real person read my email?",
     answer:
-      "Milk Me Not is a community-driven platform for discovering and rating plant-based milk alternatives. We help you find the perfect dairy-free milk for your coffee, cereal, or cooking needs based on real user experiences.",
+      "Yes — the same two people who started the spreadsheet this site grew out of. No support queue, no auto-responder pretending to be a person.",
   },
   {
-    question: "How do I add my milk test results?",
-    answer:
-      'Simply sign up for an account, then click on "Add Test" in the navigation menu. You can rate products, add photos, notes about taste and texture, and share your experience with the community.',
+    question: "How long until I hear back?",
+    answer: "Usually a couple of days. It is not staffed around the clock, but nothing here gets ignored.",
   },
   {
-    question: "Can I suggest a new brand or product?",
+    question: "Can I report a wrong score or bad data?",
     answer:
-      "Absolutely! When adding a new test, you can create new brands and products if they don't exist in our database yet. This helps grow our community knowledge base and helps others discover new alternatives.",
+      "Please do. Send the product and what looks off, and it gets checked against the actual ratings behind it.",
   },
   {
-    question: "Is the platform free to use?",
-    answer:
-      "Yes! Milk Me Not is completely free to use. You can browse all test results, add your own reviews, and participate in our community without any cost.",
-  },
-  {
-    question: "How are the ratings calculated?",
-    answer:
-      "Ratings are aggregated from all user tests for each product. We show the average rating along with individual test details so you can see the full range of experiences and make an informed decision based on what matters most to you.",
-  },
-  {
-    question: "Can I edit or delete my test results?",
-    answer:
-      "Yes! You can edit or delete your own test results at any time from your profile page. We believe in giving you full control over your contributions to the community.",
+    question: "Is the pigeon actually going to deliver my message?",
+    answer: "No. The pigeon is in flight school. Email is the one that works.",
   },
 ];
 
 const Contact = () => {
   const [flyingBirds, setFlyingBirds] = useState<number[]>([]);
-  const isMobile = useIsMobile();
 
   const handlePigeonClick = () => {
     const birdId = Date.now();
@@ -56,77 +51,175 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <StoryLayout mobileCtaHint="One inbox. Two people. No script.">
       <Seo
         title="Contact — Milk Me Not"
-        description="Get in touch with the Milk Me Not team. Suggestions, partnerships and feedback from the plant-milk community welcome."
+        description="Get in touch with the Milk Me Not team. Bug reports, missing brands, data corrections and plain old feedback — read by the two people who started this."
         path="/contact"
       />
-      <MenuBar />
-      <BackgroundPattern>
-        <div className="lg:flex lg:items-center lg:justify-center min-h-screen pt-16 pb-20 sm:pb-8">
-          <div className="container max-w-4xl mx-auto px-4 py-8 sm:py-12 relative z-10">
-            <Heading as="h1" fluid="page" className="hidden lg:block text-center mb-12 text-foreground">
-              Get in Touch
-            </Heading>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-12 lg:mb-12 mt-0 lg:mt-0">
-              <ContactCard
-                icon={Phone}
-                iconColorClass="bg-primary/10 text-primary"
-                title="Phone"
-                badgeText="On Vacation"
-                badgeVariant="unavailable"
-                description="Our phone is currently taking a well-deserved vacation in the Bermuda Triangle. It left no forwarding address."
-                buttonText="Currently Unreachable"
-                buttonDisabled
-              />
 
-              <ContactCard
-                icon={Mail}
-                iconColorClass="bg-secondary/10 text-secondary"
-                title="Email"
-                badgeText="Available"
-                badgeVariant="available"
-                description="Our inbox is always open. Unlike our fridge, it never runs out of oat milk or judgment."
-                buttonText="Send us an Email"
-                buttonHref="mailto:info@milkmenot.com"
-              />
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <Band ground="cream" size="hero">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
+          <div>
+            <Kicker>Get in touch</Kicker>
+            <Display as="h1" size="hero" className="mt-5">
+              Actual humans
+              <br />
+              <span className="text-story-green">read this inbox.</span>
+            </Display>
+            <Lede className="mt-6 max-w-[34rem]">
+              Four ways to reach us are listed below. One of them works. See if you can guess which before you
+              scroll.
+            </Lede>
+            <Link
+              to="/faq"
+              className="mt-7 inline-flex items-center gap-2 text-[0.9375rem] font-bold text-story-green-dark no-underline hover:underline"
+            >
+              Question about how scoring works? Try the FAQ first
+              <ArrowRight />
+            </Link>
+          </div>
 
-              <ContactCard
-                icon={MessageSquare}
-                iconColorClass="bg-muted text-muted-foreground"
-                title="Chat"
-                badgeText="Pursuing Dreams"
-                badgeVariant="neutral"
-                description="Our chat bot decided to pursue its dream of becoming a stand-up comedian. We wish it the best of luck in its new career."
-                buttonText="Currently Unreachable"
-                buttonDisabled
-              />
-
-              <ContactCard
-                icon={Bird}
-                iconColorClass="bg-score-fair/10 text-score-fair"
-                title="Postduif"
-                badgeText="In Training"
-                badgeVariant="unavailable"
-                description="Our carrier pigeons are still in flight school learning the difference between your address and a bread crumb trail."
-                buttonText="Currently Unreachable"
-                buttonDisabled
-                onClick={handlePigeonClick}
-              >
-                <FlyingBird birdIds={flyingBirds} />
-              </ContactCard>
+          {/* Desktop only: the drop, solid and cropped, the way the home and
+              about heroes carry their weight — Contact gets its own colour
+              (blue) so the page reads as itself, not a repeat. */}
+          <div className="relative hidden lg:block lg:min-h-[24rem]">
+            <div aria-hidden className="absolute -right-10 top-0 h-[24rem] w-[24rem] rounded-full bg-story-blue" />
+            <div aria-hidden className="pointer-events-none absolute right-6 top-12 text-story-blue-light">
+              <MilkDrop size={210} variant="solid" />
             </div>
-
-            {!isMobile && (
-              <FAQSection title="Frequently Asked Questions" items={faqItems} />
-            )}
+            <div aria-hidden className="absolute bottom-3 left-2 h-14 w-14 rounded-full bg-story-amber" />
+            <div className="absolute bottom-0 left-0 w-[19rem]">
+              <StoryCard className="story-lift p-6 sm:p-7">
+                <p className="story-kicker text-story-muted-2">Since the spreadsheet</p>
+                <p className="story-serif mt-3 text-[1.4rem] font-bold leading-snug text-story-ink">
+                  Two people.
+                  <br />
+                  One inbox.
+                  <br />
+                  Zero sponsors.
+                </p>
+              </StoryCard>
+            </div>
           </div>
         </div>
-      </BackgroundPattern>
+      </Band>
 
-      <MobileFooter />
-    </div>
+      {/* ── Channels ─────────────────────────────────────────────────── */}
+      <Band ground="paper" size="lg">
+        <SectionHead
+          kicker="Reach us"
+          title="Pick a channel"
+          lede="Email is the one built on twenty-first-century technology. The rest are, generously, works in progress."
+        />
+
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
+          <ContactCard
+            icon={Mail}
+            iconColorClass="bg-story-green text-white"
+            title="Email"
+            badgeText="Available"
+            badgeVariant="available"
+            description="Our inbox is always open. Unlike our fridge, it never runs out of oat milk or judgment."
+            buttonText="Send us an email"
+            buttonHref="mailto:info@milkmenot.com"
+          />
+
+          <ContactCard
+            icon={Phone}
+            iconColorClass="bg-story-ink text-white"
+            title="Phone"
+            badgeText="On vacation"
+            badgeVariant="unavailable"
+            description="Our phone is currently taking a well-deserved vacation in the Bermuda Triangle. It left no forwarding address."
+            buttonText="Nobody is picking up"
+            buttonDisabled
+          />
+
+          <ContactCard
+            icon={MessageSquare}
+            iconColorClass="bg-story-blue text-white"
+            title="Chat"
+            badgeText="Pursuing dreams"
+            badgeVariant="neutral"
+            description="Our chat bot decided to pursue its dream of becoming a stand-up comedian. We wish it the best of luck in its new career."
+            buttonText="Gone to open mic night"
+            buttonDisabled
+          />
+
+          <ContactCard
+            icon={Bird}
+            iconColorClass="bg-story-amber-dark text-white"
+            title="Postduif"
+            badgeText="In training"
+            badgeVariant="unavailable"
+            description="Our carrier pigeons are still in flight school, learning the difference between your address and a bread crumb trail."
+            buttonText="Still at flight school"
+            buttonDisabled
+            onClick={handlePigeonClick}
+          >
+            <FlyingBird birdIds={flyingBirds} />
+          </ContactCard>
+        </div>
+      </Band>
+
+      {/* ── Who's on the other end ──────────────────────────────────── */}
+      <Band ground="sky" size="lg">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-16">
+          <div>
+            <Kicker>Who's on the other end</Kicker>
+            <Display size="xl" className="mt-5">
+              Two people,
+              <br />
+              <span className="text-story-green">no support script.</span>
+            </Display>
+            <p className="mt-5 max-w-lg text-[1.0625rem] leading-relaxed text-story-muted">
+              Milk Me Not is run by the same two people who started the spreadsheet that became this site. Email
+              lands with one of them directly — no ticket number, no "your query is important to us."
+            </p>
+          </div>
+
+          {/* The page's own illustrated centrepiece: a solid colour panel
+              carrying real weight, the way the FAQ page's score bar does. */}
+          <div className="relative overflow-hidden rounded-[1.75rem] bg-story-green p-8 sm:p-10">
+            <div aria-hidden className="pointer-events-none absolute -right-12 -top-16 text-story-green-light">
+              <MilkDrop size={230} variant="solid" />
+            </div>
+            <p className="story-kicker relative text-white/70">Who actually replies</p>
+            <p className="story-num relative mt-4 text-[3.75rem] leading-none text-white">2</p>
+            <p className="relative mt-2 text-[0.8125rem] font-bold uppercase tracking-[0.1em] text-white/80">
+              People. Not a bot.
+            </p>
+            <DropList
+              tone="light"
+              className="relative mt-8 border-t border-white/15 pt-7"
+              items={[
+                "Spotted a wrong score or a data mistake — tell us which product.",
+                "A brand or product missing from the catalogue.",
+                "A bug, a broken page, anything that behaved badly.",
+                "Or just say hi. We read all of it.",
+              ]}
+            />
+          </div>
+        </div>
+      </Band>
+
+      {/* ── Quick answers ────────────────────────────────────────────── */}
+      <Band ground="cream-2" size="lg">
+        <SectionHead kicker="Before you write in" title="Quick answers" />
+        <div className="mt-10">
+          <FAQSection title="Contact questions" items={faqItems} />
+        </div>
+        <p className="mt-6 text-[0.9375rem] text-story-muted">
+          Bigger question about how the site works?{" "}
+          <Link to="/faq" className="font-bold text-story-green-dark no-underline hover:underline">
+            Read the full FAQ
+          </Link>
+          .
+        </p>
+      </Band>
+    </StoryLayout>
   );
 };
 

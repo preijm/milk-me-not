@@ -1,181 +1,240 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Seo } from "@/components/Seo";
-import MenuBar from "@/components/MenuBar";
 import { ImageModal } from "@/components/milk-test/ImageModal";
-import MobileFooter from "@/components/MobileFooter";
-import { Coffee, TrendingUp, Users } from "lucide-react";
-import BackgroundPattern from "@/components/BackgroundPattern";
-import { TimelineContainer } from "@/components/about/TimelineContainer";
-import { TimelineItem } from "@/components/about/TimelineItem";
-import { Heading } from "@/components/ui/typography";
 import {
-  TimelineImageGrid,
-  TimelineSingleImage,
-} from "@/components/about/TimelineImages";
-import { CommunityCarousel } from "@/components/about/CommunityCarousel";
+  ArrowRight,
+  Band,
+  CrestDivider,
+  Display,
+  Kicker,
+  Lede,
+  MilkDrop,
+  Sprig,
+  StoryButton,
+  StoryLayout,
+  StoryLinkButton,
+  useRateCta,
+} from "@/components/story";
+import { useStoryHome } from "@/components/home/useStoryHome";
+import { CARTONS, CULPRITS, SPREADSHEET, TASTING } from "@/components/about/aboutPhotos";
 
-// Image imports
-import spreadsheetImage from "@/assets/milk-tests-spreadsheet.png";
-import soySauceMilkPhoto from "@/assets/soy-sauce-milk-photo.jpg";
-import milkSoySaucePhoto from "@/assets/milk-soy-sauce-photo.jpg";
-import erwtenDrink from "@/assets/community/erwten-drink.jpg";
-import gutBioBarista from "@/assets/community/gut-bio-barista.jpg";
-import abbotKinneyAmandel from "@/assets/community/abbot-kinney-amandel.jpg";
-import rudeHealthPotato from "@/assets/community/rude-health-potato.jpg";
-import broseOat from "@/assets/community/brose-oat.jpg";
-import lupineDrink from "@/assets/community/lupine-drink.jpg";
-import milsaSoja from "@/assets/community/milsa-soja.jpg";
-import campinaHaver from "@/assets/community/campina-haver.jpg";
-import alproNotMilk from "@/assets/community/alpro-not-milk.jpg";
-import sproudMilk2 from "@/assets/community/sproud-milk-2.jpg";
-import beriefBarista from "@/assets/community/berief-barista.jpg";
-
-const communityImages = [
-  { src: erwtenDrink, alt: "AH Erwten Drink - Pea-based milk alternative" },
-  {
-    src: gutBioBarista,
-    alt: "Gut Bio Barista Hafer Drink - Oat barista milk with latte",
-  },
-  {
-    src: abbotKinneyAmandel,
-    alt: "Abbot Kinney's Barista Amandel and Best of Plants milk alternatives",
-  },
-  {
-    src: rudeHealthPotato,
-    alt: "Rude Health Tiger Nut and Potato Barista dairy-free milk",
-  },
-  {
-    src: broseOat,
-    alt: "Brose Scottish Goodness Fresh Oat Drink Barista Style",
-  },
-  {
-    src: lupineDrink,
-    alt: "AH Lupine Drink - Lupin-based milk from Dutch soil",
-  },
-  { src: milsaSoja, alt: "Milsa Soja Drink - Unsweetened soy milk alternative" },
-  { src: campinaHaver, alt: "Campina Haver Drink - Oat milk alternative" },
-  {
-    src: alproNotMilk,
-    alt: "Alpro Shhh This is NOT M*LK - Plant-based oat drink",
-  },
-  { src: sproudMilk2, alt: "Sproud plant-based unsweetened pea milk" },
-  {
-    src: beriefBarista,
-    alt: "Berief Bio Barista - Creamy plant-based barista milk",
-  },
-];
-
+/**
+ * About is the page that makes the scores believable, so it is the one place
+ * the site leads with photographs — the actual bottles from the joke, the
+ * actual spreadsheet. Everywhere else the brand works in flat colour, which
+ * makes the real pictures here land harder than they would on a photo-led site.
+ */
 const About = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [zoomed, setZoomed] = useState<string | null>(null);
+  const cta = useRateCta();
+  const { data } = useStoryHome();
 
   return (
-    <div className="min-h-screen">
+    <StoryLayout mobileCtaHint="Free forever. No brand deals.">
       <Seo
-        title="About — Milk Me Not"
-        description="The story behind Milk Me Not — how a community of plant-milk taste testers grew into a platform for finding the best dairy alternatives."
+        title="It started with soy sauce — About Milk Me Not"
+        description="A joke between colleagues became a spreadsheet, then an obsession, then a public rating platform for every plant milk on the shelf. This is how Milk Me Not happened."
         path="/about"
       />
-      <MenuBar />
-      <BackgroundPattern>
-        <div className="flex items-center justify-center min-h-screen pt-16 pb-20 sm:pb-8">
-          <div className="container max-w-4xl mx-auto px-4 py-8 sm:py-12 relative z-10">
-            <Heading as="h1" fluid="page" className="text-center mb-12 text-foreground">
-              Our Journey
-            </Heading>
 
-            <TimelineContainer>
-              {/* Timeline Item 1: How It All Started */}
-              <TimelineItem
-                icon={Coffee}
-                title="How It All Started"
-                className="mb-12 sm:mb-16"
-              >
-                <div className="flex flex-col sm:flex-row gap-6 items-start">
-                  <div className="flex-1">
-                    <p className="text-muted-foreground leading-relaxed">
-                      Our vegan-milk taste testing journey began, ironically
-                      enough, with cow milk and a silly joke between colleagues:
-                      Soy milk? You mean you mix soy sauce with milk? Sounds
-                      terrible. After that rather horrible incident (we cannot
-                      recommend you try this at home), we wanted to test actual
-                      cow-milk alternatives and, because one of these people is
-                      a data scientist, we had to record it.
-                    </p>
-                  </div>
-                  <TimelineImageGrid
-                    images={[
-                      {
-                        src: soySauceMilkPhoto,
-                        alt: "Photo of Alpro plant-based milk carton next to Shoyu soy sauce bottle with a glass showing the terrible mixture",
-                      },
-                      {
-                        src: milkSoySaucePhoto,
-                        alt: "Photo of Magere Melk dairy-free milk carton and soy sauce bottle showing the products that inspired the joke",
-                      },
-                    ]}
-                    caption="The actual culprits: milk meets soy sauce"
-                    onImageClick={setSelectedImage}
-                  />
-                </div>
-              </TimelineItem>
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <Band ground="cream" size="hero">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-14">
+          <div>
+            <Kicker>How this started</Kicker>
+            <Display as="h1" size="hero" className="mt-5">
+              It started with
+              <br />
+              <span className="text-story-green">soy sauce.</span>
+            </Display>
+            <Lede className="mt-6 max-w-[34rem]">
+              A colleague asked whether soy milk meant mixing soy sauce into milk. It was a joke. Someone tried it
+              anyway. Nobody has fully recovered.
+            </Lede>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <StoryButton onClick={cta.go} className="w-full sm:w-auto">
+                {cta.label}
+                <ArrowRight />
+              </StoryButton>
+              <StoryLinkButton to="/results" tone="outline" className="w-full sm:w-auto">
+                See what we've scored
+              </StoryLinkButton>
+            </div>
+          </div>
 
-              {/* Timeline Item 2: How it All Escalated */}
-              <TimelineItem
-                icon={TrendingUp}
-                title="How it All Escalated"
-                delay={0.2}
-                reverse
-                className="mb-12 sm:mb-16"
+          {/* The two bottles from the actual incident, overlapped and tilted so
+              they read as evidence pinned to a board rather than a gallery. */}
+          <div className="relative mx-auto flex w-full max-w-md justify-center pt-4 lg:max-w-none">
+            <div aria-hidden className="absolute right-6 top-0 h-56 w-56 rounded-full bg-story-green-light sm:h-72 sm:w-72" />
+            {CULPRITS.map((photo, i) => (
+              <button
+                key={photo.src}
+                type="button"
+                onClick={() => setZoomed(photo.src)}
+                className={`story-lift relative block w-[46%] overflow-hidden rounded-2xl bg-white p-2 transition-transform duration-200 hover:-translate-y-1 sm:w-[44%] ${
+                  i === 0 ? "-rotate-3" : "-ml-6 rotate-2 mt-8"
+                }`}
               >
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  After having recorded and rated more than 100
-                  milk-alternatives, and showed our sheet to many friends, we
-                  knew what we had to do: make it public. Our data scientist got
-                  to work and created a website, available to all, and published
-                  all of our results so far and ready to receive more from the
-                  original founders but of course everyone else who is keen to
-                  test.
-                </p>
-                <TimelineSingleImage
-                  src={spreadsheetImage}
-                  alt="Original milk testing spreadsheet with ratings and data"
-                  caption="Our original spreadsheet tracking over 100 milk alternatives"
-                  onImageClick={setSelectedImage}
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  loading="eager"
+                  className="aspect-[3/4] w-full rounded-xl object-cover"
                 />
-              </TimelineItem>
-
-              {/* Timeline Item 3: How it will Continue */}
-              <TimelineItem
-                icon={Users}
-                title="How it will (Hopefully) Continue"
-                delay={0.4}
-                reverse
-              >
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  Now it is on you, your friends, family and fiends to continue
-                  the deep-dive into cow milk alternatives. Help us figure out
-                  where we can find the best and price efficient milk-adjacent
-                  drinks. Help the world avoid the worst drinks and give love to
-                  the best ones.
-                </p>
-                <CommunityCarousel
-                  images={communityImages}
-                  caption="A few of the OG fake-milk contenders"
-                />
-              </TimelineItem>
-            </TimelineContainer>
+                <span className="mt-2 block text-center text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-story-muted-2">
+                  {photo.caption}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
-      </BackgroundPattern>
+      </Band>
 
-      <MobileFooter />
+      <div className="text-story-paper">
+        <CrestDivider className="block h-12 w-full sm:h-20" />
+      </div>
 
-      <ImageModal
-        isOpen={!!selectedImage}
-        onClose={() => setSelectedImage(null)}
-        imageUrl={selectedImage || ""}
-      />
-    </div>
+      {/* ── The spreadsheet ──────────────────────────────────────────── */}
+      <Band ground="paper" size="lg">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
+          <div>
+            <Kicker>Then it escalated</Kicker>
+            <Display size="xl" className="mt-5">
+              One of us is a
+              <br />
+              <span className="text-story-green">data scientist.</span>
+            </Display>
+            <Lede className="mt-5">
+              So the tasting did not stay a tasting. It became a column. Then a tab. Then a hundred-odd rows of brands,
+              scores and increasingly unhinged tasting notes, argued over at length by people who had strong opinions
+              about oat milk in coffee.
+            </Lede>
+            <p className="mt-4 text-[0.9375rem] leading-relaxed text-story-muted">
+              We showed the sheet to friends. They asked for a copy. That is roughly the moment this became a website.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setZoomed(SPREADSHEET.src)}
+            className="story-lift group block w-full overflow-hidden rounded-[1.25rem] bg-white p-2.5 text-left"
+          >
+            <img
+              src={SPREADSHEET.src}
+              alt={SPREADSHEET.alt}
+              loading="lazy"
+              className="w-full rounded-xl object-cover"
+            />
+            <span className="mt-3 block px-2 pb-1 text-[0.8125rem] font-medium italic text-story-muted">
+              {SPREADSHEET.caption}
+            </span>
+          </button>
+        </div>
+      </Band>
+
+      {/* ── What it is now ───────────────────────────────────────────── */}
+      <Band ground="forest" size="lg">
+        {/* Desktop only: at 390px this shape lands straight on the headline. */}
+        <div aria-hidden className="pointer-events-none absolute -right-20 -top-16 hidden text-story-green lg:block">
+          <MilkDrop size={320} variant="solid" />
+        </div>
+        <div aria-hidden className="pointer-events-none absolute -right-12 -top-10 text-story-green lg:hidden">
+          <MilkDrop size={130} variant="solid" />
+        </div>
+        <div aria-hidden className="pointer-events-none absolute -left-16 bottom-0 text-story-green-light opacity-10">
+          <Sprig size={220} />
+        </div>
+
+        <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:gap-16">
+          <div>
+            <Kicker tone="light">Where it got to</Kicker>
+            <Display size="xl" className="mt-5 text-white">
+              A hundred rows became
+              <br />
+              <span className="text-story-green-light">a public shelf.</span>
+            </Display>
+            <p className="mt-5 max-w-lg text-[1.0625rem] leading-relaxed text-white/70">
+              Everything the original founders logged is on this site, scored on the same scale as everything added
+              since. Anyone can rate. Nobody can buy a rating. If a brand ever pays us, it will say so on this page
+              before it says so anywhere else.
+            </p>
+
+            <dl className="mt-10 grid grid-cols-3 gap-6 border-t border-white/15 pt-8">
+              {[
+                { value: data?.totalRatings, label: "Ratings logged" },
+                { value: data?.products, label: "Products scored" },
+                { value: data?.brands, label: "Brands covered" },
+              ].map((s) => (
+                <div key={s.label}>
+                  <dd className="story-num text-[clamp(1.9rem,6vw,2.75rem)] leading-none text-story-green-light">
+                    {s.value ?? "—"}
+                  </dd>
+                  <dt className="story-kicker mt-2 text-white/50">{s.label}</dt>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setZoomed(TASTING.src)}
+            className="relative block overflow-hidden rounded-[1.25rem] bg-white/5 p-2.5 text-left"
+          >
+            <img
+              src={TASTING.src}
+              alt={TASTING.alt}
+              loading="lazy"
+              className="aspect-[4/3] w-full rounded-xl object-cover"
+            />
+            <span className="mt-3 block px-2 pb-1 text-[0.8125rem] font-medium italic text-white/55">
+              {TASTING.caption}
+            </span>
+          </button>
+        </div>
+      </Band>
+
+      {/* ── The cartons ──────────────────────────────────────────────── */}
+      <Band ground="cream" size="lg" width="full" innerClassName="">
+        <div className="mx-auto w-full max-w-[76rem] px-5 sm:px-8 lg:px-10">
+          <Kicker>The evidence</Kicker>
+          <Display size="lg" className="mt-4 max-w-2xl">
+            Some of the cartons that got us here
+          </Display>
+          <Lede className="mt-4 max-w-xl">
+            Photographed mid-rating, in kitchens, by people who had already opened them. Scroll.
+          </Lede>
+        </div>
+
+        {/* Full-bleed rail — the pictures run off the edge on purpose. */}
+        {/* The fade is the affordance — it says the rail keeps going. */}
+        <div className="relative mt-10">
+          <ul className="story-rail flex gap-4 px-5 pb-2 sm:px-8 lg:px-10">
+          {CARTONS.map((photo) => (
+            <li key={photo.src} className="flex-shrink-0">
+              <button
+                type="button"
+                onClick={() => setZoomed(photo.src)}
+                className="story-lift block w-40 overflow-hidden rounded-2xl bg-white p-2 transition-transform duration-200 hover:-translate-y-1 sm:w-52"
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  loading="lazy"
+                  className="aspect-[3/4] w-full rounded-xl object-cover"
+                />
+              </button>
+              </li>
+            ))}
+          </ul>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-story-cream to-transparent sm:w-24"
+          />
+        </div>
+      </Band>
+
+      <ImageModal isOpen={!!zoomed} onClose={() => setZoomed(null)} imageUrl={zoomed || ""} />
+    </StoryLayout>
   );
 };
 

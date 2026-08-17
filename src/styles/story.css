@@ -1,0 +1,144 @@
+/* ============================================
+   STORY DESIGN LANGUAGE
+   Tokens for the public, story-first marketing surface.
+   Derived from the logo's green + blue and the design-handoff prototype.
+   Deliberately independent of the app's semantic tokens so the public
+   site keeps one committed look on every device and in every theme.
+   ============================================ */
+
+:root {
+  /* Ink */
+  --story-ink: 160 14% 12%;          /* #1b2421 */
+  --story-ink-2: 167 9% 19%;         /* #2b3432 */
+  --story-muted: 154 7% 39%;         /* #5d6b65 */
+  --story-muted-2: 150 4% 56%;       /* #8a948f */
+
+  /* Grounds */
+  --story-paper: 0 0% 100%;
+  --story-cream: 135 29% 97%;        /* #f6faf7 */
+  --story-cream-2: 135 24% 93%;      /* #eaf2ec */
+  --story-cream-3: 140 15% 88%;
+
+  /* Brand green */
+  --story-green: 151 100% 37%;       /* #00bf63 */
+  --story-green-dark: 150 100% 22%;  /* #006e37 */
+  --story-green-deep: 153 71% 11%;   /* forest band ground */
+  --story-green-light: 144 67% 88%;  /* #cdf5dd */
+  --story-green-wash: 145 68% 95%;   /* #eafbf1 */
+
+  /* Brand blue */
+  --story-blue: 231 100% 56%;        /* #2144ff */
+  --story-blue-dark: 228 90% 44%;    /* #0b35d6 */
+  --story-blue-light: 228 100% 93%;  /* #dbe2ff */
+  --story-blue-wash: 228 100% 96%;
+  --story-blue-deep: 231 62% 17%;
+
+  /* Accent amber */
+  --story-amber: 37 99% 55%;         /* #fea619 */
+  --story-amber-dark: 35 83% 38%;    /* #b06d10 */
+  --story-amber-light: 40 100% 92%;  /* #fff1d6 */
+
+  /* Hairlines */
+  --story-line: 167 9% 19% / 0.08;
+  --story-line-strong: 167 9% 19% / 0.16;
+}
+
+@layer base {
+  /* The story surface always renders in its committed light palette, even if
+     the app shell is in dark mode — one look, every device. */
+  .story-surface {
+    background-color: hsl(var(--story-cream));
+    color: hsl(var(--story-ink));
+    font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .story-surface ::selection {
+    background: hsl(var(--story-green) / 0.25);
+  }
+}
+
+@layer components {
+  /* Display type: Epilogue, tight, confident. Fluid across every breakpoint so
+     mobile gets a real headline rather than a shrunken desktop one. */
+  .story-display {
+    font-family: Epilogue, Georgia, serif;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .story-serif {
+    font-family: Epilogue, Georgia, serif;
+    letter-spacing: -0.02em;
+  }
+
+  .story-kicker {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  .story-num {
+    font-family: Epilogue, Georgia, serif;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+  }
+
+  /* Edge-to-edge band inside a normal container flow. */
+  .story-hairline {
+    box-shadow: inset 0 0 0 1px hsl(var(--story-line));
+  }
+
+  .story-lift {
+    box-shadow:
+      0 24px 50px -30px hsl(160 14% 12% / 0.35),
+      0 4px 12px -6px hsl(160 14% 12% / 0.08);
+  }
+
+  .story-lift-green {
+    box-shadow: 0 14px 30px -12px hsl(var(--story-green) / 0.5);
+  }
+
+  /* index.css carries a sitewide `button:disabled { bg-gray-200 text-gray-500
+     !important }` that predates this work. It overrides every disabled button
+     on the public site with a blue-grey that belongs to no palette here — a
+     submitting form button, a "coming soon" pill. Rather than unpick a rule
+     the logged-in app may depend on, the story surface states its own disabled
+     look at higher specificity. */
+  .story-surface button:disabled,
+  .story-surface button[class*="inline-flex"]:disabled {
+    background-color: hsl(var(--story-cream-3)) !important;
+    color: hsl(var(--story-muted)) !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+  }
+
+  /* Horizontal chip rails: hide the scrollbar, keep the affordance. */
+  .story-rail {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .story-rail::-webkit-scrollbar {
+    display: none;
+  }
+  .story-rail > * {
+    scroll-snap-align: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-surface *,
+  .story-surface *::before,
+  .story-surface *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
