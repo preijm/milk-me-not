@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { brandRanges, tierBins, priceQualityBins, withPriceVerdict } from "./chartData";
+import { brandRanges, tierBins, priceQualityBins, withPriceVerdict, countryCounts } from "./chartData";
 import type { RatingFact } from "@/hooks/useRatingFacts";
 
 const fact = (over: Partial<RatingFact> & { rating: number }): RatingFact => ({
@@ -8,6 +8,10 @@ const fact = (over: Partial<RatingFact> & { rating: number }): RatingFact => ({
   product_name: "Oat",
   is_barista: null,
   price_quality_ratio: null,
+  property_names: null,
+  flavor_names: null,
+  created_at: null,
+  country_code: null,
   ...over,
 });
 
@@ -80,5 +84,28 @@ describe("withPriceVerdict", () => {
   it("counts only the ratings that carry a verdict", () => {
     const facts = [fact({ rating: 7 }), fact({ rating: 8, price_quality_ratio: "good_deal" })];
     expect(withPriceVerdict(facts)).toBe(1);
+  });
+});
+
+describe("countryCounts", () => {
+  it("counts ratings per country, busiest first", () => {
+    const facts = [
+      fact({ rating: 8, country_code: "NL" }),
+      fact({ rating: 7, country_code: "DE" }),
+      fact({ rating: 9, country_code: "NL" }),
+    ];
+    expect(countryCounts(facts)).toEqual([
+      { country_code: "NL", test_count: 2 },
+      { country_code: "DE", test_count: 1 },
+    ]);
+  });
+
+  it("leaves out ratings with no country, so the map never counts a blank one", () => {
+    const facts = [fact({ rating: 8, country_code: null }), fact({ rating: 8, country_code: "  " }), fact({ rating: 7, country_code: "NL" })];
+    expect(countryCounts(facts)).toEqual([{ country_code: "NL", test_count: 1 }]);
+  });
+
+  it("is empty when the current filter leaves nothing", () => {
+    expect(countryCounts([])).toEqual([]);
   });
 });

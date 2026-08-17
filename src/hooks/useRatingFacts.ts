@@ -18,6 +18,7 @@ export type RatingFact = {
   property_names: string[] | null;
   flavor_names: string[] | null;
   created_at: string | null;
+  country_code: string | null;
 };
 
 /** Shared by every consumer, so React Query dedupes them onto one request. */
@@ -38,6 +39,7 @@ export const fetchRatingFacts = async (): Promise<RatingFact[]> => {
       property_names: row.property_names ?? null,
       flavor_names: row.flavor_names ?? null,
       created_at: row.created_at ?? null,
+      country_code: row.country_code ?? null,
     }));
 };
 

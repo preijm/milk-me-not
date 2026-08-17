@@ -90,10 +90,12 @@ const Results = () => {
     setFilters({ barista: false, properties: [], flavors: [], myResultsOnly: false });
   };
 
-  // Charts aggregate ratings rather than products, so the toolbar counts what
-  // the view underneath is actually made of. Every rating belongs to a product,
-  // so the slice's rating total is just the surviving products' counts summed.
-  const chartsView = view === "charts";
+  // Only the ranking is a list of products; the charts and the map both
+  // aggregate ratings, so the toolbar counts whatever the view is made of.
+  // Every rating belongs to a product, so the slice's rating total is just the
+  // surviving products' counts summed. Sort is the one control that stays
+  // behind — none of its columns mean anything to a chart or a country.
+  const listView = view === "table";
   const ratingCount = filteredResults.reduce((sum, r) => sum + r.count, 0);
   const totalRatings = aggregatedResults.reduce((sum, r) => sum + r.count, 0);
 
@@ -106,10 +108,10 @@ const Results = () => {
     onSetSort: handleSetSort,
     onClearSort: handleClearSort,
     showMyResults: !!user,
-    resultCount: chartsView ? ratingCount : filteredResults.length,
-    totalCount: chartsView ? totalRatings : aggregatedResults.length,
-    countNoun: chartsView ? "ratings" : "products",
-    showSort: !chartsView,
+    resultCount: listView ? filteredResults.length : ratingCount,
+    totalCount: listView ? aggregatedResults.length : totalRatings,
+    countNoun: listView ? "products" : "ratings",
+    showSort: listView,
   };
 
   return (
@@ -148,14 +150,9 @@ const Results = () => {
           />
         )}
 
-        {/* The map runs its own country query and ignores search, sort and
-            filter entirely, so it gets no toolbar — controls that silently do
-            nothing are worse than controls that are absent. */}
-        {view !== "map" && (
-          <div className="mt-7">
-            {isMobile ? <ResultsToolbarMobile {...toolbarProps} /> : <ResultsToolbarDesktop {...toolbarProps} />}
-          </div>
-        )}
+        <div className="mt-7">
+          {isMobile ? <ResultsToolbarMobile {...toolbarProps} /> : <ResultsToolbarDesktop {...toolbarProps} />}
+        </div>
 
         <div className="mt-8">
           {isLoading ? (
@@ -183,7 +180,7 @@ const Results = () => {
                 </div>
               }
             >
-              <MapboxWorldMap />
+              <MapboxWorldMap visibleProductIds={visibleProductIds} />
             </Suspense>
           ) : (
             <MapLoginOverlay />

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,13 +6,16 @@ import { useQuery } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
 import { StoryButton, StoryCard } from '@/components/story';
 import { prefersReducedMotion } from '@/lib/motion';
+import { useRatingFacts } from '@/hooks/useRatingFacts';
+import { countryCounts } from '@/components/results/chartData';
+import { ResultsPanel } from '@/components/results/ResultsPanel';
 
 interface CountryTestCount {
   country_code: string;
   test_count: number;
 }
 
-const MapboxWorldMap = () => {
+const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const initAttempted = useRef(false);
@@ -22,31 +25,13 @@ const MapboxWorldMap = () => {
   const [mapError, setMapError] = useState<string | null>(null);
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
 
-  // Fetch test counts per country
-  const { data: countryData = [], isLoading } = useQuery({
-    queryKey: ['country-test-counts'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('milk_tests')
-        .select('country_code')
-        .not('country_code', 'is', null);
-      
-      if (error) throw error;
-      
-      // Count tests per country
-      const counts: Record<string, number> = {};
-      data.forEach(test => {
-        if (test.country_code) {
-          counts[test.country_code] = (counts[test.country_code] || 0) + 1;
-        }
-      });
-      
-      return Object.entries(counts).map(([country_code, test_count]) => ({
-        country_code,
-        test_count
-      })) as CountryTestCount[];
-    },
-  });
+  // Counted from the same ratings the ranking and the charts are showing, so
+  // search and the filters reach the map too.
+  const { data: facts = [], isLoading } = useRatingFacts();
+  const countryData: CountryTestCount[] = useMemo(
+    () => countryCounts(facts.filter((f) => f.product_id && visibleProductIds.has(f.product_id))),
+    [facts, visibleProductIds],
+  );
 
   // Fetch countries with names for display
   const { data: countriesData = [] } = useQuery({
@@ -447,20 +432,19 @@ const MapboxWorldMap = () => {
   }, [discoveryPercentage]);
 
   return (
-    <div className="w-full">
-      <div className="max-w-2xl">
-        <p className="story-kicker text-story-green-dark">Where it was drunk</p>
-        <h2 className="story-display mt-3 text-[clamp(1.4rem,3vw,1.9rem)] leading-tight text-story-ink">
-          {countryData.length} countries have put a carton on the board
-        </h2>
-        <p className="mt-3 text-[0.9375rem] leading-relaxed text-story-muted">
-          That is {animatedPercentage}% of the world, which leaves rather a lot of shelves nobody has reported back on
-          yet.
-        </p>
-      </div>
-
+    <div className="flex w-full flex-col gap-5">
+      <ResultsPanel
+        kicker="Where it was drunk"
+        title={`${countryData.length} ${countryData.length === 1 ? "country has" : "countries have"} put a carton on the board`}
+        lede={
+          <>
+            That is {animatedPercentage}% of the world, which leaves rather a lot of shelves nobody has reported back
+            on yet. Darker means more ratings.
+          </>
+        }
+      >
       {/* Legend. The fill is a single-hue ramp, so the scale reads left to right. */}
-      <div className="mt-7 flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <span className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-story-muted-2">None</span>
         <span
           aria-hidden
@@ -470,7 +454,7 @@ const MapboxWorldMap = () => {
         <span className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-story-muted-2">Most</span>
       </div>
 
-      <div className="story-hairline relative mt-5 h-[26rem] w-full overflow-hidden rounded-[1.5rem] sm:h-[34rem]">
+      <div className="story-hairline relative mt-5 h-[26rem] w-full overflow-hidden rounded-[1.25rem] sm:h-[34rem]">
         <div ref={mapContainer} className="h-full w-full" />
 
         {(isLoading || isInitializing) && !mapError && (
@@ -496,10 +480,11 @@ const MapboxWorldMap = () => {
           </div>
         )}
       </div>
+      </ResultsPanel>
 
       {/* Country rankings. Separated by spacing and a tinted bar rather than
           divider rules, which the rest of the site does not use. */}
-      <StoryCard className="mt-5 px-5 py-6 sm:px-7 sm:py-7">
+      <StoryCard className="px-5 py-6 sm:px-7 sm:py-7">
         <div className="flex items-baseline justify-between gap-4">
           <h3 className="story-serif text-[1.125rem] font-bold text-story-ink">Who is reporting back</h3>
           <span className="text-[0.8125rem] font-medium text-story-muted-2">{countryData.length} countries</span>

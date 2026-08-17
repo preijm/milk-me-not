@@ -88,3 +88,25 @@ export const priceQualityBins = (facts: RatingFact[]): PriceQualityBin[] => {
 /** How many ratings carry a price verdict at all. */
 export const withPriceVerdict = (facts: RatingFact[]): number =>
   facts.filter((f) => getPriceQuality(f.price_quality_ratio)).length;
+
+export type CountryCount = { country_code: string; test_count: number };
+
+/**
+ * Ratings per country, busiest first.
+ *
+ * The map used to run its own query straight at `milk_tests`, which is why it
+ * sat behind the same search and filters as everything else and quietly
+ * ignored them. Counting the same rows the rest of the page is looking at
+ * keeps all three views describing one slice.
+ */
+export const countryCounts = (facts: RatingFact[]): CountryCount[] => {
+  const counts = new Map<string, number>();
+  for (const fact of facts) {
+    const code = fact.country_code?.trim();
+    if (!code) continue;
+    counts.set(code, (counts.get(code) ?? 0) + 1);
+  }
+  return [...counts]
+    .map(([country_code, test_count]) => ({ country_code, test_count }))
+    .sort((a, b) => b.test_count - a.test_count || a.country_code.localeCompare(b.country_code));
+};

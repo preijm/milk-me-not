@@ -11,7 +11,7 @@
  * never disagree.
  */
 import { useMemo } from "react";
-import { StoryCard } from "@/components/story";
+import { ResultsPanel } from "./ResultsPanel";
 import { useRatingFacts } from "@/hooks/useRatingFacts";
 // The product page already draws a tier histogram exactly like this one, and it
 // is the same chart of the same five tiers — so it is borrowed rather than
@@ -20,25 +20,6 @@ import { ScoreDistribution } from "@/components/product/ScoreDistribution";
 import { brandRanges, tierBins, priceQualityBins, withPriceVerdict, MIN_RATINGS_PER_BRAND } from "./chartData";
 import { BrandRangeChart } from "./BrandRangeChart";
 import { PriceLadderChart } from "./PriceLadderChart";
-
-const ChartCard = ({
-  kicker,
-  title,
-  lede,
-  children,
-}: {
-  kicker: string;
-  title: React.ReactNode;
-  lede: React.ReactNode;
-  children: React.ReactNode;
-}) => (
-  <StoryCard as="article" className="px-5 py-7 sm:px-8 sm:py-9">
-    <p className="story-kicker text-story-green-dark">{kicker}</p>
-    <h3 className="story-display mt-3 text-[clamp(1.4rem,3vw,1.9rem)] leading-tight text-story-ink">{title}</h3>
-    <p className="mt-3 max-w-2xl text-[0.9375rem] leading-relaxed text-story-muted">{lede}</p>
-    <div className="mt-8">{children}</div>
-  </StoryCard>
-);
 
 export const ResultsCharts = ({ visibleProductIds }: { visibleProductIds: Set<string> }) => {
   const { data: facts = [], isLoading } = useRatingFacts();
@@ -68,7 +49,7 @@ export const ResultsCharts = ({ visibleProductIds }: { visibleProductIds: Set<st
 
   return (
     <div className="flex flex-col gap-5">
-      <ChartCard
+      <ResultsPanel
         kicker="Who holds up"
         title="A good average is not the same as a safe buy"
         lede={
@@ -80,9 +61,9 @@ export const ResultsCharts = ({ visibleProductIds }: { visibleProductIds: Set<st
         }
       >
         <BrandRangeChart rows={brands} minRatings={MIN_RATINGS_PER_BRAND} />
-      </ChartCard>
+      </ResultsPanel>
 
-      <ChartCard
+      <ResultsPanel
         kicker="The whole scale"
         title="Nearly everything lands in the top half"
         lede={
@@ -94,9 +75,9 @@ export const ResultsCharts = ({ visibleProductIds }: { visibleProductIds: Set<st
         }
       >
         <ScoreDistribution bins={bins} max={histogramMax} />
-      </ChartCard>
+      </ResultsPanel>
 
-      <ChartCard
+      <ResultsPanel
         kicker="Price against taste"
         title="The cheap ones are not the bad ones"
         lede={
@@ -108,7 +89,7 @@ export const ResultsCharts = ({ visibleProductIds }: { visibleProductIds: Set<st
         }
       >
         <PriceLadderChart bins={ladder} scored={priced} total={total} />
-      </ChartCard>
+      </ResultsPanel>
     </div>
   );
 };
