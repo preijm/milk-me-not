@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Seo } from "@/components/Seo";
+import { QuickRateSheet } from "@/components/story/QuickRateSheet";
 import { humanizeLabels } from "@/lib/labels";
 import {
   ArrowRight,
@@ -35,6 +37,16 @@ const ProductDetails = () => {
   const { productId } = useParams<{ productId: string }>();
   const { story, isLoading, notFound } = useProductStory(productId);
   const cta = useRateCta();
+  const [quickRateOpen, setQuickRateOpen] = useState(false);
+
+  // Signed-in readers rate the carton they are already looking at without
+  // leaving the page. Everyone else goes to sign-up, which is what the shared
+  // CTA already does — previously this button sent even signed-in readers to a
+  // blank /add, throwing away the product they had just chosen.
+  const onRateClick = () => {
+    if (cta.isAuthed && productId) setQuickRateOpen(true);
+    else cta.go();
+  };
 
   if (notFound) {
     return (
@@ -179,7 +191,7 @@ const ProductDetails = () => {
             <VerdictCard story={story} className="mt-8 lg:hidden" />
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <StoryButton onClick={cta.go} className="w-full sm:w-auto">
+              <StoryButton onClick={onRateClick} className="w-full sm:w-auto">
                 Rate this one yourself
                 <ArrowRight />
               </StoryButton>
@@ -247,6 +259,15 @@ const ProductDetails = () => {
         </StoryCard>
       </Band>
 
+      {productId && (
+        <QuickRateSheet
+          open={quickRateOpen}
+          onOpenChange={setQuickRateOpen}
+          productId={productId}
+          productName={story.productName}
+          brandName={story.brandName}
+        />
+      )}
     </StoryLayout>
   );
 };

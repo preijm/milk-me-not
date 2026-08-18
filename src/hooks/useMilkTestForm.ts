@@ -2,15 +2,52 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeFileName } from "@/lib/fileValidation";
 import { useUserProfile } from "./useUserProfile";
 import { validateMilkTestInput, sanitizeInput, sanitizeForDatabase } from "@/lib/security";
 import { MilkTestResult } from "@/types/milk-test";
 import { useAuth } from "@/contexts/AuthContext";
+import { RATING_FACTS_KEY } from "./useRatingFacts";
+import { MY_RATING_KEY } from "./useMyRatingForProduct";
 
-export const useMilkTestForm = (editTest?: MilkTestResult) => {
+/**
+ * Every cached view a rating can appear in.
+ *
+ * The board, the feed and "my ratings" were invalidated; the three queries
+ * behind a product page were not. That went unnoticed while saving always
+ * redirected to /feed — but the quick-rate sheet leaves you standing on the
+ * product page, where a stale "1 person has rated this" is the first thing
+ * you see after rating it yourself.
+ */
+const invalidateRatingViews = async (queryClient: QueryClient) => {
+  await Promise.all(
+    [
+      ['milk-tests-aggregated'],
+      ['my-milk-tests'],
+      ['feed'],
+      ['product-details'],
+      ['milk-tests-details'],
+      ['product-test-count'],
+      RATING_FACTS_KEY,
+      [MY_RATING_KEY],
+    ].map((queryKey) => queryClient.invalidateQueries({ queryKey })),
+  );
+};
+
+type MilkTestFormOptions = {
+  /**
+   * Called instead of navigating to /feed once a rating is saved. The full-page
+   * form wants the redirect; the quick-rate sheet wants to stay exactly where
+   * the reader already was, which is the entire point of it.
+   */
+  onSaved?: () => void;
+  /** Same, for the delete path. */
+  onDeleted?: () => void;
+};
+
+export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFormOptions) => {
   const [testId] = useState<string | undefined>(editTest?.id);
   const [rating, setRating] = useState(editTest?.rating || 0);
   const [productId, setProductId] = useState(editTest?.product_id || "");
@@ -241,11 +278,13 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
       });
 
       // Invalidate relevant queries to refresh data on results pages
-      await queryClient.invalidateQueries({ queryKey: ['milk-tests-aggregated'] });
-      await queryClient.invalidateQueries({ queryKey: ['my-milk-tests'] });
-      await queryClient.invalidateQueries({ queryKey: ['feed'] });
+      await invalidateRatingViews(queryClient);
 
-      navigate("/feed");
+      if (options?.onSaved) {
+        options.onSaved();
+      } else {
+        navigate("/feed");
+      }
     } catch (error) {
       console.error('Error adding milk test:', error);
       toast({
@@ -297,11 +336,13 @@ export const useMilkTestForm = (editTest?: MilkTestResult) => {
       });
 
       // Invalidate relevant queries
-      await queryClient.invalidateQueries({ queryKey: ['milk-tests-aggregated'] });
-      await queryClient.invalidateQueries({ queryKey: ['my-milk-tests'] });
-      await queryClient.invalidateQueries({ queryKey: ['feed'] });
+      await invalidateRatingViews(queryClient);
 
-      navigate("/feed");
+      if (options?.onDeleted) {
+        options.onDeleted();
+      } else {
+        navigate("/feed");
+      }
     } catch (error) {
       console.error('Error deleting milk test:', error);
       toast({

@@ -21,6 +21,13 @@ type ToolbarProps = {
   showMyResults: boolean;
   resultCount: number;
   totalCount: number;
+  /**
+   * What the view underneath is counting. The charts aggregate ratings, not
+   * products, so "220 of 220 products" would be counting the wrong thing.
+   */
+  countNoun?: string;
+  /** Sort only reorders the ranked list, so the charts hide the control. */
+  showSort?: boolean;
 };
 
 const activeFilterCount = (filters: FilterOptions) =>
@@ -59,6 +66,8 @@ export const ResultsToolbarDesktop = ({
   showMyResults,
   resultCount,
   totalCount,
+  countNoun = "products",
+  showSort = true,
 }: ToolbarProps) => {
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -69,11 +78,15 @@ export const ResultsToolbarDesktop = ({
       <div className="flex items-center gap-3">
         <SearchField searchTerm={searchTerm} setSearchTerm={setSearchTerm} className="max-w-md flex-1" />
 
-        <Popover open={sortOpen} onOpenChange={setSortOpen}>
+        <Popover open={sortOpen && showSort} onOpenChange={setSortOpen}>
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="flex h-11 flex-shrink-0 items-center gap-2 rounded-full border-[1.5px] border-story-ink/12 bg-white px-4 text-[0.8125rem] font-bold text-story-ink-2 transition-colors hover:bg-story-cream-2"
+              hidden={!showSort}
+              className={cn(
+                "h-11 flex-shrink-0 items-center gap-2 rounded-full border-[1.5px] border-story-ink/12 bg-white px-4 text-[0.8125rem] font-bold text-story-ink-2 transition-colors hover:bg-story-cream-2",
+                showSort ? "flex" : "hidden",
+              )}
             >
               <ArrowUpDown className="h-4 w-4" aria-hidden />
               {findSortLabel(sortConfig)}
@@ -123,7 +136,7 @@ export const ResultsToolbarDesktop = ({
       </div>
 
       <p className="text-[0.8125rem] font-medium text-story-muted-2">
-        Showing <span className="font-bold text-story-ink">{resultCount}</span> of {totalCount} products
+        Showing <span className="font-bold text-story-ink">{resultCount}</span> of {totalCount} {countNoun}
       </p>
     </div>
   );
@@ -142,6 +155,8 @@ export const ResultsToolbarMobile = ({
   showMyResults,
   resultCount,
   totalCount,
+  countNoun = "products",
+  showSort = true,
 }: ToolbarProps) => {
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -152,11 +167,15 @@ export const ResultsToolbarMobile = ({
       <SearchField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <div className="story-rail flex items-center gap-2">
-        <Sheet open={sortOpen} onOpenChange={setSortOpen}>
+        <Sheet open={sortOpen && showSort} onOpenChange={setSortOpen}>
           <SheetTrigger asChild>
             <button
               type="button"
-              className="flex h-10 flex-shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-story-ink/12 bg-white px-3.5 text-[0.8125rem] font-bold text-story-ink-2"
+              hidden={!showSort}
+              className={cn(
+                "h-10 flex-shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-story-ink/12 bg-white px-3.5 text-[0.8125rem] font-bold text-story-ink-2",
+                showSort ? "flex" : "hidden",
+              )}
             >
               <ArrowUpDown className="h-3.5 w-3.5" aria-hidden />
               {findSortLabel(sortConfig)}
@@ -214,7 +233,7 @@ export const ResultsToolbarMobile = ({
                 onClick={() => setFilterOpen(false)}
                 className="w-full rounded-full bg-story-green py-3.5 text-[0.9375rem] font-bold text-white"
               >
-                Show {resultCount} products
+                Show {resultCount} {countNoun}
               </button>
             </SheetFooter>
           </SheetContent>
@@ -222,7 +241,7 @@ export const ResultsToolbarMobile = ({
       </div>
 
       <p className="text-[0.75rem] font-medium text-story-muted-2">
-        {resultCount} of {totalCount} products
+        {resultCount} of {totalCount} {countNoun}
       </p>
     </div>
   );

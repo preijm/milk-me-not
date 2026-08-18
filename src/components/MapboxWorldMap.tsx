@@ -1,17 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
 import { RefreshCw } from 'lucide-react';
+import { StoryButton } from '@/components/story';
+import { prefersReducedMotion } from '@/lib/motion';
+import { useRatingFacts } from '@/hooks/useRatingFacts';
+import { countryStats, MIN_RATINGS_PER_COUNTRY, type CountryStat } from '@/components/results/chartData';
+import { ResultsPanel } from '@/components/results/ResultsPanel';
 
-interface CountryTestCount {
-  country_code: string;
-  test_count: number;
-}
+/**
+ * The distance between two averages, measured on the numbers as printed.
+ *
+ * Subtracting first and rounding after gives a sentence that argues with the
+ * figures beside it — 7.75 and 7.33 show as 7.8 and 7.3 but read as 0.4 apart.
+ */
+const gap = (low: number, high: number) => (Number(high.toFixed(1)) - Number(low.toFixed(1))).toFixed(1);
 
-const MapboxWorldMap = () => {
+const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const initAttempted = useRef(false);
@@ -21,31 +28,19 @@ const MapboxWorldMap = () => {
   const [mapError, setMapError] = useState<string | null>(null);
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
 
-  // Fetch test counts per country
-  const { data: countryData = [], isLoading } = useQuery({
-    queryKey: ['country-test-counts'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('milk_tests')
-        .select('country_code')
-        .not('country_code', 'is', null);
-      
-      if (error) throw error;
-      
-      // Count tests per country
-      const counts: Record<string, number> = {};
-      data.forEach(test => {
-        if (test.country_code) {
-          counts[test.country_code] = (counts[test.country_code] || 0) + 1;
-        }
-      });
-      
-      return Object.entries(counts).map(([country_code, test_count]) => ({
-        country_code,
-        test_count
-      })) as CountryTestCount[];
-    },
-  });
+  // Counted from the same ratings the ranking and the charts are showing, so
+  // search and the filters reach the map too.
+  const { data: facts = [], isLoading } = useRatingFacts();
+  const countryData: CountryStat[] = useMemo(
+    () => countryStats(facts.filter((f) => f.product_id && visibleProductIds.has(f.product_id))),
+    [facts, visibleProductIds],
+  );
+
+  // Only countries with enough ratings get to stand for a national palate.
+  const judged = useMemo(
+    () => [...countryData].filter((c) => c.test_count >= MIN_RATINGS_PER_COUNTRY).sort((a, b) => a.avg - b.avg),
+    [countryData],
+  );
 
   // Fetch countries with names for display
   const { data: countriesData = [] } = useQuery({
@@ -62,6 +57,8 @@ const MapboxWorldMap = () => {
 
   // Create a map from country code to country name
   const countryCodeToName = new Map(countriesData.map(c => [c.code, c.name]));
+  /** The country list may not have loaded yet, so the code stands in. */
+  const countryName = (code: string) => countryCodeToName.get(code) || code;
   const totalCountries = countriesData.length || 195;
 
   // Read Mapbox public token from environment variable
@@ -201,10 +198,12 @@ const MapboxWorldMap = () => {
         }
       });
 
-      // Add rotation
+      // Add rotation. It re-arms itself on every moveend, so for someone who
+      // has asked for reduced motion this is a globe that never stops turning —
+      // opt them out entirely rather than slowing it down.
       let userInteracting = false;
       const spinGlobe = () => {
-        if (!map.current) return;
+        if (!map.current || prefersReducedMotion()) return;
         const zoom = map.current.getZoom();
         if (!userInteracting && zoom < 5) {
           const center = map.current.getCenter();
@@ -300,16 +299,24 @@ const MapboxWorldMap = () => {
       const country = countryData.find((c) => c.country_code === countryCode);
       const testCount = country ? country.test_count : 0;
 
+      // Raw HTML sits outside React and Tailwind, so the story palette comes in
+      // as literals here — the same compromise `tiers.ts` makes for SVG fills.
+      const popup = document.createElement('div');
+      popup.style.cssText = 'padding:14px 16px;min-width:150px';
+
+      const name = document.createElement('h3');
+      name.style.cssText = 'font-weight:800;font-size:17px;margin:0 0 6px;color:#1b2421;letter-spacing:-0.01em';
+      name.textContent = countryName || countryCode || 'Unknown';
+
+      const count = document.createElement('p');
+      count.style.cssText = 'font-size:14px;font-weight:600;margin:0;color:#5d6b65';
+      count.textContent = `${testCount} ${testCount === 1 ? 'rating' : 'ratings'}`;
+
+      popup.append(name, count);
+
       new mapboxgl.Popup({ closeButton: true, className: 'custom-popup' })
         .setLngLat(e.lngLat)
-        .setHTML(`
-            <div style="padding: 16px; min-width: 140px;">
-              <h3 style="font-weight: 700; font-size: 18px; margin: 0 0 8px 0; color: #1f2937;">${countryName || countryCode}</h3>
-              <p style="font-size: 20px; font-weight: 600; margin: 0; color: ${getCountryColor(testCount)};">
-                ${testCount} ${testCount === 1 ? 'test result' : 'test results'}
-              </p>
-            </div>
-          `)
+        .setDOMContent(popup)
         .addTo(map.current);
     }
   };
@@ -414,6 +421,10 @@ const MapboxWorldMap = () => {
   // Animated counter effect
   useEffect(() => {
     if (discoveryPercentage > 0) {
+      if (prefersReducedMotion()) {
+        setAnimatedPercentage(discoveryPercentage);
+        return;
+      }
       const duration = 1500;
       const steps = 30;
       const increment = discoveryPercentage / steps;
@@ -432,93 +443,131 @@ const MapboxWorldMap = () => {
   }, [discoveryPercentage]);
 
   return (
-    <div className="w-full space-y-6">
-      {/* Discovery Message */}
-      <div className="text-center py-4">
-        <p className="text-xl md:text-2xl font-semibold text-foreground">
-          Plant-based milk alternatives mapped in{' '}
-          <span className="text-primary font-bold">{animatedPercentage}%</span>{' '}
-          of countries worldwide 🌍
-        </p>
-      </div>
-
-      {/* Legend - Gradient bar */}
-      <div className="flex items-center justify-center gap-4 mb-6">
-        <span className="text-sm text-muted-foreground">No tests</span>
-        <div 
-          className="w-96 h-4 rounded-full"
-          style={{
-            background: 'linear-gradient(to right, #e5e7eb, #00bf63)'
-          }}
+    <div className="flex w-full flex-col gap-5">
+      <ResultsPanel
+        kicker="Where it was drunk"
+        title={`${countryData.length} ${countryData.length === 1 ? "country has" : "countries have"} put a carton on the board`}
+        lede={
+          <>
+            That is {animatedPercentage}% of the world, which leaves rather a lot of shelves nobody has reported back
+            on yet. Darker means more ratings.
+          </>
+        }
+      >
+      {/* Legend. The fill is a single-hue ramp, so the scale reads left to right. */}
+      <div className="flex items-center gap-3">
+        <span className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-story-muted-2">None</span>
+        <span
+          aria-hidden
+          className="h-2 w-full max-w-xs rounded-full"
+          style={{ background: 'linear-gradient(to right, #e5e7eb, #00bf63)' }}
         />
-        <span className="text-sm text-muted-foreground">More tests</span>
+        <span className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-story-muted-2">Most</span>
       </div>
 
-      {/* Mapbox Map */}
-      <div className="w-full h-[600px] rounded-lg border border-border shadow-lg overflow-hidden relative">
-        <div ref={mapContainer} className="w-full h-full" />
+      <div className="story-hairline relative mt-5 h-[26rem] w-full overflow-hidden rounded-[1.25rem] sm:h-[34rem]">
+        <div ref={mapContainer} className="h-full w-full" />
 
         {(isLoading || isInitializing) && !mapError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-sm">
-            <div className="text-sm text-muted-foreground">
-              {isLoading ? 'Loading map data…' : 'Initializing map…'}
-            </div>
+          <div className="absolute inset-0 flex items-center justify-center bg-story-cream/80 backdrop-blur-sm">
+            <p className="text-[0.9375rem] font-medium text-story-muted">
+              {isLoading ? 'Loading map data…' : 'Waking the globe up…'}
+            </p>
           </div>
         )}
 
         {mapError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-muted/80 backdrop-blur-sm">
-            <div className="text-center p-6 max-w-md">
-              <p className="text-foreground font-semibold mb-2">{mapError}</p>
-              <p className="text-sm text-muted-foreground mb-4">
-                This could be due to network issues, authentication problems, or missing Mapbox configuration.
+          <div className="absolute inset-0 flex items-center justify-center bg-story-cream/90 p-6 backdrop-blur-sm">
+            <div className="max-w-md text-center">
+              <p className="story-serif text-[1.125rem] font-bold text-story-ink">{mapError}</p>
+              <p className="mt-2 text-[0.875rem] leading-relaxed text-story-muted">
+                Usually the network, occasionally the map service itself.
               </p>
-              <Button onClick={handleRetry} variant="default" className="gap-2">
-                <RefreshCw className="h-4 w-4" />
-                Retry
-              </Button>
+              <StoryButton tone="green" size="sm" onClick={handleRetry} className="mt-5">
+                <RefreshCw className="h-4 w-4" aria-hidden />
+                Try again
+              </StoryButton>
             </div>
           </div>
         )}
       </div>
+      </ResultsPanel>
 
-      {/* Country Rankings */}
-      <div className="bg-card rounded-lg border border-border">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <h3 className="text-lg font-semibold text-foreground">Country Rankings</h3>
-          <span className="text-sm text-muted-foreground">{countryData.length} countries</span>
-        </div>
-        <div className="divide-y divide-border">
-          {(() => {
-            const sortedData = [...countryData].sort((a, b) => b.test_count - a.test_count);
-            return sortedData.map((country, index) => {
-              const percentage = (country.test_count / totalTests) * 100;
+      {/* Country rankings. Separated by spacing and a tinted bar rather than
+          divider rules, which the rest of the site does not use. */}
+      <ResultsPanel
+        kicker="Who is reporting back"
+        title={
+          judged.length >= 2
+            ? `${countryName(judged[judged.length - 1].country_code)} is the softest touch`
+            : "Where the ratings come from"
+        }
+        lede={
+          judged.length >= 2 ? (
+            <>
+              The bar is each country's share of the ratings; the number beside it is what they score on average. Of
+              the countries with at least {MIN_RATINGS_PER_COUNTRY} ratings,{" "}
+              <strong className="font-bold text-story-ink">{countryName(judged[judged.length - 1].country_code)}</strong>{" "}
+              averages {judged[judged.length - 1].avg.toFixed(1)} and{" "}
+              <strong className="font-bold text-story-ink">{countryName(judged[0].country_code)}</strong>{" "}
+              {judged[0].avg.toFixed(1)} — {gap(judged[0].avg, judged[judged.length - 1].avg)} of a point between the
+              kindest crowd and the toughest.
+            </>
+          ) : (
+            <>
+              The bar is each country's share of the ratings; the number beside it is what they score on average. Too
+              few countries have {MIN_RATINGS_PER_COUNTRY} ratings in this slice to compare palates yet.
+            </>
+          )
+        }
+      >
+        <ol className="flex flex-col gap-1.5">
+          {[...countryData]
+            .sort((a, b) => b.test_count - a.test_count)
+            .map((country, index) => {
+              const percentage = totalTests ? (country.test_count / totalTests) * 100 : 0;
               return (
-                <div
+                <li
                   key={country.country_code}
-                  className="relative flex items-center justify-between px-6 py-4 hover:bg-muted/50 transition-colors"
+                  className="relative flex items-center justify-between overflow-hidden rounded-xl px-3 py-2.5"
                 >
-                  <div 
-                    className="absolute inset-y-0 left-0 bg-emerald-500/15 transition-all"
+                  <span
+                    aria-hidden
+                    className="absolute inset-y-0 left-0 rounded-xl bg-story-green/[0.14]"
                     style={{ width: `${percentage}%` }}
                   />
-                  <div className="relative flex items-center gap-4">
-                    <span className="text-sm font-medium w-6 text-foreground">
+                  <span className="relative flex min-w-0 items-center gap-3">
+                    <span className="story-num w-5 flex-shrink-0 text-[0.8125rem] tabular-nums text-story-muted-2">
                       {index + 1}
                     </span>
-                    <span className="font-medium text-foreground">
-                      {countryCodeToName.get(country.country_code) || country.country_code}
+                    <span className="truncate text-[0.9375rem] font-bold text-story-ink">
+                      {countryName(country.country_code)}
                     </span>
-                  </div>
-                  <span className="relative text-lg font-bold text-foreground">
-                    {country.test_count} <span className="text-sm font-normal text-muted-foreground">({Math.round(percentage)}%)</span>
                   </span>
-                </div>
+                  <span className="relative flex flex-shrink-0 items-baseline gap-4 pl-3 sm:gap-6">
+                    <span className="story-num w-10 text-right text-[0.9375rem] tabular-nums text-story-muted sm:w-12">
+                      {country.test_count}
+                    </span>
+                    {/* Dimmed below the threshold: a mean of two ratings is a
+                        number, not a verdict. */}
+                    <span
+                      className={`story-num w-9 text-right text-[1rem] tabular-nums sm:w-11 ${
+                        country.test_count >= MIN_RATINGS_PER_COUNTRY ? "text-story-ink" : "text-story-muted-2"
+                      }`}
+                    >
+                      {country.avg.toFixed(1)}
+                    </span>
+                  </span>
+                </li>
               );
-            });
-          })()}
-        </div>
-      </div>
+            })}
+        </ol>
+
+        <p className="mt-4 text-[0.8125rem] leading-relaxed text-story-muted">
+          Ratings, then average score. Averages from fewer than {MIN_RATINGS_PER_COUNTRY} ratings are greyed — they
+          move too much to mean anything yet.
+        </p>
+      </ResultsPanel>
     </div>
   );
 };

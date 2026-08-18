@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { Loader } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Band, SectionHead, StoryButton, StoryLayout } from "@/components/story";
 import { ResultsViewSwitcher } from "@/components/results/ResultsViewSwitcher";
 import { MapLoginOverlay } from "@/components/results/MapLoginOverlay";
-import { ChartComingSoon } from "@/components/results/ChartComingSoon";
+import { ResultsCharts } from "@/components/results/ResultsCharts";
 import { ResultsHero } from "@/components/results/ResultsHero";
 import { ResultsToolbarDesktop, ResultsToolbarMobile } from "@/components/results/ResultsToolbar";
 import { ResultsRankedList } from "@/components/results/ResultsRankedList";
@@ -54,6 +54,14 @@ const Results = () => {
   const visibleResults = filteredResults.slice(0, visibleCount);
   const remaining = filteredResults.length - visibleResults.length;
 
+  // The charts read raw ratings, but must show the same slice as the ranking —
+  // so they follow the products that survived filtering rather than filtering
+  // twice against two different grains.
+  const visibleProductIds = useMemo(
+    () => new Set(filteredResults.map((r) => r.product_id)),
+    [filteredResults],
+  );
+
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { user } = useAuth();
@@ -82,6 +90,15 @@ const Results = () => {
     setFilters({ barista: false, properties: [], flavors: [], myResultsOnly: false });
   };
 
+  // Only the ranking is a list of products; the charts and the map both
+  // aggregate ratings, so the toolbar counts whatever the view is made of.
+  // Every rating belongs to a product, so the slice's rating total is just the
+  // surviving products' counts summed. Sort is the one control that stays
+  // behind — none of its columns mean anything to a chart or a country.
+  const listView = view === "table";
+  const ratingCount = filteredResults.reduce((sum, r) => sum + r.count, 0);
+  const totalRatings = aggregatedResults.reduce((sum, r) => sum + r.count, 0);
+
   const toolbarProps = {
     searchTerm,
     setSearchTerm,
@@ -91,8 +108,10 @@ const Results = () => {
     onSetSort: handleSetSort,
     onClearSort: handleClearSort,
     showMyResults: !!user,
-    resultCount: filteredResults.length,
-    totalCount: aggregatedResults.length,
+    resultCount: listView ? filteredResults.length : ratingCount,
+    totalCount: listView ? aggregatedResults.length : totalRatings,
+    countNoun: listView ? "products" : "ratings",
+    showSort: listView,
   };
 
   return (
@@ -119,6 +138,18 @@ const Results = () => {
           trailing={!isMobile && <ResultsViewSwitcher view={view} onViewChange={setView} />}
         />
 
+        {/* On a phone the switcher gets its own full-width row — beside the
+            heading it would either wrap or squeeze the title. The map stays off
+            the phone, as it always has, so it is not offered there. */}
+        {isMobile && (
+          <ResultsViewSwitcher
+            view={view}
+            onViewChange={setView}
+            available={["table", "charts"]}
+            className="mt-6 flex w-full"
+          />
+        )}
+
         <div className="mt-7">
           {isMobile ? <ResultsToolbarMobile {...toolbarProps} /> : <ResultsToolbarDesktop {...toolbarProps} />}
         </div>
@@ -126,7 +157,7 @@ const Results = () => {
         <div className="mt-8">
           {isLoading ? (
             <ResultsSkeleton />
-          ) : isMobile || view === "table" ? (
+          ) : view === "table" ? (
             filteredResults.length === 0 ? (
               <ResultsEmptyState onClear={clearAllFilters} />
             ) : isMobile ? (
@@ -140,7 +171,7 @@ const Results = () => {
               />
             )
           ) : view === "charts" ? (
-            <ChartComingSoon />
+            <ResultsCharts visibleProductIds={visibleProductIds} />
           ) : user ? (
             <Suspense
               fallback={
@@ -149,12 +180,12 @@ const Results = () => {
                 </div>
               }
             >
-              <MapboxWorldMap />
+              <MapboxWorldMap visibleProductIds={visibleProductIds} />
             </Suspense>
           ) : (
             <MapLoginOverlay />
           )}
-          {remaining > 0 && (isMobile || view === "table") && !isLoading && (
+          {remaining > 0 && view === "table" && !isLoading && (
             <div className="mt-10 flex flex-col items-center gap-3">
               <StoryButton tone="outline" size="md" onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}>
                 Show {Math.min(remaining, PAGE_SIZE)} more

@@ -9,10 +9,13 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children, fallback = '/auth' }: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+  const { user, loading, initialized } = useAuth();
   const location = useLocation();
 
-  if (loading) {
+  // `user` is null until the initial session lookup resolves, so redirecting on
+  // !user before then bounces signed-in people to /auth on every hard load,
+  // refresh or deep link into a protected page.
+  if (loading || !initialized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">

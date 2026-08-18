@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { StoryButton } from "@/components/story/primitives";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -82,10 +82,10 @@ export default function ProfileSettings() {
   };
 
   return (
-    <div className="pt-6">
+    <div>
       <form onSubmit={handleUpdateProfile} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
+          <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
             Username
           </label>
           <Input
@@ -98,21 +98,17 @@ export default function ProfileSettings() {
             maxLength={30}
             pattern="^[a-zA-Z0-9_-]+$"
             title="Username can only contain letters, numbers, underscores, and hyphens"
-            className="bg-background border-border"
+            className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green"
           />
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="mt-1.5 text-[0.75rem] text-story-muted-2">
             Only letters, numbers, underscores, and hyphens allowed
           </p>
         </div>
 
-        <Button 
-          type="submit" 
-          className="w-full text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group bg-brand-secondary hover:bg-brand-secondary/90"
-          disabled={loading}
-        >
+        <StoryButton type="submit" className="w-full" disabled={loading}>
           <Save className="w-4 h-4 mr-2" />
           {loading ? "Saving..." : "Save Changes"}
-        </Button>
+        </StoryButton>
       </form>
     </div>
   );

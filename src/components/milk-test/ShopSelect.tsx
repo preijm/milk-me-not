@@ -12,6 +12,11 @@ interface ShopSelectProps {
   selectedCountry?: string;
 }
 
+// Stable reference for the loading/error case — see NO_COUNTRIES in
+// CountrySelect. `shops` is an effect dependency that setStates, so a fresh
+// `[]` literal each render spins the component until the query resolves.
+const NO_SHOPS: { name: string; country_code: string }[] = [];
+
 export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) => {
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState<{ name: string; country_code: string }[]>([]);
@@ -20,7 +25,7 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
 
-  const { data: shops = [], refetch: refetchShops } = useQuery({
+  const { data: shops = NO_SHOPS, refetch: refetchShops } = useQuery({
     queryKey: ['shops'],
     queryFn: async () => {
       console.log('Fetching all shops');

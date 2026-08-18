@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { StoryAppLayout } from "@/components/story/StoryAppLayout";
 import { ProductRegistrationProvider } from "@/components/milk-test/registration-ui/ProductRegistrationContext";
 import { ProductForm } from "@/components/milk-test/registration-ui/FormSections";
 import { useToast } from "@/hooks/use-toast";
@@ -71,39 +70,25 @@ const AddProduct = () => {
   const [searchParams] = useSearchParams();
   const editProductId = searchParams.get('edit');
 
-  const handleCancel = () => {
-    navigate('/add');
-  };
-
   return (
-    <div className="min-h-screen bg-muted">
-      <div className="sticky top-0 z-10 bg-card border-b border-border px-4 py-3">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleCancel}
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-lg font-semibold">
-            {editProductId ? 'Edit Product' : 'Add New Product'}
-          </h1>
-        </div>
-      </div>
-      
-      <div className="p-4">
+    <StoryAppLayout
+      kicker="New to the board"
+      title={editProductId ? "Fix this" : "Add a"}
+      accent={editProductId ? "carton." : "carton."}
+      lede="Not on the board yet? Put it there, then rate it."
+      back={{ to: "/add", label: "Back to rating" }}
+    >
+      <div className="story-hairline rounded-3xl bg-white p-5 md:p-7">
         <ProductRegistrationProvider
           formProps={{
             open: true,
             onOpenChange: () => {},
             onSuccess: (productId: string, brandId: string) => {
-              navigate('/add', { 
-                state: { 
-                  selectedProductId: productId, 
-                  selectedBrandId: brandId 
-                } 
+              navigate('/add', {
+                state: {
+                  selectedProductId: productId,
+                  selectedBrandId: brandId
+                }
               });
             },
             editProductId: editProductId || undefined
@@ -112,7 +97,7 @@ const AddProduct = () => {
           <AddProductForm />
         </ProductRegistrationProvider>
       </div>
-    </div>
+    </StoryAppLayout>
   );
 };
 

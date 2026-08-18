@@ -1,7 +1,7 @@
 import React from "react";
 import { User, Shield, Bell, Save, Lock } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { StoryButton } from "@/components/story/primitives";
 import { Input } from "@/components/ui/input";
 import { CountrySelect } from "@/components/milk-test/CountrySelect";
 import NotificationSettings from "@/components/settings/NotificationSettings";
@@ -38,7 +38,7 @@ export const DesktopAccountTabs = ({
   return (
     <Tabs defaultValue="profile" className="w-full">
       <div className="flex flex-col md:flex-row gap-4 md:gap-8">
-        <TabsList className="flex flex-row md:flex-col h-fit w-full md:w-48 p-1">
+        <TabsList className="flex h-fit w-full flex-row gap-1 bg-story-cream p-1 md:w-48 md:flex-col">
           <TabsTrigger
             value="profile"
             className="flex-1 md:w-full justify-center md:justify-start gap-2 mb-0 md:mb-1"
@@ -66,7 +66,7 @@ export const DesktopAccountTabs = ({
           <TabsContent value="profile" className="space-y-6 mt-0 h-full">
             <form onSubmit={onUpdateProfile} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
+                <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                   Username
                 </label>
                 <Input
@@ -79,12 +79,12 @@ export const DesktopAccountTabs = ({
                   maxLength={30}
                   pattern="^[a-zA-Z0-9_-]+$"
                   title="Username can only contain letters, numbers, underscores, and hyphens"
-                  className="bg-card/80 border-border backdrop-blur-sm rounded-sm"
+                  className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
+                <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                   Default Country (optional)
                 </label>
                 <CountrySelect
@@ -96,22 +96,17 @@ export const DesktopAccountTabs = ({
                 </p>
               </div>
 
-              <Button
-                type="submit"
-                variant="brand"
-                className="w-full"
-                disabled={loading}
-              >
+              <StoryButton type="submit" className="w-full" disabled={loading}>
                 <Save className="w-4 h-4 mr-2" />
                 {loading ? "Saving..." : "Save Profile"}
-              </Button>
+              </StoryButton>
             </form>
           </TabsContent>
 
           <TabsContent value="security" className="space-y-6 mt-0 h-full">
             <form onSubmit={onUpdatePassword} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
+                <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                   New Password
                 </label>
                 <Input
@@ -122,12 +117,12 @@ export const DesktopAccountTabs = ({
                   required
                   minLength={6}
                   showPasswordToggle
-                  className="bg-card/80 border-border backdrop-blur-sm rounded-sm"
+                  className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
+                <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                   Confirm New Password
                 </label>
                 <Input
@@ -138,13 +133,12 @@ export const DesktopAccountTabs = ({
                   required
                   minLength={6}
                   showPasswordToggle
-                  className="bg-card/80 border-border backdrop-blur-sm rounded-sm"
+                  className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green"
                 />
               </div>
 
-              <Button
+              <StoryButton
                 type="submit"
-                variant="brand"
                 className="w-full"
                 disabled={
                   isChangingPassword || !newPassword || !confirmPassword
@@ -152,7 +146,7 @@ export const DesktopAccountTabs = ({
               >
                 <Lock className="w-4 h-4 mr-2" />
                 {isChangingPassword ? "Updating..." : "Update Password"}
-              </Button>
+              </StoryButton>
             </form>
           </TabsContent>
 

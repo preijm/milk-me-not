@@ -124,7 +124,7 @@ export const ProfileEditDialog = ({
             <Avatar className="h-24 w-24">
               <AvatarImage src={previewUrl || undefined} />
               <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80">
-                <User className="h-12 w-12 text-primary-foreground" />
+                <User className="h-12 w-12 text-story-green-dark" />
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col items-center gap-2">

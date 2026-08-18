@@ -53,9 +53,19 @@ Logos render inside a small square tile on a white ground, scaled to fit with
   small next to its neighbours.
 - **Wordmarks beat lockups.** A tall logo with a tagline underneath becomes
   illegible at 32px. Crop to the mark or the wordmark alone.
+- **Square beats wide.** The tile is square and nothing is cropped, so a wide
+  logo can only ever be as tall as its ratio allows: a 5:1 wordmark lands about
+  9px tall in a 48px tile, whatever else you do. Where a brand publishes a
+  square variant — usually its app icon at `/apple-touch-icon.png` — prefer
+  that over the horizontal wordmark. Jumbo's tile comes from exactly that.
 - **Avoid white-on-transparent.** It disappears on the tile. Use the dark or
-  full-colour variant. (`rice-dream.png` currently has this problem — it
-  renders as an empty tile.)
+  full-colour variant — most brands publish both, usually with `-dark` or
+  `-black` in the filename.
+
+To check whether a logo carries its own background rather than eyeballing it,
+draw it to a canvas and read the corner alpha: four opaque corners means a
+panel, and the width-to-height ratio then decides whether it can be a
+`FULL_BLEED` entry.
 
 ## Which brands are worth it
 
@@ -76,3 +86,12 @@ there is no need to chase all 71.
 These are third-party trademarks. Using them to identify the product being
 reviewed is ordinary editorial practice, but they are not ours, so don't use
 them anywhere that implies endorsement or partnership.
+
+Most files here came from Wikimedia Commons as **PD-textlogo** — a wordmark
+too simple to attract copyright — or straight from the brand's own site. Those
+carry no attribution obligation; only the trademark rule above applies.
+
+**One exception:** `netto.svg` is **CC BY-SA 4.0**, not public domain. Shipping
+it means crediting Netto Marken-Discount via Wikimedia Commons somewhere
+user-visible. Until that credit exists, either add it or drop the file — it
+only serves the BioBio own-brand, which the fallback mark covers fine.

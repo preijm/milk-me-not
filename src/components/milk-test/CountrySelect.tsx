@@ -9,12 +9,18 @@ interface CountrySelectProps {
   setCountry: (country: string) => void;
 }
 
+// Shared empty array so the effects below keep a stable `countries` reference
+// while the query is loading. A `= []` default literal is a new array on every
+// render, which re-fires effects that setState, which renders again — an
+// infinite loop for as long as the fetch is in flight, and forever if it fails.
+const NO_COUNTRIES: { code: string; name: string }[] = [];
+
 export const CountrySelect = ({ country, setCountry }: CountrySelectProps) => {
   const [suggestions, setSuggestions] = useState<{ code: string; name: string }[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isUserTyping, setIsUserTyping] = useState(false);
 
-  const { data: countries = [] } = useQuery({
+  const { data: countries = NO_COUNTRIES } = useQuery({
     queryKey: ['countries'],
     queryFn: async () => {
       console.log('Fetching countries from database...');

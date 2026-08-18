@@ -7,13 +7,15 @@ import { useRateCta } from "./useRateCta";
 /**
  * Sticky bottom action bar for narrow viewports.
  *
- * Phones get the same single call to action the desktop header carries, pinned
- * where a thumb can reach it, instead of a tab bar full of app navigation.
+ * Shown below `lg`, which is exactly where the header trades its inline nav for
+ * a burger. Both bottom bars — this one and the members' StoryAppBar — switch
+ * at the same width, so the navigation model never changes as you move between
+ * a public page and a signed-in one at the same window size.
  */
 const MobileCtaBar = ({ hint }: { hint?: string }) => {
   const cta = useRateCta();
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-story-ink/[0.07] bg-story-cream/92 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl sm:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-story-ink/[0.07] bg-story-cream/92 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl lg:hidden">
       <StoryButton onClick={cta.go} size="md" className="w-full">
         {cta.label}
         <ArrowRight />
@@ -50,7 +52,7 @@ export const StoryLayout = ({
     {/* The sticky bar is fixed, so the *last* thing on the page has to reserve
         room for it — padding `main` left the footer's own tagline sitting
         underneath the bar at the true bottom of the scroll. */}
-    <div className={cn(!hideMobileCta && "pb-[5.25rem] sm:pb-0")}>
+    <div className={cn(!hideMobileCta && "pb-[5.25rem] lg:pb-0")}>
       <StoryFooter />
     </div>
     {!hideMobileCta && <MobileCtaBar hint={mobileCtaHint} />}

@@ -52,8 +52,11 @@ jobs:
       - name: Run ESLint
         run: bun run lint
 
+      # `tsc --noEmit` checks nothing here: the root tsconfig has "files": []
+      # and only project references, which plain tsc does not follow. Build
+      # mode walks them, so this covers src and vite.config.ts alike.
       - name: Run TypeScript type check
-        run: bunx tsc --noEmit
+        run: bunx tsc --build
 
   test:
     name: Test

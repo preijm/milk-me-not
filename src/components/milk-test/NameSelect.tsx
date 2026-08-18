@@ -14,6 +14,10 @@ interface NameSelectProps {
   autoFocus?: boolean;
 }
 
+// Stable reference for the loading/error case — see NO_COUNTRIES in
+// CountrySelect for why a `[]` literal default loops here.
+const NO_NAMES: Array<{ id: string; name: string }> = [];
+
 export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFocus = false }: NameSelectProps) => {
   const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string }>>([]);
   const [showAddNew, setShowAddNew] = useState(false);
@@ -21,7 +25,7 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFo
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { toast } = useToast();
 
-  const { data: names = [] } = useQuery({
+  const { data: names = NO_NAMES } = useQuery({
     queryKey: ['product_names'],
     queryFn: async () => {
       const { data, error } = await supabase

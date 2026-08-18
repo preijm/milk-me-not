@@ -1,63 +1,51 @@
 import { NavLink } from "react-router-dom";
-import { User, Shield, Bell, Database, HelpCircle, Menu } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { StoryAppLayout } from "@/components/story/StoryAppLayout";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import MenuBar from "@/components/MenuBar";
-import MobileFooter from "@/components/MobileFooter";
-import BackgroundPattern from "@/components/BackgroundPattern";
-
-const settingsItems = [
-  { title: "Profile", url: "/account", icon: User },
-  { title: "Security", url: "/account/security", icon: Shield },
-  { title: "Notifications", url: "/account/notifications", icon: Bell },
-  { title: "Data & Privacy", url: "/account/privacy", icon: Database },
-  { title: "Help & Support", url: "/account/help", icon: HelpCircle },
+/**
+ * Settings destinations.
+ *
+ * These were previously "Profile / Security / Notifications / Data & Privacy /
+ * Help & Support" — but /account/privacy and /account/help have never been
+ * routes, so both fell through to the 404 page, while /account/country existed
+ * and was missing from the list entirely.
+ */
+const SETTINGS_ITEMS = [
+  { title: "Profile", url: "/account" },
+  { title: "Security", url: "/account/security" },
+  { title: "Notifications", url: "/account/notifications" },
+  { title: "Country", url: "/account/country" },
 ];
 
-function SettingsSidebar() {
-  const { state } = useSidebar();
-
-
-  const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50";
-
-  return (
-    <Sidebar className={state === "collapsed" ? "w-14" : "w-60"} collapsible="icon">
-      <SidebarTrigger className="m-2 self-end" />
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Settings</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} end className={getNavCls}>
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
-  );
-}
+/**
+ * A horizontal rail on phones, a vertical one from `lg` up. The old layout
+ * branched on `window.innerWidth` at first render, which never re-evaluated on
+ * resize or rotation; this is the same nav at both sizes, chosen by CSS.
+ */
+const SettingsNav = () => (
+  <nav aria-label="Settings" className="lg:w-52 lg:shrink-0">
+    <ul className="story-rail -mx-1 flex gap-1.5 px-1 pb-1 lg:mx-0 lg:flex-col lg:px-0 lg:pb-0">
+      {SETTINGS_ITEMS.map((item) => (
+        <li key={item.url} className="shrink-0 lg:w-full">
+          <NavLink
+            to={item.url}
+            end
+            className={({ isActive }) =>
+              cn(
+                "block whitespace-nowrap rounded-full px-4 py-2.5 text-[0.875rem] font-bold no-underline transition-colors lg:rounded-xl",
+                isActive
+                  ? "bg-story-green-wash text-story-green-dark"
+                  : "text-story-ink-2 hover:bg-story-ink/[0.05]",
+              )
+            }
+          >
+            {item.title}
+          </NavLink>
+        </li>
+      ))}
+    </ul>
+  </nav>
+);
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -65,53 +53,17 @@ interface SettingsLayoutProps {
 }
 
 export default function SettingsLayout({ children, title }: SettingsLayoutProps) {
-  const isMobileOrTablet = typeof window !== 'undefined' && window.innerWidth < 1024;
-  
-  
-  // Mobile/Tablet layout
-  if (isMobileOrTablet) {
-    return (
-      <div className="min-h-screen bg-white">
-        <MenuBar />
-        <div className="pt-14 pb-20 min-h-screen">
-          <div className="p-4">
-            {children}
-          </div>
-        </div>
-        <MobileFooter />
-      </div>
-    );
-  }
-  
-  // Desktop layout
   return (
-    <div className="min-h-screen">
-      <MenuBar />
-      <SidebarProvider>
-        <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-          <SidebarTrigger>
-            <Menu className="h-4 w-4" />
-          </SidebarTrigger>
-          <div className="flex items-center gap-3 ml-3">
-            <h1 className="text-base font-semibold">{title}</h1>
-          </div>
-        </header>
-        
-        <div className="flex min-h-screen w-full">
-          <SettingsSidebar />
-          
-          <main className="flex-1 pt-16 pb-8">
-            <BackgroundPattern>
-              <div className="container max-w-4xl mx-auto px-4 py-8">
-                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-8 border border-white/20 animate-fade-up">
-                  {children}
-                </div>
-              </div>
-            </BackgroundPattern>
-          </main>
-        </div>
-      </SidebarProvider>
-      <MobileFooter />
-    </div>
+    <StoryAppLayout
+      kicker="Your account"
+      title={title}
+      lede="Manage your details and how Milk Me Not reaches you."
+      width="wide"
+    >
+      <div className="flex flex-col gap-6 lg:flex-row lg:gap-10">
+        <SettingsNav />
+        <div className="story-hairline min-w-0 flex-1 rounded-3xl bg-white p-5 md:p-7">{children}</div>
+      </div>
+    </StoryAppLayout>
   );
 }
