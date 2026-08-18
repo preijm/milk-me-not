@@ -137,7 +137,7 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
     
     if (!token) {
       console.error('No Mapbox token available');
-      setMapError('Unable to load map token. Please check the MAPBOX_KEY secret.');
+      setMapError('The map is not configured yet — no Mapbox public token is set for this app.');
       return;
     }
 
