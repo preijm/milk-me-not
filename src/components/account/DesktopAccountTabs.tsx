@@ -62,9 +62,10 @@ export const DesktopAccountTabs = ({
           </TabsTrigger>
         </TabsList>
 
-        <div className="flex-1 h-[280px]">
-          <TabsContent value="profile" className="space-y-6 mt-0 h-full">
+        <div className="min-w-0 flex-1">
+          <TabsContent value="profile" className="mt-0 space-y-6">
             <form onSubmit={onUpdateProfile} className="space-y-6">
+              <div className="grid gap-6 xl:grid-cols-2">
               <div>
                 <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                   Username
@@ -91,9 +92,10 @@ export const DesktopAccountTabs = ({
                   country={defaultCountry}
                   setCountry={setDefaultCountry}
                 />
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1.5 text-[0.75rem] text-story-muted-2">
                   This will be pre-selected when adding new milk tests
                 </p>
+              </div>
               </div>
 
               <StoryButton type="submit" className="w-full" disabled={loading}>
@@ -103,7 +105,7 @@ export const DesktopAccountTabs = ({
             </form>
           </TabsContent>
 
-          <TabsContent value="security" className="space-y-6 mt-0 h-full">
+          <TabsContent value="security" className="mt-0 space-y-6">
             <form onSubmit={onUpdatePassword} className="space-y-6">
               <div>
                 <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
@@ -150,7 +152,7 @@ export const DesktopAccountTabs = ({
             </form>
           </TabsContent>
 
-          <TabsContent value="notifications" className="space-y-6 mt-0 h-full">
+          <TabsContent value="notifications" className="mt-0 space-y-6">
             <NotificationSettings />
           </TabsContent>
         </div>

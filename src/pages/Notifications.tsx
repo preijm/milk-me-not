@@ -36,7 +36,7 @@ const Notifications = () => {
           <MobileNotificationList />
         </div>
         <div className="hidden lg:block">
-          <NotificationList />
+          <NotificationList variant="page" />
         </div>
       </div>
     </StoryAppLayout>

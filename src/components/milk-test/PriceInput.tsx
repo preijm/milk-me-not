@@ -38,8 +38,12 @@ const Meter = ({ step, colour, active }: { step: number; colour: string; active:
     {[0, 1, 2, 3, 4].map((i) => (
       <span
         key={i}
-        className={cn("w-[3px] rounded-[1px] transition-opacity", i <= step ? "" : "opacity-20")}
-        style={{ height: `${6 + i * 3}px`, backgroundColor: colour, opacity: i <= step ? (active ? 1 : 0.62) : undefined }}
+        className="w-[3px] rounded-[1px]"
+        style={{
+          height: `${6 + i * 3}px`,
+          backgroundColor: active ? "#fff" : colour,
+          opacity: i <= step ? (active ? 1 : 0.62) : active ? 0.32 : 0.2,
+        }}
       />
     ))}
   </span>
@@ -66,7 +70,7 @@ export const PriceInput = ({ price, setPrice, hasChanged, setHasChanged }: Price
             onClick={() => handlePriceChange(value)}
             aria-label={label}
             aria-pressed={active}
-            style={active && tier ? { backgroundColor: tier.light, color: tier.color, boxShadow: `inset 0 0 0 1.5px ${tier.color}` } : undefined}
+            style={active && tier ? { backgroundColor: tier.color } : undefined}
             className={cn(
               "flex min-h-[4.25rem] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2.5 transition-colors",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
@@ -74,7 +78,7 @@ export const PriceInput = ({ price, setPrice, hasChanged, setHasChanged }: Price
             )}
           >
             <Meter step={i} colour={tier?.color ?? "hsl(var(--story-muted-2))"} active={active} />
-            <span className={cn("text-[0.6875rem] font-bold", !active && "text-story-muted")}>{short}</span>
+            <span className={cn("text-[0.6875rem] font-bold", active ? "text-white" : "text-story-muted")}>{short}</span>
           </button>
         );
       })}
