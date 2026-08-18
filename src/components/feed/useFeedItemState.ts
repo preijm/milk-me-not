@@ -49,10 +49,9 @@ export const useFeedItemState = (item: MilkTestResult) => {
       const likesWithUsernames = await Promise.all(
         (data || []).map(async (like) => {
           const { data: profile } = await supabase
-            .from('profiles_public')
-            .select('username')
-            .eq('id', like.user_id)
+            .rpc('get_public_profile', { _user_id: like.user_id })
             .maybeSingle();
+
 
           return { ...like, username: profile?.username || 'Anonymous' };
         })
