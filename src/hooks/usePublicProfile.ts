@@ -46,14 +46,13 @@ export const usePublicProfile = (userId: string | undefined) =>
     queryFn: async () => {
       if (!userId) return null;
 
-      const profileResult = await supabase
-        .from("profiles_public")
-        .select("id, username, avatar_url")
-        .eq("id", userId)
-        .maybeSingle();
+      // Public identity comes from a narrow RPC: the profiles table itself is
+      // owner-only, so only id/username/avatar are ever exposed.
+      const profileResult = await supabase.rpc("get_public_profile", { _user_id: userId }).maybeSingle();
 
       if (profileResult.error) throw profileResult.error;
       if (!profileResult.data) return null;
+
 
       // The RPC caps a page at 200 rows whatever page_limit asks for, so a
       // single call would silently under-report anyone whose ratings fall
