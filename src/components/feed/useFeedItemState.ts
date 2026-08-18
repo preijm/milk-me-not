@@ -75,10 +75,9 @@ export const useFeedItemState = (item: MilkTestResult) => {
       const commentsWithUsernames = await Promise.all(
         (data || []).map(async (comment) => {
           const { data: profile } = await supabase
-            .from('profiles_public')
-            .select('username')
-            .eq('id', comment.user_id)
+            .rpc('get_public_profile', { _user_id: comment.user_id })
             .maybeSingle();
+
 
           return { ...comment, username: profile?.username || 'Anonymous' };
         })
