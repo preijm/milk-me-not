@@ -1,44 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { StoryHeader } from "./StoryHeader";
+import { StoryFooter } from "./StoryFooter";
+import { MilkDrop } from "./motifs";
 import { StoryAppBar } from "./StoryAppBar";
-
-const FOOTER_LINKS = [
-  { to: "/results", label: "Discover" },
-  { to: "/faq", label: "How ratings work" },
-  { to: "/contact", label: "Contact" },
-];
-
-/**
- * A deliberately quiet footer for the signed-in pages.
- *
- * StoryFooter closes with a full marketing band — the right ending for a page
- * that is still selling, the wrong one under a settings form the reader is
- * already inside. Same palette and type, a fraction of the volume.
- */
-const AppFooter = () => (
-  <footer className="mt-auto border-t border-story-ink/[0.07] px-5 py-7 sm:px-8 lg:px-10">
-    <div className="mx-auto flex max-w-[76rem] flex-col items-center gap-3 sm:flex-row sm:justify-between">
-      <p className="text-[0.75rem] font-semibold text-story-muted-2">
-        Milk Me Not — rated by people who actually drank it.
-      </p>
-      {/* Only from `lg`, where the bottom tab bar is gone. Below that these
-          links were a third wayfinding system stacked under a tab bar and a
-          hamburger that already reach the same places. */}
-      <nav aria-label="Footer" className="hidden flex-wrap items-center justify-center gap-x-5 gap-y-1.5 lg:flex">
-        {FOOTER_LINKS.map((link) => (
-          <Link
-            key={link.to}
-            to={link.to}
-            className="text-[0.75rem] font-bold text-story-muted no-underline transition-colors hover:text-story-green-dark"
-          >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
-    </div>
-  </footer>
-);
 
 export type StoryAppLayoutProps = {
   children: React.ReactNode;
@@ -54,6 +19,14 @@ export type StoryAppLayoutProps = {
   width?: "narrow" | "wide";
   /** Renders a back link above the title, for sub-steps of a larger flow. */
   back?: { to: string; label: string };
+  /**
+   * The visual that sits beside the page header from `lg` up. Every marketing
+   * hero pairs its text with one; the member pages went text-only, which two
+   * blind critics separately identified as the biggest single reason this half
+   * of the site read as a lesser pass of the same system. Defaults to the
+   * milk-drop motif so no page is left without one by omission.
+   */
+  visual?: React.ReactNode;
   className?: string;
 };
 
@@ -71,7 +44,7 @@ const BackArrow = () => (
  * navigation in place of the marketing call to action, because someone on this
  * side of the sign-in has already been sold.
  */
-export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = "narrow", back, className }: StoryAppLayoutProps) => {
+export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = "narrow", back, visual, className }: StoryAppLayoutProps) => {
   const location = useLocation();
   // Pointing the header CTA at the page you are already on reads as a dead end.
   const onRateFlow = location.pathname.startsWith("/add");
@@ -92,15 +65,20 @@ export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = 
             </Link>
           )}
           {title && (
-            <header className="mb-7 lg:mb-9">
-              {kicker && <p className="story-kicker mb-2.5 text-story-green-dark">{kicker}</p>}
-              {/* Every marketing headline pairs ink with a green accent line;
-                  the member pages were flat black and read as another product. */}
-              <h1 className="story-display text-[2.1rem] text-story-ink sm:text-[2.6rem] lg:text-[3.1rem]">
-                {title}
-                {accent && <span className="block text-story-green">{accent}</span>}
-              </h1>
-              {lede && <p className="mt-3 max-w-prose text-[1rem] text-story-muted">{lede}</p>}
+            <header className="mb-7 flex items-center gap-10 lg:mb-10">
+              <div className="min-w-0 flex-1">
+                {kicker && <p className="story-kicker mb-2.5 text-story-green-dark">{kicker}</p>}
+                {/* Ink line plus a green accent line, as every marketing
+                    headline does — these were flat black. */}
+                <h1 className="story-display text-[2.1rem] text-story-ink sm:text-[2.6rem] lg:text-[3.1rem]">
+                  {title}
+                  {accent && <span className="block text-story-green">{accent}</span>}
+                </h1>
+                {lede && <p className="mt-3 max-w-prose text-[1rem] text-story-muted">{lede}</p>}
+              </div>
+              <div aria-hidden className="hidden shrink-0 lg:block">
+                {visual ?? <MilkDrop size={150} variant="solid" className="text-story-green-light" />}
+              </div>
             </header>
           )}
           {children}
@@ -108,7 +86,7 @@ export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = 
       </main>
 
       <div className="pb-[4.75rem] lg:pb-0">
-        <AppFooter />
+        <StoryFooter hideCta />
       </div>
       <StoryAppBar />
     </div>

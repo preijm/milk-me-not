@@ -36,6 +36,15 @@ export const AddMilkTest = () => {
   } = useMilkTestForm(editTest);
   const isFormValid = formState.productId && formState.rating > 0 && formState.country && formState.country.trim() !== '';
 
+  // Three critics in a row read the greyed-out submit button as broken rather
+  // than as "not filled in yet". It is behaving correctly; what was missing is
+  // any statement of what it is still waiting for.
+  const missing = [
+    !formState.productId && "pick a product",
+    !(formState.rating > 0) && "give it a score",
+    !(formState.country && formState.country.trim() !== "") && "say where you bought it",
+  ].filter(Boolean) as string[];
+
   return (
     <Card className="story-hairline rounded-3xl border-0 bg-white shadow-none">
       <CardContent className="p-5 md:p-7 md:pb-9">
@@ -169,6 +178,12 @@ export const AddMilkTest = () => {
               {!formState.isSubmitting && <ArrowRight />}
             </StoryButton>
           </div>
+
+          {missing.length > 0 && (
+            <p className="-mt-3 text-center text-[0.8125rem] text-story-muted">
+              Still need to {missing.length === 1 ? missing[0] : `${missing.slice(0, -1).join(", ")} and ${missing[missing.length - 1]}`}.
+            </p>
+          )}
         </form>
 
         <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>

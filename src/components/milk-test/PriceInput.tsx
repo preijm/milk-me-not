@@ -12,17 +12,21 @@ interface PriceInputProps {
 /**
  * The five values the database stores, in order, worst to best.
  *
- * The colours come from the shared price-quality scale rather than being
- * restated here — the old buttons had drifted out of order, tinting "good deal"
- * with the same amber as "not worth it" and "fair price" with the strongest
- * green on the scale, so the row read as no scale at all.
+ * The labels are the price-quality vocabulary, not the score vocabulary. These
+ * used to read Waste / Poor / Fair / Good / Gem — the same five words the board
+ * uses for an overall *score* — while a product page reports the same answer
+ * back as "Great value". You rated on one scale and read the result in another.
+ *
+ * Colours come from the shared price-quality scale rather than being restated,
+ * because the old buttons had drifted out of order: "good deal" wore the same
+ * amber as "not worth it", and "fair price" the strongest green.
  */
 const CHOICES = [
-  { value: "waste_of_money", short: "Waste", label: "Total waste of money" },
-  { value: "not_worth_it", short: "Poor", label: "Not worth it" },
-  { value: "fair_price", short: "Fair", label: "Fair price" },
-  { value: "good_deal", short: "Good", label: "Good deal" },
-  { value: "great_value", short: "Gem", label: "Great value for money" },
+  { value: "waste_of_money", short: "Overpriced", label: "A total waste of money" },
+  { value: "not_worth_it", short: "Pricey", label: "Not worth what it cost" },
+  { value: "fair_price", short: "Fair", label: "A fair price" },
+  { value: "good_deal", short: "Good", label: "Good value" },
+  { value: "great_value", short: "Great", label: "Great value for money" },
 ];
 
 /**
@@ -78,7 +82,7 @@ export const PriceInput = ({ price, setPrice, hasChanged, setHasChanged }: Price
             )}
           >
             <Meter step={i} colour={tier?.color ?? "hsl(var(--story-muted-2))"} active={active} />
-            <span className={cn("text-[0.6875rem] font-bold", active ? "text-white" : "text-story-muted")}>{short}</span>
+            <span className={cn("text-[0.625rem] font-bold leading-tight sm:text-[0.6875rem]", active ? "text-white" : "text-story-muted")}>{short}</span>
           </button>
         );
       })}
