@@ -2,7 +2,7 @@ import { useState, lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { VersionProvider } from "@/contexts/VersionContext";
@@ -22,10 +22,6 @@ const Index = lazy(() => import("./pages/Index"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Account = lazy(() => import("./pages/Account"));
-const AccountSecurity = lazy(() => import("./pages/AccountSecurity"));
-const AccountNotifications = lazy(() => import("./pages/AccountNotifications"));
-const AccountCountry = lazy(() => import("./pages/AccountCountry"));
-const AccountProfile = lazy(() => import("./pages/AccountProfile"));
 const ProductDetails = lazy(() => import("./pages/ProductDetails"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Feed = lazy(() => import("./pages/Feed"));
@@ -94,10 +90,10 @@ const App = () => {
                 <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
                 <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-                <Route path="/account/security" element={<ProtectedRoute><AccountSecurity /></ProtectedRoute>} />
-                <Route path="/account/notifications" element={<ProtectedRoute><AccountNotifications /></ProtectedRoute>} />
-                <Route path="/account/country" element={<ProtectedRoute><AccountCountry /></ProtectedRoute>} />
-                <Route path="/account/profile" element={<ProtectedRoute><AccountProfile /></ProtectedRoute>} />
+                {/* Settings used to be split across four sub-pages behind their
+                    own sidebar, duplicating what /account already showed. They
+                    redirect rather than 404 so older links still land. */}
+                <Route path="/account/*" element={<Navigate to="/account" replace />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>

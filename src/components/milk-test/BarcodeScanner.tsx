@@ -1,215 +1,177 @@
+import { useEffect, useRef, useState } from "react";
+import { BrowserMultiFormatReader } from "@zxing/browser";
+import { BarcodeFormat, DecodeHintType } from "@zxing/library";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { StoryButton } from "@/components/story/primitives";
+import { lookUpBarcode, type ScannedProduct } from "@/lib/openFoodFacts";
 
-import React, { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Camera, Upload, X } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-  DialogDescription,
-} from "@/components/ui/dialog";
+/** The symbologies actually printed on grocery packaging. */
+const FORMATS = [
+  BarcodeFormat.EAN_13,
+  BarcodeFormat.EAN_8,
+  BarcodeFormat.UPC_A,
+  BarcodeFormat.UPC_E,
+];
 
 interface BarcodeScannerProps {
   open: boolean;
   onClose: () => void;
-  onScan: (barcodeData: string) => void;
+  /** Fires with whatever the lookup found; `brand`/`name` may be null. */
+  onScan: (result: ScannedProduct) => void;
 }
 
-export const BarcodeScanner: React.FC<BarcodeScannerProps> = ({ 
-  open, 
-  onClose, 
-  onScan 
-}) => {
+type Phase =
+  | { step: "starting" }
+  | { step: "scanning" }
+  | { step: "looking-up"; code: string }
+  | { step: "missing"; code: string }
+  | { step: "denied" }
+  | { step: "unsupported" };
+
+/**
+ * Scan the barcode on a carton the board has not seen before.
+ *
+ * This replaces a mockup — a dashed box captioned "Barcode scanner would
+ * appear here" beside a "Simulate Scan" button hardcoded to one number. It
+ * decodes in the browser with ZXing, which was already a dependency and
+ * imported nowhere, and hands the caller whatever Open Food Facts knows so the
+ * registration form arrives filled in rather than blank.
+ *
+ * It never blocks: an unreadable code, an unknown product, a refused camera or
+ * a browser without one all end with the reader typing, which is the situation
+ * they were in before scanning existed.
+ */
+export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const stopRef = useRef<(() => void) | null>(null);
+  const [phase, setPhase] = useState<Phase>({ step: "starting" });
+
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    setPhase({ step: "starting" });
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setPhase({ step: "unsupported" });
+      return;
+    }
+
+    const hints = new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, FORMATS);
+    const reader = new BrowserMultiFormatReader(hints);
+
+    const handle = async (code: string) => {
+      if (cancelled) return;
+      stopRef.current?.();
+      setPhase({ step: "looking-up", code });
+      const found = await lookUpBarcode(code);
+      if (cancelled) return;
+      if (!found) {
+        setPhase({ step: "missing", code });
+        return;
+      }
+      onScan(found);
+    };
+
+    // decodeFromVideoDevice can hang rather than reject — a camera held by
+    // another app, or a headless browser where the API exists but no device
+    // does. Without this the reader watches "Waking the camera…" forever.
+    const timeout = window.setTimeout(() => {
+      if (!cancelled) setPhase((cur) => (cur.step === "starting" ? { step: "denied" } : cur));
+    }, 8000);
+
+    reader
+      .decodeFromVideoDevice(undefined, videoRef.current ?? undefined, (result) => {
+        if (result) void handle(result.getText());
+      })
+      .then((controls) => {
+        window.clearTimeout(timeout);
+        if (cancelled) {
+          controls.stop();
+          return;
+        }
+        stopRef.current = () => controls.stop();
+        setPhase({ step: "scanning" });
+      })
+      .catch(() => {
+        window.clearTimeout(timeout);
+        if (!cancelled) setPhase({ step: "denied" });
+      });
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeout);
+      // Without this the camera light stays on after the dialog closes.
+      stopRef.current?.();
+      stopRef.current = null;
+    };
+  }, [open, onScan]);
+
+  const message =
+    phase.step === "starting" ? "Waking the camera…"
+    : phase.step === "scanning" ? "Point it at the barcode on the carton."
+    : phase.step === "looking-up" ? "Looking it up…"
+    : phase.step === "missing" ? "Nothing on file for that one — you can still add it by hand."
+    : phase.step === "denied" ? "No camera access. You can allow it in your browser, or type the details instead."
+    : "This browser cannot open a camera. Type the details instead.";
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogDescription className="sr-only">
-          Scan a barcode to identify a milk product
+      <DialogContent className="story-surface max-w-md rounded-3xl border-story-ink/10 bg-story-cream p-5">
+        <DialogTitle className="story-serif text-[1.15rem] font-bold text-story-ink">
+          Scan the carton
+        </DialogTitle>
+        <DialogDescription className="text-[0.875rem] text-story-muted">
+          {message}
         </DialogDescription>
-        <div className="text-center">
-          <h3 className="text-lg font-medium">Scan Barcode</h3>
-          <p className="text-sm text-gray-500">
-            Position the barcode within the scanner
-          </p>
+
+        <div className="relative mt-1 overflow-hidden rounded-2xl bg-story-ink">
+          <video
+            ref={videoRef}
+            className="aspect-[4/3] w-full object-cover"
+            muted
+            playsInline
+          />
+          {phase.step === "scanning" && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-8 top-1/2 h-24 -translate-y-1/2 rounded-xl border-2 border-white/80"
+            />
+          )}
         </div>
-        
-        <div className="mt-4 flex flex-col items-center">
-          {/* Barcode scanning implementation would go here */}
-          <div className="border-2 border-dashed border-gray-300 rounded-md p-6 w-full h-48 flex items-center justify-center">
-            <p className="text-gray-500">Barcode scanner would appear here</p>
-          </div>
-          
-          <div className="mt-4 flex gap-2">
-            <Button onClick={() => onScan("4006298001234")} type="button">
-              Simulate Scan
-            </Button>
-            <Button onClick={onClose} variant="outline" type="button">
-              Cancel
-            </Button>
-          </div>
+
+        <div className="mt-1 flex gap-2">
+          {(phase.step === "denied" || phase.step === "unsupported") && (
+            <StoryButton type="button" size="sm" className="flex-1" onClick={onClose}>
+              Type it instead
+            </StoryButton>
+          )}
+          {phase.step === "missing" && (
+            <StoryButton
+              type="button"
+              size="sm"
+              className="flex-1"
+              onClick={() =>
+                onScan({
+                  barcode: phase.code,
+                  brand: null,
+                  name: null,
+                  quantity: null,
+                  looksLikePlantMilk: true,
+                  isBarista: false,
+                })
+              }
+            >
+              Add it by hand
+            </StoryButton>
+          )}
+          <StoryButton type="button" tone="outline" size="sm" className="flex-1" onClick={onClose}>
+            Cancel
+          </StoryButton>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
 
-interface PictureCaptureProps {
-  picture: File | null;
-  picturePreview: string | null;
-  setPicture: (file: File | null) => void;
-  setPicturePreview: (url: string | null) => void;
-}
-
-export const PictureCapture: React.FC<PictureCaptureProps> = ({
-  picture: _picture,
-  picturePreview,
-  setPicture,
-  setPicturePreview,
-}) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [showCamera, setShowCamera] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
-
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      streamRef.current = stream;
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-      
-      setShowCamera(true);
-    } catch (err) {
-      console.error("Error accessing camera:", err);
-      alert("Failed to access camera. Please ensure camera permissions are granted.");
-    }
-  };
-
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    setShowCamera(false);
-  };
-
-  const takePicture = () => {
-    if (!videoRef.current) return;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    
-    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    
-    canvas.toBlob((blob) => {
-      if (blob) {
-        const file = new File([blob], "milk-picture.jpg", { type: "image/jpeg" });
-        setPicture(file);
-        setPicturePreview(URL.createObjectURL(blob));
-        stopCamera();
-      }
-    }, "image/jpeg", 0.9);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPicture(file);
-      setPicturePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const removePicture = () => {
-    setPicture(null);
-    if (picturePreview) {
-      URL.revokeObjectURL(picturePreview);
-      setPicturePreview(null);
-    }
-  };
-
-  return (
-    <div className="flex flex-col items-center">
-      {picturePreview ? (
-        <div className="relative">
-          <img 
-            src={picturePreview} 
-            alt="Milk product" 
-            className="w-32 min-h-[80px] h-full object-cover rounded-md cursor-pointer"
-            onClick={() => setIsImageDialogOpen(true)}
-          />
-          <Button 
-            variant="destructive" 
-            size="icon" 
-            className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-            onClick={removePicture}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-          
-          <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
-            <DialogContent className="max-w-3xl p-0 overflow-hidden bg-transparent border-none">
-              <DialogClose className="absolute right-4 top-4 rounded-sm bg-white/10 opacity-70 ring-offset-background z-10 hover:opacity-100" />
-              <div className="relative w-full">
-                <img 
-                  src={picturePreview} 
-                  alt="Milk product full view" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-2 items-center">
-          {showCamera ? (
-            <div className="relative">
-              <video 
-                ref={videoRef} 
-                autoPlay 
-                playsInline 
-                className="w-48 h-48 border rounded-md"
-              />
-              <div className="absolute inset-x-0 bottom-2 flex justify-center gap-2">
-                <Button onClick={takePicture} size="sm">Capture</Button>
-                <Button onClick={stopCamera} variant="outline" size="sm">Cancel</Button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="icon"
-                onClick={startCamera}
-              >
-                <Camera className="h-5 w-5" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Upload className="h-5 w-5" />
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
+export default BarcodeScanner;

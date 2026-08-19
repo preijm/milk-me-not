@@ -16,11 +16,11 @@ import { cn } from "@/lib/utils";
  * indistinguishable from one entered on the full page.
  */
 const PRICE_CHOICES = [
-  { value: "waste_of_money", short: "Waste" },
-  { value: "not_worth_it", short: "Poor" },
+  { value: "waste_of_money", short: "Overpriced" },
+  { value: "not_worth_it", short: "Pricey" },
   { value: "fair_price", short: "Fair" },
   { value: "good_deal", short: "Good" },
-  { value: "great_value", short: "Gem" },
+  { value: "great_value", short: "Great" },
 ];
 
 const SCORES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -186,7 +186,7 @@ const QuickRateForm = ({
                 }}
                 aria-pressed={active}
                 className={cn(
-                  "rounded-xl px-1 py-2.5 text-[0.75rem] font-bold transition-colors",
+                  "rounded-xl px-1 py-2.5 text-[0.625rem] font-bold leading-tight transition-colors sm:text-[0.6875rem]",
                   active
                     ? "bg-story-ink text-story-cream"
                     : "story-hairline bg-white text-story-muted hover:bg-story-cream-2",

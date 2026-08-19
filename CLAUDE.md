@@ -42,7 +42,16 @@ bunx vitest run src/lib/security.test.ts
 - **Forms:** React Hook Form + Zod validation
 - **Maps:** Mapbox GL JS (lazy-loaded due to 200KB+ size)
 - **Backend:** Supabase (PostgreSQL, Auth, Edge Functions, Storage)
-- **Mobile:** Capacitor with camera plugin for barcode scanning
+- **Mobile:** Capacitor with camera plugin for photo capture
+
+### Barcode scanning is not implemented
+`BarcodeScanner.tsx` and `BarcodeResultDialog.tsx` exist but nothing imports
+them, and the scanner itself is a mockup — a dashed placeholder box and a
+"Simulate Scan" button hardcoded to one barcode. `@zxing/browser` and
+`@zxing/library` are installed and imported nowhere. There is also no `barcode`
+column on `products`, so a scan has nothing to resolve against. Building it for
+real means a migration, populating codes for the catalogue, and a scanner —
+not reconnecting what is there.
 
 ### Source Layout
 ```

@@ -1,5 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Heart, MessageCircle, Bell, ChevronDown } from "lucide-react";
+import { Heart, MessageCircle, ChevronDown } from "lucide-react";
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import { formatDistanceToNow, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { EmptyNotifications } from "./EmptyNotifications";
 
 function NotificationItem({ notification, onMarkAsRead }: { 
   notification: Notification; 
@@ -115,7 +116,15 @@ function NotificationItem({ notification, onMarkAsRead }: {
   );
 }
 
-export function NotificationList() {
+/**
+ * Shared by the header dropdown and the full notifications page.
+ *
+ * The 320px scroll window is right inside a dropdown and wrong on a page that
+ * already scrolls — it pinned the list into a small box while the rest of the
+ * page sat empty. `variant="page"` lets the list run to its natural height.
+ */
+export function NotificationList({ variant = "dropdown" }: { variant?: "dropdown" | "page" } = {}) {
+  const onPage = variant === "page";
   const { notifications, loading, markAsRead } = useNotifications();
   const [lastWeekOpen, setLastWeekOpen] = useState(true);
   const [lastMonthOpen, setLastMonthOpen] = useState(true);
@@ -144,13 +153,9 @@ export function NotificationList() {
   return (
     <div className="w-full">
       {notifications.length === 0 ? (
-        <div className="p-8 text-center text-muted-foreground bg-background">
-          <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
-          <p>No notifications yet</p>
-          <p className="text-xs mt-1">You'll see likes and comments here</p>
-        </div>
+        <EmptyNotifications onPage={onPage} />
       ) : (
-        <ScrollArea className="h-80 bg-background">
+        <ScrollArea className={onPage ? "bg-transparent" : "h-80 bg-background"}>
           <div className="pt-5">
             {lastWeekNotifications.length > 0 && (
               <Collapsible open={lastWeekOpen} onOpenChange={setLastWeekOpen}>

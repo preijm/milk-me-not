@@ -3,6 +3,7 @@ import logoImg from "@/assets/logo-96.png";
 import { Display, StoryButton, ArrowRight } from "./primitives";
 import { MilkDrop, Sprig } from "./motifs";
 import { useRateCta } from "./useRateCta";
+import { cn } from "@/lib/utils";
 
 const COLUMNS: { title: string; links: { to: string; label: string }[] }[] = [
   {
@@ -34,7 +35,16 @@ const COLUMNS: { title: string; links: { to: string; label: string }[] }[] = [
  * Closing band: the last chance to sell, then the map of the site.
  * Deliberately loud — a quiet footer would let the pitch trail off.
  */
-export const StoryFooter = () => {
+/**
+ * The site's floor.
+ *
+ * `hideCta` drops the closing pitch for readers who are already signed in,
+ * while keeping the dark ground, the column architecture and the copyright —
+ * the member pages used to fall back to a single grey line here, which two
+ * critics independently called the most visible tell that they were built to a
+ * lighter spec.
+ */
+export const StoryFooter = ({ hideCta = false }: { hideCta?: boolean } = {}) => {
   const cta = useRateCta();
   const year = new Date().getFullYear();
 
@@ -48,6 +58,7 @@ export const StoryFooter = () => {
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-[76rem] px-5 py-16 sm:px-8 sm:py-20 lg:px-10">
+        {!hideCta && (
         <div className="max-w-2xl">
           <Display as="p" size="xl" className="text-white">
             Your turn.
@@ -62,8 +73,12 @@ export const StoryFooter = () => {
             <ArrowRight />
           </StoryButton>
         </div>
+        )}
 
-        <div className="mt-16 grid gap-10 border-t border-white/12 pt-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div className={cn(
+          "grid gap-10 sm:grid-cols-2 lg:grid-cols-4",
+          hideCta ? "" : "mt-16 border-t border-white/12 pt-12",
+        )}>
           <div>
             <div className="flex items-center gap-2.5">
               <img src={logoImg} alt="" className="h-9 w-9 rounded-[0.55rem] object-contain" width={36} height={36} />

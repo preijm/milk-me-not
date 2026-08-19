@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { StoryButton, ArrowRight } from "@/components/story/primitives";
 import { ShopSelect } from "./milk-test/ShopSelect";
 import { CountrySelect } from "./milk-test/CountrySelect";
@@ -36,10 +35,22 @@ export const AddMilkTest = () => {
   } = useMilkTestForm(editTest);
   const isFormValid = formState.productId && formState.rating > 0 && formState.country && formState.country.trim() !== '';
 
+  // Three critics in a row read the greyed-out submit button as broken rather
+  // than as "not filled in yet". It is behaving correctly; what was missing is
+  // any statement of what it is still waiting for.
+  const missing = [
+    !formState.productId && "pick a product",
+    !(formState.rating > 0) && "give it a score",
+    !(formState.country && formState.country.trim() !== "") && "say where you bought it",
+  ].filter(Boolean) as string[];
+
   return (
-    <Card className="story-hairline rounded-3xl border-0 bg-white shadow-none">
-      <CardContent className="p-5 md:p-7 md:pb-9">
-        <form onSubmit={e => {
+    // No outer container. The page background is the ground, exactly as it is
+    // on every other screen — this form used to sit in a white card whose
+    // sections were themselves cream panels, a card inside a card inside the
+    // page, which appears nowhere else in the product.
+    <>
+      <form onSubmit={e => {
           e.preventDefault();
           if (isFormValid) {
             handleSubmit(e);
@@ -51,7 +62,7 @@ export const AddMilkTest = () => {
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Product</h2>
               <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
             </div>
-            <div className="rounded-2xl bg-story-cream p-4">
+            <div className="story-hairline rounded-2xl bg-white p-4 sm:p-5">
               <ProductInformation 
                 brandId={formState.brandId} 
                 setBrandId={formSetters.setBrandId} 
@@ -67,7 +78,7 @@ export const AddMilkTest = () => {
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Rating</h2>
               <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
             </div>
-            <div className="rounded-2xl bg-story-cream p-4">
+            <div className="story-hairline rounded-2xl bg-white p-4 sm:p-5">
               <RatingSelect rating={formState.rating} setRating={formSetters.setRating} />
               <div className="mt-4">
                 <ResponsiveNotesArea 
@@ -88,7 +99,7 @@ export const AddMilkTest = () => {
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Price-to-Quality Ratio</h2>
               <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
             </div>
-            <div className="rounded-2xl bg-story-cream p-4">
+            <div className="story-hairline rounded-2xl bg-white p-4 sm:p-5">
               <PriceInput 
                 price={formState.price} 
                 setPrice={formSetters.setPrice} 
@@ -104,7 +115,7 @@ export const AddMilkTest = () => {
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Buying Location</h2>
               <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
             </div>
-            <div className="space-y-3 rounded-2xl bg-story-cream p-4">
+            <div className="story-hairline space-y-3 rounded-2xl bg-white p-4 sm:p-5">
               <div>
                 <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                   Country <span className="text-story-amber-dark">*</span>
@@ -133,7 +144,7 @@ export const AddMilkTest = () => {
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Drinking Style</h2>
               <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
             </div>
-            <div className="rounded-2xl bg-story-cream p-4">
+            <div className="story-hairline rounded-2xl bg-white p-4 sm:p-5">
               <DrinkPreference 
                 preference={formState.drinkPreference} 
                 setPreference={formSetters.setDrinkPreference} 
@@ -169,6 +180,12 @@ export const AddMilkTest = () => {
               {!formState.isSubmitting && <ArrowRight />}
             </StoryButton>
           </div>
+
+          {missing.length > 0 && (
+            <p className="-mt-3 text-center text-[0.8125rem] text-story-muted">
+              Still need to {missing.length === 1 ? missing[0] : `${missing.slice(0, -1).join(", ")} and ${missing[missing.length - 1]}`}.
+            </p>
+          )}
         </form>
 
         <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
@@ -187,7 +204,6 @@ export const AddMilkTest = () => {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </CardContent>
-    </Card>
+    </>
   );
 };

@@ -68,9 +68,14 @@ const ALIASES: Record<string, string> = {
   "ah-terra": "ah-terra",
   "albert-heijn-terra": "ah-terra",
   "rewe-beste-wahl": "rewe",
+  "rewe-bio": "rewe",
   "edeka-bio-my-veggie": "edeka",
+  "edeka-bio": "edeka",
+  "edeka-herzstucke": "edeka",
   "dmbio": "dmbio",
   "dm-bio": "dmbio",
+  // The carton says Mighty Drinks; the wordmark on it is just Mighty.
+  "mighty-drinks": "mighty",
   // Supermarket own-brands carry the retailer's mark: the carton says Vemondo,
   // but the only logo that brand has ever had is Lidl's.
   "vemondo": "lidl",
@@ -95,16 +100,7 @@ export const getBrandLogo = (brandName: string | null | undefined): string | nul
  * Aspect ratio does not matter here: nothing is cropped, so a wide panel keeps
  * its wordmark and simply sits centred in the tile.
  */
-const FULL_BLEED = new Set([
-  "friesche-vlag",
-  "isola",
-  "aldi",
-  "edeka",
-  "lidl",
-  "picnic",
-  "kara",
-  "jumbo",
-]);
+const FULL_BLEED = new Set(["friesche-vlag", "aldi", "edeka", "lidl", "picnic", "jumbo"]);
 
 /** Does this brand's logo bring its own background? */
 export const isFullBleedLogo = (brandName: string | null | undefined): boolean => {

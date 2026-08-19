@@ -10,7 +10,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Band, SectionHead, StoryButton, StoryLayout } from "@/components/story";
 import { ResultsViewSwitcher } from "@/components/results/ResultsViewSwitcher";
-import { MapLoginOverlay } from "@/components/results/MapLoginOverlay";
 import { ResultsCharts } from "@/components/results/ResultsCharts";
 import { ResultsHero } from "@/components/results/ResultsHero";
 import { ResultsToolbarDesktop, ResultsToolbarMobile } from "@/components/results/ResultsToolbar";
@@ -172,7 +171,7 @@ const Results = () => {
             )
           ) : view === "charts" ? (
             <ResultsCharts visibleProductIds={visibleProductIds} />
-          ) : user ? (
+          ) : (
             <Suspense
               fallback={
                 <div className="flex min-h-[60vh] items-center justify-center">
@@ -182,8 +181,6 @@ const Results = () => {
             >
               <MapboxWorldMap visibleProductIds={visibleProductIds} />
             </Suspense>
-          ) : (
-            <MapLoginOverlay />
           )}
           {remaining > 0 && view === "table" && !isLoading && (
             <div className="mt-10 flex flex-col items-center gap-3">

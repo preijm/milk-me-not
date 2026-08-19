@@ -107,8 +107,10 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
             className={cn(
               "flex min-h-[5rem] flex-col items-center justify-center gap-1 rounded-xl p-3 transition-colors",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
+              // Solid fill is how a chosen value reads everywhere else on the
+              // site; the wash is reserved for "this is the page you are on".
               active
-                ? "bg-story-green-wash text-story-green-dark shadow-[inset_0_0_0_1.5px_hsl(var(--story-green))]"
+                ? "bg-story-green text-white"
                 : "story-hairline bg-white text-story-muted hover:bg-story-cream-2",
             )}
           >

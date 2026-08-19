@@ -105,9 +105,9 @@ export default function ProfileSettings() {
           </p>
         </div>
 
-        <StoryButton type="submit" className="w-full" disabled={loading}>
+        <StoryButton type="submit" disabled={loading}>
           <Save className="w-4 h-4 mr-2" />
-          {loading ? "Saving..." : "Save Changes"}
+          {loading ? "Saving…" : "Save name"}
         </StoryButton>
       </form>
     </div>

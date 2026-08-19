@@ -1,4 +1,5 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useProductRegistration } from "./ProductRegistrationContext";
 import { BrandSelect } from "../BrandSelect";
@@ -6,6 +7,8 @@ import { FlavorSelector } from "../FlavorSelector";
 import { BaristaToggle } from "../BaristaToggle";
 import { ProductOptions } from "../ProductOptions";
 import { NameSelect } from "../NameSelect";
+import { supabase } from "@/integrations/supabase/client";
+import type { ScannedProduct } from "@/lib/openFoodFacts";
 import { Trash2, Coffee, Tag, Droplet } from "lucide-react";
 
 interface ProductFormProps {
@@ -16,6 +19,9 @@ interface ProductFormProps {
 }
 
 export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onSubmit, onCancel, onBrandInputReady, onDelete }, ref) => {
+  const [scanNote, setScanNote] = useState<string | null>(null);
+  const location = useLocation();
+  const appliedScan = useRef(false);
   const {
     brandId,
     setBrandId,
@@ -38,9 +44,57 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
   // Form validation logic
   const isFormValid = !!brandId && !!productName;
 
+  /**
+   * Fill the form in from a carton scanned on the way here.
+   *
+   * The scan flow sends the reader here when the board has nothing for that
+   * barcode, so the details Open Food Facts knows arrive with them. There is no
+   * scan button on this form itself: you only reach it after searching and not
+   * finding the product, by which point you have already typed its name.
+   *
+   * Open Food Facts gives a brand as text and this form wants a brand id, so
+   * the name is matched against brands already on the board. An unknown brand
+   * is left for the reader to add rather than invented from a third-party
+   * database.
+   */
+  useEffect(() => {
+    const scanned = (location.state as { scanned?: ScannedProduct } | null)?.scanned;
+    if (!scanned || isEditMode || appliedScan.current) return;
+    appliedScan.current = true;
+
+    if (scanned.name) setProductName(scanned.name);
+    if (scanned.isBarista) setIsBarista(true);
+
+    if (!scanned.brand) {
+      setScanNote("Filled in from the barcode. Pick a brand to finish.");
+      return;
+    }
+
+    void supabase
+      .from("brands")
+      .select("id")
+      .ilike("name", scanned.brand)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.id) {
+          setBrandId(data.id);
+          setScanNote("Filled in from the barcode — check it before saving.");
+        } else {
+          setScanNote(`Scanned "${scanned.brand}", which is not on the board yet. Add it below.`);
+        }
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state, isEditMode]);
+
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-4">
+        {scanNote && (
+          <p className="rounded-2xl bg-story-green-wash px-3.5 py-2.5 text-[0.8125rem] font-medium text-story-green-dark">
+            {scanNote}
+          </p>
+        )}
+
         <div className="space-y-2">
           <label htmlFor="brand" className="block font-medium text-foreground">
             Brand <span className="text-destructive">*</span>

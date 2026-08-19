@@ -48,7 +48,11 @@ export const ResultsHero = ({ stats, isLoading }: ResultsHeroProps) => {
         ))}
       </dl>
 
-      <div className="story-rail relative mt-9 flex gap-2.5">
+      {/* Wraps rather than scrolls. As a hidden-scrollbar rail this clipped
+          mid-pill at the viewport edge with no affordance, which reads as a
+          broken layout rather than something you can swipe. Five short pills
+          fit two rows on a phone. */}
+      <div className="relative mt-9 flex flex-wrap gap-2">
         {SCORE_TIERS.map((tier) => (
           <div
             key={tier.key}

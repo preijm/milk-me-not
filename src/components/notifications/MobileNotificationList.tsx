@@ -1,4 +1,4 @@
-import { Heart, MessageCircle, Bell, ChevronDown } from "lucide-react";
+import { Heart, MessageCircle, ChevronDown } from "lucide-react";
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import { formatDistanceToNow, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
+import { EmptyNotifications } from "./EmptyNotifications";
 function NotificationItem({
   notification,
   onMarkAsRead
@@ -123,11 +124,7 @@ export function MobileNotificationList() {
       </div>;
   }
   if (notifications.length === 0) {
-    return <div className="p-8 text-center text-muted-foreground">
-        <Bell className="h-8 w-8 mx-auto mb-2 opacity-50" />
-        <p>No notifications yet</p>
-        <p className="text-xs mt-1">You'll see likes and comments here</p>
-      </div>;
+    return <EmptyNotifications onPage />;
   }
 
   // Group notifications by time period

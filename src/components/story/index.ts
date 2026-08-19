@@ -3,6 +3,7 @@ export * from "./motifs";
 export * from "./primitives";
 export * from "./tiers";
 export * from "./useRateCta";
+export * from "./StoryDialog";
 export { BrandMark } from "./BrandMark";
 export { StoryHeader } from "./StoryHeader";
 export { StoryFooter } from "./StoryFooter";
