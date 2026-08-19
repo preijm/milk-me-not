@@ -73,11 +73,19 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       onScan(found);
     };
 
+    // decodeFromVideoDevice can hang rather than reject — a camera held by
+    // another app, or a headless browser where the API exists but no device
+    // does. Without this the reader watches "Waking the camera…" forever.
+    const timeout = window.setTimeout(() => {
+      if (!cancelled) setPhase((cur) => (cur.step === "starting" ? { step: "denied" } : cur));
+    }, 8000);
+
     reader
       .decodeFromVideoDevice(undefined, videoRef.current ?? undefined, (result) => {
         if (result) void handle(result.getText());
       })
       .then((controls) => {
+        window.clearTimeout(timeout);
         if (cancelled) {
           controls.stop();
           return;
@@ -86,11 +94,13 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         setPhase({ step: "scanning" });
       })
       .catch(() => {
+        window.clearTimeout(timeout);
         if (!cancelled) setPhase({ step: "denied" });
       });
 
     return () => {
       cancelled = true;
+      window.clearTimeout(timeout);
       // Without this the camera light stays on after the dialog closes.
       stopRef.current?.();
       stopRef.current = null;
@@ -131,6 +141,11 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         </div>
 
         <div className="mt-1 flex gap-2">
+          {(phase.step === "denied" || phase.step === "unsupported") && (
+            <StoryButton type="button" size="sm" className="flex-1" onClick={onClose}>
+              Type it instead
+            </StoryButton>
+          )}
           {phase.step === "missing" && (
             <StoryButton
               type="button"
