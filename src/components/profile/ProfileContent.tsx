@@ -22,6 +22,18 @@ interface ProfileContentProps {
   ratings?: MilkTestResult[];
 }
 
+const PinGlyph = () => (
+  <svg viewBox="0 0 24 24" width="11" height="11" fill="none" className="shrink-0" aria-hidden>
+    <path
+      d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinejoin="round"
+    />
+    <circle cx="12" cy="10" r="2.4" stroke="currentColor" strokeWidth="2" />
+  </svg>
+);
+
 /**
  * One responsive implementation, not two.
  *
@@ -159,6 +171,17 @@ export const ProfileContent = ({
                         {r.brand_name || "Unknown brand"}
                         {r.notes ? ` — ${r.notes}` : ""}
                       </span>
+                      {/* The rating form has always asked where you bought it and
+                          nothing ever showed the answer back. It belongs here and
+                          only here: the private view already withholds shop_name
+                          from anonymous readers, so it is your record, not the
+                          product's. */}
+                      {r.shop_name && (
+                        <span className="mt-0.5 flex items-center gap-1 text-[0.75rem] text-story-muted-2">
+                          <PinGlyph />
+                          <span className="truncate">{r.shop_name}</span>
+                        </span>
+                      )}
                     </span>
                     <span
                       className="story-num shrink-0 rounded-lg px-2.5 py-1 text-[0.9375rem] text-white"
