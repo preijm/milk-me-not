@@ -28,28 +28,30 @@ export interface FeedComment {
  * never drift apart on *behaviour*, so that behaviour lives here once.
  */
 /**
- * Resolve display names for a set of user ids in one request.
+ * Resolve display names for a set of user ids, asking once per distinct user.
  *
- * Both queries below used to fetch usernames one row at a time — a request per
- * like and per comment, on top of the two this hook already makes, multiplied
- * by every card in the feed. Anyone with no row in `profiles_public` also
- * produced a console 404 each time they appeared.
+ * Both queries below used to fetch a name per row — a request per like and per
+ * comment, multiplied by every card in the feed. They were also pointed at
+ * `profiles_public`, which is not exposed by the API at all, so every name
+ * rendered as "Anonymous".
+ *
+ * get_public_profile is the working path and takes one id at a time, so this
+ * cannot collapse to a single request without a batch function to call. What
+ * it can do is not ask twice about the same person, which is the common case
+ * on a post with several reactions.
  */
 const fetchUsernames = async (userIds: string[]): Promise<Map<string, string>> => {
   const unique = [...new Set(userIds.filter(Boolean))];
   if (unique.length === 0) return new Map();
 
-  const { data, error } = await supabase
-    .from('profiles_public')
-    .select('id, username')
-    .in('id', unique);
+  const entries = await Promise.all(
+    unique.map(async (id) => {
+      const { data } = await supabase.rpc('get_public_profile', { _user_id: id }).maybeSingle();
+      return [id, (data as { username?: string } | null)?.username || 'Anonymous'] as const;
+    }),
+  );
 
-  if (error) {
-    console.error('Error fetching usernames:', error);
-    return new Map();
-  }
-
-  return new Map((data ?? []).map((row) => [row.id as string, (row.username as string) || 'Anonymous']));
+  return new Map(entries);
 };
 
 export const useFeedItemState = (item: MilkTestResult) => {

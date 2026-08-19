@@ -61,17 +61,21 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
   const countryName = (code: string) => countryCodeToName.get(code) || code;
   const totalCountries = countriesData.length || 195;
 
-  // Read Mapbox public token from environment variable
+  // Read Mapbox public token from environment.
+  // Accepts either the Mapbox connector's injected token or a manually set env var.
   // Public tokens (pk.*) are designed for client-side use and should be URL-restricted
   // in the Mapbox dashboard to your domains for quota protection.
   const getMapboxToken = (): string | null => {
-    const token = import.meta.env.VITE_MAPBOX_PUBLIC_KEY;
+    const token =
+      import.meta.env.VITE_LOVABLE_CONNECTOR_MAPBOX_PUBLIC_TOKEN ||
+      import.meta.env.VITE_MAPBOX_PUBLIC_KEY;
     if (!token) {
-      console.error('MapboxWorldMap: VITE_MAPBOX_PUBLIC_KEY is not set');
+      console.error('MapboxWorldMap: no Mapbox public token found in environment');
       return null;
     }
     return token;
   };
+
 
   // Interpolate between colors for smooth heatmap gradient (grey to green)
   const interpolateColor = (value: number, min: number, max: number): string => {
@@ -133,7 +137,7 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
     
     if (!token) {
       console.error('No Mapbox token available');
-      setMapError('Unable to load map token. Please check the MAPBOX_KEY secret.');
+      setMapError('The map is not configured yet — no Mapbox public token is set for this app.');
       return;
     }
 
