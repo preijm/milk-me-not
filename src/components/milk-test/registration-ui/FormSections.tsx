@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useProductRegistration } from "./ProductRegistrationContext";
 import { BrandSelect } from "../BrandSelect";
@@ -6,7 +6,11 @@ import { FlavorSelector } from "../FlavorSelector";
 import { BaristaToggle } from "../BaristaToggle";
 import { ProductOptions } from "../ProductOptions";
 import { NameSelect } from "../NameSelect";
-import { Trash2, Coffee, Tag, Droplet } from "lucide-react";
+import { BarcodeScanner } from "../BarcodeScanner";
+import { StoryButton } from "@/components/story/primitives";
+import { supabase } from "@/integrations/supabase/client";
+import type { ScannedProduct } from "@/lib/openFoodFacts";
+import { Trash2, Coffee, Tag, Droplet, ScanLine } from "lucide-react";
 
 interface ProductFormProps {
   onSubmit: (e: React.FormEvent) => Promise<void>;
@@ -16,6 +20,8 @@ interface ProductFormProps {
 }
 
 export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onSubmit, onCancel, onBrandInputReady, onDelete }, ref) => {
+  const [scanning, setScanning] = useState(false);
+  const [scanNote, setScanNote] = useState<string | null>(null);
   const {
     brandId,
     setBrandId,
@@ -38,9 +44,54 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
   // Form validation logic
   const isFormValid = !!brandId && !!productName;
 
+  /**
+   * Fill the form in from a scanned carton.
+   *
+   * Open Food Facts gives a brand as text, and this form wants a brand id, so
+   * the name is matched against the brands already on the board. An unknown
+   * brand is left for the reader to add — the point is to save typing, not to
+   * quietly invent records from a third-party database.
+   */
+  const applyScan = async (found: ScannedProduct) => {
+    setScanning(false);
+    if (found.name) setProductName(found.name);
+    if (found.isBarista) setIsBarista(true);
+
+    if (!found.brand) {
+      setScanNote(found.name ? "Found the product. Pick its brand." : "Nothing on file — add it by hand.");
+      return;
+    }
+
+    const { data } = await supabase
+      .from("brands")
+      .select("id, name")
+      .ilike("name", found.brand)
+      .maybeSingle();
+
+    if (data?.id) {
+      setBrandId(data.id);
+      setScanNote(`Filled in from the barcode — check it before saving.`);
+    } else {
+      setScanNote(`Scanned "${found.brand}" — that brand is not on the board yet, so add it below.`);
+    }
+  };
+
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-4">
+        {!isEditMode && (
+          <div className="rounded-2xl bg-story-cream p-3.5">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <StoryButton type="button" tone="outline" size="sm" onClick={() => setScanning(true)}>
+                <ScanLine className="mr-2 h-4 w-4 shrink-0" />
+                <span className="whitespace-nowrap">Scan barcode</span>
+              </StoryButton>
+              <p className="text-[0.8125rem] text-story-muted">or fill it in below</p>
+            </div>
+            {scanNote && <p className="mt-2 text-[0.8125rem] font-medium text-story-green-dark">{scanNote}</p>}
+          </div>
+        )}
+
         <div className="space-y-2">
           <label htmlFor="brand" className="block font-medium text-foreground">
             Brand <span className="text-destructive">*</span>
@@ -99,6 +150,8 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
           />
         </div>
       </div>
+
+      <BarcodeScanner open={scanning} onClose={() => setScanning(false)} onScan={applyScan} />
 
       <div className="flex justify-between items-center gap-2 pt-4">
         {/* Remove button for admins in edit mode */}

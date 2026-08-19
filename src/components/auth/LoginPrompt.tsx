@@ -1,58 +1,59 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { LogIn, UserPlus } from "lucide-react";
+import { ArrowRight, StoryButton, StoryDialog, StoryDialogActions } from "@/components/story";
+
 interface LoginPromptProps {
   isOpen: boolean;
   onClose: () => void;
   productName?: string;
 }
-export const LoginPrompt = ({
-  isOpen,
-  onClose,
-  productName: _productName
-}: LoginPromptProps) => {
+
+/**
+ * What a signed-out visitor gets when they click through to a product.
+ *
+ * The product they reached for is named in the title. The old version threw
+ * that away and asked "Ready to see more?" over a padlock emoji, which is the
+ * same wall every site puts up and says nothing about what is behind it.
+ *
+ * Signing up returns them to the page they were on rather than the homepage —
+ * being bounced to the front door after a sign-up is how people leave.
+ */
+export const LoginPrompt = ({ isOpen, onClose, productName }: LoginPromptProps) => {
   const navigate = useNavigate();
-  const handleLogin = () => {
+  const from = window.location.pathname + window.location.search;
+
+  const goToAuth = (mode?: "signup") => {
     onClose();
-    navigate('/auth', {
-      state: {
-        from: window.location.pathname
-      }
-    });
+    navigate("/auth", { state: { from, ...(mode ? { mode } : {}) } });
   };
-  const handleSignUp = () => {
-    onClose();
-    navigate('/auth', {
-      state: {
-        from: window.location.pathname,
-        mode: 'signup'
+
+  return (
+    <StoryDialog
+      open={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+      kicker="One step away"
+      title={
+        productName ? (
+          <>
+            Who rated <span className="text-story-green-dark">{productName}</span>, and what they said.
+          </>
+        ) : (
+          <>
+            Every rating, and <span className="text-story-green-dark">who wrote it.</span>
+          </>
+        )
       }
-    });
-  };
-  return <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <div className="flex justify-center mb-4">
-            <div className="text-4xl">🔓</div>
-          </div>
-          <DialogTitle className="text-center text-xl">Ready to see more?</DialogTitle>
-          <DialogDescription className="text-center mt-4">
-            Join our community to unlock all reviews, leave comments, and share your own taste tests!
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
-          <Button onClick={handleLogin} variant="brand" className="border-0 bg-primary text-primary-foreground hover:bg-primary/90" size="lg">
-            <LogIn className="mr-2 h-4 w-4" />
-            Log In
-          </Button>
-          <Button onClick={handleSignUp} variant="outline" size="lg">
-            <UserPlus className="mr-2 h-4 w-4" />
-            Sign Up
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>;
+      lede="Scores are open to everyone. The tasting notes behind them — the person, the shop, the verdict in their own words — are for the people who write them."
+      size="lg"
+    >
+      <StoryDialogActions>
+        <StoryButton tone="outline" size="md" onClick={() => goToAuth()}>
+          I already have an account
+        </StoryButton>
+        <StoryButton size="md" onClick={() => goToAuth("signup")}>
+          Join — it's free
+          <ArrowRight />
+        </StoryButton>
+      </StoryDialogActions>
+    </StoryDialog>
+  );
 };
