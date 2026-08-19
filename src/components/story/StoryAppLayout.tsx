@@ -27,6 +27,13 @@ export type StoryAppLayoutProps = {
    * milk-drop motif so no page is left without one by omission.
    */
   visual?: React.ReactNode;
+  /**
+   * Utility pages get a plain one-line heading and no hero visual. The
+   * marketing hero pattern belongs on pages that are still selling; on a
+   * settings form it is several hundred pixels of preamble in front of a
+   * couple of fields.
+   */
+  compact?: boolean;
   className?: string;
 };
 
@@ -44,7 +51,7 @@ const BackArrow = () => (
  * navigation in place of the marketing call to action, because someone on this
  * side of the sign-in has already been sold.
  */
-export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = "narrow", back, visual, className }: StoryAppLayoutProps) => {
+export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = "narrow", back, visual, compact = false, className }: StoryAppLayoutProps) => {
   const location = useLocation();
   // Pointing the header CTA at the page you are already on reads as a dead end.
   const onRateFlow = location.pathname.startsWith("/add");
@@ -65,20 +72,29 @@ export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = 
             </Link>
           )}
           {title && (
-            <header className="mb-7 flex items-center gap-10 lg:mb-10">
+            <header className={cn("flex items-center gap-10", compact ? "mb-6" : "mb-7 lg:mb-10")}>
               <div className="min-w-0 flex-1">
                 {kicker && <p className="story-kicker mb-2.5 text-story-green-dark">{kicker}</p>}
                 {/* Ink line plus a green accent line, as every marketing
                     headline does — these were flat black. */}
-                <h1 className="story-display text-[2.1rem] text-story-ink sm:text-[2.6rem] lg:text-[3.1rem]">
+                <h1
+                  className={cn(
+                    "story-display text-story-ink",
+                    compact
+                      ? "text-[1.9rem] sm:text-[2.2rem]"
+                      : "text-[2.1rem] sm:text-[2.6rem] lg:text-[3.1rem]",
+                  )}
+                >
                   {title}
                   {accent && <span className="block text-story-green">{accent}</span>}
                 </h1>
-                {lede && <p className="mt-3 max-w-prose text-[1rem] text-story-muted">{lede}</p>}
+                {lede && <p className="mt-2.5 max-w-prose text-[0.9375rem] text-story-muted sm:text-[1rem]">{lede}</p>}
               </div>
-              <div aria-hidden className="hidden shrink-0 lg:block">
-                {visual ?? <MilkDrop size={150} variant="solid" className="text-story-green-light" />}
-              </div>
+              {!compact && (
+                <div aria-hidden className="hidden shrink-0 lg:block">
+                  {visual ?? <MilkDrop size={150} variant="solid" className="text-story-green-light" />}
+                </div>
+              )}
             </header>
           )}
           {children}

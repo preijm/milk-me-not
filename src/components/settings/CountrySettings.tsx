@@ -66,18 +66,18 @@ export default function CountrySettings() {
 
         <form onSubmit={handleUpdateCountry} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
               Country
             </label>
             <CountrySelect country={defaultCountry} setCountry={setDefaultCountry} />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="mt-1.5 text-[0.75rem] text-story-muted-2">
               This will be pre-selected when adding new milk tests
             </p>
           </div>
           
           <StoryButton type="submit" disabled={loading}>
             <Save className="w-4 h-4 mr-2" />
-            {loading ? "Saving..." : "Save Country"}
+            {loading ? "Saving…" : "Save country"}
           </StoryButton>
         </form>
       </div>

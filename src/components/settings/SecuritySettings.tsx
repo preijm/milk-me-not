@@ -50,22 +50,22 @@ export default function SecuritySettings() {
       <div className="space-y-8">
         <form onSubmit={handleUpdatePassword} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                 New Password
               </label>
-              <Input type="password" placeholder="Enter new password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={6} showPasswordToggle className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm" />
+              <Input type="password" placeholder="Enter new password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={6} showPasswordToggle className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green" />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                 Confirm New Password
               </label>
-              <Input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={6} showPasswordToggle className="bg-white/80 border-black/20 backdrop-blur-sm rounded-sm" />
+              <Input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={6} showPasswordToggle className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green" />
             </div>
             
             <StoryButton type="submit" disabled={isChangingPassword || !newPassword || !confirmPassword}>
               <Lock className="w-4 h-4 mr-2" />
-              {isChangingPassword ? "Updating..." : "Update Password"}
+              {isChangingPassword ? "Updating…" : "Update password"}
             </StoryButton>
           </form>
       </div>
