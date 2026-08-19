@@ -24,7 +24,6 @@ const ColorSwatch = ({
 const DesignSystem = () => {
   return (
     <div className="min-h-screen bg-background">
-      <MenuBar />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="space-y-12">
