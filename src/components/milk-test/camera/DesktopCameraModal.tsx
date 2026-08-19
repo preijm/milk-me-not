@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
-import { Camera, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { StoryButton, StoryDialogClose } from "@/components/story";
+import { Camera } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface DesktopCameraModalProps {
@@ -106,66 +106,55 @@ export const DesktopCameraModal: React.FC<DesktopCameraModalProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  // A viewfinder, not a card: the frame stays black so nothing competes with
+  // what the lens is showing. Only the chrome around it is the site's.
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl p-0 overflow-hidden">
-        <div className="relative">
-          <DialogClose asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-2 top-2 z-10 bg-black/20 hover:bg-black/40 text-white"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogClose>
-          
-          <div className="relative bg-black">
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-10">
-                <div className="text-white text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-                  <p>Starting camera...</p>
-                </div>
+      <DialogContent
+        closeButton={false}
+        className="max-w-4xl overflow-hidden rounded-[1.5rem] border-0 bg-story-ink p-0"
+      >
+        <DialogTitle className="sr-only">Take a photo</DialogTitle>
+        <div className="relative bg-black">
+          <StoryDialogClose className="text-white/80 hover:bg-white/15 hover:text-white" />
+
+          {isLoading && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/80">
+              <div className="text-center text-white">
+                <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-b-2 border-white" />
+                <p className="text-[0.9375rem]">Waking the camera…</p>
               </div>
-            )}
-            
-            {error && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-10">
-                <div className="text-white text-center max-w-md px-4">
-                  <p className="mb-4">{error}</p>
-                  <Button onClick={startCamera} variant="outline">
-                    Try Again
-                  </Button>
-                </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/85 px-6">
+              <div className="max-w-sm text-center">
+                <p className="story-display text-[1.5rem] leading-tight text-white">The camera didn't open.</p>
+                <p className="mt-3 text-[0.9375rem] leading-relaxed text-white/70">{error}</p>
+                <StoryButton tone="paper" size="md" className="mt-6" onClick={startCamera}>
+                  Try again
+                </StoryButton>
               </div>
-            )}
-            
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-auto max-h-[70vh] object-cover"
-            />
-            
-            <canvas
-              ref={canvasRef}
-              className="hidden"
-            />
-            
-            {!isLoading && !error && (
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                <Button
-                  onClick={capturePhoto}
-                  size="lg"
-                  className="rounded-full h-16 w-16 bg-white hover:bg-gray-100 text-black"
-                >
-                  <Camera className="h-6 w-6" />
-                </Button>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
+
+          <video ref={videoRef} autoPlay playsInline muted className="h-auto max-h-[70vh] w-full object-cover" />
+
+          <canvas ref={canvasRef} className="hidden" />
+
+          {!isLoading && !error && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
+              <button
+                type="button"
+                onClick={capturePhoto}
+                aria-label="Take the photo"
+                className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-story-ink shadow-[0_10px_30px_-8px_rgba(0,0,0,0.8)] ring-4 ring-white/25 transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-story-green"
+              >
+                <Camera className="h-6 w-6" />
+              </button>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

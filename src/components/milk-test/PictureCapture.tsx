@@ -1,12 +1,7 @@
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-} from "@/components/ui/dialog";
+import { ImageModal } from "./ImageModal";
 import { CameraOptions } from "./camera/CameraOptions";
 import { DesktopCameraModal } from "./camera/DesktopCameraModal";
 import { useCameraCapabilities } from "@/hooks/useCameraCapabilities";
@@ -84,27 +79,22 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
               onClick={() => setIsImageDialogOpen(true)}
             />
           </div>
-          <Button 
-            variant="destructive" 
-            size="icon" 
-            className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+          {/* Removing your own photo is not a destructive act — it was red. */}
+          <button
+            type="button"
             onClick={removePicture}
+            aria-label="Remove photo"
+            className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-story-ink text-story-cream shadow-[0_4px_12px_-4px_rgba(27,36,33,0.8)] transition-[filter] hover:brightness-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2"
           >
-            <X className="h-4 w-4" />
-          </Button>
-          
-          <Dialog open={isImageDialogOpen} onOpenChange={setIsImageDialogOpen}>
-            <DialogContent className="max-w-3xl p-0 overflow-hidden bg-transparent border-none">
-              <DialogClose className="absolute right-4 top-4 rounded-sm bg-white/10 opacity-70 ring-offset-background z-10 hover:opacity-100" />
-              <div className="relative w-full">
-                <img 
-                  src={picturePreview} 
-                  alt="Milk product full view" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
+            <X className="h-3.5 w-3.5" />
+          </button>
+
+          {/* The same lightbox the rest of the site uses, rather than a second one. */}
+          <ImageModal
+            isOpen={isImageDialogOpen}
+            onClose={() => setIsImageDialogOpen(false)}
+            imageUrl={picturePreview}
+          />
         </div>
       ) : (
         <div className="h-full w-full flex items-center justify-center">

@@ -26,6 +26,7 @@ type Phase =
   | { step: "looking-up"; code: string }
   | { step: "missing"; code: string }
   | { step: "denied" }
+  | { step: "blank" }
   | { step: "unsupported" };
 
 /**
@@ -42,12 +43,12 @@ type Phase =
  * they were in before scanning existed.
  */
 export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const stopRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<Phase>({ step: "starting" });
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !videoEl) return;
     let cancelled = false;
     setPhase({ step: "starting" });
 
@@ -81,7 +82,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
     }, 8000);
 
     reader
-      .decodeFromVideoDevice(undefined, videoRef.current ?? undefined, (result) => {
+      .decodeFromVideoDevice(undefined, videoEl, (result) => {
         if (result) void handle(result.getText());
       })
       .then((controls) => {
@@ -92,6 +93,13 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         }
         stopRef.current = () => controls.stop();
         setPhase({ step: "scanning" });
+
+        // A stream can be granted and still never paint — another app holding
+        // the camera, or a track that starts and stalls. Without this the
+        // reader just watches a black rectangle with no explanation.
+        window.setTimeout(() => {
+          if (!cancelled && videoEl.videoWidth === 0) setPhase({ step: "blank" });
+        }, 4000);
       })
       .catch(() => {
         window.clearTimeout(timeout);
@@ -105,7 +113,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       stopRef.current?.();
       stopRef.current = null;
     };
-  }, [open, onScan]);
+  }, [open, videoEl, onScan]);
 
   const message =
     phase.step === "starting" ? "Waking the camera…"
@@ -113,6 +121,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
     : phase.step === "looking-up" ? "Looking it up…"
     : phase.step === "missing" ? "Nothing on file for that one — you can still add it by hand."
     : phase.step === "denied" ? "No camera access. You can allow it in your browser, or type the details instead."
+    : phase.step === "blank" ? "The camera is on but sending nothing. Another app may be holding it — close that and try again, or type the details instead."
     : "This browser cannot open a camera. Type the details instead.";
 
   return (
@@ -127,8 +136,9 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
         <div className="relative mt-1 overflow-hidden rounded-2xl bg-story-ink">
           <video
-            ref={videoRef}
+            ref={setVideoEl}
             className="aspect-[4/3] w-full object-cover"
+            autoPlay
             muted
             playsInline
           />
@@ -141,7 +151,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         </div>
 
         <div className="mt-1 flex gap-2">
-          {(phase.step === "denied" || phase.step === "unsupported") && (
+          {(phase.step === "denied" || phase.step === "unsupported" || phase.step === "blank") && (
             <StoryButton type="button" size="sm" className="flex-1" onClick={onClose}>
               Type it instead
             </StoryButton>

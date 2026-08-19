@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { supabase } from '@/integrations/supabase/client';
-import { useQuery } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
 import { StoryButton } from '@/components/story';
 import { prefersReducedMotion } from '@/lib/motion';
@@ -17,6 +15,39 @@ import { ResultsPanel } from '@/components/results/ResultsPanel';
  * figures beside it — 7.75 and 7.33 show as 7.8 and 7.3 but read as 0.4 apart.
  */
 const gap = (low: number, high: number) => (Number(high.toFixed(1)) - Number(low.toFixed(1))).toFixed(1);
+
+/** The denominator behind "x% of the world". Sovereign states, roughly. */
+const COUNTRIES_IN_THE_WORLD = 195;
+
+/**
+ * ISO country code to a readable name.
+ *
+ * This used to read the `countries` table, but that table is closed to
+ * anonymous visitors, so once the map stopped requiring an account every
+ * signed-out reader saw "DE is the softest touch". The browser already knows
+ * every one of these names and cannot fail to load them.
+ */
+const regionNames = (() => {
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'region' });
+  } catch {
+    return null;
+  }
+})();
+
+const countryName = (code: string) => {
+  try {
+    return regionNames?.of(code) ?? code;
+  } catch {
+    return code; // Not a valid region code — show it raw rather than throwing.
+  }
+};
+
+/** Touch and stylus, as opposed to a mouse — what decides the gesture rules. */
+const isCoarsePointer = () =>
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(pointer: coarse)').matches;
 
 const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -42,24 +73,7 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
     [countryData],
   );
 
-  // Fetch countries with names for display
-  const { data: countriesData = [] } = useQuery({
-    queryKey: ['countries-list'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('countries')
-        .select('code, name');
-      
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
-  // Create a map from country code to country name
-  const countryCodeToName = new Map(countriesData.map(c => [c.code, c.name]));
-  /** The country list may not have loaded yet, so the code stands in. */
-  const countryName = (code: string) => countryCodeToName.get(code) || code;
-  const totalCountries = countriesData.length || 195;
+  const totalCountries = COUNTRIES_IN_THE_WORLD;
 
   // Read Mapbox public token from environment.
   // Accepts either the Mapbox connector's injected token or a manually set env var.
@@ -103,12 +117,8 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
   };
 
   const initializeMap = async () => {
-    console.log('MapboxWorldMap: initializeMap called');
-    console.log('MapboxWorldMap: mapContainer.current:', !!mapContainer.current);
-    console.log('MapboxWorldMap: map.current:', !!map.current);
     
     if (!mapContainer.current || map.current) {
-      console.log('MapboxWorldMap: Early return - container missing or map already exists');
       return;
     }
 
@@ -133,7 +143,6 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
     }
 
     const token = getMapboxToken();
-    console.log('MapboxWorldMap: Token received:', token ? 'yes (length: ' + token.length + ')' : 'no');
     
     if (!token) {
       console.error('No Mapbox token available');
@@ -148,7 +157,6 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
     }
 
     try {
-      console.log('MapboxWorldMap: Setting access token and creating map...');
       mapboxgl.accessToken = token;
       
       map.current = new mapboxgl.Map({
@@ -158,6 +166,11 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
         center: [0, 30],
         projection: 'globe',
         attributionControl: false,
+        // A full-width map inside a scrolling page swallows the swipe that was
+        // meant to scroll past it. On touch this asks for two fingers to pan,
+        // which hands single-finger scrolling back to the page; the zoom
+        // buttons still work for anyone who does not discover that.
+        cooperativeGestures: isCoarsePointer(),
       });
 
       // Add compact attribution control (no duplicates, no "Improve this map" link)
@@ -165,7 +178,6 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
         compact: true,
       }), 'bottom-right');
 
-      console.log('MapboxWorldMap: Map instance created');
 
       // If load never fires (token/style/network), surface an error instead of staying blank
       if (loadTimeoutRef.current) window.clearTimeout(loadTimeoutRef.current);
@@ -182,7 +194,6 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
       map.current.on('load', () => {
-        console.log('MapboxWorldMap: Map loaded successfully!');
         if (loadTimeoutRef.current) {
           window.clearTimeout(loadTimeoutRef.current);
           loadTimeoutRef.current = null;
@@ -337,7 +348,6 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
 
   // Retry handler for the map
   const handleRetry = () => {
-    console.log('MapboxWorldMap: Retry requested');
     setMapError(null);
     initAttempted.current = false;
     if (map.current) {
@@ -355,7 +365,6 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      console.log('MapboxWorldMap: Cleanup');
       if (loadTimeoutRef.current) {
         window.clearTimeout(loadTimeoutRef.current);
         loadTimeoutRef.current = null;
@@ -374,7 +383,6 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
     if (isLoading) return;
     if (map.current) return;
     if (initAttempted.current) {
-      console.log('MapboxWorldMap: Skipping duplicate initialization');
       return;
     }
 
@@ -388,7 +396,6 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
         return;
       }
 
-      console.log('MapboxWorldMap: Starting initialization...');
       initAttempted.current = true;
       setIsInitializing(true);
 
