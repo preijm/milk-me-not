@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import MenuBar from "@/components/MenuBar";
+
 
 const ColorSwatch = ({ 
   name, 
@@ -24,7 +24,6 @@ const ColorSwatch = ({
 const DesignSystem = () => {
   return (
     <div className="min-h-screen bg-background">
-      <MenuBar />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="space-y-12">
