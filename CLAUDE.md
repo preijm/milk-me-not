@@ -95,3 +95,27 @@ Husky + lint-staged run ESLint on staged files before each commit.
 - DB types are auto-generated at `src/integrations/supabase/types.ts` — do not edit manually
 - Edge Functions live under `supabase/functions/` (e.g., `check-rate-limit`)
 - Migrations in `supabase/migrations/`
+
+### The migrations are not a complete schema
+`supabase/migrations/` cannot rebuild the database. It has no baseline: ten of
+the tables the app reads — `products`, `milk_tests`, `profiles`, `brands`,
+`shops`, `flavors`, `properties`, `names`, `product_flavors`,
+`product_properties` — are never created by any migration, and the earliest
+file already does `INSERT INTO public.profiles`. The original schema was
+created outside migrations and the folder starts mid-life, so every file
+assumes a database that already exists.
+
+What this means in practice: the deployed database is the source of truth, not
+this folder. Read the schema from `src/integrations/supabase/types.ts`, which
+is generated from the live database. Do not assume a migration you are looking
+at ever ran, and do not assume adding one makes a fresh environment work.
+
+Fixing it means capturing a baseline from the live database, which needs
+credentials this repo does not carry:
+
+```bash
+supabase db dump --schema public -f supabase/migrations/00000000000000_baseline.sql
+```
+
+That file would have to sort before every existing migration, and the existing
+ones would then need to tolerate re-running against it.

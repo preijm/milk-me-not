@@ -1,13 +1,17 @@
 -- Bring `countries` under version control.
 --
 -- The table exists in the deployed database but was never in a migration: it
--- was created through the dashboard, so the migrations describe an app that
--- cannot run. `milk_tests.country_code` references it and the rating form
--- reads it, but a database rebuilt from this folder would have neither the
--- table nor its policies.
+-- was created through the dashboard, so three earlier migrations add policies
+-- to a table that, as far as this folder is concerned, does not exist.
 --
--- Everything here is written to be a no-op against the deployed database and
--- to reproduce it exactly on an empty one.
+-- This does not make the folder rebuildable, and is not trying to. Ten more
+-- tables are missing the same way, `products` and `milk_tests` among them, and
+-- the earliest migration already writes to `profiles`; that needs a baseline
+-- dump of the live database, not another migration. See CLAUDE.md.
+--
+-- What it does do is write down what the deployed table looks like, so the
+-- policies below are reviewable in the repo rather than only in a dashboard.
+-- Every statement is a no-op against the deployed database.
 
 CREATE TABLE IF NOT EXISTS public.countries (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
