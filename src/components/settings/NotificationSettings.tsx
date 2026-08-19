@@ -22,7 +22,7 @@ export default function NotificationSettings() {
                 Likes
               </Label>
               <p className="text-sm text-muted-foreground">
-                Get notified when someone likes your test results
+                Show up in your inbox when someone likes a rating you left
               </p>
             </div>
             <Switch id="likes-notifications" checked={preferences?.likes_enabled ?? true} onCheckedChange={checked => updatePreferences({
@@ -36,30 +36,12 @@ export default function NotificationSettings() {
                 Comments
               </Label>
               <p className="text-sm text-muted-foreground">
-                Get notified when someone comments on your test results
+                Show up in your inbox when someone replies to a rating you left
               </p>
             </div>
             <Switch id="comments-notifications" checked={preferences?.comments_enabled ?? true} onCheckedChange={checked => updatePreferences({
             comments_enabled: checked
           })} />
-          </div>
-          
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <Label htmlFor="newsletter-notifications" className="font-medium">
-                Newsletters
-              </Label>
-              <p className="text-sm text-muted-foreground">
-                Receive updates about new features and product announcements
-              </p>
-            </div>
-            <Switch 
-              id="newsletter-notifications" 
-              checked={preferences?.newsletter_enabled ?? true} 
-              onCheckedChange={checked => updatePreferences({
-                newsletter_enabled: checked
-              })} 
-            />
           </div>
         </div>
         

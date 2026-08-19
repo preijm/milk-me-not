@@ -66,7 +66,11 @@ const Account = () => {
           <SecuritySettings />
         </Section>
 
-        <Section title="Email" hint="We only send what you ask for.">
+        {/* Not "Email": nothing in this project sends any. These two toggles
+            are honoured by database triggers that decide whether a row lands
+            in the notifications table at all. A third, Newsletters, was a
+            column nothing ever read. */}
+        <Section title="Notifications" hint="What reaches you on the site.">
           <NotificationSettings />
         </Section>
 
