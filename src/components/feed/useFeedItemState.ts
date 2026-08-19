@@ -27,6 +27,31 @@ export interface FeedComment {
  * (the brief wants two deliberate layouts, not one reflowed), but they must
  * never drift apart on *behaviour*, so that behaviour lives here once.
  */
+/**
+ * Resolve display names for a set of user ids in one request.
+ *
+ * Both queries below used to fetch usernames one row at a time — a request per
+ * like and per comment, on top of the two this hook already makes, multiplied
+ * by every card in the feed. Anyone with no row in `profiles_public` also
+ * produced a console 404 each time they appeared.
+ */
+const fetchUsernames = async (userIds: string[]): Promise<Map<string, string>> => {
+  const unique = [...new Set(userIds.filter(Boolean))];
+  if (unique.length === 0) return new Map();
+
+  const { data, error } = await supabase
+    .from('profiles_public')
+    .select('id, username')
+    .in('id', unique);
+
+  if (error) {
+    console.error('Error fetching usernames:', error);
+    return new Map();
+  }
+
+  return new Map((data ?? []).map((row) => [row.id as string, (row.username as string) || 'Anonymous']));
+};
+
 export const useFeedItemState = (item: MilkTestResult) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -46,19 +71,12 @@ export const useFeedItemState = (item: MilkTestResult) => {
 
       if (error) throw error;
 
-      const likesWithUsernames = await Promise.all(
-        (data || []).map(async (like) => {
-          const { data: profile } = await supabase
-            .from('profiles_public')
-            .select('username')
-            .eq('id', like.user_id)
-            .maybeSingle();
+      const names = await fetchUsernames((data || []).map((like) => like.user_id));
 
-          return { ...like, username: profile?.username || 'Anonymous' };
-        })
-      );
-
-      return likesWithUsernames as FeedLike[];
+      return (data || []).map((like) => ({
+        ...like,
+        username: names.get(like.user_id) || 'Anonymous',
+      })) as FeedLike[];
     }
   });
 
@@ -73,19 +91,12 @@ export const useFeedItemState = (item: MilkTestResult) => {
 
       if (error) throw error;
 
-      const commentsWithUsernames = await Promise.all(
-        (data || []).map(async (comment) => {
-          const { data: profile } = await supabase
-            .from('profiles_public')
-            .select('username')
-            .eq('id', comment.user_id)
-            .maybeSingle();
+      const names = await fetchUsernames((data || []).map((comment) => comment.user_id));
 
-          return { ...comment, username: profile?.username || 'Anonymous' };
-        })
-      );
-
-      return commentsWithUsernames as FeedComment[];
+      return (data || []).map((comment) => ({
+        ...comment,
+        username: names.get(comment.user_id) || 'Anonymous',
+      })) as FeedComment[];
     }
   });
 
