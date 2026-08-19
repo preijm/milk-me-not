@@ -34,15 +34,16 @@ own. This is the default. It sits on a white tile with a little padding, which
 is what keeps a dark logo readable when the row itself is dark.
 
 **A panel** — a logo that already carries its own coloured background, like
-Friesche Vlag's blue shield or Isola's yellow block. These must fill the tile
-edge to edge; putting them on a white tile with padding draws a white ring
-around a logo that already has its own edge, and it reads as a picture inside
-a picture.
+Friesche Vlag's blue shield or Lidl's. These skip the white ground; putting
+them on a white tile with padding draws a white ring around a logo that
+already has its own edge, and it reads as a picture inside a picture.
 
-Panels are declared in `FULL_BLEED` in `src/lib/brandLogo.ts` — add the slug
-and it fills. Only do this for a **roughly square** panel: a wide one cropped
-to a square tile loses its wordmark, which is why `kara.jpg` stays on the
-default treatment despite being a blue panel.
+Panels are declared in `FULL_BLEED` in `src/lib/brandLogo.ts` — add the slug.
+Aspect ratio does not matter: nothing is cropped, so a wide panel keeps its
+wordmark and sits centred instead of filling the tile.
+
+To tell which kind a file is without guessing, draw it to a canvas and read
+the corner alpha — four opaque, non-white corners means a panel.
 
 ## What makes a good file
 
@@ -62,11 +63,6 @@ Logos render inside a small square tile on a white ground, scaled to fit with
   full-colour variant — most brands publish both, usually with `-dark` or
   `-black` in the filename.
 
-To check whether a logo carries its own background rather than eyeballing it,
-draw it to a canvas and read the corner alpha: four opaque corners means a
-panel, and the width-to-height ratio then decides whether it can be a
-`FULL_BLEED` entry.
-
 ## Which brands are worth it
 
 Ratings are concentrated. As of the last count, 71 brands share 350 ratings,
@@ -77,9 +73,16 @@ but the top 11 cover 58% of them and the top 25 cover 78%. In rough order:
 13. Melkan · 14. Vemondo · 15. EDEKA Bio MY VEGGIE · 16. Campina ·
 17. Arla Jörd · 18. BioBio · 19. Just Plants · 20. Alnatura
 
+Nineteen of those twenty are covered; only Just Plants is not, and it does not
+appear to be a real company. Between them the files here carry **76% of all
+ratings from 25 files**, and the whole remaining tail is brands with four
+ratings or fewer.
+
 Anything without a file falls back to a three-letter plant-base mark
 (`OAT`, `ALM`, `SOY`…), which is a deliberate design, not a broken state — so
-there is no need to chase all 71.
+there is no need to chase all 71. Adding a file for a brand with two ratings
+costs a download on every build and buys almost nothing; check the brand's
+rating count before hunting for its logo.
 
 ## A note on rights
 
