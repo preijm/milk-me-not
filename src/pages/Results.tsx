@@ -138,15 +138,9 @@ const Results = () => {
         />
 
         {/* On a phone the switcher gets its own full-width row — beside the
-            heading it would either wrap or squeeze the title. The map stays off
-            the phone, as it always has, so it is not offered there. */}
+            heading it would either wrap or squeeze the title. */}
         {isMobile && (
-          <ResultsViewSwitcher
-            view={view}
-            onViewChange={setView}
-            available={["table", "charts"]}
-            className="mt-6 flex w-full"
-          />
+          <ResultsViewSwitcher view={view} onViewChange={setView} className="mt-6 flex w-full" />
         )}
 
         <div className="mt-7">
