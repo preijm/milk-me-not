@@ -70,8 +70,14 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
     // thumb and the tenths buttons both have to fit without pushing the submit
     // button further down the page than the control they replaced.
     <div className="flex items-center gap-3">
+      {/* Unrated, this had no background at all, so the field you are meant to
+          type into simply was not visible — a critic reading the empty form
+          reported there was no numeral telling you what you were submitting. */}
       <label
-        className="flex h-[4.5rem] w-[4.5rem] shrink-0 cursor-text flex-col items-center justify-center rounded-2xl transition-colors"
+        className={cn(
+          "flex h-[4.5rem] w-[4.5rem] shrink-0 cursor-text flex-col items-center justify-center rounded-2xl transition-colors",
+          !scored && "story-hairline bg-story-cream",
+        )}
         style={{ backgroundColor: scored ? tier.color : undefined }}
       >
         <span className="sr-only">Score out of 10</span>
@@ -90,7 +96,7 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
           onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
           className={cn(
             "story-num h-11 w-full bg-transparent text-center text-[1.6rem] leading-none outline-none",
-            scored ? "text-white placeholder:text-white/60" : "text-story-muted-2",
+            scored ? "text-white placeholder:text-white/60" : "text-story-ink-2 placeholder:text-story-muted",
           )}
         />
         <span
