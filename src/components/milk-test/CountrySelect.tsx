@@ -23,18 +23,12 @@ export const CountrySelect = ({ country, setCountry }: CountrySelectProps) => {
   const { data: countries = NO_COUNTRIES } = useQuery({
     queryKey: ['countries'],
     queryFn: async () => {
-      console.log('Fetching countries from database...');
       const { data, error } = await supabase
         .from('countries')
         .select('name, code')
         .order('name');
-      
-      if (error) {
-        console.error('Error fetching countries:', error);
-        throw error;
-      }
-      
-      console.log('Fetched countries:', data);
+
+      if (error) throw error;
       return data || [];
     },
   });

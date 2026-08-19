@@ -5,6 +5,26 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { StoryButton } from "@/components/story/primitives";
 import { lookUpBarcode, type ScannedProduct } from "@/lib/openFoodFacts";
 
+/**
+ * Ask for the back camera at as many pixels as it will give.
+ *
+ * Passing no constraints lets the browser choose, and it chooses badly for
+ * this: often the front camera, usually around 640x480. A barcode occupies a
+ * small part of the frame, so at that size there are too few pixels across the
+ * bars to resolve — the preview looks soft and nothing ever decodes.
+ *
+ * These are all `ideal` rather than `exact`, so a device that cannot manage
+ * 1080p or has no rear camera still gets a stream instead of an error.
+ */
+const CAMERA: MediaStreamConstraints = {
+  audio: false,
+  video: {
+    facingMode: { ideal: "environment" },
+    width: { ideal: 1920 },
+    height: { ideal: 1080 },
+  },
+};
+
 /** The symbologies actually printed on grocery packaging. */
 const FORMATS = [
   BarcodeFormat.EAN_13,
@@ -46,11 +66,13 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const stopRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<Phase>({ step: "starting" });
+  const [resolution, setResolution] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !videoEl) return;
     let cancelled = false;
     setPhase({ step: "starting" });
+    setResolution(null);
 
     if (!navigator.mediaDevices?.getUserMedia) {
       setPhase({ step: "unsupported" });
@@ -59,6 +81,9 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
     const hints = new Map();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, FORMATS);
+    // Grocery barcodes are small in frame and often printed on a curved,
+    // shiny carton. Spending more time per frame beats failing silently.
+    hints.set(DecodeHintType.TRY_HARDER, true);
     const reader = new BrowserMultiFormatReader(hints);
 
     const handle = async (code: string) => {
@@ -74,7 +99,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       onScan(found);
     };
 
-    // decodeFromVideoDevice can hang rather than reject — a camera held by
+    // Starting the camera can hang rather than reject — a device held by
     // another app, or a headless browser where the API exists but no device
     // does. Without this the reader watches "Waking the camera…" forever.
     const timeout = window.setTimeout(() => {
@@ -82,7 +107,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
     }, 8000);
 
     reader
-      .decodeFromVideoDevice(undefined, videoEl, (result) => {
+      .decodeFromConstraints(CAMERA, videoEl, (result) => {
         if (result) void handle(result.getText());
       })
       .then((controls) => {
@@ -93,6 +118,22 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         }
         stopRef.current = () => controls.stop();
         setPhase({ step: "scanning" });
+
+        // Grocery barcodes are read at arm's length on a curved surface, so
+        // continuous autofocus matters more than usual. Not every browser
+        // exposes it; a rejection here is not a failure worth surfacing.
+        const track = (videoEl.srcObject as MediaStream | null)?.getVideoTracks()[0];
+        track
+          ?.applyConstraints({ advanced: [{ focusMode: "continuous" } as never] })
+          .catch(() => undefined);
+
+        // What the camera actually gave us, which is the first thing worth
+        // knowing when a scan will not resolve.
+        window.setTimeout(() => {
+          if (!cancelled && videoEl.videoWidth > 0) {
+            setResolution(`${videoEl.videoWidth}×${videoEl.videoHeight}`);
+          }
+        }, 1200);
 
         // A stream can be granted and still never paint — another app holding
         // the camera, or a track that starts and stalls. Without this the
@@ -143,10 +184,17 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
             playsInline
           />
           {phase.step === "scanning" && (
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-8 top-1/2 h-24 -translate-y-1/2 rounded-xl border-2 border-white/80"
-            />
+            <>
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-8 top-1/2 h-24 -translate-y-1/2 rounded-xl border-2 border-white/80"
+              />
+              {resolution && (
+                <span className="absolute bottom-1.5 right-2 rounded bg-story-ink/55 px-1.5 py-0.5 text-[0.625rem] font-medium text-white/90">
+                  {resolution}
+                </span>
+              )}
+            </>
           )}
         </div>
 
