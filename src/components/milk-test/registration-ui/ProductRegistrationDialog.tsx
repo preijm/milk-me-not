@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ProductRegistrationHeader } from "../ProductRegistrationHeader";
-import { DialogDescription } from "@/components/ui/dialog";
+import {
+  Kicker,
+  STORY_ALERT_ACTION_CLASS,
+  STORY_ALERT_CANCEL_CLASS,
+  STORY_DIALOG_SURFACE,
+  StoryDialog,
+} from "@/components/story";
 import { ProductRegistrationProvider, useProductRegistration } from "./ProductRegistrationContext";
 import { ProductForm } from "./FormSections";
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useProductTestCount } from "@/hooks/useProductTestCount";
 interface ProductRegistrationDialogProps {
@@ -272,71 +276,73 @@ const ProductRegistrationContainer: React.FC<ProductRegistrationDialogProps> = (
     handleOpenChange(false);
   };
   return <>
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent 
-          className="max-w-2xl max-h-[85vh] overflow-y-auto backdrop-blur-sm border border-white/20 shadow-xl bg-white"
-          onOpenAutoFocus={editProductId ? (e) => e.preventDefault() : undefined}
-        >
-          <ProductRegistrationHeader isEditMode={!!editProductId} />
-          <DialogDescription className="sr-only">
-            {editProductId ? 'Edit milk product details, properties, and flavors' : 'Register a new milk product with brand, product details, properties, and flavors'}
-          </DialogDescription>
-          
-          <ProductForm onSubmit={handleSubmit} onCancel={handleCancel} onBrandInputReady={handleBrandInputReady} onDelete={handleDeleteClick} />
-        </DialogContent>
-      </Dialog>
+      <StoryDialog
+        open={open}
+        onOpenChange={handleOpenChange}
+        kicker={editProductId ? "Edit a product" : "Add a product"}
+        title={editProductId ? "Fix what's wrong with it." : "Put a carton on the shelf."}
+        // The old dialog hid this behind a "?" icon as a wall of tooltip text.
+        // It is the instruction for the form directly underneath, so it is copy.
+        lede={
+          editProductId
+            ? "Changes show on every rating already filed against this product."
+            : "Brand and product name are required — name it after what is actually in it. Flavour, barista and the rest are what stop two similar cartons collapsing into one entry."
+        }
+        size="xl"
+        contentClassName="mt-6"
+        // Editing opens on a filled form — grabbing the first field would scroll
+        // the reader away from the value they came to change.
+        onOpenAutoFocus={editProductId ? e => e.preventDefault() : undefined}
+      >
+        <ProductForm onSubmit={handleSubmit} onCancel={handleCancel} onBrandInputReady={handleBrandInputReady} onDelete={handleDeleteClick} />
+      </StoryDialog>
+
       
       {/* Simplified Alert dialog for duplicate products */}
       <AlertDialog open={duplicateDialogOpen} onOpenChange={setDuplicateDialogOpen}>
-        <AlertDialogContent className="bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Duplicate Product</AlertDialogTitle>
-            <AlertDialogDescription>
-              This product already exists with the exact same properties and flavors.
-              You cannot register duplicate products.
+        <AlertDialogContent className={`${STORY_DIALOG_SURFACE} sm:max-w-md`}>
+          <header className="text-left">
+            <Kicker>Already here</Kicker>
+            <AlertDialogTitle className="story-display pt-3 text-[1.75rem] leading-tight text-story-ink">
+              Someone beat you to this one.
+            </AlertDialogTitle>
+            <AlertDialogDescription className="mt-3 text-[0.9375rem] leading-relaxed text-story-muted">
+              A product with exactly these properties and flavours is already on the shelf. Search for it instead —
+              and if yours differs in some way, add what makes it different.
             </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={handleDuplicateDialogAction} className="bg-blue-600 hover:bg-blue-700 text-white">
-              OK
+          </header>
+          <div className="mt-6 flex justify-end">
+            <AlertDialogAction onClick={handleDuplicateDialogAction} className={STORY_ALERT_ACTION_CLASS}>
+              Got it
             </AlertDialogAction>
-          </AlertDialogFooter>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
       
       {/* Delete confirmation dialog */}
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <AlertDialogContent className="bg-white/95 backdrop-blur-sm border border-white/20 shadow-xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Product</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this product?
-              {testCount > 0 ? (
-                <div className="mt-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-                  <div className="text-destructive font-medium">
-                    Warning: This product has {testCount} linked test{testCount !== 1 ? 's' : ''}.
-                  </div>
-                  <div className="text-destructive/80 text-sm mt-1">
-                    Deleting this product will also delete all linked tests.
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-2 text-muted-foreground">
-                  This product has no linked tests.
-                </div>
-              )}
+        <AlertDialogContent className={`${STORY_DIALOG_SURFACE} sm:max-w-md`}>
+          <header className="text-left">
+            <Kicker>Delete a product</Kicker>
+            <AlertDialogTitle className="story-display pt-3 text-[1.75rem] leading-tight text-story-ink">
+              {testCount > 0 ? `This takes ${testCount} rating${testCount !== 1 ? 's' : ''} with it.` : 'Take this one off the shelf?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="mt-3 text-[0.9375rem] leading-relaxed text-story-muted">
+              {testCount > 0
+                ? "Deleting the product deletes every rating filed against it, including other people's. There is no undo."
+                : 'Nobody has rated this one yet, so nothing else goes with it. There is no undo.'}
             </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+          </header>
+          <div className="mt-6 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
+            <AlertDialogCancel className={STORY_ALERT_CANCEL_CLASS}>Keep it</AlertDialogCancel>
+            <AlertDialogAction
               onClick={handleConfirmedDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className={`${STORY_ALERT_ACTION_CLASS} bg-story-amber-dark hover:brightness-110`}
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Deleting..." : "Delete Product"}
+              {isSubmitting ? 'Deleting…' : 'Delete the product'}
             </AlertDialogAction>
-          </AlertDialogFooter>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
     </>;

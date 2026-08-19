@@ -25,14 +25,30 @@ import { Kicker } from "./primitives";
  * shell but must still look identical to it.
  */
 export const STORY_DIALOG_SURFACE =
-  // `!bg-story-cream` beats shadcn's own `bg-background` on the content. Utilities
-  // outrank the base layer `story-surface` paints in, so without this the card
-  // takes the app's background token — and follows it to near-black in dark mode,
-  // which is the one thing story-surface exists to prevent.
-  "story-surface !bg-story-cream story-lift gap-0 rounded-[1.5rem] border-story-ink/10 p-6 sm:p-8 " +
+  // `bg-story-cream` is load-bearing, not decoration. DialogContent carries
+  // `bg-background`, a utility, and `story-surface` paints in the base layer —
+  // so the utility wins and the card takes the app's background token, following
+  // it to near-black in dark mode. Naming a background here gives tailwind-merge
+  // a conflict it can resolve in our favour, which is the one thing
+  // `story-surface` exists to guarantee.
+  "story-surface bg-story-cream story-lift gap-0 rounded-[1.5rem] border-story-ink/10 p-6 sm:p-8 " +
   // Tall dialogs (the registration form, the camera) must not run off a short
   // laptop window — the shell scrolls, the card keeps its shape.
   "max-h-[calc(100dvh-2rem)] overflow-y-auto";
+
+/**
+ * AlertDialog's action and cancel come with their own button styling baked in,
+ * and they cannot host a StoryButton without losing the close-on-select
+ * behaviour. These give them the same shape by hand.
+ */
+export const STORY_ALERT_ACTION_CLASS =
+  "inline-flex items-center justify-center gap-2.5 rounded-full bg-story-green px-6 py-3.5 font-sans " +
+  "text-[0.9375rem] font-bold tracking-[-0.01em] text-white transition-[filter] hover:brightness-[1.07]";
+
+export const STORY_ALERT_CANCEL_CLASS =
+  "mt-0 inline-flex items-center justify-center gap-2.5 rounded-full border-[1.5px] border-story-ink/15 " +
+  "bg-transparent px-6 py-3.5 font-sans text-[0.9375rem] font-bold tracking-[-0.01em] text-story-ink " +
+  "transition-colors hover:bg-story-ink/[0.05]";
 
 const SIZE_CLASS = {
   sm: "sm:max-w-sm",
@@ -54,8 +70,16 @@ export type StoryDialogProps = {
   size?: keyof typeof SIZE_CLASS;
   /** Hide the title visually but keep it for screen readers. */
   hideHeader?: boolean;
+  /**
+   * Drop the built-in close. For dialogs whose × means something other than
+   * "dismiss" — the update notice silences itself for a week — and which
+   * therefore render their own.
+   */
+  closeButton?: boolean;
   className?: string;
   contentClassName?: string;
+  /** Passed through to Radix — the edit forms suppress the opening autofocus. */
+  onOpenAutoFocus?: (event: Event) => void;
   children?: React.ReactNode;
 };
 
@@ -67,16 +91,19 @@ export const StoryDialog = ({
   lede,
   size = "md",
   hideHeader = false,
+  closeButton = true,
   className,
   contentClassName,
+  onOpenAutoFocus,
   children,
 }: StoryDialogProps) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent
       closeButton={false}
       className={cn(STORY_DIALOG_SURFACE, SIZE_CLASS[size], className)}
+      onOpenAutoFocus={onOpenAutoFocus}
     >
-      <StoryDialogClose />
+      {closeButton && <StoryDialogClose />}
 
       {hideHeader ? (
         <DialogTitle className="sr-only">{title}</DialogTitle>
@@ -101,22 +128,33 @@ export const StoryDialog = ({
   </Dialog>
 );
 
-/** The close affordance, in the site's own weight rather than a faint grey ×. */
-export const StoryDialogClose = ({ className }: { className?: string }) => (
-  <DialogPrimitive.Close
-    className={cn(
-      "absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-story-muted",
-      "transition-colors hover:bg-story-ink/[0.06] hover:text-story-ink",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2",
-      className,
-    )}
-  >
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden>
-      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
-    </svg>
-    <span className="sr-only">Close</span>
-  </DialogPrimitive.Close>
-);
+/**
+ * The close affordance, in the site's own weight rather than a faint grey ×.
+ *
+ * Pass `onClick` when closing has to do more than dismiss — that renders a
+ * plain button, because Radix's Close would fire `onOpenChange` as well and
+ * the two would race.
+ */
+export const StoryDialogClose = ({ className, onClick }: { className?: string; onClick?: () => void }) => {
+  const Tag = onClick ? "button" : DialogPrimitive.Close;
+  return (
+    <Tag
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-story-muted",
+        "transition-colors hover:bg-story-ink/[0.06] hover:text-story-ink",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2",
+        className,
+      )}
+    >
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden>
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      </svg>
+      <span className="sr-only">Close</span>
+    </Tag>
+  );
+};
 
 /**
  * The action row. Reversed on phones so the affirmative button sits under the
