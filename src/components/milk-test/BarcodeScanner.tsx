@@ -79,11 +79,32 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       return;
     }
 
-    const hints = new Map();
-    hints.set(DecodeHintType.POSSIBLE_FORMATS, FORMATS);
-    // Grocery barcodes are small in frame and often on a curved, shiny carton.
-    hints.set(DecodeHintType.TRY_HARDER, true);
-    const reader = new BrowserMultiFormatReader(hints);
+    /**
+     * Two readers, because TRY_HARDER is expensive and usually unnecessary.
+     *
+     * Measured on this machine at a 1280 long edge: a frame with no barcode —
+     * which is nearly every frame — takes about 7ms to reject without the hint
+     * and about 35ms with it. Two orientations per pass doubles that, so the
+     * hint is the difference between roughly 15ms and 70ms of work per pass,
+     * and a mid-range phone is several times slower than this machine.
+     *
+     * A real photograph of a carton read at every size tested, with the hint
+     * and without — so the hint buys nothing on a clean frame. It is held back
+     * for frames that are not clean: the plain reader runs alone while a scan
+     * is going well, and the thorough one joins in only once a few seconds
+     * have passed without a read. Most scans finish before that and never pay
+     * for it, and a struggling one gets the extra effort where it might help.
+     *
+     * Running it on a fixed cycle instead would put a hitch into every scan,
+     * including the ones about to succeed.
+     */
+    const quickHints = new Map();
+    quickHints.set(DecodeHintType.POSSIBLE_FORMATS, FORMATS);
+    const quick = new BrowserMultiFormatReader(quickHints);
+
+    const thoroughHints = new Map(quickHints);
+    thoroughHints.set(DecodeHintType.TRY_HARDER, true);
+    const thorough = new BrowserMultiFormatReader(thoroughHints);
 
     const handle = async (code: string) => {
       if (cancelled) return;
@@ -102,7 +123,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
     let tick: number | null = null;
 
     const stop = () => {
-      if (tick !== null) window.clearInterval(tick);
+      if (tick !== null) window.clearTimeout(tick);
       tick = null;
       stream?.getTracks().forEach((t) => t.stop());
       stream = null;
@@ -177,11 +198,22 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
           else setResolution(`${videoEl.videoWidth}×${videoEl.videoHeight}`);
         }, 1200);
 
-        tick = window.setInterval(() => {
+        // A self-scheduling loop rather than setInterval: on a slow phone a
+        // pass can outlast its own interval, and setInterval would queue the
+        // next one on top of it until the preview stutters.
+        const startedAt = performance.now();
+        let pass = 0;
+        const scan = () => {
           if (cancelled) return;
+
+          // Escalate only after the quick path has had a fair go.
+          const struggling = performance.now() - startedAt > 3000;
+          const reader = struggling && pass % 2 === 1 ? thorough : quick;
+          pass += 1;
+
           for (const turned of [false, true]) {
             const c = frame(videoEl, turned);
-            if (!c) return;
+            if (!c) break;
             try {
               const result = reader.decodeFromCanvas(c);
               if (result) {
@@ -189,10 +221,12 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
                 return;
               }
             } catch {
-              // No code in this orientation; try the other, then the next frame.
+              // No code in this orientation; try the other, then the next pass.
             }
           }
-        }, 220);
+          tick = window.setTimeout(scan, 120);
+        };
+        scan();
       })
       .catch(() => {
         window.clearTimeout(timeout);
