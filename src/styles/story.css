@@ -51,23 +51,24 @@
   --story-line-strong: 167 9% 19% / 0.16;
 }
 
-@layer base {
-  /* The story surface always renders in its committed light palette, even if
-     the app shell is in dark mode — one look, every device. */
-  .story-surface {
-    background-color: hsl(var(--story-cream));
-    color: hsl(var(--story-ink));
-    font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  .story-surface ::selection {
-    background: hsl(var(--story-green) / 0.25);
-  }
+/* The story surface always renders in its committed light palette, even if
+   the app shell is in dark mode — one look, every device. This imported file
+   intentionally uses plain CSS because Tailwind processes it independently. */
+.story-surface {
+  background-color: hsl(var(--story-cream));
+  color: hsl(var(--story-ink));
+  font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-@layer components {
+.story-surface ::selection {
+  background: hsl(var(--story-green) / 0.25);
+}
+
+/* Keep these as ordinary component classes rather than a Tailwind layer: the
+   stylesheet is also compiled as its own PostCSS input. */
+{
   /* Display type: Epilogue, tight, confident. Fluid across every breakpoint so
      mobile gets a real headline rather than a shrunken desktop one. */
   .story-display {
