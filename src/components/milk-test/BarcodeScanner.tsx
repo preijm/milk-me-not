@@ -20,8 +20,17 @@ const CAMERA: MediaStreamConstraints = {
   audio: false,
   video: {
     facingMode: { ideal: "environment" },
-    width: { ideal: 1920 },
-    height: { ideal: 1080 },
+    // Asked for 1920x1080 and an Android phone answered with 720x1280 — a
+    // portrait sensor cannot honour a landscape pair, so it fell back to a
+    // small mode. A barcode needs a couple of pixels per bar, and 720 across
+    // does not give that at arm's length. Asking high on both edges biases the
+    // pick upward whichever way round the device holds the frame.
+    //
+    // Deliberately `ideal` and not `min`: a hard floor throws
+    // OverconstrainedError on a device that cannot meet it, which would take
+    // the scanner from poor to broken.
+    width: { ideal: 2560 },
+    height: { ideal: 1440 },
   },
 };
 
@@ -67,12 +76,17 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
   const stopRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<Phase>({ step: "starting" });
   const [resolution, setResolution] = useState<string | null>(null);
+  const [attempts, setAttempts] = useState(0);
+  const trackRef = useRef<MediaStreamTrack | null>(null);
+  const [torch, setTorch] = useState(false);
 
   useEffect(() => {
     if (!open || !videoEl) return;
     let cancelled = false;
     setPhase({ step: "starting" });
     setResolution(null);
+    setAttempts(0);
+    setTorch(false);
 
     if (!navigator.mediaDevices?.getUserMedia) {
       setPhase({ step: "unsupported" });
@@ -148,26 +162,45 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
      * parallel to those scan lines, which is the common case, so every frame is
      * offered in both orientations.
      */
-    const frame = (video: HTMLVideoElement, turned: boolean) => {
+    const frame = (video: HTMLVideoElement, turned: boolean, wide: boolean) => {
       const vw = video.videoWidth;
       const vh = video.videoHeight;
       if (!vw || !vh) return null;
 
-      // Cap the long edge: decoding full 1080p twice a tick costs more than it
-      // buys, and the code stays legible well below that.
-      const cap = 1280;
-      const scale = Math.min(1, cap / Math.max(vw, vh));
-      const w = Math.round(vw * scale);
-      const h = Math.round(vh * scale);
+      /**
+       * Crop to the middle of the frame at full resolution, rather than
+       * shrinking the whole frame.
+       *
+       * A barcode has to be a couple of pixels per bar to be read at all. An
+       * Android phone handed back a 720x1280 stream, and downscaling that to a
+       * 1280 long edge — as this did — left a code held at arm's length with
+       * barely two pixels a bar, which is where decoding stops working. The
+       * bars are in the middle of the picture, where the guide box is, so
+       * taking that band untouched keeps the detail and costs fewer pixels
+       * than the shrunken whole.
+       *
+       * `wide` falls back to the entire frame, shrunk, for a code that is not
+       * where the guide says it should be.
+       */
+      const band = 0.55;
+      const sw = wide ? vw : Math.round(vw * (vw > vh ? band : 1));
+      const sh = wide ? vh : Math.round(vh * (vw > vh ? 1 : band));
+      const sx = Math.round((vw - sw) / 2);
+      const sy = Math.round((vh - sh) / 2);
+
+      // Only the whole-frame fallback is shrunk, and only if it is very large.
+      const scale = wide ? Math.min(1, 1280 / Math.max(sw, sh)) : 1;
+      const w = Math.round(sw * scale);
+      const h = Math.round(sh * scale);
 
       canvas.width = turned ? h : w;
       canvas.height = turned ? w : h;
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) return null;
       ctx.save();
       ctx.translate(canvas.width / 2, canvas.height / 2);
       if (turned) ctx.rotate(Math.PI / 2);
-      ctx.drawImage(video, -w / 2, -h / 2, w, h);
+      ctx.drawImage(video, sx, sy, sw, sh, -w / 2, -h / 2, w, h);
       ctx.restore();
       return canvas;
     };
@@ -187,15 +220,16 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
         // Reading a code at arm's length depends on focus more than most
         // camera work. Not every browser exposes it; silence is fine.
-        granted
-          .getVideoTracks()[0]
+        const track = granted.getVideoTracks()[0] ?? null;
+        trackRef.current = track;
+        track
           ?.applyConstraints({ advanced: [{ focusMode: "continuous" } as never] })
           .catch(() => undefined);
 
         window.setTimeout(() => {
           if (cancelled) return;
           if (videoEl.videoWidth === 0) setPhase({ step: "blank" });
-          else setResolution(`${videoEl.videoWidth}×${videoEl.videoHeight}`);
+          else setResolution(`${videoEl.videoWidth}×${videoEl.videoHeight} · reads ${canvas.width}×${canvas.height}`);
         }, 1200);
 
         // A self-scheduling loop rather than setInterval: on a slow phone a
@@ -208,11 +242,18 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
           // Escalate only after the quick path has had a fair go.
           const struggling = performance.now() - startedAt > 3000;
+          setAttempts((n) => n + 1);
           const reader = struggling && pass % 2 === 1 ? thorough : quick;
           pass += 1;
 
-          for (const turned of [false, true]) {
-            const c = frame(videoEl, turned);
+          // Centre band first, both ways round; the whole frame only when the
+          // quick path has been struggling, since it is the weaker read.
+          const attempts: Array<[boolean, boolean]> = struggling
+            ? [[false, false], [true, false], [false, true], [true, true]]
+            : [[false, false], [true, false]];
+
+          for (const [turned, wide] of attempts) {
+            const c = frame(videoEl, turned, wide);
             if (!c) break;
             try {
               const result = reader.decodeFromCanvas(c);
@@ -263,6 +304,17 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
         <div className="relative mt-1 overflow-hidden rounded-2xl bg-story-ink">
           <video
+            onClick={() => {
+              // Android often parks focus at infinity, which looks fine to the
+              // eye and leaves the bars too soft to decode. Nudging it is the
+              // one thing a reader can do about that from here.
+              const t = trackRef.current;
+              void t
+                ?.applyConstraints({ advanced: [{ focusMode: "single-shot" } as never] })
+                .catch(() =>
+                  t.applyConstraints({ advanced: [{ focusMode: "continuous" } as never] }).catch(() => undefined),
+                );
+            }}
             ref={setVideoEl}
             className="aspect-[4/3] w-full object-cover"
             autoPlay
@@ -275,14 +327,33 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
                 aria-hidden
                 className="pointer-events-none absolute inset-x-8 top-1/2 h-24 -translate-y-1/2 rounded-xl border-2 border-white/80"
               />
+              <span className="absolute bottom-1.5 left-2 rounded bg-story-ink/55 px-1.5 py-0.5 text-[0.625rem] font-medium text-white/90">
+                Tap to focus
+              </span>
               {resolution && (
                 <span className="absolute bottom-1.5 right-2 rounded bg-story-ink/55 px-1.5 py-0.5 text-[0.625rem] font-medium text-white/90">
-                  {resolution}
+                  {resolution} · {attempts}
                 </span>
               )}
             </>
           )}
         </div>
+
+        {phase.step === "scanning" && (
+          <button
+            type="button"
+            onClick={() => {
+              const next = !torch;
+              void trackRef.current
+                ?.applyConstraints({ advanced: [{ torch: next } as never] })
+                .then(() => setTorch(next))
+                .catch(() => undefined);
+            }}
+            className="story-hairline mt-1 rounded-full bg-white px-3 py-1.5 text-[0.8125rem] font-bold text-story-ink"
+          >
+            {torch ? "Light off" : "Light on"}
+          </button>
+        )}
 
         <div className="mt-1 flex gap-2">
           {(phase.step === "denied" || phase.step === "unsupported" || phase.step === "blank") && (
