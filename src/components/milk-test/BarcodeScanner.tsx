@@ -4,6 +4,7 @@ import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { StoryButton } from "@/components/story/primitives";
 import { lookUpBarcode, type ScannedProduct } from "@/lib/openFoodFacts";
+import { createNativeDetector } from "@/lib/barcodeDetector";
 
 /**
  * Ask for the back camera at as many pixels as it will give.
@@ -80,6 +81,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
   const trackRef = useRef<MediaStreamTrack | null>(null);
   const [torch, setTorch] = useState(false);
   const [seen, setSeen] = useState<string | null>(null);
+  const [engine, setEngine] = useState<"native" | "zxing">("zxing");
   const lastFrame = useRef<(() => string | null) | null>(null);
 
   useEffect(() => {
@@ -240,12 +242,36 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         // next one on top of it until the preview stutters.
         const startedAt = performance.now();
         let pass = 0;
-        const scan = () => {
+
+        // The platform detector, where the platform has one.
+        const native = await createNativeDetector();
+        if (cancelled) return;
+        setEngine(native ? "native" : "zxing");
+
+        const scan = async () => {
           if (cancelled) return;
 
           // Escalate only after the quick path has had a fair go.
           const struggling = performance.now() - startedAt > 3000;
           setAttempts((n) => n + 1);
+
+          if (native) {
+            // Hand it the video directly: no canvas copy, no orientation
+            // guessing, and the work happens off the JavaScript thread.
+            try {
+              const found = await native.detect(videoEl);
+              const code = found.find((b) => /^\d{8,14}$/.test(b.rawValue))?.rawValue;
+              if (code) {
+                void handle(code);
+                return;
+              }
+            } catch {
+              // A detector that throws mid-stream is not worth retrying
+              // against; the ZXing path below still runs.
+            }
+            if (!cancelled) tick = window.setTimeout(scan, 80);
+            return;
+          }
           const reader = struggling && pass % 2 === 1 ? thorough : quick;
           pass += 1;
 
@@ -303,7 +329,10 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
   const message =
     phase.step === "starting" ? "Waking the camera…"
-    : phase.step === "scanning" ? "Point it at the barcode on the carton."
+    : phase.step === "scanning"
+      ? engine === "native"
+        ? "Point it at the barcode on the carton."
+        : "Point it at the barcode. This browser has no built-in reader, so it may take a moment."
     : phase.step === "looking-up" ? "Looking it up…"
     : phase.step === "missing" ? "Nothing on file for that one — you can still add it by hand."
     : phase.step === "denied" ? "No camera access. You can allow it in your browser, or type the details instead."
@@ -350,7 +379,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
               </span>
               {resolution && (
                 <span className="absolute bottom-1.5 right-2 rounded bg-story-ink/55 px-1.5 py-0.5 text-[0.625rem] font-medium text-white/90">
-                  {resolution} · {attempts}
+                  {engine === "native" ? "fast" : "zxing"} · {resolution} · {attempts}
                 </span>
               )}
             </>
