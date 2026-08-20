@@ -1,10 +1,10 @@
-@import './styles/colors.css';
-@import './styles/design-tokens.css';
-@import './styles/story.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import './styles/colors.css';
+@import './styles/design-tokens.css';
+@import './styles/story.css';
 
 @layer base {
   :root {
