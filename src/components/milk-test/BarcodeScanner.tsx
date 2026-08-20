@@ -81,14 +81,13 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
     const hints = new Map();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, FORMATS);
-    // Grocery barcodes are small in frame and often printed on a curved,
-    // shiny carton. Spending more time per frame beats failing silently.
+    // Grocery barcodes are small in frame and often on a curved, shiny carton.
     hints.set(DecodeHintType.TRY_HARDER, true);
     const reader = new BrowserMultiFormatReader(hints);
 
     const handle = async (code: string) => {
       if (cancelled) return;
-      stopRef.current?.();
+      stop();
       setPhase({ step: "looking-up", code });
       const found = await lookUpBarcode(code);
       if (cancelled) return;
@@ -99,48 +98,101 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       onScan(found);
     };
 
-    // Starting the camera can hang rather than reject — a device held by
-    // another app, or a headless browser where the API exists but no device
-    // does. Without this the reader watches "Waking the camera…" forever.
+    let stream: MediaStream | null = null;
+    let tick: number | null = null;
+
+    const stop = () => {
+      if (tick !== null) window.clearInterval(tick);
+      tick = null;
+      stream?.getTracks().forEach((t) => t.stop());
+      stream = null;
+    };
+    stopRef.current = stop;
+
+    // A camera that never answers leaves the reader staring at "Waking the
+    // camera…" with only Cancel, so give up rather than hang.
     const timeout = window.setTimeout(() => {
       if (!cancelled) setPhase((cur) => (cur.step === "starting" ? { step: "denied" } : cur));
     }, 8000);
 
-    reader
-      .decodeFromConstraints(CAMERA, videoEl, (result) => {
-        if (result) void handle(result.getText());
-      })
-      .then((controls) => {
+    const canvas = document.createElement("canvas");
+
+    /**
+     * Draw the current frame, optionally turned a quarter turn.
+     *
+     * ZXing reads 1D barcodes along horizontal scan lines, and its browser
+     * build does not retry a rotated image even with TRY_HARDER — measured
+     * against a real photograph, a code that reads at 0 and 180 degrees fails
+     * outright at 90 and 270. Holding a tall carton in portrait puts the bars
+     * parallel to those scan lines, which is the common case, so every frame is
+     * offered in both orientations.
+     */
+    const frame = (video: HTMLVideoElement, turned: boolean) => {
+      const vw = video.videoWidth;
+      const vh = video.videoHeight;
+      if (!vw || !vh) return null;
+
+      // Cap the long edge: decoding full 1080p twice a tick costs more than it
+      // buys, and the code stays legible well below that.
+      const cap = 1280;
+      const scale = Math.min(1, cap / Math.max(vw, vh));
+      const w = Math.round(vw * scale);
+      const h = Math.round(vh * scale);
+
+      canvas.width = turned ? h : w;
+      canvas.height = turned ? w : h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return null;
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      if (turned) ctx.rotate(Math.PI / 2);
+      ctx.drawImage(video, -w / 2, -h / 2, w, h);
+      ctx.restore();
+      return canvas;
+    };
+
+    navigator.mediaDevices
+      .getUserMedia(CAMERA)
+      .then(async (granted) => {
         window.clearTimeout(timeout);
         if (cancelled) {
-          controls.stop();
+          granted.getTracks().forEach((t) => t.stop());
           return;
         }
-        stopRef.current = () => controls.stop();
+        stream = granted;
+        videoEl.srcObject = granted;
+        await videoEl.play().catch(() => undefined);
         setPhase({ step: "scanning" });
 
-        // Grocery barcodes are read at arm's length on a curved surface, so
-        // continuous autofocus matters more than usual. Not every browser
-        // exposes it; a rejection here is not a failure worth surfacing.
-        const track = (videoEl.srcObject as MediaStream | null)?.getVideoTracks()[0];
-        track
+        // Reading a code at arm's length depends on focus more than most
+        // camera work. Not every browser exposes it; silence is fine.
+        granted
+          .getVideoTracks()[0]
           ?.applyConstraints({ advanced: [{ focusMode: "continuous" } as never] })
           .catch(() => undefined);
 
-        // What the camera actually gave us, which is the first thing worth
-        // knowing when a scan will not resolve.
         window.setTimeout(() => {
-          if (!cancelled && videoEl.videoWidth > 0) {
-            setResolution(`${videoEl.videoWidth}×${videoEl.videoHeight}`);
-          }
+          if (cancelled) return;
+          if (videoEl.videoWidth === 0) setPhase({ step: "blank" });
+          else setResolution(`${videoEl.videoWidth}×${videoEl.videoHeight}`);
         }, 1200);
 
-        // A stream can be granted and still never paint — another app holding
-        // the camera, or a track that starts and stalls. Without this the
-        // reader just watches a black rectangle with no explanation.
-        window.setTimeout(() => {
-          if (!cancelled && videoEl.videoWidth === 0) setPhase({ step: "blank" });
-        }, 4000);
+        tick = window.setInterval(() => {
+          if (cancelled) return;
+          for (const turned of [false, true]) {
+            const c = frame(videoEl, turned);
+            if (!c) return;
+            try {
+              const result = reader.decodeFromCanvas(c);
+              if (result) {
+                void handle(result.getText());
+                return;
+              }
+            } catch {
+              // No code in this orientation; try the other, then the next frame.
+            }
+          }
+        }, 220);
       })
       .catch(() => {
         window.clearTimeout(timeout);
@@ -151,7 +203,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       cancelled = true;
       window.clearTimeout(timeout);
       // Without this the camera light stays on after the dialog closes.
-      stopRef.current?.();
+      stop();
       stopRef.current = null;
     };
   }, [open, videoEl, onScan]);
