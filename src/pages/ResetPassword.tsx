@@ -40,7 +40,7 @@ const ResetPassword = () => {
       <main className="flex flex-1 items-center">
         <div className="mx-auto grid w-full max-w-[76rem] items-center gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 lg:px-10">
           <div className="relative">
-            <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 hidden text-story-green-light lg:block">
+            <div aria-hidden className="pointer-events-none absolute -left-24 -top-64 hidden text-story-green-light lg:block">
               <MilkDrop size={240} variant="solid" />
             </div>
             <div className="relative">
