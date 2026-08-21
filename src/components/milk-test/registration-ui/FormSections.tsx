@@ -96,8 +96,8 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         )}
 
         <div className="space-y-2">
-          <label htmlFor="brand" className="block font-medium text-foreground">
-            Brand <span className="text-destructive">*</span>
+          <label htmlFor="brand" className="block text-[0.8125rem] font-bold text-story-ink-2">
+            Brand <span className="text-error">*</span>
           </label>
           <div className="w-full">
             <BrandSelect
@@ -111,8 +111,8 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="product" className="block font-medium text-foreground">
-            Product <span className="text-destructive">*</span>
+          <label htmlFor="product" className="block text-[0.8125rem] font-bold text-story-ink-2">
+            Product <span className="text-error">*</span>
           </label>
           <NameSelect
             productName={productName}
@@ -122,7 +122,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-foreground flex items-center gap-1.5">
+          <span className="flex items-center gap-1.5 text-[0.8125rem] font-bold text-story-ink-2">
             <Coffee className="w-4 h-4 text-badge-barista" />
             Type
           </span>
@@ -130,7 +130,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-foreground flex items-center gap-1.5">
+          <span className="flex items-center gap-1.5 text-[0.8125rem] font-bold text-story-ink-2">
             <Tag className="w-4 h-4 text-badge-property" />
             Properties
           </span>
@@ -141,7 +141,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
         </div>
 
         <div className="space-y-2">
-          <span className="block font-medium text-foreground flex items-center gap-1.5">
+          <span className="flex items-center gap-1.5 text-[0.8125rem] font-bold text-story-ink-2">
             <Droplet className="w-4 h-4 text-badge-flavor" />
             Flavors
           </span>

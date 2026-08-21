@@ -8,7 +8,7 @@ interface PasswordResetFormProps {
 }
 
 const fieldClass =
-  "h-12 rounded-xl border-[1.5px] border-story-ink/12 bg-white px-4 font-sans text-[0.9375rem] text-story-ink " +
+  "h-12 rounded-xl border-[1.5px] border-story-ink/[0.12] bg-white px-4 font-sans text-[0.9375rem] text-story-ink " +
   "placeholder:text-story-muted-2 focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-0";
 
 const PasswordResetForm = ({ isResetting, onPasswordUpdate }: PasswordResetFormProps) => {

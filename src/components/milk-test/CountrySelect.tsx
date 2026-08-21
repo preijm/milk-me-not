@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
+import { SUGGESTION_PANEL, SUGGESTION_ROW, SUGGESTION_SCROLL } from "./suggestionStyles";
 
 interface CountrySelectProps {
   country: string | null;
@@ -86,11 +88,11 @@ export const CountrySelect = ({ country, setCountry }: CountrySelectProps) => {
         className="w-full"
       />
       {suggestions.length > 0 && isUserTyping && (
-        <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <div className={cn(SUGGESTION_PANEL, SUGGESTION_SCROLL)}>
           {suggestions.map((suggestion) => (
             <div
               key={suggestion.code}
-              className="px-4 py-2 cursor-pointer hover:bg-muted flex items-center gap-2 text-foreground"
+              className={SUGGESTION_ROW}
               onClick={() => handleSelectCountry(suggestion)}
               onMouseDown={(e) => e.preventDefault()}
             >

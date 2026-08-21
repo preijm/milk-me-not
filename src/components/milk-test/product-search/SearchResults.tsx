@@ -2,6 +2,8 @@
 import React from "react";
 import { ProductResultItem } from "./ProductResultItem";
 import { ProductData } from "./search-utils/types";
+import { cn } from "@/lib/utils";
+import { SUGGESTION_NOTE, SUGGESTION_PANEL, SUGGESTION_SCROLL } from "../suggestionStyles";
 
 interface ProductResult extends ProductData {
   id: string;
@@ -39,9 +41,9 @@ export const SearchResults = ({
   };
 
   return (
-    <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto">
+    <div className={cn(SUGGESTION_PANEL, SUGGESTION_SCROLL)}>
       {isLoading ? (
-        <div className="px-4 py-3 text-sm text-gray-500">Loading...</div>
+        <div className={SUGGESTION_NOTE}>Loading…</div>
       ) : results.length > 0 ? (
         results.map(product => (
           <ProductResultItem
@@ -52,7 +54,7 @@ export const SearchResults = ({
           />
         ))
       ) : (
-        <div className="px-4 py-3 text-sm text-gray-500">No products found</div>
+        <div className={SUGGESTION_NOTE}>No products found</div>
       )}
     </div>
   );

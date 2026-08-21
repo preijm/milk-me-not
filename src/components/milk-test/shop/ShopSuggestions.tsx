@@ -7,6 +7,8 @@ import { DeleteShopDialog } from "./DeleteShopDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { SUGGESTION_PANEL, SUGGESTION_ROW, SUGGESTION_ROW_MUTED, SUGGESTION_SCROLL } from "../suggestionStyles";
 
 interface ShopSuggestionsProps {
   suggestions: { name: string; country_code: string | null }[];
@@ -144,11 +146,11 @@ export const ShopSuggestions = ({
 
   return (
     <>
-      <div className="absolute z-10 w-full mt-1 bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
+      <div className={cn(SUGGESTION_PANEL, SUGGESTION_SCROLL)}>
         {suggestions.map((suggestion, index) => (
           <div
             key={index}
-            className="px-4 py-2 cursor-pointer hover:bg-muted flex items-center justify-between group"
+            className={cn(SUGGESTION_ROW, "group justify-between")}
             onMouseDown={(e) => {
               if (editingShopName !== suggestion.name) {
                 e.preventDefault();
@@ -182,7 +184,7 @@ export const ShopSuggestions = ({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 text-primary hover:text-primary"
+                    className="h-6 w-6 text-story-green-dark hover:text-story-green-dark"
                     onMouseDown={(e) => handleSaveEdit(e, suggestion.name)}
                     disabled={isUpdating || !editValue.trim()}
                     title="Save"
@@ -208,7 +210,7 @@ export const ShopSuggestions = ({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6 text-destructive hover:text-destructive"
+                      className="h-6 w-6 text-error hover:text-error"
                       onMouseDown={(e) => handleDeleteClick(e, suggestion.name)}
                       title="Delete shop"
                     >
@@ -222,7 +224,7 @@ export const ShopSuggestions = ({
         ))}
         {showAddNew && !editingShopName && (
           <div
-            className="px-4 py-2 cursor-pointer hover:bg-muted flex items-center text-muted-foreground"
+            className={SUGGESTION_ROW_MUTED}
             onMouseDown={(e) => {
               e.preventDefault();
               onAddNew();

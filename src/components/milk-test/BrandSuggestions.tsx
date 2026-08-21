@@ -2,6 +2,7 @@
 import React from "react";
 import { Plus, ArrowRight } from "lucide-react";
 import { Brand } from "@/hooks/useBrandData";
+import { SUGGESTION_PANEL, SUGGESTION_ROW, SUGGESTION_ROW_HINT, SUGGESTION_ROW_MUTED } from "./suggestionStyles";
 
 interface BrandSuggestionsProps {
   suggestions: Brand[];
@@ -27,23 +28,23 @@ export const BrandSuggestions = ({
   }
 
   return (
-    <div className="absolute z-10 w-full mt-1 bg-background border rounded-md shadow-lg">
+    <div className={SUGGESTION_PANEL}>
       {closeMatch && (
         <div
-          className="px-4 py-2 cursor-pointer bg-accent/30 hover:bg-accent/50 flex items-center gap-2 text-sm border-b"
+          className={SUGGESTION_ROW_HINT}
           onMouseDown={(e) => {
             e.preventDefault();
             onSelectBrand(closeMatch);
           }}
         >
-          <ArrowRight className="w-4 h-4 text-primary" />
+          <ArrowRight className="h-4 w-4 shrink-0" />
           <span>Did you mean <strong>"{closeMatch.name}"</strong>?</span>
         </div>
       )}
       {suggestions.map((suggestion) => (
         <div
           key={suggestion.id}
-          className="px-4 py-2 cursor-pointer hover:bg-muted"
+          className={SUGGESTION_ROW}
           onMouseDown={(e) => {
             e.preventDefault();
             onSelectBrand(suggestion);
@@ -54,7 +55,7 @@ export const BrandSuggestions = ({
       ))}
       {showAddNew && (
         <div
-          className="px-4 py-2 cursor-pointer hover:bg-muted flex items-center text-muted-foreground"
+          className={SUGGESTION_ROW_MUTED}
           onMouseDown={(e) => {
             e.preventDefault();
             onAddNewBrand();

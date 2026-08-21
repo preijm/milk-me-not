@@ -27,9 +27,9 @@ export const SelectedProduct = ({
     flavorNames: product.flavor_names,
     isBarista: product.is_barista
   });
-  return <div className="mt-2 p-3 bg-muted/50 border border-border rounded-md">
+  return <div className="mt-2 rounded-xl border-[1.5px] border-story-green/25 bg-story-green-wash p-3">
       <div className="flex justify-between items-start">
-        <div className="font-medium text-foreground"><span translate="no">{product.brand_name}</span> - {product.product_name}</div>
+        <div className="text-[0.9375rem] font-bold text-story-ink"><span translate="no">{product.brand_name}</span> - {product.product_name}</div>
         {isAdmin && onEdit && (
           <Button
             variant="ghost"
@@ -39,7 +39,7 @@ export const SelectedProduct = ({
               e.stopPropagation();
               onEdit();
             }}
-            className="h-8 w-8 p-0 hover:bg-muted"
+            className="h-8 w-8 shrink-0 rounded-full p-0 text-story-muted hover:bg-story-ink/[0.06] hover:text-story-ink"
           >
             <Edit className="h-4 w-4" />
           </Button>

@@ -172,7 +172,7 @@ const ProductDetails = () => {
                 {chips.map((c) => (
                   <li
                     key={c}
-                    className="rounded-full border-[1.5px] border-story-ink/12 px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em] text-story-ink-2"
+                    className="rounded-full border-[1.5px] border-story-ink/[0.12] px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em] text-story-ink-2"
                   >
                     {c}
                   </li>

@@ -1,7 +1,6 @@
 import { useNotifications } from "@/hooks/useNotifications";
 import { StoryAppLayout } from "@/components/story/StoryAppLayout";
 import { NotificationList } from "@/components/notifications/NotificationList";
-import { MobileNotificationList } from "@/components/notifications/MobileNotificationList";
 
 const Notifications = () => {
   const { notifications, unreadCount, markAllAsRead } = useNotifications();
@@ -29,15 +28,7 @@ const Notifications = () => {
             </button>
           </div>
         )}
-        {/* Two lists, chosen by CSS rather than a `window.innerWidth` read at
-            first render — the narrow one groups older items behind a
-            collapsible, which the wide one does not. */}
-        <div className="lg:hidden">
-          <MobileNotificationList />
-        </div>
-        <div className="hidden lg:block">
-          <NotificationList variant="page" />
-        </div>
+        <NotificationList variant="page" />
       </div>
     </StoryAppLayout>
   );
