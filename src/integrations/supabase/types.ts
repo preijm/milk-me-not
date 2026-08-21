@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       app_versions: {
@@ -311,6 +336,42 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      product_barcodes: {
+        Row: {
+          barcode: string
+          created_at: string
+          created_by: string | null
+          product_id: string
+        }
+        Insert: {
+          barcode: string
+          created_at?: string
+          created_by?: string | null
+          product_id: string
+        }
+        Update: {
+          barcode?: string
+          created_at?: string
+          created_by?: string | null
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_barcodes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product_search_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_barcodes_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       product_flavors: {
         Row: {
@@ -998,6 +1059,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["admin", "user"],

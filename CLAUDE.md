@@ -92,7 +92,10 @@ Three sequential stages: **Lint + Type Check → Test → Build**. Uses Bun. Can
 Husky + lint-staged run ESLint on staged files before each commit.
 
 ### Supabase
-- DB types are auto-generated at `src/integrations/supabase/types.ts` — do not edit manually
+- DB types are auto-generated at `src/integrations/supabase/types.ts` — do not edit
+  manually. Regenerate with `npm run types:gen`, which needs `supabase login`
+  first. On Windows PowerShell, `npx` may be blocked by the execution policy;
+  `npx.cmd` or `bunx` get around it without changing any machine settings.
 - Edge Functions live under `supabase/functions/` (e.g., `check-rate-limit`)
 - Migrations in `supabase/migrations/`
 

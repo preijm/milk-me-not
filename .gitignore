@@ -37,3 +37,7 @@ dist-ssr
 
 # Design handoff bundles (raw export, not source)
 design-handoff/
+
+# Supabase CLI scratch state — which project this checkout is linked to,
+# and the CLI version it last used. Local to a machine, not to the project.
+supabase/.temp/
