@@ -1,13 +1,10 @@
 import { useState, useEffect, useMemo, lazy, Suspense } from "react";
 import { Loader } from "lucide-react";
 import { Seo } from "@/components/Seo";
-import { useNavigate } from "react-router-dom";
 import { useAggregatedResults } from "@/hooks/useAggregatedResults";
 import { useResultsUrlState, useResultsFiltering } from "@/hooks/useResultsState";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { supabase } from "@/integrations/supabase/client";
-import { LoginPrompt } from "@/components/auth/LoginPrompt";
 import { Band, SectionHead, StoryButton, StoryLayout } from "@/components/story";
 import { ResultsViewSwitcher } from "@/components/results/ResultsViewSwitcher";
 import { ResultsCharts } from "@/components/results/ResultsCharts";
@@ -38,8 +35,6 @@ const Results = () => {
   } = useResultsUrlState();
 
   const [view, setView] = useState<"table" | "charts" | "map">("table");
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [selectedProductName, setSelectedProductName] = useState("");
 
   const { data: aggregatedResults = [], isLoading } = useAggregatedResults(sortConfig);
   const { filteredResults } = useResultsFiltering(aggregatedResults, searchTerm, filters);
@@ -61,28 +56,26 @@ const Results = () => {
     [filteredResults],
   );
 
-  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { user } = useAuth();
 
   const stats = computeCatalogueStats(aggregatedResults);
 
-  const navigateToProduct = async (productId: string) => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session) {
-      const product = aggregatedResults.find((r) => r.product_id === productId);
-      const productDisplayName = product ? `${product.brand_name} ${product.product_name}` : "";
-
-      setSelectedProductName(productDisplayName);
-      setShowLoginPrompt(true);
-      return;
-    }
-
-    navigate(`/product/${productId}`);
-  };
+  /**
+   * Product pages are public, and the gate lives one layer down.
+   *
+   * Clicking a row used to check for a session and show a login prompt
+   * instead of navigating. That was a second, stricter gate than the one the
+   * product page already applies: useProductTests withholds usernames, notes
+   * and photos from signed-out visitors while still serving the score, the
+   * tier and the distribution. Blocking the route meant nobody ever saw that
+   * — no search engine could reach 220 product pages, no one could share a
+   * carton with a friend without an account, and a stranger was asked to sign
+   * up before being shown anything worth signing up for.
+   *
+   * The rows are plain links now. What is private stays private because it is
+   * withheld at the query, not hidden behind navigation.
+   */
 
   const clearAllFilters = () => {
     setSearchTerm("");
@@ -154,13 +147,13 @@ const Results = () => {
             filteredResults.length === 0 ? (
               <ResultsEmptyState onClear={clearAllFilters} />
             ) : isMobile ? (
-              <ResultsCardList results={visibleResults} onProductClick={navigateToProduct} />
+              <ResultsCardList results={visibleResults} />
             ) : (
               <ResultsRankedList
                 results={visibleResults}
                 sortConfig={sortConfig}
                 onSort={handleSort}
-                onProductClick={navigateToProduct}
+               
               />
             )
           ) : view === "charts" ? (
@@ -190,11 +183,6 @@ const Results = () => {
       </Band>
 
       {/* Login prompt modal */}
-      <LoginPrompt
-        isOpen={showLoginPrompt}
-        onClose={() => setShowLoginPrompt(false)}
-        productName={selectedProductName}
-      />
     </StoryLayout>
   );
 };
