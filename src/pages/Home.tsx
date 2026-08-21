@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   ArrowRight,
   Band,
@@ -80,6 +81,7 @@ const PILLARS = [
 const Home = () => {
   const cta = useRateCta();
   const { data, isLoading } = useStoryHome();
+  const { user } = useAuth();
 
   const stats = [
     { value: data ? formatCount(data.totalRatings) : "—", label: "Honest ratings" },
@@ -88,6 +90,23 @@ const Home = () => {
   ];
 
   const leaderboard = data?.leaderboard ?? [];
+
+  /**
+   * Signed in, "home" is the feed.
+   *
+   * This page is the pitch — what the project is, why the scores mean
+   * anything. Serving it to someone who already joined asks them to be sold a
+   * second time, and it made the header wordmark the one link on the site that
+   * took a member somewhere less useful than where they already were.
+   *
+   * A member cold-loading `/` does see the pitch for the frame or two before
+   * getSession() resolves, because AuthContext starts with no session so this
+   * page never flashes a signed-in shell at a stranger. Blocking the site's
+   * most important public page on an auth round-trip to avoid that would be a
+   * bad trade. Arriving by the wordmark — the common path — costs nothing,
+   * since the session is long resolved by then.
+   */
+  if (user) return <Navigate to="/feed" replace />;
 
   return (
     <StoryLayout transparentHeader mobileCtaHint="90 seconds. No photo needed.">

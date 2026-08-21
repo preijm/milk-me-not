@@ -3,7 +3,7 @@ import logoImg from "@/assets/logo-96.png";
 import { Display, StoryButton, ArrowRight } from "./primitives";
 import { MilkDrop, Sprig } from "./motifs";
 import { useRateCta } from "./useRateCta";
-import { cn } from "@/lib/utils";
+import { SECONDARY_LINKS } from "./memberNav";
 
 const COLUMNS: { title: string; links: { to: string; label: string }[] }[] = [
   {
@@ -44,9 +44,53 @@ const COLUMNS: { title: string; links: { to: string; label: string }[] }[] = [
  * critics independently called the most visible tell that they were built to a
  * lighter spec.
  */
-export const StoryFooter = ({ hideCta = false }: { hideCta?: boolean } = {}) => {
+export const StoryFooter = ({ variant = "full" }: { variant?: "full" | "member" } = {}) => {
   const cta = useRateCta();
   const year = new Date().getFullYear();
+
+  /**
+   * Signed in, the floor stops being a sitemap. The full footer is three
+   * columns of "here is what this project is" — an advert for something the
+   * reader has already joined, and on a phone it ran for screens underneath
+   * their own notifications. Same dark ground, a fraction of the height.
+   *
+   * And on a phone it does not appear at all. Below `lg` the tab bar is pinned
+   * to the bottom of the screen, which makes it the end of the page — putting a
+   * footer immediately above it gives the page two endings, the lower of which
+   * is not the real one. Desktop has no bar, so there the footer still does the
+   * job of closing the page. Everything it links to is in the drawer's More
+   * group, so nothing becomes unreachable by dropping it.
+   */
+  if (variant === "member") {
+    return (
+      <footer className="relative hidden overflow-hidden bg-story-green-deep text-story-cream lg:block">
+        <div className="relative z-10 mx-auto w-full max-w-[76rem] px-5 py-9 sm:px-8 lg:px-10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2.5">
+              <img src={logoImg} alt="" className="h-8 w-8 rounded-[0.5rem] object-contain" width={32} height={32} />
+              <span translate="no" className="font-display text-[1.05rem] font-extrabold tracking-[-0.03em] text-white">
+                Milk Me Not
+              </span>
+            </div>
+            <nav aria-label="More" className="flex flex-wrap gap-x-6 gap-y-2">
+              {SECONDARY_LINKS.slice(0, 3).map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="text-[0.875rem] font-medium text-white/70 no-underline transition-colors hover:text-story-green-light"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <p className="mt-6 border-t border-white/12 pt-5 text-[0.8125rem] text-white/40">
+            © {year} Milk Me Not. Nobody pays us. Nobody ever has.
+          </p>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer className="relative overflow-hidden bg-story-green-deep text-story-cream">
@@ -58,7 +102,6 @@ export const StoryFooter = ({ hideCta = false }: { hideCta?: boolean } = {}) => 
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-[76rem] px-5 py-16 sm:px-8 sm:py-20 lg:px-10">
-        {!hideCta && (
         <div className="max-w-2xl">
           <Display as="p" size="xl" className="text-white">
             Your turn.
@@ -73,12 +116,8 @@ export const StoryFooter = ({ hideCta = false }: { hideCta?: boolean } = {}) => 
             <ArrowRight />
           </StoryButton>
         </div>
-        )}
 
-        <div className={cn(
-          "grid gap-10 sm:grid-cols-2 lg:grid-cols-4",
-          hideCta ? "" : "mt-16 border-t border-white/12 pt-12",
-        )}>
+        <div className="mt-16 grid gap-10 border-t border-white/12 pt-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2.5">
               <img src={logoImg} alt="" className="h-9 w-9 rounded-[0.55rem] object-contain" width={36} height={36} />

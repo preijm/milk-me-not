@@ -102,7 +102,7 @@ export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = 
       </main>
 
       <div className="pb-[4.75rem] lg:pb-0">
-        <StoryFooter hideCta />
+        <StoryFooter variant="member" />
       </div>
       <StoryAppBar />
     </div>

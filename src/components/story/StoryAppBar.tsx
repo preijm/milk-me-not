@@ -44,11 +44,11 @@ const PersonIcon = () => (
 );
 
 /**
- * Home is deliberately absent. The wordmark in the sticky header goes home from
- * every page, and for someone already signed in "home" is the marketing page —
- * the least useful place in the bar. Scanning earns the slot instead: checking
- * what the board thinks of a carton in your hand is a different intent from
- * rating one, so it does not belong folded into the centre action.
+ * Home is deliberately absent, and now costs nothing: for a signed-in reader
+ * "home" resolves to the feed, and the wordmark in the sticky header reaches it
+ * from every page. Scanning earns the slot instead — checking what the board
+ * thinks of a carton in your hand is a different intent from rating one, so it
+ * does not belong folded into the centre action.
  */
 const TABS = [
   { to: "/results", label: "Board", icon: BoardIcon, match: (p: string) => p.startsWith("/results") },
