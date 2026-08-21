@@ -1,10 +1,10 @@
+import { Link } from "react-router-dom";
 import { BrandMark, ScoreMark, getTier } from "@/components/story";
 import { humanizeLabels } from "@/lib/labels";
 import type { AggregatedResult } from "@/hooks/useAggregatedResults";
 
 type ResultsCardListProps = {
   results: AggregatedResult[];
-  onProductClick: (productId: string) => void;
 };
 
 /**
@@ -12,7 +12,7 @@ type ResultsCardListProps = {
  * table. Each card leads with brand + product, then the score — the biggest
  * thing on the card — with its tier spelled out underneath.
  */
-export const ResultsCardList = ({ results, onProductClick }: ResultsCardListProps) => (
+export const ResultsCardList = ({ results }: ResultsCardListProps) => (
   <ol className="flex flex-col gap-3">
     {results.map((r, i) => {
       const tier = getTier(r.avg_rating);
@@ -23,10 +23,13 @@ export const ResultsCardList = ({ results, onProductClick }: ResultsCardListProp
       ].slice(0, 3);
       return (
         <li key={r.product_id}>
-          <button
-            type="button"
-            onClick={() => onProductClick(r.product_id)}
-            className="story-hairline flex w-full items-center gap-3.5 rounded-[1.25rem] bg-white p-4 text-left"
+          {/* A real link, not a click handler. These rows are how a product
+              page is found — by a person opening one in a new tab to compare,
+              by someone sending a friend a carton, and by a search engine,
+              which cannot follow an onClick at all. */}
+          <Link
+            to={`/product/${r.product_id}`}
+            className="story-hairline flex w-full items-center gap-3.5 rounded-[1.25rem] bg-white p-4 text-left no-underline"
           >
             <span className="story-num flex-shrink-0 text-[1.05rem] leading-none text-story-muted-2">{i + 1}</span>
             <BrandMark
@@ -61,7 +64,7 @@ export const ResultsCardList = ({ results, onProductClick }: ResultsCardListProp
                 {tier.name}
               </span>
             </span>
-          </button>
+          </Link>
         </li>
       );
     })}

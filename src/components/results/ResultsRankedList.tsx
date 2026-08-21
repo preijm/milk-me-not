@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ArrowRight, BrandMark, ScoreMark } from "@/components/story";
 import { humanizeLabels } from "@/lib/labels";
 import { cn } from "@/lib/utils";
@@ -7,7 +8,6 @@ type ResultsRankedListProps = {
   results: AggregatedResult[];
   sortConfig: SortConfig;
   onSort: (column: string) => void;
-  onProductClick: (productId: string) => void;
 };
 
 const HEADERS: { column: string; label: string; className: string }[] = [
@@ -20,7 +20,7 @@ const HEADERS: { column: string; label: string; className: string }[] = [
  * The desktop ranking: a dense, edge-to-edge list where the score is the
  * biggest thing on the row and its tier is legible without hovering.
  */
-export const ResultsRankedList = ({ results, sortConfig, onSort, onProductClick }: ResultsRankedListProps) => (
+export const ResultsRankedList = ({ results, sortConfig, onSort }: ResultsRankedListProps) => (
   <div>
     <div className="flex items-center gap-4 border-b-2 border-story-ink/10 pb-3">
       <span className="w-10 flex-shrink-0" aria-hidden />
@@ -44,10 +44,12 @@ export const ResultsRankedList = ({ results, sortConfig, onSort, onProductClick 
         const tags = [...(r.is_barista ? ["Barista"] : []), ...humanizeLabels(r.property_names)].slice(0, 3);
         return (
           <li key={r.product_id} className="border-b border-story-ink/[0.08]">
-            <button
-              type="button"
-              onClick={() => onProductClick(r.product_id)}
-              className="group flex w-full items-center gap-4 py-5 text-left"
+            {/* A real link, so a row can be opened in a tab, copied, shared
+                and crawled. The sort headers above stay buttons: they change
+                this page rather than going anywhere. */}
+            <Link
+              to={`/product/${r.product_id}`}
+              className="group flex w-full items-center gap-4 py-5 text-left no-underline"
             >
               <span className="story-num w-10 flex-shrink-0 text-[1.35rem] leading-none text-story-muted-2">{i + 1}</span>
                             <BrandMark
@@ -85,7 +87,7 @@ export const ResultsRankedList = ({ results, sortConfig, onSort, onProductClick 
               />
 
               <ArrowRight className="flex-shrink-0 text-story-muted-2" />
-            </button>
+            </Link>
           </li>
         );
       })}
