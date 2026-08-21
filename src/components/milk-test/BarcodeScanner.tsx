@@ -4,6 +4,7 @@ import { BarcodeFormat, DecodeHintType } from "@zxing/library";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { StoryButton } from "@/components/story/primitives";
 import { lookUpBarcode, type ScannedProduct } from "@/lib/openFoodFacts";
+import { createNativeDetector } from "@/lib/barcodeDetector";
 
 /**
  * Ask for the back camera at as many pixels as it will give.
@@ -79,6 +80,9 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
   const [attempts, setAttempts] = useState(0);
   const trackRef = useRef<MediaStreamTrack | null>(null);
   const [torch, setTorch] = useState(false);
+  const [seen, setSeen] = useState<string | null>(null);
+  const [engine, setEngine] = useState<"native" | "zxing">("zxing");
+  const lastFrame = useRef<(() => string | null) | null>(null);
 
   useEffect(() => {
     if (!open || !videoEl) return;
@@ -87,6 +91,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
     setResolution(null);
     setAttempts(0);
     setTorch(false);
+    setSeen(null);
 
     if (!navigator.mediaDevices?.getUserMedia) {
       setPhase({ step: "unsupported" });
@@ -237,20 +242,59 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         // next one on top of it until the preview stutters.
         const startedAt = performance.now();
         let pass = 0;
-        const scan = () => {
+
+        // The platform detector, where the platform has one.
+        const native = await createNativeDetector();
+        if (cancelled) return;
+        setEngine(native ? "native" : "zxing");
+
+        const scan = async () => {
           if (cancelled) return;
 
           // Escalate only after the quick path has had a fair go.
           const struggling = performance.now() - startedAt > 3000;
           setAttempts((n) => n + 1);
+
+          if (native) {
+            // Hand it the video directly: no canvas copy, no orientation
+            // guessing, and the work happens off the JavaScript thread.
+            try {
+              const found = await native.detect(videoEl);
+              const code = found.find((b) => /^\d{8,14}$/.test(b.rawValue))?.rawValue;
+              if (code) {
+                void handle(code);
+                return;
+              }
+            } catch {
+              // A detector that throws mid-stream is not worth retrying
+              // against; the ZXing path below still runs.
+            }
+            if (!cancelled) tick = window.setTimeout(scan, 80);
+            return;
+          }
           const reader = struggling && pass % 2 === 1 ? thorough : quick;
           pass += 1;
 
-          // Centre band first, both ways round; the whole frame only when the
-          // quick path has been struggling, since it is the weaker read.
-          const attempts: Array<[boolean, boolean]> = struggling
-            ? [[false, false], [true, false], [false, true], [true, true]]
-            : [[false, false], [true, false]];
+          // Both regions, both ways round, every pass.
+          //
+          // The preview is object-cover inside a 4:3 box, so the reader aims
+          // using a cropped view of the stream while this decodes the raw
+          // frame — and Android may report the sensor's orientation rather
+          // than the displayed one, which would put my centre band on the
+          // wrong axis. Guessing which is right has already been wrong twice,
+          // and a rejection costs about 7ms now, so try all four.
+          const attempts: Array<[boolean, boolean]> = [
+            [false, false],
+            [true, false],
+            [false, true],
+            [true, true],
+          ];
+
+          // Keep a way to show the reader the exact frame this rejected.
+          lastFrame.current = () => {
+            const c = frame(videoEl, false, false);
+            return c ? c.toDataURL("image/jpeg", 0.8) : null;
+          };
 
           for (const [turned, wide] of attempts) {
             const c = frame(videoEl, turned, wide);
@@ -285,7 +329,10 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
   const message =
     phase.step === "starting" ? "Waking the camera…"
-    : phase.step === "scanning" ? "Point it at the barcode on the carton."
+    : phase.step === "scanning"
+      ? engine === "native"
+        ? "Point it at the barcode on the carton."
+        : "Point it at the barcode. This browser has no built-in reader, so it may take a moment."
     : phase.step === "looking-up" ? "Looking it up…"
     : phase.step === "missing" ? "Nothing on file for that one — you can still add it by hand."
     : phase.step === "denied" ? "No camera access. You can allow it in your browser, or type the details instead."
@@ -332,12 +379,31 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
               </span>
               {resolution && (
                 <span className="absolute bottom-1.5 right-2 rounded bg-story-ink/55 px-1.5 py-0.5 text-[0.625rem] font-medium text-white/90">
-                  {resolution} · {attempts}
+                  {engine === "native" ? "fast" : "zxing"} · {resolution} · {attempts}
                 </span>
               )}
             </>
           )}
         </div>
+
+        {phase.step === "scanning" && (
+          <button
+            type="button"
+            onClick={() => setSeen(lastFrame.current?.() ?? null)}
+            className="story-hairline mt-1 rounded-full bg-white px-3 py-1.5 text-[0.8125rem] font-bold text-story-ink"
+          >
+            Show what it sees
+          </button>
+        )}
+
+        {seen && (
+          <div className="mt-1">
+            <img src={seen} alt="The frame the scanner is reading" className="w-full rounded-xl" />
+            <p className="mt-1 text-[0.75rem] text-story-muted">
+              This is the frame being decoded. If the bars are soft or missing here, the camera is the problem, not the code.
+            </p>
+          </div>
+        )}
 
         {phase.step === "scanning" && (
           <button
