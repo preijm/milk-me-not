@@ -6,6 +6,7 @@ import { BarcodeScanner } from "@/components/milk-test/BarcodeScanner";
 import { BrandMark } from "./BrandMark";
 import { StoryButton, ArrowRight } from "./primitives";
 import type { ScannedProduct } from "@/lib/openFoodFacts";
+import { createProductFromScan } from "@/lib/createScannedProduct";
 
 type BoardMatch = {
   id: string;
@@ -34,14 +35,36 @@ type Stage =
 export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const navigate = useNavigate();
   const [stage, setStage] = useState<Stage>({ at: "scanning" });
+  const [adding, setAdding] = useState(false);
 
   const close = () => {
     setStage({ at: "scanning" });
+    setAdding(false);
     onClose();
   };
 
+  /** Straight to the product, which is the whole point of scanning one. */
+  const goToProduct = useCallback(
+    (productId: string) => {
+      close();
+      navigate(`/product/${productId}`);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [navigate],
+  );
+
   const handleScan = useCallback(async (scanned: ScannedProduct) => {
     setStage({ at: "searching" });
+
+    // Has anyone scanned this exact carton before? If so there is nothing to
+    // choose between and no reason to ask.
+    const { data: known } = await supabase.rpc("get_product_by_barcode", {
+      _barcode: scanned.barcode,
+    });
+    if (typeof known === "string" && known) {
+      goToProduct(known);
+      return;
+    }
 
     const term = scanned.brand ?? scanned.name;
     if (!term) {
@@ -64,8 +87,18 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
       ? [...rows].sort((a, b) => Number(b.is_barista) - Number(a.is_barista))
       : rows;
 
+    // Only one carton it could be — asking would be a question with one answer.
+    if (ranked.length === 1) {
+      void supabase.rpc("remember_product_barcode", {
+        _barcode: scanned.barcode,
+        _product_id: ranked[0].id,
+      });
+      goToProduct(ranked[0].id);
+      return;
+    }
+
     setStage({ at: "matches", scanned, matches: ranked.slice(0, 8) });
-  }, []);
+  }, [goToProduct]);
 
   if (stage.at === "scanning") {
     return <BarcodeScanner open={open} onClose={close} onScan={handleScan} />;
@@ -91,15 +124,20 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
               {stage.scanned.brand ?? "Found it"} on the board
             </DialogTitle>
             <DialogDescription className="text-[0.875rem] text-story-muted">
-              Which carton is in your hand?
+              Pick the one in your hand — we will remember it next time.
             </DialogDescription>
             <ul className="mt-1 space-y-2">
               {stage.matches.map((m) => (
                 <li key={m.id}>
                   <button
                     onClick={() => {
-                      close();
-                      navigate(`/product/${m.id}`);
+                      // Now we know which carton this barcode is. Record it so
+                      // the next person to scan it goes straight through.
+                      void supabase.rpc("remember_product_barcode", {
+                        _barcode: stage.scanned.barcode,
+                        _product_id: m.id,
+                      });
+                      goToProduct(m.id);
                     }}
                     className="story-hairline flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left transition-colors hover:bg-story-cream-2"
                   >
@@ -124,23 +162,85 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
         {stage.at === "nothing" && (
           <>
             <DialogTitle className="story-serif text-[1.15rem] font-bold text-story-ink">
-              Not on the board yet
+              {stage.scanned.brand && stage.scanned.name ? "Nobody has rated this yet" : "Not on the board yet"}
             </DialogTitle>
-            <DialogDescription className="text-[0.875rem] text-story-muted">
-              {stage.scanned.brand || stage.scanned.name
-                ? `We read it as ${[stage.scanned.brand, stage.scanned.name].filter(Boolean).join(" — ")}. Nobody has rated it here.`
-                : "Nothing on file for that barcode."}
-            </DialogDescription>
-            <StoryButton
-              className="mt-2 w-full"
-              onClick={() => {
-                close();
-                navigate("/add-product", { state: { scanned: stage.scanned } });
-              }}
-            >
-              Add it to the board
-              <ArrowRight />
-            </StoryButton>
+
+            {stage.scanned.brand && stage.scanned.name ? (
+              <>
+                {/* Open Food Facts already knows what this is, so the reader
+                    confirms rather than types. Filling a blank form in a shop
+                    is the thing that stops people bothering. */}
+                <DialogDescription className="text-[0.875rem] text-story-muted">
+                  We read it as:
+                </DialogDescription>
+                <div className="story-hairline flex items-center gap-3 rounded-2xl bg-white p-3">
+                  <BrandMark
+                    brand={stage.scanned.brand}
+                    product={stage.scanned.name}
+                    className="h-11 w-11 shrink-0"
+                    radius="rounded-xl"
+                  />
+                  <span className="min-w-0">
+                    <span className="block truncate text-[0.9375rem] font-bold text-story-ink">
+                      {stage.scanned.name}
+                    </span>
+                    <span className="block truncate text-[0.8125rem] text-story-muted">
+                      {stage.scanned.brand}
+                      {stage.scanned.quantity ? ` · ${stage.scanned.quantity}` : ""}
+                      {stage.scanned.isBarista ? " · Barista" : ""}
+                    </span>
+                  </span>
+                </div>
+
+                <StoryButton
+                  className="mt-1 w-full"
+                  disabled={adding}
+                  onClick={async () => {
+                    setAdding(true);
+                    const made = await createProductFromScan(stage.scanned);
+                    if (made) {
+                      goToProduct(made.productId);
+                      return;
+                    }
+                    setAdding(false);
+                    // Falling back rather than dead-ending: the full form still
+                    // works, and arrives with what the scan already knew.
+                    close();
+                    navigate("/add-product", { state: { scanned: stage.scanned } });
+                  }}
+                >
+                  {adding ? "Adding it…" : "Add it and be first to rate it"}
+                  {!adding && <ArrowRight />}
+                </StoryButton>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    close();
+                    navigate("/add-product", { state: { scanned: stage.scanned } });
+                  }}
+                  className="text-center text-[0.8125rem] font-bold text-story-muted"
+                >
+                  Change the details first
+                </button>
+              </>
+            ) : (
+              <>
+                <DialogDescription className="text-[0.875rem] text-story-muted">
+                  Nothing on file for that barcode, so you will need to fill it in.
+                </DialogDescription>
+                <StoryButton
+                  className="mt-1 w-full"
+                  onClick={() => {
+                    close();
+                    navigate("/add-product", { state: { scanned: stage.scanned } });
+                  }}
+                >
+                  Add it to the board
+                  <ArrowRight />
+                </StoryButton>
+              </>
+            )}
           </>
         )}
 
