@@ -61,9 +61,14 @@ jobs:
 
       # Uploads ./dist per wrangler.toml. No build happens here; the step above
       # already produced the artifact this deploys.
+      #
+      # cloudflare/wrangler-action installs wrangler with npm, which refuses to
+      # resolve the @zxing/browser -> @zxing/library peer conflict already in
+      # package.json and fails before wrangler ever runs. bunx resolves it the
+      # same way every other step in this repo does. Wrangler reads both
+      # credentials from the environment on its own.
       - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+        run: bunx wrangler@4 deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
