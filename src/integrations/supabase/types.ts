@@ -795,6 +795,7 @@ export type Database = {
               username: string
             }[]
           }
+      get_product_by_barcode: { Args: { _barcode: string }; Returns: string }
       get_profile_username: { Args: { _user_id: string }; Returns: string }
       get_public_profile: {
         Args: { _user_id: string }
@@ -823,6 +824,10 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       log_security_event: {
         Args: { event_data_val?: Json; event_type_val: string }
+        Returns: undefined
+      }
+      remember_product_barcode: {
+        Args: { _barcode: string; _product_id: string }
         Returns: undefined
       }
       search_product_types:
