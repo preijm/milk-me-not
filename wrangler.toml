@@ -1,0 +1,17 @@
+# Cloudflare Workers hosting for the built SPA.
+#
+# There is deliberately no `main` script here. An assets-only Worker serves
+# files straight from the edge without ever invoking Worker code, which keeps
+# those requests free and unmetered instead of counting against the daily
+# request quota. Adding a `main` entry would change that.
+name = "milk-me-not"
+compatibility_date = "2026-08-21"
+
+[assets]
+directory = "./dist"
+
+# React Router owns the URL space, so a request for /product/:productId has no
+# matching file on disk. Returning index.html with a 200 lets the client-side
+# router resolve it; the edge default would 404 every deep link and every
+# shared review URL.
+not_found_handling = "single-page-application"

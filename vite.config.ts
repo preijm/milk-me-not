@@ -20,7 +20,11 @@ export default (defineConfig as any)(({ mode }: { mode: string }) => ({
     componentTagger(),
   ].filter(Boolean),
   build: {
-    sourcemap: true,
+    // Nothing consumes these. The repo is public, so they guard no secret
+    // either — they were simply 12.6 MB of every 20 MB upload. If an error
+    // reporter is added later, switch to 'hidden' and ship the maps to that
+    // service instead of to the edge.
+    sourcemap: false,
     rolldownOptions: {
       output: {
         manualChunks(id: string) {
