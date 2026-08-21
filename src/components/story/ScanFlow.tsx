@@ -40,8 +40,28 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
     onClose();
   };
 
+  /** Straight to the product, which is the whole point of scanning one. */
+  const goToProduct = useCallback(
+    (productId: string) => {
+      close();
+      navigate(`/product/${productId}`);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [navigate],
+  );
+
   const handleScan = useCallback(async (scanned: ScannedProduct) => {
     setStage({ at: "searching" });
+
+    // Has anyone scanned this exact carton before? If so there is nothing to
+    // choose between and no reason to ask.
+    const { data: known } = await supabase.rpc("get_product_by_barcode", {
+      _barcode: scanned.barcode,
+    });
+    if (typeof known === "string" && known) {
+      goToProduct(known);
+      return;
+    }
 
     const term = scanned.brand ?? scanned.name;
     if (!term) {
@@ -64,8 +84,18 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
       ? [...rows].sort((a, b) => Number(b.is_barista) - Number(a.is_barista))
       : rows;
 
+    // Only one carton it could be — asking would be a question with one answer.
+    if (ranked.length === 1) {
+      void supabase.rpc("remember_product_barcode", {
+        _barcode: scanned.barcode,
+        _product_id: ranked[0].id,
+      });
+      goToProduct(ranked[0].id);
+      return;
+    }
+
     setStage({ at: "matches", scanned, matches: ranked.slice(0, 8) });
-  }, []);
+  }, [goToProduct]);
 
   if (stage.at === "scanning") {
     return <BarcodeScanner open={open} onClose={close} onScan={handleScan} />;
@@ -91,15 +121,20 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
               {stage.scanned.brand ?? "Found it"} on the board
             </DialogTitle>
             <DialogDescription className="text-[0.875rem] text-story-muted">
-              Which carton is in your hand?
+              Pick the one in your hand — we will remember it next time.
             </DialogDescription>
             <ul className="mt-1 space-y-2">
               {stage.matches.map((m) => (
                 <li key={m.id}>
                   <button
                     onClick={() => {
-                      close();
-                      navigate(`/product/${m.id}`);
+                      // Now we know which carton this barcode is. Record it so
+                      // the next person to scan it goes straight through.
+                      void supabase.rpc("remember_product_barcode", {
+                        _barcode: stage.scanned.barcode,
+                        _product_id: m.id,
+                      });
+                      goToProduct(m.id);
                     }}
                     className="story-hairline flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left transition-colors hover:bg-story-cream-2"
                   >
