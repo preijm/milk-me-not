@@ -43,9 +43,16 @@ export const FeedHero = ({ items, isLoading, isAuthenticated }: FeedHeroProps) =
 
   return (
     <Band ground="cream" size="md" className="pt-6 sm:pt-10">
+      {/* Deep forest, not the electric blue this used to be. Two reasons: at
+          15rem, fully-saturated `story-blue` fought the green headline beside
+          it and the forest band directly below; and Contact had already claimed
+          blue as the colour that makes it read as itself, which a main-nav page
+          wearing the same hue quietly overrode. The deep tone picks up that band
+          so the fold reads as one composition, and stays clear of the bright
+          green discs on Home and Discover. */}
       <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 hidden lg:block">
-        <div className="relative h-60 w-60 overflow-hidden rounded-full bg-story-blue">
-          <span className="absolute right-2 top-6 text-story-blue-light">
+        <div className="relative h-60 w-60 overflow-hidden rounded-full bg-story-green-deep">
+          <span className="absolute right-2 top-6 text-story-green-light">
             <MilkDrop size={140} variant="solid" />
           </span>
         </div>
