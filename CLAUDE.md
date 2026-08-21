@@ -44,14 +44,31 @@ bunx vitest run src/lib/security.test.ts
 - **Backend:** Supabase (PostgreSQL, Auth, Edge Functions, Storage)
 - **Mobile:** Capacitor with camera plugin for photo capture
 
-### Barcode scanning is not implemented
-`BarcodeScanner.tsx` and `BarcodeResultDialog.tsx` exist but nothing imports
-them, and the scanner itself is a mockup — a dashed placeholder box and a
-"Simulate Scan" button hardcoded to one barcode. `@zxing/browser` and
-`@zxing/library` are installed and imported nowhere. There is also no `barcode`
-column on `products`, so a scan has nothing to resolve against. Building it for
-real means a migration, populating codes for the catalogue, and a scanner —
-not reconnecting what is there.
+### Barcode scanning decodes two different ways
+Scanning is live. `ScanFlow.tsx` opens `milk-test/BarcodeScanner.tsx`, which
+reads EAN-13, EAN-8, UPC-A and UPC-E through whichever decoder the platform
+offers:
+
+- **`BarcodeDetector`**, the browser's own, via `src/lib/barcodeDetector.ts`.
+  Android Chromium backs it with the same ML Kit detector native apps use. It
+  reads the video element directly and handles orientation, so it is faster and
+  far more tolerant of angle, blur and glare.
+- **`@zxing/browser` + `@zxing/library`**, decoding in JavaScript, everywhere
+  the native API is missing — all of iOS Safari, and desktop Chrome on Windows.
+
+So neither `@zxing` package is removable: dropping them takes scanning away
+from every iPhone. They look unused at a glance because only `BarcodeScanner`
+imports them.
+
+`@zxing/browser` must stay at 0.2.1 or later. 0.2.0 declares a peer of
+`@zxing/library@^0.22.0` against the pinned ^0.23.0, which npm refuses to
+resolve — that is what broke the first Cloudflare deploy.
+
+There is still no `barcode` column on `products`, so a scanned number cannot
+pinpoint a row. It is resolved through Open Food Facts
+(`src/lib/openFoodFacts.ts`) and then matched on brand, which is fuzzy by
+nature — retail names and board names rarely line up. `ScanFlow.tsx` documents
+that limitation where it bites.
 
 ### Source Layout
 ```
