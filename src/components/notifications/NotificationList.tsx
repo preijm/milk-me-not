@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import { cn } from "@/lib/utils";
+import { UserMark } from "@/components/story/UserMark";
 import { EmptyNotifications } from "./EmptyNotifications";
 
 /**
@@ -84,12 +85,7 @@ const NotificationItem = ({
           than by comparing two nearly identical background tints. */}
       {!notification.is_read && <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-story-green" />}
 
-      <span
-        aria-hidden
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-story-ink text-[0.9375rem] font-extrabold text-story-cream sm:h-11 sm:w-11"
-      >
-        {username.charAt(0).toUpperCase() || "U"}
-      </span>
+      <UserMark name={username} className="h-10 w-10 text-[0.9375rem] sm:h-11 sm:w-11" />
 
       <span className="min-w-0 flex-1 space-y-1.5">
         <span className="block text-[0.9375rem] leading-snug text-story-ink">

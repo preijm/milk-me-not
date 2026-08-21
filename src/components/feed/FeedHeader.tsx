@@ -2,6 +2,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { formatScore } from "@/lib/scoreFormatter";
 import { getTier } from "@/components/story";
+import { UserMark } from "@/components/story/UserMark";
 
 interface FeedHeaderProps {
   username?: string;
@@ -22,12 +23,7 @@ export const FeedHeader = ({ username, createdAt, rating, blurred }: FeedHeaderP
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
-        <span
-          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-story-ink text-sm font-bold text-story-cream"
-          aria-hidden
-        >
-          {username?.charAt(0).toUpperCase() || "U"}
-        </span>
+        <UserMark name={username} className="h-9 w-9 text-sm" />
         <div className="flex min-w-0 flex-col">
           <span className={cn("truncate text-sm font-bold text-story-ink", blurred && "blur-sm")} translate="no">
             {username}

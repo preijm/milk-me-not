@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import { getTier } from "@/components/story";
+import { UserMark } from "@/components/story/UserMark";
 import { humanizeLabels } from "@/lib/labels";
 import { inferPlantBase } from "@/lib/plantBase";
 import { cn } from "@/lib/utils";
@@ -102,12 +103,7 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
       </div>
 
       <div className="flex items-center gap-2 pt-0.5">
-        <span
-          className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-story-ink text-[0.625rem] font-bold text-story-cream"
-          aria-hidden
-        >
-          {item.username?.charAt(0).toUpperCase() || "U"}
-        </span>
+        <UserMark name={item.username} className="h-6 w-6 text-[0.625rem]" />
         <span className="truncate text-[0.75rem] font-bold text-story-muted" translate="no">
           {item.username}
         </span>

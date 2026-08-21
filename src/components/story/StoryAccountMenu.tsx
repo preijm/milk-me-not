@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MEMBER_LINKS } from "./memberNav";
+import { markFor } from "./userMarkTone";
 
 const initialOf = (email: string | undefined) => (email?.trim()?.[0] ?? "?").toUpperCase();
 
@@ -27,13 +28,18 @@ export const StoryAccountMenu = ({ className }: { className?: string }) => {
 
   if (!user) return null;
 
+  // The reader's own mark, in the colour their name wears everywhere else.
+  const tone = markFor(user.email);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
           "relative flex h-10 w-10 items-center justify-center rounded-full border border-story-ink/10",
-          "bg-white font-display text-[0.9375rem] font-extrabold text-story-ink transition-colors",
-          "hover:bg-story-cream-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green",
+          "font-display text-[0.9375rem] font-extrabold transition-colors",
+          "hover:brightness-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green",
+          tone.bg,
+          tone.fg,
           className,
         )}
         aria-label={`Account menu for ${user.email ?? "your account"}`}
