@@ -41,3 +41,6 @@ design-handoff/
 # Supabase CLI scratch state — which project this checkout is linked to,
 # and the CLI version it last used. Local to a machine, not to the project.
 supabase/.temp/
+
+# Wrangler's local build and state cache
+.wrangler/
