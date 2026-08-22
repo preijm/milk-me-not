@@ -6,6 +6,7 @@ interface FeedHeaderProps {
   username?: string;
   createdAt: string;
   blurred?: boolean;
+  className?: string;
 }
 
 /**
@@ -16,11 +17,11 @@ interface FeedHeaderProps {
  * here. The docstring already argued the score "runs large at the top of the
  * card"; the figure beneath it disagreed.
  */
-export const FeedHeader = ({ username, createdAt, blurred }: FeedHeaderProps) => {
+export const FeedHeader = ({ username, createdAt, blurred, className }: FeedHeaderProps) => {
   const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true }).replace("about ", "");
 
   return (
-    <div className="flex items-center justify-between gap-3">
+    <div className={cn("flex items-center gap-3", className)}>
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
         <UserMark name={username} className="h-9 w-9 text-sm" />
         <div className="flex min-w-0 flex-col">

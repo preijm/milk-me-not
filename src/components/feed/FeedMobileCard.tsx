@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import { getTier } from "@/components/story";
+import { ScoreMark } from "@/components/story";
 import { UserMark } from "@/components/story/UserMark";
 import { ProductIdentity } from "@/components/story/ProductIdentity";
 import { MilkTestResult } from "@/types/milk-test";
@@ -35,41 +35,41 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
     handleEdit,
   } = useFeedItemState(item);
 
-  const tier = getTier(item.rating);
   const timeAgo = formatDistanceToNow(new Date(item.created_at), { addSuffix: true }).replace("about ", "");
 
   return (
     <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-2.5 rounded-2xl bg-white p-4">
-      {/* Score and product share one line — the two things a thumb scrolling fast needs first. */}
-      <div className="flex items-center gap-3">
-        <span className="story-num flex-shrink-0 text-[1.6rem] leading-none" style={{ color: tier.color }}>
-          {item.rating.toFixed(1)}
-        </span>
-        {/* No mark: the score already holds the left edge of this row. The
-            badges come with the identity now, which is why the separate tag
-            strip below this header is gone — it carried a base chip and the
-            properties but dropped flavours, so two flavours of one carton
-            looked identical here. */}
-        <Link
-          to={`/product/${item.product_id}`}
-          className="min-w-0 flex-1 no-underline"
-        >
-          <ProductIdentity
-            brand={item.brand_name}
-            product={item.product_name}
-            properties={item.property_names}
-            flavors={item.flavor_names}
-            isBarista={item.is_barista}
-            size="sm"
-            showMark={false}
-            maxBadges={2}
-          />
-          <p className="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.08em]" style={{ color: tier.color }}>
-            {tier.name}
-          </p>
-        </Link>
-        <span className="flex-shrink-0 text-[0.6875rem] font-medium text-story-muted-2">{timeAgo}</span>
+      {/* Who, when and how they scored it, in one place.
+          These three were spread across the card: the time sat top-right, the
+          name four rows below it at the foot, and the tier word hung under the
+          product name in the identity column rather than beside the score it
+          describes. */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <UserMark name={item.username} className="h-8 w-8 text-[0.75rem]" />
+          <span className="min-w-0">
+            <span className="block truncate text-[0.8125rem] font-bold text-story-ink" translate="no">
+              {item.username}
+            </span>
+            <span className="block text-[0.6875rem] font-medium text-story-muted-2">{timeAgo}</span>
+          </span>
+        </div>
+        <ScoreMark score={item.rating} size="sm" className="flex-shrink-0" />
       </div>
+
+      {/* The mark comes back now that the score has moved off the left edge,
+          so a carton looks the same here as it does on the board. */}
+      <Link to={`/product/${item.product_id}`} className="no-underline">
+        <ProductIdentity
+          brand={item.brand_name}
+          product={item.product_name}
+          properties={item.property_names}
+          flavors={item.flavor_names}
+          isBarista={item.is_barista}
+          size="sm"
+          maxBadges={2}
+        />
+      </Link>
 
       {/* This row cost 112px to show 18px of note. The photo set the height
           and the note sat beside it, so a one-line tasting note — which is
@@ -96,13 +96,6 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
           )}
         </div>
       )}
-
-      <div className="flex items-center gap-2 pt-0.5">
-        <UserMark name={item.username} className="h-6 w-6 text-[0.625rem]" />
-        <span className="truncate text-[0.75rem] font-bold text-story-muted" translate="no">
-          {item.username}
-        </span>
-      </div>
 
       <FeedEngagement
         likes={likes}

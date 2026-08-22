@@ -38,12 +38,21 @@ export const FeedItem = ({ item }: FeedItemProps) => {
 
   return (
     <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-4 rounded-[1.25rem] bg-white p-5">
-      {/* "Buy two." is the tier's verdict on the score, so it sits under the
-          score. Right-aligned across the card from it, it read as an unattached
-          remark with no visible subject. */}
-      <div>
-        <ScoreMark score={item.rating} size="lg" />
-        <p className="mt-1 text-[0.8125rem] font-medium italic leading-snug text-story-muted-2">{tier.blurb}</p>
+      {/* Who, when and how they scored it, together. The byline used to sit at
+          the foot of the card, so the score at the top belonged to nobody until
+          you had scrolled past the photo and the note to find out whose opinion
+          it was. "Buy two." is the tier's verdict on the score and stays with
+          it. */}
+      <div className="flex items-start justify-between gap-4">
+        <FeedHeader
+          username={item.username ?? undefined}
+          createdAt={item.created_at}
+          className="min-w-0 flex-1"
+        />
+        <div className="flex-shrink-0 text-right">
+          <ScoreMark score={item.rating} size="lg" className="justify-end" />
+          <p className="mt-1 text-[0.8125rem] font-medium italic leading-snug text-story-muted-2">{tier.blurb}</p>
+        </div>
       </div>
 
       {/* The product name is the link to the product. It is what someone
@@ -73,8 +82,6 @@ export const FeedItem = ({ item }: FeedItemProps) => {
           &ldquo;{item.notes}&rdquo;
         </p>
       )}
-
-      <FeedHeader username={item.username ?? undefined} createdAt={item.created_at} />
 
       <FeedEngagement
         likes={likes}
