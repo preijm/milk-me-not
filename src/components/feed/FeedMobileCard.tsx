@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { ScoreMark } from "@/components/story";
+import { ArrowRight, ScoreMark } from "@/components/story";
 import { UserMark } from "@/components/story/UserMark";
 import { ProductIdentity } from "@/components/story/ProductIdentity";
 import { MilkTestResult } from "@/types/milk-test";
@@ -82,8 +82,13 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="flex items-start justify-between gap-2">
             {/* No mark beside the name: the photo is the picture of this
-                carton, and a logo tile next to it would be a second one. */}
-            <Link to={`/product/${item.product_id}`} className="min-w-0 no-underline">
+                carton, and a logo tile next to it would be a second one.
+                The arrow is the only thing saying this goes somewhere — there
+                is no hover on a phone to discover it with. */}
+            <Link
+              to={`/product/${item.product_id}`}
+              className="group -m-1 min-w-0 rounded-lg p-1 no-underline active:bg-story-cream-2"
+            >
               <ProductIdentity
                 brand={item.brand_name}
                 product={item.product_name}
@@ -93,9 +98,12 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
                 size="sm"
                 showMark={false}
                 maxBadges={2}
+                after={<ArrowRight className="h-3.5 w-3.5 flex-shrink-0 text-story-muted-2" />}
               />
             </Link>
-            <ScoreMark score={item.rating} size="sm" className="shrink-0 flex-col items-end gap-0" />
+            {/* Right-aligned so scores line up down the feed. At sm it read as
+                stranded in the corner; md gives it the weight to anchor it. */}
+            <ScoreMark score={item.rating} size="md" className="shrink-0 flex-col items-end gap-0" />
           </div>
 
           {item.notes && (

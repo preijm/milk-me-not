@@ -97,6 +97,11 @@ type ProductIdentityProps = {
    * whole card, roughly 300px, and costs no extra height.
    */
   badgesBelow?: boolean;
+  /**
+   * Something to sit at the end of the product name — an arrow, when the
+   * identity is a link and there is no hover to reveal that with.
+   */
+  after?: ReactNode;
   className?: string;
 };
 
@@ -111,6 +116,7 @@ export const ProductIdentity = ({
   maxBadges,
   meta,
   badgesBelow = false,
+  after,
   className,
 }: ProductIdentityProps) => {
   const s = SIZES[size];
@@ -161,8 +167,11 @@ export const ProductIdentity = ({
           {brand || "Unknown brand"}
         </span>
 
-        <span className={cn("block truncate font-sans font-bold text-story-ink", s.product)} translate="no">
-          {product || "Unknown product"}
+        <span className="flex min-w-0 items-center gap-1">
+          <span className={cn("min-w-0 truncate font-sans font-bold text-story-ink", s.product)} translate="no">
+            {product || "Unknown product"}
+          </span>
+          {after}
         </span>
 
         {!badgesBelow && badgeLine}
