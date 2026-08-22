@@ -147,13 +147,7 @@ export const ProductIdentity = ({
   const identity = (
     <span className={cn("flex min-w-0 items-center", s.gap, badgesBelow ? "" : className)}>
       {showMark && (
-        <BrandMark
-          brand={brand}
-          product={product}
-          hint={[...propertyLabels, ...flavorLabels].join(" ")}
-          className={cn("flex-shrink-0", s.mark)}
-          radius={s.radius}
-        />
+        <BrandMark brand={brand} className={cn("flex-shrink-0", s.mark)} radius={s.radius} />
       )}
 
       <span className="min-w-0 flex-1">

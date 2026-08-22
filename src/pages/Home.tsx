@@ -224,7 +224,6 @@ const Home = () => {
 
                   <BrandMark
                     brand={entry?.brand}
-                    product={entry?.product}
                     className="hidden h-14 w-14 text-[0.8125rem] sm:flex"
                   />
 
@@ -398,7 +397,7 @@ const TopVerdictBar = ({
       to={entry ? `/product/${entry.productId}` : "/results"}
       className={`story-hairline flex items-center gap-4 rounded-[1.25rem] bg-white px-4 py-3.5 no-underline ${className ?? ""}`}
     >
-      <BrandMark brand={entry?.brand} product={entry?.product} className="h-11 w-11 text-[0.7rem]" radius="rounded-xl" />
+      <BrandMark brand={entry?.brand} className="h-11 w-11 text-[0.7rem]" radius="rounded-xl" />
       <span className="min-w-0 flex-1">
         <span className="story-kicker block text-story-muted-2">Top of the board</span>
         <span className="mt-1 block truncate text-[0.9375rem] font-bold text-story-ink">
@@ -435,7 +434,7 @@ const TopVerdictCard = ({
       <p className="story-kicker text-story-muted-2">Top of the board</p>
 
       <div className="relative mt-6 flex items-start gap-5">
-        <BrandMark brand={entry?.brand} product={entry?.product} className="h-20 w-20 text-[1rem]" radius="rounded-3xl" />
+        <BrandMark brand={entry?.brand} className="h-20 w-20 text-[1rem]" radius="rounded-3xl" />
         <div className="min-w-0">
           <p className="text-sm font-medium text-story-muted">{loading ? "Loading" : entry?.brand}</p>
           <p className="story-serif mt-0.5 text-[1.6rem] font-bold leading-tight text-story-ink">

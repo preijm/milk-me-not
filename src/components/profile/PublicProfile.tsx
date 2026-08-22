@@ -41,7 +41,6 @@ const RatingRow = ({ rating }: { rating: PublicRating }) => {
       >
         <BrandMark
           brand={rating.brand}
-          product={rating.product}
           className="mt-0.5 h-11 w-11 text-[0.7rem]"
           radius="rounded-xl"
         />

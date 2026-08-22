@@ -68,7 +68,7 @@ export const QuickRateSheet = ({
         <SheetHeader className="space-y-0 text-left">
           <SheetTitle className="sr-only">Rate {productName}</SheetTitle>
           <div className="flex items-center gap-3">
-            <BrandMark brand={brandName} product={productName} className="h-12 w-12 shrink-0" />
+            <BrandMark brand={brandName} className="h-12 w-12 shrink-0" />
             <div className="min-w-0">
               <p className="story-kicker text-story-muted-2">{existing ? "Your rating" : "Your score"}</p>
               <p className="truncate font-display text-[1.15rem] font-extrabold tracking-[-0.03em] text-story-ink">
