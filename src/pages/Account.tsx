@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { StoryAppLayout } from "@/components/story/StoryAppLayout";
-import { StoryButton } from "@/components/story/primitives";
+import { ArrowRight, StoryButton } from "@/components/story/primitives";
+import { SECONDARY_LINKS } from "@/components/story/memberNav";
 import ProfileSettings from "@/components/settings/ProfileSettings";
 import CountrySettings from "@/components/settings/CountrySettings";
 import SecuritySettings from "@/components/settings/SecuritySettings";
@@ -50,8 +51,8 @@ const Account = () => {
     <StoryAppLayout
       compact
       kicker="Your account"
-      title="Account"
-      lede="Your name, where you shop, your password, and what we may email you about."
+      title="Settings"
+      lede="Your name, where you shop, your password, what reaches you, and where to find help."
     >
       <div className="space-y-4">
         <Section title="You" hint="How you appear on every rating you leave.">
@@ -72,6 +73,26 @@ const Account = () => {
             column nothing ever read. */}
         <Section title="Notifications" hint="What reaches you on the site.">
           <NotificationSettings />
+        </Section>
+
+        {/* These used to live only in a mobile drawer and the public footer, so
+            a signed-in reader on a phone reached help through a hamburger that
+            existed for nothing else. This page is where someone already goes
+            looking for the occasional thing. */}
+        <Section title="Help and the project" hint="How the scores work, who we are, and how to reach us.">
+          <ul className="-my-2 divide-y divide-story-ink/7">
+            {SECONDARY_LINKS.map((link) => (
+              <li key={link.to}>
+                <Link
+                  to={link.to}
+                  className="group flex items-center justify-between gap-3 py-3 text-[0.9375rem] font-bold text-story-ink no-underline transition-colors hover:text-story-green-dark"
+                >
+                  {link.label}
+                  <ArrowRight className="h-4 w-4 shrink-0 text-story-muted-2 transition-colors group-hover:text-story-green-dark" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         </Section>
 
         <StoryButton tone="outline" onClick={handleLogout} className="w-full sm:w-auto">

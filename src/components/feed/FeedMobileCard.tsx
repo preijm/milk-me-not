@@ -98,7 +98,7 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
                 size="sm"
                 showMark={false}
                 maxBadges={2}
-                after={<ArrowRight className="h-3.5 w-3.5 flex-shrink-0 text-story-muted-2" />}
+                after={<ArrowRight className="h-3.5 w-3.5 shrink-0 text-story-muted-2" />}
               />
             </Link>
             {/* Right-aligned so scores line up down the feed. At sm it read as

@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useNotifications } from "@/hooks/useNotifications";
-import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StoryButton, ArrowRight } from "@/components/story/primitives";
 import { DropGlyph } from "@/components/story/motifs";
@@ -57,7 +55,6 @@ export const ProfileContent = ({
   ratings = [],
 }: ProfileContentProps) => {
   const navigate = useNavigate();
-  const { unreadCount } = useNotifications();
   const [editing, setEditing] = useState<MilkTestResult | null>(null);
 
   return (
@@ -110,33 +107,11 @@ export const ProfileContent = ({
         </dl>
       </section>
 
-      {/* Notifications lost their own tab when the bar made room for the feed,
-          so this is now the way in. It leads the section when something is
-          waiting and drops to a quiet row when nothing is. */}
+      {/* No alerts card here any more: the bell in the header carries them from
+          every page, which beats a card you have to reach the profile to see. */}
       <section>
         <h3 className="story-kicker mb-3 px-1 text-story-muted-2">Carry on</h3>
         <div className="grid gap-3 sm:grid-cols-2">
-          <button
-            onClick={() => navigate("/notifications")}
-            className={cn(
-              "group flex items-center justify-between rounded-2xl p-4 text-left transition-colors sm:col-span-2",
-              unreadCount > 0
-                ? "bg-story-ink text-story-cream hover:brightness-[1.15]"
-                : "story-hairline bg-white hover:bg-story-cream-2",
-            )}
-          >
-            <span>
-              <span className={cn("block text-[0.9375rem] font-bold", unreadCount === 0 && "text-story-ink")}>
-                {unreadCount > 0
-                  ? `${unreadCount} thing${unreadCount === 1 ? "" : "s"} you have not read`
-                  : "Replies and likes"}
-              </span>
-              <span className={cn("block text-[0.8125rem]", unreadCount > 0 ? "text-white/70" : "text-story-muted")}>
-                {unreadCount > 0 ? "Someone reacted to a rating you left" : "Nothing new right now"}
-              </span>
-            </span>
-            <ArrowRight className="shrink-0" />
-          </button>
           <button
             onClick={() => navigate("/results", { state: { myResultsOnly: true } })}
             className="story-hairline group flex items-center justify-between rounded-2xl bg-white p-4 text-left transition-colors hover:bg-story-cream-2"
