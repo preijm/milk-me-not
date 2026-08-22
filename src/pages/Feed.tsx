@@ -74,7 +74,13 @@ const Feed = () => {
 
       <FeedHero items={feedItems} isLoading={isLoading} isAuthenticated={!!user} />
 
-      {!isLoading && feedItems.length > 0 && <FeedPullQuote items={feedItems} />}
+      {/* Desktop only for a member. It is real content rather than pitch — one
+          verdict set at editorial scale — but it is also 310px showing an item
+          that appears again in the stream a moment later, and on a phone that
+          is the last thing between someone and the feed they opened. */}
+      {!isLoading && feedItems.length > 0 && (
+        <FeedPullQuote items={feedItems} className={user ? "hidden lg:block" : undefined} />
+      )}
 
       <Band ground="paper" size={user ? "sm" : "lg"}>
         {/* Signposting for a first-time reader; 148px of it for a member who

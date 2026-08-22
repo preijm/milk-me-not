@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Band, Kicker, MilkDrop, getTier } from "@/components/story";
+import { cn } from "@/lib/utils";
 import type { MilkTestResult } from "@/types/milk-test";
 
 type FeedPullQuoteProps = {
   items: MilkTestResult[];
+  className?: string;
 };
 
 /**
@@ -12,7 +14,7 @@ type FeedPullQuoteProps = {
  * best-scored note actually left by someone in the window currently loaded,
  * so it changes as the real feed changes.
  */
-export const FeedPullQuote = ({ items }: FeedPullQuoteProps) => {
+export const FeedPullQuote = ({ items, className }: FeedPullQuoteProps) => {
   const withNotes = items.filter((i) => !!i.notes?.trim());
   const pool = withNotes.length > 0 ? withNotes : items;
   const featured = [...pool].sort((a, b) => b.rating - a.rating)[0];
@@ -21,7 +23,7 @@ export const FeedPullQuote = ({ items }: FeedPullQuoteProps) => {
   const tier = getTier(featured.rating);
 
   return (
-    <Band ground="forest" size="md">
+    <Band ground="forest" size="md" className={cn(className)}>
       <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 text-story-green opacity-40">
         <MilkDrop size={280} variant="solid" />
       </div>
