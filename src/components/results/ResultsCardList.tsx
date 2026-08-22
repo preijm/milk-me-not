@@ -28,6 +28,10 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
           >
             <span className="story-num flex-shrink-0 text-[1.05rem] leading-none text-story-muted-2">{i + 1}</span>
             <span className="min-w-0 flex-1">
+              {/* The count rides the badge line instead of claiming a row of
+                  its own. With badges wrapping, these cards came out 104px,
+                  120px or 145px tall depending on how long a flavour name
+                  happened to be, which read as a ragged list. */}
               <ProductIdentity
                 brand={r.brand_name}
                 product={r.product_name}
@@ -35,13 +39,8 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
                 flavors={r.flavor_names}
                 isBarista={r.is_barista}
                 size="md"
+                meta={`${r.count} rating${r.count === 1 ? "" : "s"}`}
               />
-              {/* How many people rated it is evidence about the score, not part
-                  of the product's name, so it sits below the identity block
-                  rather than inside it. */}
-              <span className="mt-1.5 block pl-[3.75rem] text-[0.75rem] font-medium text-story-muted-2">
-                {r.count} rating{r.count === 1 ? "" : "s"}
-              </span>
             </span>
 
             <span className="flex flex-shrink-0 flex-col items-end gap-1">

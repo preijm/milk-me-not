@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { humanizeLabels } from "@/lib/labels";
 import { BrandMark } from "./BrandMark";
@@ -12,18 +13,26 @@ import { BrandMark } from "./BrandMark";
  * appeared on two of the eight surfaces, in two different palettes.
  *
  * The rule: a product is its mark, its brand, its name and its badges. Notes,
- * shop, score, rating count and who posted it are context — the caller arranges
- * those around this block and never inside it. The profile list broke that by
- * printing `brand — tasting note` as the second line, which read as part of the
- * name and left three Oatly rows titled "Oat" with nothing to tell them apart.
+ * shop, score and who posted it are context — the caller arranges those around
+ * this block and never inside it. The profile list broke that by printing
+ * `brand — tasting note` as the second line, which read as part of the name and
+ * left three Oatly rows titled "Oat" with nothing to tell them apart.
  *
  * Badges are identity, not decoration. Oatly Barista and Oatly Original are
- * different cartons, and the flavour is the only thing separating three otherwise
- * identical rows, so they belong here rather than being optional garnish.
+ * different cartons, and the flavour is often the only thing separating two
+ * otherwise identical rows.
  *
  * Brand sits above the product name rather than inline with it. When the row
  * runs out of room, an inline brand eats the product name — and the product
  * name is the half that distinguishes two cartons from the same brand.
+ *
+ * The badge line never wraps. On a phone the identity column gets about 142px
+ * between the rank, the mark and the score, so two uppercase letter-spaced
+ * pills were landing right on the edge of fitting: rows came out 104px, 120px
+ * or 145px tall depending on how long a flavour happened to be, which read as
+ * a ragged list. Sentence case is roughly a third narrower than uppercase with
+ * tracking, `meta` puts the caller's one-liner on the same row rather than a
+ * new one, and anything still over the count becomes `+N`.
  */
 
 const SIZES = {
@@ -32,7 +41,8 @@ const SIZES = {
     radius: "rounded-xl",
     brand: "text-[0.625rem]",
     product: "text-[0.875rem]",
-    pill: "px-2 py-0.5 text-[0.5625rem]",
+    pill: "px-1.5 py-[0.0625rem] text-[0.625rem]",
+    meta: "text-[0.6875rem]",
     gap: "gap-2.5",
     badges: 2,
   },
@@ -41,18 +51,20 @@ const SIZES = {
     radius: "rounded-xl",
     brand: "text-[0.6875rem]",
     product: "text-[0.9375rem]",
-    pill: "px-2 py-0.5 text-[0.625rem]",
+    pill: "px-2 py-[0.09375rem] text-[0.6875rem]",
+    meta: "text-[0.75rem]",
     gap: "gap-3",
-    badges: 3,
+    badges: 2,
   },
   lg: {
     mark: "h-14 w-14 text-[0.8125rem]",
     radius: "rounded-2xl",
     brand: "text-[0.75rem]",
     product: "text-[1.0625rem]",
-    pill: "px-2.5 py-0.5 text-[0.6875rem]",
+    pill: "px-2 py-0.5 text-[0.6875rem]",
+    meta: "text-[0.8125rem]",
     gap: "gap-3.5",
-    badges: 4,
+    badges: 3,
   },
 } as const;
 
@@ -69,6 +81,11 @@ type ProductIdentityProps = {
   showMark?: boolean;
   /** Override how many badges fit. Defaults to something sane for the size. */
   maxBadges?: number;
+  /**
+   * One short piece of context to sit at the end of the badge line — "12
+   * ratings", a date. It shares the row so it does not cost a line of its own.
+   */
+  meta?: ReactNode;
   className?: string;
 };
 
@@ -81,6 +98,7 @@ export const ProductIdentity = ({
   size = "md",
   showMark = true,
   maxBadges,
+  meta,
   className,
 }: ProductIdentityProps) => {
   const s = SIZES[size];
@@ -94,8 +112,7 @@ export const ProductIdentity = ({
     ...flavorLabels.map((label) => ({ key: `f:${label}`, label, tone: "bg-story-amber-light text-story-amber-dark" })),
     ...propertyLabels.map((label) => ({ key: `p:${label}`, label, tone: "bg-story-ink/[0.06] text-story-muted" })),
   ];
-  const limit = maxBadges ?? s.badges;
-  const shown = badges.slice(0, limit);
+  const shown = badges.slice(0, maxBadges ?? s.badges);
   const hidden = badges.length - shown.length;
 
   return (
@@ -125,18 +142,24 @@ export const ProductIdentity = ({
           {product || "Unknown product"}
         </span>
 
-        {shown.length > 0 && (
-          <span className="mt-1.5 flex flex-wrap items-center gap-1.5">
+        {(shown.length > 0 || meta) && (
+          <span className="mt-1 flex min-w-0 flex-nowrap items-center gap-1.5">
             {shown.map((b) => (
               <span
                 key={b.key}
-                className={cn("rounded-full font-bold uppercase tracking-[0.04em]", s.pill, b.tone)}
+                className={cn("max-w-[8.5rem] truncate rounded-full font-bold", s.pill, b.tone)}
               >
                 {b.label}
               </span>
             ))}
             {hidden > 0 && (
-              <span className={cn("font-bold text-story-muted-2", s.pill)}>+{hidden}</span>
+              <span className={cn("flex-shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>
+            )}
+            {meta && (
+              <span className={cn("min-w-0 flex-shrink truncate text-story-muted-2", s.meta)}>
+                {shown.length > 0 && <span className="mr-1.5" aria-hidden>·</span>}
+                {meta}
+              </span>
             )}
           </span>
         )}
