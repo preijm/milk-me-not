@@ -1,9 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { getTier } from "@/components/story";
 import { UserMark } from "@/components/story/UserMark";
-import { humanizeLabels } from "@/lib/labels";
-import { inferPlantBase } from "@/lib/plantBase";
-import { cn } from "@/lib/utils";
+import { ProductIdentity } from "@/components/story/ProductIdentity";
 import { MilkTestResult } from "@/types/milk-test";
 import { useFeedItemState } from "./useFeedItemState";
 import { FeedImage } from "./FeedImage";
@@ -39,10 +37,6 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
 
   const tier = getTier(item.rating);
   const timeAgo = formatDistanceToNow(new Date(item.created_at), { addSuffix: true }).replace("about ", "");
-  const base = inferPlantBase(
-    `${item.brand_name ?? ""} ${item.product_name ?? ""} ${(item.property_names ?? []).join(" ")}`,
-  );
-  const tags = [...(item.is_barista ? ["Barista"] : []), ...humanizeLabels(item.property_names)].slice(0, 2);
 
   return (
     <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-2.5 rounded-2xl bg-white p-4">
@@ -51,38 +45,28 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
         <span className="story-num flex-shrink-0 text-[1.6rem] leading-none" style={{ color: tier.color }}>
           {item.rating.toFixed(1)}
         </span>
+        {/* No mark: the score already holds the left edge of this row. The
+            badges come with the identity now, which is why the separate tag
+            strip below this header is gone — it carried a base chip and the
+            properties but dropped flavours, so two flavours of one carton
+            looked identical here. */}
         <div className="min-w-0 flex-1">
-          <p className="story-serif truncate text-[0.9375rem] font-bold leading-tight text-story-ink" translate="no">
-            {item.brand_name ?? "Unknown brand"} - {item.product_name ?? "Unknown product"}
-          </p>
-          <p className="mt-0.5 text-[0.625rem] font-bold uppercase tracking-[0.08em]" style={{ color: tier.color }}>
+          <ProductIdentity
+            brand={item.brand_name}
+            product={item.product_name}
+            properties={item.property_names}
+            flavors={item.flavor_names}
+            isBarista={item.is_barista}
+            size="sm"
+            showMark={false}
+            maxBadges={2}
+          />
+          <p className="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.08em]" style={{ color: tier.color }}>
             {tier.name}
           </p>
         </div>
         <span className="flex-shrink-0 text-[0.6875rem] font-medium text-story-muted-2">{timeAgo}</span>
       </div>
-
-      {tags.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span
-            className={cn(
-              "story-num flex h-5 flex-shrink-0 items-center rounded-md px-1.5 text-[0.5625rem] font-extrabold",
-              base.bg,
-              base.fg,
-            )}
-          >
-            {base.abbr}
-          </span>
-          {tags.map((label) => (
-            <span
-              key={label}
-              className="rounded-full bg-story-ink/[0.06] px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-[0.04em] text-story-muted"
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-      )}
 
       <div className="flex items-start gap-3">
         <div className="w-24 flex-shrink-0">

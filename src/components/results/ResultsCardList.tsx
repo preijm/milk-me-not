@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { BrandMark, ScoreMark, getTier } from "@/components/story";
-import { humanizeLabels } from "@/lib/labels";
+import { ScoreMark, getTier } from "@/components/story";
+import { ProductIdentity } from "@/components/story/ProductIdentity";
 import type { AggregatedResult } from "@/hooks/useAggregatedResults";
 
 type ResultsCardListProps = {
@@ -16,11 +16,6 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
   <ol className="flex flex-col gap-3">
     {results.map((r, i) => {
       const tier = getTier(r.avg_rating);
-      const tags = [
-        ...(r.is_barista ? ["Barista"] : []),
-        ...humanizeLabels(r.property_names),
-        ...humanizeLabels(r.flavor_names),
-      ].slice(0, 3);
       return (
         <li key={r.product_id}>
           {/* A real link, not a click handler. These rows are how a product
@@ -32,28 +27,19 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
             className="story-hairline flex w-full items-center gap-3.5 rounded-[1.25rem] bg-white p-4 text-left no-underline"
           >
             <span className="story-num flex-shrink-0 text-[1.05rem] leading-none text-story-muted-2">{i + 1}</span>
-            <BrandMark
-              brand={r.brand_name}
-              product={r.product_name}
-              hint={`${(r.property_names ?? []).join(" ")} ${(r.flavor_names ?? []).join(" ")}`}
-              className="h-12 w-12 text-[0.75rem]"
-            />
-
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-story-muted-2">
-                {r.brand_name}
-              </span>
-              <span className="block truncate font-sans text-[0.9375rem] font-bold text-story-ink">{r.product_name}</span>
-              {tags.length > 0 && (
-                <span className="mt-1.5 flex flex-wrap gap-1.5">
-                  {tags.map((t) => (
-                    <span key={t} className="rounded-full bg-story-ink/[0.05] px-2 py-0.5 text-[0.625rem] font-bold text-story-muted">
-                      {t}
-                    </span>
-                  ))}
-                </span>
-              )}
-              <span className="mt-1.5 block text-[0.75rem] font-medium text-story-muted-2">
+              <ProductIdentity
+                brand={r.brand_name}
+                product={r.product_name}
+                properties={r.property_names}
+                flavors={r.flavor_names}
+                isBarista={r.is_barista}
+                size="md"
+              />
+              {/* How many people rated it is evidence about the score, not part
+                  of the product's name, so it sits below the identity block
+                  rather than inside it. */}
+              <span className="mt-1.5 block pl-[3.75rem] text-[0.75rem] font-medium text-story-muted-2">
                 {r.count} rating{r.count === 1 ? "" : "s"}
               </span>
             </span>

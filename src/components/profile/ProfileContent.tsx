@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StoryButton, ArrowRight } from "@/components/story/primitives";
 import { DropGlyph } from "@/components/story/motifs";
-import { BrandMark } from "@/components/story/BrandMark";
+import { ProductIdentity } from "@/components/story/ProductIdentity";
 import { QuickRateSheet } from "@/components/story/QuickRateSheet";
 import { getTier } from "@/components/story/tiers";
 import type { MilkTestResult } from "@/types/milk-test";
@@ -157,29 +157,34 @@ export const ProfileContent = ({
                     onClick={() => setEditing(r)}
                     className="story-hairline flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left transition-colors hover:bg-story-cream-2"
                   >
-                    <BrandMark
-                      brand={r.brand_name}
-                      product={r.product_name}
-                      className="h-11 w-11 shrink-0"
-                      radius="rounded-xl"
-                    />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[0.9375rem] font-bold text-story-ink">
-                        {r.product_name || "Unknown product"}
-                      </span>
-                      <span className="block truncate text-[0.8125rem] text-story-muted">
-                        {r.brand_name || "Unknown brand"}
-                        {r.notes ? ` — ${r.notes}` : ""}
-                      </span>
-                      {/* The rating form has always asked where you bought it and
-                          nothing ever showed the answer back. It belongs here and
-                          only here: the private view already withholds shop_name
-                          from anonymous readers, so it is your record, not the
-                          product's. */}
-                      {r.shop_name && (
-                        <span className="mt-0.5 flex items-center gap-1 text-[0.75rem] text-story-muted-2">
-                          <PinGlyph />
-                          <span className="truncate">{r.shop_name}</span>
+                      <ProductIdentity
+                        brand={r.brand_name}
+                        product={r.product_name}
+                        properties={r.property_names}
+                        flavors={r.flavor_names}
+                        isBarista={r.is_barista}
+                        size="sm"
+                      />
+                      {/* Your note and where you bought it are context, not part
+                          of the product's name. The note used to be glued to the
+                          brand with an em dash, which read as though the carton
+                          were called "Oatly — Coconut shouldn't be a flavor".
+                          shop_name belongs here and only here: the public view
+                          withholds it, so it is your record, not the product's. */}
+                      {(r.notes || r.shop_name) && (
+                        <span className="mt-1.5 block space-y-0.5 pl-[3.125rem]">
+                          {r.notes && (
+                            <span className="block truncate text-[0.8125rem] italic text-story-muted">
+                              “{r.notes}”
+                            </span>
+                          )}
+                          {r.shop_name && (
+                            <span className="flex items-center gap-1 text-[0.75rem] text-story-muted-2">
+                              <PinGlyph />
+                              <span className="truncate">{r.shop_name}</span>
+                            </span>
+                          )}
                         </span>
                       )}
                     </span>
