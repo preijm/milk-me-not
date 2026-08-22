@@ -1,24 +1,23 @@
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
-import { formatScore } from "@/lib/scoreFormatter";
-import { getTier } from "@/components/story";
 import { UserMark } from "@/components/story/UserMark";
 
 interface FeedHeaderProps {
   username?: string;
   createdAt: string;
-  rating: number;
   blurred?: boolean;
 }
 
 /**
- * The verdict card's byline: who tasted it and when. The score already runs
- * large at the top of the card, so this is a quiet signature, not a second
- * hero — a small tier-coloured figure rather than a badge.
+ * The verdict card's byline: who tasted it and when.
+ *
+ * It used to end with the score again, in tier colour, which put the same
+ * number twice on one card — once at display size in the top-left and once
+ * here. The docstring already argued the score "runs large at the top of the
+ * card"; the figure beneath it disagreed.
  */
-export const FeedHeader = ({ username, createdAt, rating, blurred }: FeedHeaderProps) => {
+export const FeedHeader = ({ username, createdAt, blurred }: FeedHeaderProps) => {
   const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true }).replace("about ", "");
-  const tier = getTier(rating);
 
   return (
     <div className="flex items-center justify-between gap-3">
@@ -31,9 +30,6 @@ export const FeedHeader = ({ username, createdAt, rating, blurred }: FeedHeaderP
           <span className="text-[0.75rem] font-medium text-story-muted-2">{timeAgo}</span>
         </div>
       </div>
-      <span className="story-num flex-shrink-0 text-[0.9375rem]" style={{ color: tier.color }}>
-        {formatScore(Number(rating))}
-      </span>
     </div>
   );
 };

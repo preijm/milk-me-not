@@ -6,7 +6,6 @@ describe("FeedHeader", () => {
   const defaultProps = {
     username: "TestUser",
     createdAt: new Date().toISOString(),
-    rating: 8.5,
   };
 
   it("renders username", () => {
@@ -20,13 +19,15 @@ describe("FeedHeader", () => {
   });
 
   it("renders 'U' when username is undefined", () => {
-    render(<FeedHeader createdAt={defaultProps.createdAt} rating={5} />);
+    render(<FeedHeader createdAt={defaultProps.createdAt} />);
     expect(screen.getByText("U")).toBeInTheDocument();
   });
 
-  it("renders formatted rating", () => {
+  // The byline used to end with the score, which put the same number twice on
+  // one card — once at display size at the top and once here.
+  it("leaves the score to the top of the card", () => {
     render(<FeedHeader {...defaultProps} />);
-    expect(screen.getByText("8.5")).toBeInTheDocument();
+    expect(screen.queryByText("8.5")).not.toBeInTheDocument();
   });
 
   it("renders time ago text", () => {

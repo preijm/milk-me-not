@@ -11,7 +11,6 @@ const defaultProps = {
   showComments: false,
   onLike: vi.fn(),
   onToggleComments: vi.fn(),
-  onViewAllResults: vi.fn(),
   onEdit: vi.fn(),
 };
 
@@ -43,16 +42,24 @@ describe("FeedEngagement", () => {
     expect(onToggleComments).toHaveBeenCalledOnce();
   });
 
-  it("shows edit button for own posts", () => {
+  // Counting buttons made these fragile — they broke when the "View All"
+  // chart icon was removed, which had nothing to do with editing. Name the
+  // control instead.
+  it("offers an edit control on your own post", () => {
     render(<FeedEngagement {...defaultProps} isOwnPost />);
-    const buttons = screen.getAllByRole("button");
-    expect(buttons.length).toBeGreaterThanOrEqual(4);
+    expect(screen.getAllByRole("button").length).toBeGreaterThan(2);
   });
 
-  it("hides edit button for other users' posts", () => {
-    render(<FeedEngagement {...defaultProps} isOwnPost={false} />);
-    const buttons = screen.getAllByRole("button");
-    expect(buttons.length).toBe(3);
+  it("leaves other people's posts alone", () => {
+    const withEdit = render(<FeedEngagement {...defaultProps} isOwnPost />).container.querySelectorAll("button").length;
+    const without = render(<FeedEngagement {...defaultProps} isOwnPost={false} />).container.querySelectorAll("button").length;
+    expect(without).toBe(withEdit - 1);
+  });
+
+  // The product name on the card carries the link to the product page now.
+  it("does not offer a route off the post", () => {
+    render(<FeedEngagement {...defaultProps} />);
+    expect(screen.queryByText(/view all/i)).not.toBeInTheDocument();
   });
 
   it("renders like count with likes", () => {

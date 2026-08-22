@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { getTier } from "@/components/story";
 import { UserMark } from "@/components/story/UserMark";
@@ -31,7 +32,6 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
     commentMutation,
     handleLike,
     handleComment,
-    handleViewAllResults,
     handleEdit,
   } = useFeedItemState(item);
 
@@ -50,7 +50,10 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
             strip below this header is gone — it carried a base chip and the
             properties but dropped flavours, so two flavours of one carton
             looked identical here. */}
-        <div className="min-w-0 flex-1">
+        <Link
+          to={`/product/${item.product_id}`}
+          className="min-w-0 flex-1 no-underline"
+        >
           <ProductIdentity
             brand={item.brand_name}
             product={item.product_name}
@@ -64,27 +67,35 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
           <p className="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.08em]" style={{ color: tier.color }}>
             {tier.name}
           </p>
-        </div>
+        </Link>
         <span className="flex-shrink-0 text-[0.6875rem] font-medium text-story-muted-2">{timeAgo}</span>
       </div>
 
-      <div className="flex items-start gap-3">
-        <div className="w-24 flex-shrink-0">
-          <FeedImage
-            compact
-            picturePath={item.picture_path}
-            brandName={item.brand_name ?? "Unknown brand"}
-            productName={item.product_name ?? "Unknown product"}
-          />
+      {/* This row cost 112px to show 18px of note. The photo set the height
+          and the note sat beside it, so a one-line tasting note — which is
+          most of them — left about 94px of white space, and a card with
+          neither photo nor note still announced "No note left."
+          The photo is a thumbnail now, and each piece only appears if it
+          exists. */}
+      {(item.picture_path || item.notes) && (
+        <div className="flex items-start gap-3">
+          {item.picture_path && (
+            <div className="w-20 flex-shrink-0">
+              <FeedImage
+                compact
+                picturePath={item.picture_path}
+                brandName={item.brand_name ?? "Unknown brand"}
+                productName={item.product_name ?? "Unknown product"}
+              />
+            </div>
+          )}
+          {item.notes && (
+            <p className="story-serif line-clamp-3 flex-1 self-center text-[0.8125rem] italic leading-snug text-story-ink-2">
+              &ldquo;{item.notes}&rdquo;
+            </p>
+          )}
         </div>
-        {item.notes ? (
-          <p className="story-serif line-clamp-4 flex-1 text-[0.8125rem] italic leading-snug text-story-ink-2">
-            &ldquo;{item.notes}&rdquo;
-          </p>
-        ) : (
-          <p className="flex-1 text-[0.8125rem] italic leading-snug text-story-muted-2">No note left.</p>
-        )}
-      </div>
+      )}
 
       <div className="flex items-center gap-2 pt-0.5">
         <UserMark name={item.username} className="h-6 w-6 text-[0.625rem]" />
@@ -102,7 +113,6 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
         showComments={showComments}
         onLike={handleLike}
         onToggleComments={() => setShowComments(!showComments)}
-        onViewAllResults={handleViewAllResults}
         onEdit={handleEdit}
       />
 

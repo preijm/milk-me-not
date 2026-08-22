@@ -1,6 +1,7 @@
 import { MilkTestResult } from "@/types/milk-test";
 import { ScoreMark, getTier } from "@/components/story";
 import { useFeedItemState } from "./useFeedItemState";
+import { Link } from "react-router-dom";
 import { FeedHeader } from "./FeedHeader";
 import { FeedProductInfo } from "./FeedProductInfo";
 import { FeedImage } from "./FeedImage";
@@ -30,7 +31,6 @@ export const FeedItem = ({ item }: FeedItemProps) => {
     commentMutation,
     handleLike,
     handleComment,
-    handleViewAllResults,
     handleEdit,
   } = useFeedItemState(item);
 
@@ -38,20 +38,29 @@ export const FeedItem = ({ item }: FeedItemProps) => {
 
   return (
     <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-4 rounded-[1.25rem] bg-white p-5">
-      <div className="flex items-end justify-between gap-4">
+      {/* "Buy two." is the tier's verdict on the score, so it sits under the
+          score. Right-aligned across the card from it, it read as an unattached
+          remark with no visible subject. */}
+      <div>
         <ScoreMark score={item.rating} size="lg" />
-        <span className="text-right text-[0.8125rem] font-medium italic leading-snug text-story-muted-2">
-          {tier.blurb}
-        </span>
+        <p className="mt-1 text-[0.8125rem] font-medium italic leading-snug text-story-muted-2">{tier.blurb}</p>
       </div>
 
-      <FeedProductInfo
-        brandName={item.brand_name ?? "Unknown brand"}
-        productName={item.product_name ?? "Unknown product"}
-        isBarista={item.is_barista ?? undefined}
-        propertyNames={item.property_names ?? undefined}
-        flavorNames={item.flavor_names ?? undefined}
-      />
+      {/* The product name is the link to the product. It is what someone
+          reaches for, and it replaces a bar-chart icon labelled "View All"
+          that went to the same place without saying so. */}
+      <Link
+        to={`/product/${item.product_id}`}
+        className="-m-2 rounded-xl p-2 no-underline transition-colors hover:bg-story-cream-2"
+      >
+        <FeedProductInfo
+          brandName={item.brand_name ?? "Unknown brand"}
+          productName={item.product_name ?? "Unknown product"}
+          isBarista={item.is_barista ?? undefined}
+          propertyNames={item.property_names ?? undefined}
+          flavorNames={item.flavor_names ?? undefined}
+        />
+      </Link>
 
       <FeedImage
         picturePath={item.picture_path}
@@ -65,7 +74,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
         </p>
       )}
 
-      <FeedHeader username={item.username ?? undefined} createdAt={item.created_at} rating={item.rating} />
+      <FeedHeader username={item.username ?? undefined} createdAt={item.created_at} />
 
       <FeedEngagement
         likes={likes}
@@ -76,7 +85,6 @@ export const FeedItem = ({ item }: FeedItemProps) => {
         showComments={showComments}
         onLike={handleLike}
         onToggleComments={() => setShowComments(!showComments)}
-        onViewAllResults={handleViewAllResults}
         onEdit={handleEdit}
       />
 

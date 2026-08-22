@@ -20,7 +20,7 @@ export const FeedImage = ({ picturePath, brandName, productName, compact = false
       <div
         className={cn(
           "relative flex items-center justify-center overflow-hidden rounded-xl bg-story-cream-2",
-          compact ? "h-24" : "h-56 sm:h-64",
+          compact ? "h-20" : "h-56 sm:h-64",
         )}
       >
         <span className="text-story-ink/[0.08]" aria-hidden>
@@ -47,7 +47,7 @@ export const FeedImage = ({ picturePath, brandName, productName, compact = false
           decoding="sync"
           className={cn(
             "w-full object-cover transition-transform duration-300 hover:scale-105",
-            compact ? "h-28" : "h-56 sm:h-64",
+            compact ? "h-20" : "h-56 sm:h-64",
           )}
           onError={(e) => {
             const target = e.currentTarget as HTMLImageElement;
