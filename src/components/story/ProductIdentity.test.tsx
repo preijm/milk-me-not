@@ -47,4 +47,21 @@ describe("ProductIdentity", () => {
     );
     expect(screen.getByText("+2")).toBeInTheDocument();
   });
+
+  // In a dense list row the text column is only ~142px after a rank, a mark
+  // and a score, which truncated two badges to "Bari…" and "Hazel…".
+  it("can put the badges on their own line, clear of the narrow text column", () => {
+    const props = { brand: "Natrue", product: "Oat", isBarista: true, flavors: ["pumpkin_spice"] };
+    const inline = render(<ProductIdentity {...props} />).container.firstElementChild;
+    expect(inline?.className).toContain("items-center");
+
+    const below = render(<ProductIdentity {...props} badgesBelow />).container.firstElementChild;
+    expect(below?.classList.contains("flex-col")).toBe(true);
+  });
+
+  it("shows both badges in full either way", () => {
+    render(<ProductIdentity brand="Natrue" product="Oat" isBarista flavors={["pumpkin_spice"]} badgesBelow />);
+    expect(screen.getByText("Barista")).toBeInTheDocument();
+    expect(screen.getByText("Pumpkin spice")).toBeInTheDocument();
+  });
 });

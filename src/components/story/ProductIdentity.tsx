@@ -86,6 +86,17 @@ type ProductIdentityProps = {
    * ratings", a date. It shares the row so it does not cost a line of its own.
    */
   meta?: ReactNode;
+  /**
+   * Put the badges on their own full-width line under the mark instead of in
+   * the text column beside it.
+   *
+   * In a dense list row the text column is what is left after a rank, a mark
+   * and a score — about 142px on a phone. One badge and a count fit in that;
+   * two do not, and 6 of 29 board rows were rendering "Bari…" and "Hazel…",
+   * which say less than showing nothing. Below the mark the same line gets the
+   * whole card, roughly 300px, and costs no extra height.
+   */
+  badgesBelow?: boolean;
   className?: string;
 };
 
@@ -99,6 +110,7 @@ export const ProductIdentity = ({
   showMark = true,
   maxBadges,
   meta,
+  badgesBelow = false,
   className,
 }: ProductIdentityProps) => {
   const s = SIZES[size];
@@ -115,8 +127,25 @@ export const ProductIdentity = ({
   const shown = badges.slice(0, maxBadges ?? s.badges);
   const hidden = badges.length - shown.length;
 
-  return (
-    <span className={cn("flex min-w-0 items-center", s.gap, className)}>
+  const badgeLine = (shown.length > 0 || meta) && (
+    <span className={cn("flex min-w-0 flex-nowrap items-center gap-1.5", badgesBelow ? "mt-2" : "mt-1")}>
+      {shown.map((b) => (
+        <span key={b.key} className={cn("max-w-[10rem] truncate rounded-full font-bold", s.pill, b.tone)}>
+          {b.label}
+        </span>
+      ))}
+      {hidden > 0 && <span className={cn("flex-shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>}
+      {meta && (
+        <span className={cn("min-w-0 flex-shrink truncate text-story-muted-2", s.meta)}>
+          {shown.length > 0 && <span className="mr-1.5" aria-hidden>·</span>}
+          {meta}
+        </span>
+      )}
+    </span>
+  );
+
+  const identity = (
+    <span className={cn("flex min-w-0 items-center", s.gap, badgesBelow ? "" : className)}>
       {showMark && (
         <BrandMark
           brand={brand}
@@ -142,28 +171,17 @@ export const ProductIdentity = ({
           {product || "Unknown product"}
         </span>
 
-        {(shown.length > 0 || meta) && (
-          <span className="mt-1 flex min-w-0 flex-nowrap items-center gap-1.5">
-            {shown.map((b) => (
-              <span
-                key={b.key}
-                className={cn("max-w-[8.5rem] truncate rounded-full font-bold", s.pill, b.tone)}
-              >
-                {b.label}
-              </span>
-            ))}
-            {hidden > 0 && (
-              <span className={cn("flex-shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>
-            )}
-            {meta && (
-              <span className={cn("min-w-0 flex-shrink truncate text-story-muted-2", s.meta)}>
-                {shown.length > 0 && <span className="mr-1.5" aria-hidden>·</span>}
-                {meta}
-              </span>
-            )}
-          </span>
-        )}
+        {!badgesBelow && badgeLine}
       </span>
+    </span>
+  );
+
+  if (!badgesBelow) return identity;
+
+  return (
+    <span className={cn("flex min-w-0 flex-col", className)}>
+      {identity}
+      {badgeLine}
     </span>
   );
 };

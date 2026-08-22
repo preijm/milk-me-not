@@ -28,10 +28,6 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
           >
             <span className="story-num flex-shrink-0 text-[1.05rem] leading-none text-story-muted-2">{i + 1}</span>
             <span className="min-w-0 flex-1">
-              {/* The count rides the badge line instead of claiming a row of
-                  its own. With badges wrapping, these cards came out 104px,
-                  120px or 145px tall depending on how long a flavour name
-                  happened to be, which read as a ragged list. */}
               <ProductIdentity
                 brand={r.brand_name}
                 product={r.product_name}
@@ -39,14 +35,22 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
                 flavors={r.flavor_names}
                 isBarista={r.is_barista}
                 size="md"
-                meta={`${r.count} rating${r.count === 1 ? "" : "s"}`}
+                badgesBelow
               />
             </span>
 
-            <span className="flex flex-shrink-0 flex-col items-end gap-1">
+            {/* The count sits with the score rather than trailing the badges.
+                It is what the score is worth — 9.0 from one rating and 9.0 from
+                thirty are different claims — and on the badge line it was
+                arbitrary furniture competing for the 5px that made a flavour
+                render as "Pumpkin spic…". */}
+            <span className="flex flex-shrink-0 flex-col items-end gap-0.5">
               <ScoreMark score={r.avg_rating} size="md" showTier={false} />
               <span className="text-[0.625rem] font-bold uppercase tracking-[0.1em]" style={{ color: tier.color }}>
                 {tier.name}
+              </span>
+              <span className="text-[0.6875rem] font-medium text-story-muted-2">
+                {r.count} rating{r.count === 1 ? "" : "s"}
               </span>
             </span>
           </Link>
