@@ -44,6 +44,7 @@ const SIZES = {
     pill: "px-1.5 py-0.25 text-[0.625rem]",
     meta: "text-[0.6875rem]",
     gap: "gap-2.5",
+    indent: "pl-[3.125rem]",
     badges: 2,
   },
   md: {
@@ -54,6 +55,7 @@ const SIZES = {
     pill: "px-2 py-[0.09375rem] text-[0.6875rem]",
     meta: "text-[0.75rem]",
     gap: "gap-3",
+    indent: "pl-[3.75rem]",
     badges: 2,
   },
   lg: {
@@ -64,6 +66,7 @@ const SIZES = {
     pill: "px-2 py-0.5 text-[0.6875rem]",
     meta: "text-[0.8125rem]",
     gap: "gap-3.5",
+    indent: "pl-[4.375rem]",
     badges: 3,
   },
 } as const;
@@ -94,7 +97,8 @@ type ProductIdentityProps = {
    * and a score — about 142px on a phone. One badge and a count fit in that;
    * two do not, and 6 of 29 board rows were rendering "Bari…" and "Hazel…",
    * which say less than showing nothing. Below the mark the same line gets the
-   * whole card, roughly 300px, and costs no extra height.
+   * whole card, roughly 300px, and costs no extra height. It is indented past
+   * the mark so it still lines up with the brand and product above it.
    */
   badgesBelow?: boolean;
   /**
@@ -134,7 +138,14 @@ export const ProductIdentity = ({
   const hidden = badges.length - shown.length;
 
   const badgeLine = (shown.length > 0 || meta) && (
-    <span className={cn("flex min-w-0 flex-nowrap items-center gap-1.5", badgesBelow ? "mt-2" : "mt-1")}>
+    <span
+      className={cn(
+        "flex min-w-0 flex-nowrap items-center gap-1.5",
+        // Dropped below the row, the line has to clear the mark or it starts
+        // under the logo instead of under the name it belongs to.
+        badgesBelow ? cn("mt-2", showMark && s.indent) : "mt-1",
+      )}
+    >
       {shown.map((b) => (
         <span key={b.key} className={cn("max-w-40 truncate rounded-full font-bold", s.pill, b.tone)}>
           {b.label}
