@@ -4,6 +4,7 @@ import { Seo } from "@/components/Seo";
 import { useAggregatedResults } from "@/hooks/useAggregatedResults";
 import { useResultsUrlState, useResultsFiltering } from "@/hooks/useResultsState";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Band, SectionHead, StoryButton, StoryLayout } from "@/components/story";
 import { ResultsViewSwitcher } from "@/components/results/ResultsViewSwitcher";
@@ -122,18 +123,23 @@ const Results = () => {
 
       <ResultsHero stats={stats} isLoading={isLoading} />
 
-      <Band ground="paper" size="lg">
-        <SectionHead
-          kicker="Browse everything"
-          title={<>Sort it your way</>}
-          size="md"
-          trailing={!isMobile && <ResultsViewSwitcher view={view} onViewChange={setView} />}
-        />
+      <Band ground="paper" size={user && isMobile ? "sm" : "lg"}>
+        {/* "Browse everything / Sort it your way" introduces a switcher and a
+            sort control that say the same thing themselves. A first-time reader
+            gets the signpost; a member on a phone gets the controls. */}
+        {!(user && isMobile) && (
+          <SectionHead
+            kicker="Browse everything"
+            title={<>Sort it your way</>}
+            size="md"
+            trailing={!isMobile && <ResultsViewSwitcher view={view} onViewChange={setView} />}
+          />
+        )}
 
         {/* On a phone the switcher gets its own full-width row — beside the
             heading it would either wrap or squeeze the title. */}
         {isMobile && (
-          <ResultsViewSwitcher view={view} onViewChange={setView} className="mt-6 flex w-full" />
+          <ResultsViewSwitcher view={view} onViewChange={setView} className={cn("flex w-full", !user && "mt-6")} />
         )}
 
         <div className="mt-7">

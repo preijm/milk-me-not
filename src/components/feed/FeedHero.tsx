@@ -1,6 +1,8 @@
 import { formatDistanceToNow } from "date-fns";
 import { ArrowRight, Band, Display, Kicker, Lede, MilkDrop, StatFigure, StoryButton, useRateCta } from "@/components/story";
 import { useStoryHome } from "@/components/home/useStoryHome";
+import { MemberPageHead } from "@/components/story/MemberPageHead";
+import { cn } from "@/lib/utils";
 import type { MilkTestResult } from "@/types/milk-test";
 
 const formatCount = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}K` : `${n}`);
@@ -42,7 +44,19 @@ export const FeedHero = ({ items, isLoading, isAuthenticated }: FeedHeroProps) =
     : "";
 
   return (
-    <Band ground="cream" size="md" className="pt-6 sm:pt-10">
+    <>
+      {/* A member on a phone gets the page's name and the freshness, not the
+          pitch. See MemberPageHead for why. */}
+      {isAuthenticated && (
+        <MemberPageHead
+          kicker="Live from the community"
+          title="The feed"
+          meta={isLoading ? "Loading the latest pours…" : `${items.length} verdicts${latestAgo ? `, newest ${latestAgo}` : ""}`}
+          className="lg:hidden"
+        />
+      )}
+
+    <Band ground="cream" size="md" className={cn("pt-6 sm:pt-10", isAuthenticated && "hidden lg:block")}>
       {/* Deep forest, not the electric blue this used to be. Two reasons: at
           15rem, fully-saturated `story-blue` fought the green headline beside
           it and the forest band directly below; and Contact had already claimed
@@ -83,5 +97,6 @@ export const FeedHero = ({ items, isLoading, isAuthenticated }: FeedHeroProps) =
         ))}
       </dl>
     </Band>
+    </>
   );
 };

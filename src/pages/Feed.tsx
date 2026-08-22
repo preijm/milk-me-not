@@ -76,15 +76,20 @@ const Feed = () => {
 
       {!isLoading && feedItems.length > 0 && <FeedPullQuote items={feedItems} />}
 
-      <Band ground="paper" size="lg">
-        <SectionHead
-          kicker="The stream"
-          title="Every carton, in the order it was opened"
-          lede="No filters, no curation — this is what the community is actually drinking, right now."
-          size="md"
-        />
+      <Band ground="paper" size={user ? "sm" : "lg"}>
+        {/* Signposting for a first-time reader; 148px of it for a member who
+            opened the feed to read the feed. The compact page head above has
+            already said what this is. */}
+        {!user && (
+          <SectionHead
+            kicker="The stream"
+            title="Every carton, in the order it was opened"
+            lede="No filters, no curation — this is what the community is actually drinking, right now."
+            size="md"
+          />
+        )}
 
-        <div className="mt-8">
+        <div className={user ? "" : "mt-8"}>
           <FeedContent
             items={feedItems}
             isLoading={isLoading}
