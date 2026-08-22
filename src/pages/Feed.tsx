@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobileOrTablet } from "@/hooks/use-mobile";
 import { useHighlightScroll } from "@/hooks/useHighlightScroll";
 import { Band, SectionHead, StoryLayout } from "@/components/story";
+import { cn } from "@/lib/utils";
 import { FeedHero } from "@/components/feed/FeedHero";
 import { FeedPullQuote } from "@/components/feed/FeedPullQuote";
 import { FeedContent } from "@/components/feed/FeedContent";
@@ -82,7 +83,18 @@ const Feed = () => {
         <FeedPullQuote items={feedItems} className={user ? "hidden lg:block" : undefined} />
       )}
 
-      <Band ground="paper" size={user ? "sm" : "lg"}>
+      {/* One ground the whole way down for a member on a phone.
+          The compact head sits on cream and this band was paper, so a hard
+          seam landed 106px into the page — on a desktop the same change of
+          ground arrives after a tall hero and reads as editorial rhythm, but
+          at that height it is just a stripe. Cards are white, so cream also
+          gives them an edge they never had against paper. Desktop keeps the
+          white band. */}
+      <Band
+        ground="paper"
+        size={user ? "sm" : "lg"}
+        className={cn(user && "bg-story-cream lg:bg-story-paper")}
+      >
         {/* Signposting for a first-time reader; 148px of it for a member who
             opened the feed to read the feed. The compact page head above has
             already said what this is. */}

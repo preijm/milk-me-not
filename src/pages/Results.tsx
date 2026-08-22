@@ -123,7 +123,12 @@ const Results = () => {
 
       <ResultsHero stats={stats} isLoading={isLoading} />
 
-      <Band ground="paper" size={user && isMobile ? "sm" : "lg"}>
+      {/* Same seam as the feed: cream head into a paper band. See Feed.tsx. */}
+      <Band
+        ground="paper"
+        size={user && isMobile ? "sm" : "lg"}
+        className={cn(user && "bg-story-cream lg:bg-story-paper")}
+      >
         {/* "Browse everything / Sort it your way" introduces a switcher and a
             sort control that say the same thing themselves. A first-time reader
             gets the signpost; a member on a phone gets the controls. */}
