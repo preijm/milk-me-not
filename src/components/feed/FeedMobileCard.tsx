@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+
 import { ScoreMark } from "@/components/story";
 import { UserMark } from "@/components/story/UserMark";
 import { ProductIdentity } from "@/components/story/ProductIdentity";
@@ -14,10 +14,38 @@ interface FeedMobileCardProps {
 }
 
 /**
+ * "5h", not "5 hours ago".
+ *
+ * The byline shares its line with the like and comment buttons in a column
+ * about 190px wide. Spelled out, the timestamp took enough of it that the
+ * username was squeezed to zero width and vanished — the card named nobody.
+ */
+const shortAgo = (iso: string) => {
+  const secs = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+  const mins = Math.floor(secs / 60);
+  if (mins < 1) return "now";
+  if (mins < 60) return `${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo`;
+  return `${Math.floor(months / 12)}y`;
+};
+
+/**
  * The mobile card is not the desktop card narrowed down — it is denser and
- * ordered for a thumb moving fast: score and product share the first line,
- * the photo is a supporting thumbnail rather than the hero, and the byline
- * drops the duplicate timestamp the top line already gave away.
+ * ordered for a thumb moving fast.
+ *
+ * It reads across rather than down. Every photo on this feed is portrait —
+ * eight of eight measured, mostly 3000×4000 straight off a phone — so standing
+ * one up on the left gives it its own shape back instead of cropping a
+ * letterbox out of the middle, and leaves the right-hand column for everything
+ * that is words.
+ *
+ * Desktop keeps its masonry grid of vertical cards: a column there is about
+ * 440px, and a portrait photo beside a text column needs more than that.
  */
 export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
   const {
@@ -35,79 +63,76 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
     handleEdit,
   } = useFeedItemState(item);
 
-  const timeAgo = formatDistanceToNow(new Date(item.created_at), { addSuffix: true }).replace("about ", "");
+  const timeAgo = shortAgo(item.created_at);
 
   return (
-    <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-2.5 rounded-2xl bg-white p-4">
-      {/* Who, when and how they scored it, in one place.
-          These three were spread across the card: the time sat top-right, the
-          name four rows below it at the foot, and the tier word hung under the
-          product name in the identity column rather than beside the score it
-          describes. */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <UserMark name={item.username} className="h-8 w-8 text-[0.75rem]" />
-          <span className="min-w-0">
-            <span className="block truncate text-[0.8125rem] font-bold text-story-ink" translate="no">
-              {item.username}
-            </span>
-            <span className="block text-[0.6875rem] font-medium text-story-muted-2">{timeAgo}</span>
-          </span>
-        </div>
-        <ScoreMark score={item.rating} size="sm" className="shrink-0" />
-      </div>
+    <article id={`test-${item.id}`} className="story-hairline w-full rounded-2xl bg-white p-3">
+      <div className="flex gap-3">
+        {item.picture_path && (
+          <div className="w-26 shrink-0">
+            <FeedImage
+              portrait
+              picturePath={item.picture_path}
+              brandName={item.brand_name ?? "Unknown brand"}
+              productName={item.product_name ?? "Unknown product"}
+            />
+          </div>
+        )}
 
-      {/* The mark comes back now that the score has moved off the left edge,
-          so a carton looks the same here as it does on the board. */}
-      <Link to={`/product/${item.product_id}`} className="no-underline">
-        <ProductIdentity
-          brand={item.brand_name}
-          product={item.product_name}
-          properties={item.property_names}
-          flavors={item.flavor_names}
-          isBarista={item.is_barista}
-          size="sm"
-          maxBadges={2}
-        />
-      </Link>
-
-      {/* This row cost 112px to show 18px of note. The photo set the height
-          and the note sat beside it, so a one-line tasting note — which is
-          most of them — left about 94px of white space, and a card with
-          neither photo nor note still announced "No note left."
-          The photo is a thumbnail now, and each piece only appears if it
-          exists. */}
-      {(item.picture_path || item.notes) && (
-        <div className="flex items-start gap-3">
-          {item.picture_path && (
-            <div className="w-20 shrink-0">
-              <FeedImage
-                compact
-                picturePath={item.picture_path}
-                brandName={item.brand_name ?? "Unknown brand"}
-                productName={item.product_name ?? "Unknown product"}
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="flex items-start justify-between gap-2">
+            {/* No mark beside the name: the photo is the picture of this
+                carton, and a logo tile next to it would be a second one. */}
+            <Link to={`/product/${item.product_id}`} className="min-w-0 no-underline">
+              <ProductIdentity
+                brand={item.brand_name}
+                product={item.product_name}
+                properties={item.property_names}
+                flavors={item.flavor_names}
+                isBarista={item.is_barista}
+                size="sm"
+                showMark={false}
+                maxBadges={2}
               />
-            </div>
-          )}
+            </Link>
+            <ScoreMark score={item.rating} size="sm" className="shrink-0 flex-col items-end gap-0" />
+          </div>
+
           {item.notes && (
-            <p className="story-serif line-clamp-3 flex-1 self-center text-[0.8125rem] italic leading-snug text-story-ink-2">
+            <p className="story-serif line-clamp-3 text-[0.8125rem] italic leading-snug text-story-ink-2">
               &ldquo;{item.notes}&rdquo;
             </p>
           )}
-        </div>
-      )}
 
-      <FeedEngagement
-        likes={likes}
-        commentsCount={comments.length}
-        isLiked={isLiked}
-        isOwnPost={isOwnPost}
-        isLikePending={likeMutation.isPending}
-        showComments={showComments}
-        onLike={handleLike}
-        onToggleComments={() => setShowComments(!showComments)}
-        onEdit={handleEdit}
-      />
+          {/* Who left it, and what it drew, on the last line — the two things
+              you act on rather than read. */}
+          <div className="mt-auto flex items-center justify-between gap-2 pt-1">
+            {/* flex-1 + min-w-0 on the byline and shrink-0 on the actions:
+                without it the engagement row claimed the whole line and
+                squeezed the username to zero width. */}
+            <span className="flex min-w-0 flex-1 items-center gap-1.5">
+              <UserMark name={item.username} className="h-6 w-6 text-[0.625rem]" />
+              <span className="min-w-0 truncate text-[0.75rem] font-bold text-story-ink" translate="no">
+                {item.username}
+              </span>
+              <span className="shrink-0 text-[0.6875rem] text-story-muted-2">· {timeAgo}</span>
+            </span>
+            <FeedEngagement
+              bare
+              className="shrink-0"
+              likes={likes}
+              commentsCount={comments.length}
+              isLiked={isLiked}
+              isOwnPost={isOwnPost}
+              isLikePending={likeMutation.isPending}
+              showComments={showComments}
+              onLike={handleLike}
+              onToggleComments={() => setShowComments(!showComments)}
+              onEdit={handleEdit}
+            />
+          </div>
+        </div>
+      </div>
 
       {showComments && (
         <FeedComments

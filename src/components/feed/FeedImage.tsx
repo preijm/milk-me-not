@@ -10,9 +10,18 @@ interface FeedImageProps {
   productName: string;
   /** The mobile card's photo is a supporting detail, not the hero — shorter and quieter. */
   compact?: boolean;
+  /**
+   * Keep the photo's own shape instead of cropping it to a letterbox.
+   *
+   * Every photo on the feed is portrait — measured across the loaded window,
+   * eight of eight, mostly 3000×4000 straight off a phone. A landscape crop
+   * threw away most of each one, which is a strange thing to do to the only
+   * picture of the carton anybody took.
+   */
+  portrait?: boolean;
 }
 
-export const FeedImage = ({ picturePath, brandName, productName, compact = false }: FeedImageProps) => {
+export const FeedImage = ({ picturePath, brandName, productName, compact = false, portrait = false }: FeedImageProps) => {
   const [showEnlarged, setShowEnlarged] = useState(false);
 
   if (!picturePath) {
@@ -20,7 +29,7 @@ export const FeedImage = ({ picturePath, brandName, productName, compact = false
       <div
         className={cn(
           "relative flex items-center justify-center overflow-hidden rounded-xl bg-story-cream-2",
-          compact ? "h-20" : "h-56 sm:h-64",
+          portrait ? "aspect-[3/4] h-auto w-full" : compact ? "h-20" : "h-56 sm:h-64",
         )}
       >
         <span className="text-story-ink/8" aria-hidden>
@@ -47,7 +56,7 @@ export const FeedImage = ({ picturePath, brandName, productName, compact = false
           decoding="sync"
           className={cn(
             "w-full object-cover transition-transform duration-300 hover:scale-105",
-            compact ? "h-20" : "h-56 sm:h-64",
+            portrait ? "aspect-[3/4] h-auto" : compact ? "h-20" : "h-56 sm:h-64",
           )}
           onError={(e) => {
             const target = e.currentTarget as HTMLImageElement;
