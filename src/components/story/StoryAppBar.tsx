@@ -29,10 +29,10 @@ const BoardIcon = () => (
   </svg>
 );
 
-const BellIcon = () => (
+const FeedIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className={ICON} aria-hidden>
-    <path d="M18 8.5a6 6 0 1 0-12 0c0 5-2 6.5-2 6.5h16s-2-1.5-2-6.5" />
-    <path d="M10.3 19a2 2 0 0 0 3.4 0" />
+    <rect x="3.5" y="4.5" width="17" height="7" rx="2" />
+    <path d="M3.5 15.5h11M3.5 19.5h7" />
   </svg>
 );
 
@@ -44,16 +44,35 @@ const PersonIcon = () => (
 );
 
 /**
- * Home is deliberately absent, and now costs nothing: for a signed-in reader
- * "home" resolves to the feed, and the wordmark in the sticky header reaches it
- * from every page. Scanning earns the slot instead — checking what the board
- * thinks of a carton in your hand is a different intent from rating one, so it
- * does not belong folded into the centre action.
+ * Five slots, and what earns them.
+ *
+ * Scanning stays: checking what the community thinks of a carton in your hand
+ * is a different intent from rating one, so it does not fold into the centre
+ * action. Home is absent because for a signed-in reader "home" resolves to the
+ * feed, which now has a tab of its own anyway.
+ *
+ * Alerts folded into You. Likes and comments are low volume here, so a tab each
+ * for notifications and profile spent two of five slots on the two things a
+ * reader opens least — and the feed, which is the whole point of a community,
+ * had none. Notifications keep their route for email links, the unread dot
+ * moves to You, and the profile page leads with them when anything is unread.
+ *
+ * "Rankings", not "Board". That destination answered to five different names —
+ * Board here, Discover in the header, All ratings in the footer, The full
+ * catalogue on the page, Results in the title — and "Board" was the only place
+ * that word appeared at all.
  */
 const TABS = [
-  { to: "/results", label: "Board", icon: BoardIcon, match: (p: string) => p.startsWith("/results") },
-  { to: "/notifications", label: "Alerts", icon: BellIcon, match: (p: string) => p.startsWith("/notifications") },
-  { to: "/profile", label: "You", icon: PersonIcon, match: (p: string) => p.startsWith("/profile") },
+  { to: "/feed", label: "Feed", icon: FeedIcon, match: (p: string) => p.startsWith("/feed") },
+  { to: "/results", label: "Rankings", icon: BoardIcon, match: (p: string) => p.startsWith("/results") },
+  {
+    to: "/profile",
+    label: "You",
+    icon: PersonIcon,
+    // Highlighted on the notifications page too, since that is now reached
+    // through this tab rather than beside it.
+    match: (p: string) => p.startsWith("/profile") || p.startsWith("/notifications"),
+  },
 ];
 
 export const StoryAppBar = () => {
@@ -105,7 +124,7 @@ export const StoryAppBar = () => {
             key={tab.to}
             tab={tab}
             active={tab.match(location.pathname)}
-            badge={tab.to === "/notifications" ? unreadCount : 0}
+            badge={tab.to === "/profile" ? unreadCount : 0}
           />
         ))}
       </ul>

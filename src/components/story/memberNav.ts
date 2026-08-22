@@ -17,7 +17,7 @@ export const MEMBER_LINKS = [
  * arguing with each other, so this is only what the bar has no room for.
  */
 export const MEMBER_DRAWER_LINKS = [
-  { to: "/feed", label: "Feed" },
+  { to: "/notifications", label: "Notifications" },
   { to: "/account", label: "Account settings" },
 ];
 
