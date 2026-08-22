@@ -98,7 +98,6 @@ export default function ProfileSettings() {
             maxLength={30}
             pattern="^[a-zA-Z0-9_-]+$"
             title="Username can only contain letters, numbers, underscores, and hyphens"
-            className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green"
           />
           <p className="mt-1.5 text-[0.75rem] text-story-muted-2">
             Only letters, numbers, underscores, and hyphens allowed

@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobileOrTablet } from "@/hooks/use-mobile";
 import { useHighlightScroll } from "@/hooks/useHighlightScroll";
 import { Band, SectionHead, StoryLayout } from "@/components/story";
+import { cn } from "@/lib/utils";
 import { FeedHero } from "@/components/feed/FeedHero";
 import { FeedPullQuote } from "@/components/feed/FeedPullQuote";
 import { FeedContent } from "@/components/feed/FeedContent";
@@ -74,17 +75,39 @@ const Feed = () => {
 
       <FeedHero items={feedItems} isLoading={isLoading} isAuthenticated={!!user} />
 
-      {!isLoading && feedItems.length > 0 && <FeedPullQuote items={feedItems} />}
+      {/* Desktop only for a member. It is real content rather than pitch — one
+          verdict set at editorial scale — but it is also 310px showing an item
+          that appears again in the stream a moment later, and on a phone that
+          is the last thing between someone and the feed they opened. */}
+      {!isLoading && feedItems.length > 0 && (
+        <FeedPullQuote items={feedItems} className={user ? "hidden lg:block" : undefined} />
+      )}
 
-      <Band ground="paper" size="lg">
-        <SectionHead
-          kicker="The stream"
-          title="Every carton, in the order it was opened"
-          lede="No filters, no curation — this is what the community is actually drinking, right now."
-          size="md"
-        />
+      {/* One ground the whole way down for a member on a phone.
+          The compact head sits on cream and this band was paper, so a hard
+          seam landed 106px into the page — on a desktop the same change of
+          ground arrives after a tall hero and reads as editorial rhythm, but
+          at that height it is just a stripe. Cards are white, so cream also
+          gives them an edge they never had against paper. Desktop keeps the
+          white band. */}
+      <Band
+        ground="paper"
+        size={user ? "sm" : "lg"}
+        className={cn(user && "bg-story-cream lg:bg-story-paper")}
+      >
+        {/* Signposting for a first-time reader; 148px of it for a member who
+            opened the feed to read the feed. The compact page head above has
+            already said what this is. */}
+        {!user && (
+          <SectionHead
+            kicker="The stream"
+            title="Every carton, in the order it was opened"
+            lede="No filters, no curation — this is what the community is actually drinking, right now."
+            size="md"
+          />
+        )}
 
-        <div className="mt-8">
+        <div className={user ? "" : "mt-8"}>
           <FeedContent
             items={feedItems}
             isLoading={isLoading}

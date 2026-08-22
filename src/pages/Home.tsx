@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   ArrowRight,
   Band,
@@ -80,6 +81,7 @@ const PILLARS = [
 const Home = () => {
   const cta = useRateCta();
   const { data, isLoading } = useStoryHome();
+  const { user } = useAuth();
 
   const stats = [
     { value: data ? formatCount(data.totalRatings) : "—", label: "Honest ratings" },
@@ -88,6 +90,23 @@ const Home = () => {
   ];
 
   const leaderboard = data?.leaderboard ?? [];
+
+  /**
+   * Signed in, "home" is the feed.
+   *
+   * This page is the pitch — what the project is, why the scores mean
+   * anything. Serving it to someone who already joined asks them to be sold a
+   * second time, and it made the header wordmark the one link on the site that
+   * took a member somewhere less useful than where they already were.
+   *
+   * A member cold-loading `/` does see the pitch for the frame or two before
+   * getSession() resolves, because AuthContext starts with no session so this
+   * page never flashes a signed-in shell at a stranger. Blocking the site's
+   * most important public page on an auth round-trip to avoid that would be a
+   * bad trade. Arriving by the wordmark — the common path — costs nothing,
+   * since the session is long resolved by then.
+   */
+  if (user) return <Navigate to="/feed" replace />;
 
   return (
     <StoryLayout transparentHeader mobileCtaHint="90 seconds. No photo needed.">
@@ -205,7 +224,6 @@ const Home = () => {
 
                   <BrandMark
                     brand={entry?.brand}
-                    product={entry?.product}
                     className="hidden h-14 w-14 text-[0.8125rem] sm:flex"
                   />
 
@@ -379,7 +397,7 @@ const TopVerdictBar = ({
       to={entry ? `/product/${entry.productId}` : "/results"}
       className={`story-hairline flex items-center gap-4 rounded-[1.25rem] bg-white px-4 py-3.5 no-underline ${className ?? ""}`}
     >
-      <BrandMark brand={entry?.brand} product={entry?.product} className="h-11 w-11 text-[0.7rem]" radius="rounded-xl" />
+      <BrandMark brand={entry?.brand} className="h-11 w-11 text-[0.7rem]" radius="rounded-xl" />
       <span className="min-w-0 flex-1">
         <span className="story-kicker block text-story-muted-2">Top of the board</span>
         <span className="mt-1 block truncate text-[0.9375rem] font-bold text-story-ink">
@@ -416,7 +434,7 @@ const TopVerdictCard = ({
       <p className="story-kicker text-story-muted-2">Top of the board</p>
 
       <div className="relative mt-6 flex items-start gap-5">
-        <BrandMark brand={entry?.brand} product={entry?.product} className="h-20 w-20 text-[1rem]" radius="rounded-3xl" />
+        <BrandMark brand={entry?.brand} className="h-20 w-20 text-[1rem]" radius="rounded-3xl" />
         <div className="min-w-0">
           <p className="text-sm font-medium text-story-muted">{loading ? "Loading" : entry?.brand}</p>
           <p className="story-serif mt-0.5 text-[1.6rem] font-bold leading-tight text-story-ink">

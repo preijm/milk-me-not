@@ -2,6 +2,7 @@ import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
 import { StoryButton } from "@/components/story";
+import { UserMark } from "@/components/story/UserMark";
 
 interface Comment {
   id: string;
@@ -31,12 +32,7 @@ export const FeedComments = ({ comments, userEmail, isCommentPending, onAddComme
     <div className="flex flex-col gap-3 border-t border-story-ink/[0.08] pt-4">
       {comments.map((comment) => (
         <div key={comment.id} className="flex items-start gap-2.5">
-          <span
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-story-ink/[0.06] text-xs font-bold text-story-ink"
-            aria-hidden
-          >
-            {comment.username?.charAt(0).toUpperCase() || "U"}
-          </span>
+          <UserMark name={comment.username} className="h-8 w-8 text-xs" />
           <div className="min-w-0 flex-1 rounded-xl bg-story-cream-2 px-3 py-2">
             <div className="flex items-center gap-2">
               <span className="truncate text-[0.8125rem] font-bold text-story-ink" translate="no">

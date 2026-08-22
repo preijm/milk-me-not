@@ -4,6 +4,7 @@ import { Loader } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { usePublicProfile, type PublicRating } from "@/hooks/usePublicProfile";
 import { humanizeLabel } from "@/lib/labels";
+import { UserMark } from "@/components/story/UserMark";
 import {
   ArrowRight,
   Band,
@@ -40,7 +41,6 @@ const RatingRow = ({ rating }: { rating: PublicRating }) => {
       >
         <BrandMark
           brand={rating.brand}
-          product={rating.product}
           className="mt-0.5 h-11 w-11 text-[0.7rem]"
           radius="rounded-xl"
         />
@@ -123,7 +123,6 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
     );
   }
 
-  const initials = data.username.slice(0, 2).toUpperCase();
   const avgTier = getTier(data.average ?? undefined);
   const shown = data.ratings.slice(0, visible);
   const remaining = data.total - shown.length;
@@ -161,9 +160,12 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
               height={112}
             />
           ) : (
-            <span className="story-serif flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-2xl bg-story-green text-[1.9rem] font-extrabold text-white sm:h-28 sm:w-28 sm:text-[2.6rem]">
-              {initials}
-            </span>
+            <UserMark
+              name={data.username}
+              letters={2}
+              radius="rounded-2xl"
+              className="story-serif h-20 w-20 text-[1.9rem] sm:h-28 sm:w-28 sm:text-[2.6rem]"
+            />
           )}
 
           <div className="min-w-0">

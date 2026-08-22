@@ -6,10 +6,30 @@ import ResetPasswordDialog from "@/components/auth/ResetPasswordDialog";
 import EmailConfirmationPending from "@/components/auth/EmailConfirmationPending";
 import PasswordResetForm from "@/components/auth/PasswordResetForm";
 import { useAuthFlow } from "@/hooks/useAuthFlow";
-import { useStoryHome } from "@/components/home/useStoryHome";
+import { useStoryHome, type HomeStory } from "@/components/home/useStoryHome";
 import { peekPendingRating } from "@/lib/pendingRating";
 import logoImg from "@/assets/logo-96.png";
 import { Display, DropList, Kicker, MilkDrop, StoryHeader } from "@/components/story";
+
+/**
+ * The three headline figures. One implementation, rendered in two slots: above
+ * the form on a phone, and under the sell points in the left column on desktop.
+ * Display is left to the caller so the two placements hide independently.
+ */
+const Stats = ({ data, className = "" }: { data: HomeStory; className?: string }) => (
+  <dl className={"max-w-md grid-cols-3 gap-6 " + className}>
+    {[
+      { value: data.totalRatings, label: "Ratings" },
+      { value: data.products, label: "Products" },
+      { value: data.brands, label: "Brands" },
+    ].map((s) => (
+      <div key={s.label}>
+        <dd className="story-num text-[clamp(1.6rem,5vw,2.25rem)] leading-none text-story-ink">{s.value}</dd>
+        <dt className="story-kicker mt-1.5 text-story-muted-2">{s.label}</dt>
+      </div>
+    ))}
+  </dl>
+);
 
 /**
  * Every call to action on the site lands here, so this page is the last beat of
@@ -20,6 +40,11 @@ import { Display, DropList, Kicker, MilkDrop, StoryHeader } from "@/components/s
  * "start rating" band and the sticky mobile bar carries the same ask, and
  * pointing a visitor at the rating flow while they are filling in the form to
  * reach it is noise.
+ *
+ * It carries no footer of its own either. The hand-rolled one here listed Home,
+ * Discover, About and Contact — three of which the header already offers, and
+ * all four of which are exits from the single form this page exists to get
+ * completed. ResetPassword, the sibling with this same layout, has none.
  */
 const Auth = () => {
   const location = useLocation();
@@ -93,10 +118,13 @@ const Auth = () => {
             On desktop the pitch and proof stack in the left column beside it. */}
         <div className="mx-auto grid w-full max-w-[76rem] items-start gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 lg:px-10 lg:py-16">
           {/* ── The pitch ─────────────────────────────────────────────── */}
-          <div className="relative lg:col-start-1 lg:row-start-1">
-            <div aria-hidden className="pointer-events-none absolute -left-28 -top-20 hidden h-72 w-72 rounded-full bg-story-green-wash lg:block" />
-            <div aria-hidden className="pointer-events-none absolute -left-16 -top-14 hidden text-story-green lg:block">
-              <MilkDrop size={210} variant="solid" />
+          <div className="relative order-1 lg:col-start-1 lg:row-start-1">
+            {/* Pale, and clear of the headline. This drop used to be
+                `text-story-green` — the same token as the accent line below it —
+                so "your opinion." was green on green and effectively invisible. */}
+            <div aria-hidden className="pointer-events-none absolute -left-28 -top-52 hidden h-72 w-72 rounded-full bg-story-green-wash lg:block" />
+            <div aria-hidden className="pointer-events-none absolute -left-24 -top-56 hidden text-story-green-light lg:block">
+              <MilkDrop size={220} variant="solid" />
             </div>
 
             <div className="relative">
@@ -106,18 +134,6 @@ const Auth = () => {
                 <br />
                 <span className="text-story-green">{heading.accent}</span>
               </Display>
-
-              {/* One number above the form on a phone, so nobody is asked to
-                  commit before seeing any evidence. The rest follows below. */}
-              <div className="mt-5 rounded-[1.25rem] bg-story-ink px-4 py-3.5 lg:hidden">
-                <p className="story-kicker text-white/45">Why bother</p>
-                <p className="mt-1.5 text-[0.9375rem] font-semibold leading-snug text-white">
-                  {data
-                    ? `${data.totalRatings} honest ratings across ${data.products} products.`
-                    : "Hundreds of honest ratings."}{" "}
-                  <span className="text-story-green-light">No brand has ever paid for a point.</span>
-                </p>
-              </div>
 
               {pending?.label && (
                 <p className="mt-5 inline-flex items-center gap-2.5 rounded-full bg-story-green-wash px-4 py-2 text-[0.875rem] font-bold text-story-green-dark">
@@ -129,8 +145,22 @@ const Auth = () => {
             </div>
           </div>
 
+          {/* ── The proof, ahead of the ask on a phone ────────────────── */}
+          {/* These numbers used to appear twice on a phone: paraphrased into a
+              sentence inside a black slab above the form, then again as figures
+              below it. The slab was also the only dark panel on a light page —
+              full-strength `bg-story-ink` is a chip and avatar colour
+              everywhere else. Same figures, same component, just placed where a
+              phone needs them, so the evidence still lands before the ask. */}
+          {data && (
+            <div className="order-2 border-t border-story-ink/[0.08] pt-6 lg:hidden">
+              <Stats data={data} className="grid" />
+              <p className="mt-3 text-[0.8125rem] text-story-muted">No brand has ever paid for a point.</p>
+            </div>
+          )}
+
           {/* ── The form ──────────────────────────────────────────────── */}
-          <div className="story-hairline story-lift rounded-[1.5rem] bg-white p-6 sm:p-8 lg:col-start-2 lg:row-start-1 lg:row-span-2">
+          <div className="story-hairline story-lift order-3 rounded-[1.5rem] bg-white p-6 sm:p-8 lg:col-start-2 lg:row-start-1 lg:row-span-2">
             {shouldShowEmailPending ? (
               <EmailConfirmationPending
                 email={pendingEmail}
@@ -161,34 +191,12 @@ const Auth = () => {
             </p>
           </div>
           {/* ── The proof ─────────────────────────────────────────────── */}
-          <div className="lg:col-start-1 lg:row-start-2">
+          <div className="order-4 lg:col-start-1 lg:row-start-2">
             <DropList className="max-w-md" items={sellPoints} />
-            {data && (
-              <dl className="mt-8 grid max-w-md grid-cols-3 gap-6 border-t border-story-ink/[0.08] pt-7">
-                {[
-                  { value: data.totalRatings, label: "Ratings" },
-                  { value: data.products, label: "Products" },
-                  { value: data.brands, label: "Brands" },
-                ].map((s) => (
-                  <div key={s.label}>
-                    <dd className="story-num text-[clamp(1.6rem,5vw,2.25rem)] leading-none text-story-ink">{s.value}</dd>
-                    <dt className="story-kicker mt-1.5 text-story-muted-2">{s.label}</dt>
-                  </div>
-                ))}
-              </dl>
-            )}
+            {data && <Stats data={data} className="mt-8 hidden border-t border-story-ink/[0.08] pt-7 lg:grid" />}
           </div>
         </div>
       </main>
-
-      <footer className="border-t border-story-ink/[0.07] py-6">
-        <nav className="mx-auto flex max-w-[76rem] flex-wrap justify-center gap-x-7 gap-y-2 px-5 text-[0.875rem] font-medium text-story-muted">
-          <Link to="/" className="no-underline hover:text-story-ink">Home</Link>
-          <Link to="/results" className="no-underline hover:text-story-ink">Discover</Link>
-          <Link to="/about" className="no-underline hover:text-story-ink">About</Link>
-          <Link to="/contact" className="no-underline hover:text-story-ink">Contact</Link>
-        </nav>
-      </footer>
 
       <ResetPasswordDialog open={showResetDialog} onOpenChange={setShowResetDialog} />
     </div>

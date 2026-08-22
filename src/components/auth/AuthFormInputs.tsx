@@ -15,12 +15,16 @@ interface AuthFormInputsProps {
   usernameError?: string;
 }
 
-const fieldClass = (hasError?: string) =>
-  cn(
-    "h-12 rounded-xl border-[1.5px] bg-white px-4 font-sans text-[0.9375rem] text-story-ink",
-    "placeholder:text-story-muted-2 focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-0",
-    hasError ? "border-error" : "border-story-ink/12",
-  );
+/**
+ * Only the error state. The rest of what used to be here is now the default
+ * for every Input in the app.
+ *
+ * Worth knowing why the old border here looked right anyway: it never applied.
+ * Tailwind's colour-opacity shorthand only takes multiples of five, so the /12
+ * suffix this used generated no CSS at all and what you saw was preflight's
+ * grey. Anything off that scale has to use the bracket form.
+ */
+const fieldClass = (hasError?: string) => cn(hasError && "border-error");
 
 const Field = ({
   label,

@@ -6,7 +6,7 @@ import logoImg from "@/assets/logo-96.png";
 import { StoryButton, ArrowRight } from "./primitives";
 import { useRateCta } from "./useRateCta";
 import { StoryAccountMenu } from "./StoryAccountMenu";
-import { MEMBER_LINKS } from "./memberNav";
+import { MEMBER_DRAWER_LINKS, SECONDARY_LINKS } from "./memberNav";
 
 const PUBLIC_LINKS = [
   { to: "/results", label: "Discover" },
@@ -15,8 +15,8 @@ const PUBLIC_LINKS = [
   { to: "/faq", label: "How it works" },
 ];
 
-const Wordmark = ({ tone }: { tone: "ink" | "light" }) => (
-  <Link to="/" className="flex items-center gap-2.5 no-underline" aria-label="Milk Me Not — home">
+const Wordmark = ({ tone, to = "/" }: { tone: "ink" | "light"; to?: string }) => (
+  <Link to={to} className="flex items-center gap-2.5 no-underline" aria-label="Milk Me Not — home">
     <img src={logoImg} alt="" className="h-9 w-9 rounded-[0.55rem] object-contain" width={36} height={36} />
     <span
       translate="no"
@@ -75,6 +75,7 @@ export const StoryHeader = ({
   const { user, signOut } = useAuth();
   const cta = useRateCta();
   const onAuthPage = location.pathname === "/auth";
+  const home = user ? "/feed" : "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -105,7 +106,10 @@ export const StoryHeader = ({
         )}
       >
         <div className="mx-auto flex h-16 w-full max-w-[76rem] items-center gap-4 px-5 sm:px-8 lg:h-[4.5rem] lg:px-10">
-          <Wordmark tone="ink" />
+          {/* For a member, home is the feed — `/` redirects there anyway, so
+              linking straight at it saves a render hop and keeps the Feed nav
+              item correctly marked as current. */}
+          <Wordmark tone="ink" to={home} />
 
           <nav className="ml-6 hidden items-center gap-1 lg:flex" aria-label="Main">
             {PUBLIC_LINKS.map((link) => {
@@ -182,7 +186,7 @@ export const StoryHeader = ({
           )}
         >
           <div className="flex h-16 items-center justify-between px-5">
-            <Wordmark tone="ink" />
+            <Wordmark tone="ink" to={home} />
             <button
               type="button"
               tabIndex={open ? 0 : -1}
@@ -194,8 +198,12 @@ export const StoryHeader = ({
             </button>
           </div>
 
-          <nav className="flex flex-col px-5 pt-4" aria-label="Mobile">
-            {PUBLIC_LINKS.map((link) => (
+          {/* Signed out, this drawer is the whole navigation. Signed in, the
+              bottom bar is — so the drawer drops Discover, My ratings and
+              Notifications, which are Board, You and Alerts one thumb-width
+              below it, and carries what the bar has no room for instead. */}
+          <nav className="flex flex-col overflow-y-auto px-5 pt-4" aria-label="Mobile">
+            {(user ? MEMBER_DRAWER_LINKS : PUBLIC_LINKS).map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -206,22 +214,28 @@ export const StoryHeader = ({
                 <ArrowRight className="text-story-muted-2" />
               </Link>
             ))}
-            {user &&
-              MEMBER_LINKS.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  tabIndex={open ? 0 : -1}
-                  className="flex items-center justify-between border-t border-story-ink/[0.08] py-3.5 font-sans text-[0.9375rem] font-bold text-story-muted no-underline"
-                >
-                  {link.label}
-                  <ArrowRight className="text-story-muted-2" />
-                </Link>
-              ))}
+            {user && (
+              <>
+                <p className="story-kicker mt-7 pb-1 text-story-muted-2">More</p>
+                {SECONDARY_LINKS.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    tabIndex={open ? 0 : -1}
+                    className="flex items-center justify-between border-t border-story-ink/[0.08] py-3.5 font-sans text-[0.9375rem] font-bold text-story-muted no-underline"
+                  >
+                    {link.label}
+                    <ArrowRight className="text-story-muted-2" />
+                  </Link>
+                ))}
+              </>
+            )}
           </nav>
 
-          <div className="mt-auto flex flex-col gap-2.5 p-5 pb-8">
-            {!hideCta && (
+          <div className="mt-auto flex shrink-0 flex-col gap-2.5 p-5 pb-8">
+            {/* No rating button for members: RATE is the centre of the bottom
+                bar on every page, and a second one here is the same ask twice. */}
+            {!hideCta && !user && (
               <StoryButton tabIndex={open ? 0 : -1} onClick={cta.go} className="w-full">
                 {cta.label}
                 <ArrowRight />
@@ -231,7 +245,7 @@ export const StoryHeader = ({
               <Link
                 to="/auth"
                 tabIndex={open ? 0 : -1}
-                className="rounded-full border-[1.5px] border-story-ink/12 py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-ink no-underline"
+                className="rounded-full border-[1.5px] border-story-ink/[0.12] py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-ink no-underline"
               >
                 Log in
               </Link>
@@ -244,7 +258,7 @@ export const StoryHeader = ({
                   await signOut();
                   navigate("/");
                 }}
-                className="rounded-full border-[1.5px] border-story-ink/12 py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-muted"
+                className="rounded-full border-[1.5px] border-story-ink/[0.12] py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-muted"
               >
                 Sign out
               </button>

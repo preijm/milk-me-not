@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Heart, MessageCircle, BarChart3, Edit3 } from "lucide-react";
+import { Heart, MessageCircle, Edit3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Like {
@@ -19,7 +19,6 @@ interface FeedEngagementProps {
   showComments: boolean;
   onLike: () => void;
   onToggleComments: () => void;
-  onViewAllResults: () => void;
   onEdit: () => void;
 }
 
@@ -32,7 +31,6 @@ export const FeedEngagement = ({
   showComments: _showComments,
   onLike,
   onToggleComments,
-  onViewAllResults,
   onEdit
 }: FeedEngagementProps) => {
   const [showLikesPopover, setShowLikesPopover] = useState(false);
@@ -126,16 +124,11 @@ export const FeedEngagement = ({
           <span className="hidden text-sm lg:inline">Comments</span>
         </Button>
 
-        {/* View All button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onViewAllResults}
-          className="flex items-center gap-2 rounded-full px-3 py-1.5 font-bold text-story-muted transition-all duration-200 hover:bg-story-green/10 hover:text-story-ink"
-        >
-          <BarChart3 className="h-4 w-4" />
-          <span className="hidden text-sm lg:inline">View All</span>
-        </Button>
+        {/* A bar-chart icon labelled "View All" used to sit here and navigate
+            to the product page. Nothing about it said so, and the product name
+            above — which is what someone would reach for anyway — now carries
+            that link instead. This row is left with the two things that act on
+            the post rather than leave it. */}
       </div>
 
       {isOwnPost && (

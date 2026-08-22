@@ -174,7 +174,7 @@ export const StoryDialogActions = ({
 
 /** The one input look, so a field reads the same in every dialog and form. */
 export const storyInputClass =
-  "h-12 w-full rounded-xl border-[1.5px] border-story-ink/12 bg-white px-4 font-sans text-[0.9375rem] " +
+  "h-12 w-full rounded-xl border-[1.5px] border-story-ink/[0.12] bg-white px-4 font-sans text-[0.9375rem] " +
   "text-story-ink placeholder:text-story-muted-2 focus-visible:outline-none focus-visible:ring-2 " +
   "focus-visible:ring-story-green focus-visible:ring-offset-0 disabled:opacity-60";
 

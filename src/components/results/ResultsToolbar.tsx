@@ -49,7 +49,7 @@ const SearchField = ({
       onChange={(e) => setSearchTerm(sanitizeInput(e.target.value).slice(0, 100))}
       placeholder="Search brand or product…"
       maxLength={100}
-      className="h-11 w-full rounded-full border-[1.5px] border-story-ink/12 bg-white pl-11 pr-4 text-[0.9375rem] font-medium text-story-ink placeholder:text-story-muted-2 focus:border-story-green focus:outline-none"
+      className="h-11 w-full rounded-full border-[1.5px] border-story-ink/[0.12] bg-white pl-11 pr-4 text-[0.9375rem] font-medium text-story-ink placeholder:text-story-muted-2 focus:border-story-green focus:outline-none"
     />
   </div>
 );
@@ -84,7 +84,7 @@ export const ResultsToolbarDesktop = ({
               type="button"
               hidden={!showSort}
               className={cn(
-                "h-11 flex-shrink-0 items-center gap-2 rounded-full border-[1.5px] border-story-ink/12 bg-white px-4 text-[0.8125rem] font-bold text-story-ink-2 transition-colors hover:bg-story-cream-2",
+                "h-11 flex-shrink-0 items-center gap-2 rounded-full border-[1.5px] border-story-ink/[0.12] bg-white px-4 text-[0.8125rem] font-bold text-story-ink-2 transition-colors hover:bg-story-cream-2",
                 showSort ? "flex" : "hidden",
               )}
             >
@@ -117,7 +117,7 @@ export const ResultsToolbarDesktop = ({
                 "flex h-11 flex-shrink-0 items-center gap-2 rounded-full border-[1.5px] px-4 text-[0.8125rem] font-bold transition-colors",
                 filterCount > 0
                   ? "border-story-green bg-story-green text-white"
-                  : "border-story-ink/12 bg-white text-story-ink-2 hover:bg-story-cream-2",
+                  : "border-story-ink/[0.12] bg-white text-story-ink-2 hover:bg-story-cream-2",
               )}
             >
               <SlidersHorizontal className="h-4 w-4" aria-hidden />
@@ -173,7 +173,7 @@ export const ResultsToolbarMobile = ({
               type="button"
               hidden={!showSort}
               className={cn(
-                "h-10 flex-shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-story-ink/12 bg-white px-3.5 text-[0.8125rem] font-bold text-story-ink-2",
+                "h-10 flex-shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-story-ink/[0.12] bg-white px-3.5 text-[0.8125rem] font-bold text-story-ink-2",
                 showSort ? "flex" : "hidden",
               )}
             >
@@ -213,7 +213,7 @@ export const ResultsToolbarMobile = ({
               type="button"
               className={cn(
                 "flex h-10 flex-shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3.5 text-[0.8125rem] font-bold",
-                filterCount > 0 ? "border-story-green bg-story-green text-white" : "border-story-ink/12 bg-white text-story-ink-2",
+                filterCount > 0 ? "border-story-green bg-story-green text-white" : "border-story-ink/[0.12] bg-white text-story-ink-2",
               )}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />

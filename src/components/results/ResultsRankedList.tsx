@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, BrandMark, ScoreMark } from "@/components/story";
-import { humanizeLabels } from "@/lib/labels";
+import { ArrowRight, ScoreMark } from "@/components/story";
+import { ProductIdentity } from "@/components/story/ProductIdentity";
 import { cn } from "@/lib/utils";
 import type { AggregatedResult, SortConfig } from "@/hooks/useAggregatedResults";
 
@@ -41,7 +41,6 @@ export const ResultsRankedList = ({ results, sortConfig, onSort }: ResultsRanked
 
     <ol className="flex flex-col">
       {results.map((r, i) => {
-        const tags = [...(r.is_barista ? ["Barista"] : []), ...humanizeLabels(r.property_names)].slice(0, 3);
         return (
           <li key={r.product_id} className="border-b border-story-ink/[0.08]">
             {/* A real link, so a row can be opened in a tab, copied, shared
@@ -52,29 +51,18 @@ export const ResultsRankedList = ({ results, sortConfig, onSort }: ResultsRanked
               className="group flex w-full items-center gap-4 py-5 text-left no-underline"
             >
               <span className="story-num w-10 flex-shrink-0 text-[1.35rem] leading-none text-story-muted-2">{i + 1}</span>
-                            <BrandMark
+              {/* This view used to drop flavours entirely — properties only —
+                  so three Oatly rows differing only by flavour were identical
+                  here. */}
+              <ProductIdentity
                 brand={r.brand_name}
                 product={r.product_name}
-                hint={`${(r.property_names ?? []).join(" ")} ${(r.flavor_names ?? []).join(" ")}`}
-                className="h-14 w-14 text-[0.8125rem]"
+                properties={r.property_names}
+                flavors={r.flavor_names}
+                isBarista={r.is_barista}
+                size="lg"
+                className="flex-1"
               />
-
-              <span className="min-w-0 flex-1">
-                <span className="block truncate font-sans text-base">
-                  <span className="font-medium text-story-muted">{r.brand_name}</span>
-                  <span className="mx-1.5 text-story-muted-2">·</span>
-                  <span className="font-bold text-story-ink group-hover:underline">{r.product_name}</span>
-                </span>
-                {tags.length > 0 && (
-                  <span className="mt-1.5 flex flex-wrap gap-1.5">
-                    {tags.map((t) => (
-                      <span key={t} className="rounded-full bg-story-ink/[0.05] px-2 py-0.5 text-[0.6875rem] font-bold text-story-muted">
-                        {t}
-                      </span>
-                    ))}
-                  </span>
-                )}
-              </span>
 
               <span className="w-24 flex-shrink-0 text-right font-sans text-[0.9375rem] font-bold text-story-muted">
                 {r.count}

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { BarcodeScanner } from "@/components/milk-test/BarcodeScanner";
-import { BrandMark } from "./BrandMark";
+import { ProductIdentity } from "./ProductIdentity";
 import { StoryButton, ArrowRight } from "./primitives";
 import type { ScannedProduct } from "@/lib/openFoodFacts";
 import { createProductFromScan } from "@/lib/createScannedProduct";
@@ -141,16 +141,13 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
                     }}
                     className="story-hairline flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left transition-colors hover:bg-story-cream-2"
                   >
-                    <BrandMark brand={m.brand_name} product={m.product_name} className="h-10 w-10 shrink-0" radius="rounded-xl" />
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[0.9375rem] font-bold text-story-ink">
-                        {m.product_name}
-                      </span>
-                      <span className="block truncate text-[0.8125rem] text-story-muted">
-                        {m.brand_name}
-                        {m.is_barista ? " · Barista" : ""}
-                      </span>
-                    </span>
+                    <ProductIdentity
+                      brand={m.brand_name}
+                      product={m.product_name}
+                      isBarista={m.is_barista}
+                      size="sm"
+                      className="flex-1"
+                    />
                     <ArrowRight className="shrink-0 text-story-muted-2" />
                   </button>
                 </li>
@@ -174,21 +171,18 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
                   We read it as:
                 </DialogDescription>
                 <div className="story-hairline flex items-center gap-3 rounded-2xl bg-white p-3">
-                  <BrandMark
-                    brand={stage.scanned.brand}
-                    product={stage.scanned.name}
-                    className="h-11 w-11 shrink-0"
-                    radius="rounded-xl"
-                  />
-                  <span className="min-w-0">
-                    <span className="block truncate text-[0.9375rem] font-bold text-story-ink">
-                      {stage.scanned.name}
-                    </span>
-                    <span className="block truncate text-[0.8125rem] text-story-muted">
-                      {stage.scanned.brand}
-                      {stage.scanned.quantity ? ` · ${stage.scanned.quantity}` : ""}
-                      {stage.scanned.isBarista ? " · Barista" : ""}
-                    </span>
+                  <span className="min-w-0 flex-1">
+                    <ProductIdentity
+                      brand={stage.scanned.brand}
+                      product={stage.scanned.name}
+                      isBarista={stage.scanned.isBarista}
+                      size="sm"
+                    />
+                    {stage.scanned.quantity && (
+                      <span className="mt-1 block pl-[3.125rem] text-[0.75rem] text-story-muted-2">
+                        {stage.scanned.quantity}
+                      </span>
+                    )}
                   </span>
                 </div>
 

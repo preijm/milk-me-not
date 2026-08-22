@@ -28,7 +28,11 @@ export const useAuthOperations = () => {
   const { toast } = useToast();
   const { refreshAuth } = useAuth();
   
-  const fromPath = location.state?.from || '/results';
+  // Where a sign-in lands when nothing else claimed the visit. The feed is the
+  // community actually doing the thing; /results is a league table, which is a
+  // fine reference but a cold room to be dropped into. A pending rating or a
+  // protected route still wins through location.state.from.
+  const fromPath = location.state?.from || '/feed';
 
   const signIn = async (email: string, password: string) => {
     const sanitizedEmail = sanitizeInput(email).toLowerCase();

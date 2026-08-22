@@ -1,6 +1,37 @@
 import React, { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { Camera, Upload, Image, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+/**
+ * One tile, used up to four times below.
+ *
+ * This file previously repeated the same `Button variant="outline"` four
+ * times, each carrying `text-muted-foreground` from the pre-redesign palette
+ * against a dashed shadcn outline — the pair of grey boxes that sat under the
+ * tasting notes looking like they came from another application.
+ */
+const CaptureTile = React.forwardRef<
+  HTMLButtonElement,
+  { icon: React.ElementType; label: string; busy: boolean; disabled: boolean; onClick: () => void }
+>(({ icon: Icon, label, busy, disabled, onClick }, ref) => (
+  <button
+    ref={ref}
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    className={cn(
+      "flex min-h-[4.5rem] w-full flex-col items-center justify-center gap-1.5 rounded-xl",
+      "border-[1.5px] border-dashed border-story-ink/[0.18] bg-white/60 text-story-muted transition-colors",
+      "hover:border-story-green hover:bg-story-green-wash hover:text-story-green-dark",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green",
+      "disabled:pointer-events-none disabled:opacity-50",
+    )}
+  >
+    {busy ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden /> : <Icon className="h-5 w-5" aria-hidden />}
+    <span className="text-[0.8125rem] font-bold">{label}</span>
+  </button>
+));
+CaptureTile.displayName = "CaptureTile";
 
 interface CameraOptionsProps {
   onTakePhoto: () => Promise<void> | void;
@@ -43,75 +74,19 @@ export const CameraOptions: React.FC<CameraOptionsProps> = ({
 
   if (isNativeApp) {
     return (
-      <div className="flex flex-col gap-2 w-full">
-        <Button
-          ref={cameraButtonRef}
-          type="button"
-          variant="outline"
-          className="flex-1 flex flex-col items-center justify-center gap-2 border-dashed min-h-[60px]"
-          onClick={handleTakePhoto}
-          disabled={disabled}
-        >
-          {isCapturing === 'camera' ? (
-            <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
-          ) : (
-            <Camera className="h-6 w-6 text-muted-foreground" />
-          )}
-          <span className="text-sm text-muted-foreground">Take Photo</span>
-        </Button>
-        <Button
-          ref={galleryButtonRef}
-          type="button"
-          variant="outline"
-          className="flex-1 flex flex-col items-center justify-center gap-2 border-dashed min-h-[60px]"
-          onClick={handleChooseFromGallery}
-          disabled={disabled}
-        >
-          {isCapturing === 'gallery' ? (
-            <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
-          ) : (
-            <Image className="h-6 w-6 text-muted-foreground" />
-          )}
-          <span className="text-sm text-muted-foreground">Choose from Gallery</span>
-        </Button>
+      <div className="flex w-full flex-col gap-2">
+        <CaptureTile ref={cameraButtonRef} icon={Camera} label="Take photo" busy={isCapturing === 'camera'} disabled={disabled} onClick={handleTakePhoto} />
+        <CaptureTile ref={galleryButtonRef} icon={Image} label="Choose from gallery" busy={isCapturing === 'gallery'} disabled={disabled} onClick={handleChooseFromGallery} />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex w-full flex-col gap-2">
       {hasCameraSupport && (
-        <Button
-          ref={cameraButtonRef}
-          type="button"
-          variant="outline"
-          className="flex-1 flex flex-col items-center justify-center gap-2 border-dashed min-h-[60px]"
-          onClick={handleTakePhoto}
-          disabled={disabled}
-        >
-          {isCapturing === 'camera' ? (
-            <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
-          ) : (
-            <Camera className="h-6 w-6 text-muted-foreground" />
-          )}
-          <span className="text-sm text-muted-foreground">Take Photo</span>
-        </Button>
+        <CaptureTile ref={cameraButtonRef} icon={Camera} label="Take photo" busy={isCapturing === 'camera'} disabled={disabled} onClick={handleTakePhoto} />
       )}
-      <Button
-        ref={galleryButtonRef}
-        type="button"
-        variant="outline"
-        className="flex-1 flex flex-col items-center justify-center gap-2 border-dashed min-h-[60px]"
-        onClick={handleChooseFromGallery}
-        disabled={disabled}
-      >
-        {isCapturing === 'gallery' ? (
-          <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
-        ) : (
-          <Upload className="h-6 w-6 text-muted-foreground" />
-        )}
-        <span className="text-sm text-muted-foreground">Select Photo</span>
-      </Button>
+      <CaptureTile ref={galleryButtonRef} icon={Upload} label="Select photo" busy={isCapturing === 'gallery'} disabled={disabled} onClick={handleChooseFromGallery} />
     </div>
   );
 };

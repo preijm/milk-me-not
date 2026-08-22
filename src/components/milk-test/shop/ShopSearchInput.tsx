@@ -18,14 +18,16 @@ export const ShopSearchInput = ({
 }: ShopSearchInputProps) => {
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+      {/* z-10 because the input's own background is opaque and paints after
+          this in tree order — the magnifier was rendered but invisible. */}
+      <Search className="pointer-events-none absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-story-muted-2" />
       <Input
         placeholder="Search or add shop..."
         value={value}
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
-        className="text-left placeholder:text-left pr-10"
+        className="pl-11 pr-4"
         autoComplete="off"
       />
     </div>

@@ -10,7 +10,13 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <textarea
         className={cn(
-          "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          // Matches Input. These two sit side by side in the rating form, so a
+          // textarea left on the old system reads as a seam down the middle of
+          // the page: 16px radius beside 6px, white beside grey.
+          "flex min-h-[80px] w-full rounded-xl border-[1.5px] border-story-ink/[0.12] bg-white px-4 py-3",
+          "font-sans text-[0.9375rem] text-story-ink transition-colors placeholder:text-story-muted-2",
+          "focus-visible:border-story-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-0",
+          "disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         ref={ref}

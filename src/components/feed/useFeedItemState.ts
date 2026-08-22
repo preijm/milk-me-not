@@ -185,10 +185,6 @@ export const useFeedItemState = (item: MilkTestResult) => {
     commentMutation.mutate(content);
   };
 
-  const handleViewAllResults = () => {
-    navigate(`/product/${item.product_id}`);
-  };
-
   const handleEdit = () => {
     navigate('/add', { state: { editTest: item } });
   };
@@ -205,7 +201,6 @@ export const useFeedItemState = (item: MilkTestResult) => {
     commentMutation,
     handleLike,
     handleComment,
-    handleViewAllResults,
     handleEdit,
   };
 };

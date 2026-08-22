@@ -1,8 +1,8 @@
+import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import { getTier } from "@/components/story";
-import { humanizeLabels } from "@/lib/labels";
-import { inferPlantBase } from "@/lib/plantBase";
-import { cn } from "@/lib/utils";
+import { ScoreMark } from "@/components/story";
+import { UserMark } from "@/components/story/UserMark";
+import { ProductIdentity } from "@/components/story/ProductIdentity";
 import { MilkTestResult } from "@/types/milk-test";
 import { useFeedItemState } from "./useFeedItemState";
 import { FeedImage } from "./FeedImage";
@@ -32,86 +32,70 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
     commentMutation,
     handleLike,
     handleComment,
-    handleViewAllResults,
     handleEdit,
   } = useFeedItemState(item);
 
-  const tier = getTier(item.rating);
   const timeAgo = formatDistanceToNow(new Date(item.created_at), { addSuffix: true }).replace("about ", "");
-  const base = inferPlantBase(
-    `${item.brand_name ?? ""} ${item.product_name ?? ""} ${(item.property_names ?? []).join(" ")}`,
-  );
-  const tags = [...(item.is_barista ? ["Barista"] : []), ...humanizeLabels(item.property_names)].slice(0, 2);
 
   return (
     <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-2.5 rounded-2xl bg-white p-4">
-      {/* Score and product share one line — the two things a thumb scrolling fast needs first. */}
-      <div className="flex items-center gap-3">
-        <span className="story-num flex-shrink-0 text-[1.6rem] leading-none" style={{ color: tier.color }}>
-          {item.rating.toFixed(1)}
-        </span>
-        <div className="min-w-0 flex-1">
-          <p className="story-serif truncate text-[0.9375rem] font-bold leading-tight text-story-ink" translate="no">
-            {item.brand_name ?? "Unknown brand"} - {item.product_name ?? "Unknown product"}
-          </p>
-          <p className="mt-0.5 text-[0.625rem] font-bold uppercase tracking-[0.08em]" style={{ color: tier.color }}>
-            {tier.name}
-          </p>
+      {/* Who, when and how they scored it, in one place.
+          These three were spread across the card: the time sat top-right, the
+          name four rows below it at the foot, and the tier word hung under the
+          product name in the identity column rather than beside the score it
+          describes. */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <UserMark name={item.username} className="h-8 w-8 text-[0.75rem]" />
+          <span className="min-w-0">
+            <span className="block truncate text-[0.8125rem] font-bold text-story-ink" translate="no">
+              {item.username}
+            </span>
+            <span className="block text-[0.6875rem] font-medium text-story-muted-2">{timeAgo}</span>
+          </span>
         </div>
-        <span className="flex-shrink-0 text-[0.6875rem] font-medium text-story-muted-2">{timeAgo}</span>
+        <ScoreMark score={item.rating} size="sm" className="flex-shrink-0" />
       </div>
 
-      {tags.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span
-            className={cn(
-              "story-num flex h-5 flex-shrink-0 items-center rounded-md px-1.5 text-[0.5625rem] font-extrabold",
-              base.bg,
-              base.fg,
-            )}
-          >
-            {base.abbr}
-          </span>
-          {tags.map((label) => (
-            <span
-              key={label}
-              className="rounded-full bg-story-ink/[0.06] px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-[0.04em] text-story-muted"
-            >
-              {label}
-            </span>
-          ))}
+      {/* The mark comes back now that the score has moved off the left edge,
+          so a carton looks the same here as it does on the board. */}
+      <Link to={`/product/${item.product_id}`} className="no-underline">
+        <ProductIdentity
+          brand={item.brand_name}
+          product={item.product_name}
+          properties={item.property_names}
+          flavors={item.flavor_names}
+          isBarista={item.is_barista}
+          size="sm"
+          maxBadges={2}
+        />
+      </Link>
+
+      {/* This row cost 112px to show 18px of note. The photo set the height
+          and the note sat beside it, so a one-line tasting note — which is
+          most of them — left about 94px of white space, and a card with
+          neither photo nor note still announced "No note left."
+          The photo is a thumbnail now, and each piece only appears if it
+          exists. */}
+      {(item.picture_path || item.notes) && (
+        <div className="flex items-start gap-3">
+          {item.picture_path && (
+            <div className="w-20 flex-shrink-0">
+              <FeedImage
+                compact
+                picturePath={item.picture_path}
+                brandName={item.brand_name ?? "Unknown brand"}
+                productName={item.product_name ?? "Unknown product"}
+              />
+            </div>
+          )}
+          {item.notes && (
+            <p className="story-serif line-clamp-3 flex-1 self-center text-[0.8125rem] italic leading-snug text-story-ink-2">
+              &ldquo;{item.notes}&rdquo;
+            </p>
+          )}
         </div>
       )}
-
-      <div className="flex items-start gap-3">
-        <div className="w-24 flex-shrink-0">
-          <FeedImage
-            compact
-            picturePath={item.picture_path}
-            brandName={item.brand_name ?? "Unknown brand"}
-            productName={item.product_name ?? "Unknown product"}
-          />
-        </div>
-        {item.notes ? (
-          <p className="story-serif line-clamp-4 flex-1 text-[0.8125rem] italic leading-snug text-story-ink-2">
-            &ldquo;{item.notes}&rdquo;
-          </p>
-        ) : (
-          <p className="flex-1 text-[0.8125rem] italic leading-snug text-story-muted-2">No note left.</p>
-        )}
-      </div>
-
-      <div className="flex items-center gap-2 pt-0.5">
-        <span
-          className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-story-ink text-[0.625rem] font-bold text-story-cream"
-          aria-hidden
-        >
-          {item.username?.charAt(0).toUpperCase() || "U"}
-        </span>
-        <span className="truncate text-[0.75rem] font-bold text-story-muted" translate="no">
-          {item.username}
-        </span>
-      </div>
 
       <FeedEngagement
         likes={likes}
@@ -122,7 +106,6 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
         showComments={showComments}
         onLike={handleLike}
         onToggleComments={() => setShowComments(!showComments)}
-        onViewAllResults={handleViewAllResults}
         onEdit={handleEdit}
       />
 

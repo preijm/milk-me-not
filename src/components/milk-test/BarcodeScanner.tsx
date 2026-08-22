@@ -76,22 +76,17 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const stopRef = useRef<(() => void) | null>(null);
   const [phase, setPhase] = useState<Phase>({ step: "starting" });
-  const [resolution, setResolution] = useState<string | null>(null);
-  const [attempts, setAttempts] = useState(0);
   const trackRef = useRef<MediaStreamTrack | null>(null);
   const [torch, setTorch] = useState(false);
-  const [seen, setSeen] = useState<string | null>(null);
+  // Which reader is running still decides what the copy promises, since the
+  // JS fallback is visibly slower. Nothing else about the engine is shown.
   const [engine, setEngine] = useState<"native" | "zxing">("zxing");
-  const lastFrame = useRef<(() => string | null) | null>(null);
 
   useEffect(() => {
     if (!open || !videoEl) return;
     let cancelled = false;
     setPhase({ step: "starting" });
-    setResolution(null);
-    setAttempts(0);
     setTorch(false);
-    setSeen(null);
 
     if (!navigator.mediaDevices?.getUserMedia) {
       setPhase({ step: "unsupported" });
@@ -234,7 +229,6 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         window.setTimeout(() => {
           if (cancelled) return;
           if (videoEl.videoWidth === 0) setPhase({ step: "blank" });
-          else setResolution(`${videoEl.videoWidth}×${videoEl.videoHeight} · reads ${canvas.width}×${canvas.height}`);
         }, 1200);
 
         // A self-scheduling loop rather than setInterval: on a slow phone a
@@ -253,7 +247,6 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
 
           // Escalate only after the quick path has had a fair go.
           const struggling = performance.now() - startedAt > 3000;
-          setAttempts((n) => n + 1);
 
           if (native) {
             // Hand it the video directly: no canvas copy, no orientation
@@ -289,12 +282,6 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
             [false, true],
             [true, true],
           ];
-
-          // Keep a way to show the reader the exact frame this rejected.
-          lastFrame.current = () => {
-            const c = frame(videoEl, false, false);
-            return c ? c.toDataURL("image/jpeg", 0.8) : null;
-          };
 
           for (const [turned, wide] of attempts) {
             const c = frame(videoEl, turned, wide);
@@ -368,42 +355,15 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
             muted
             playsInline
           />
+          {/* No aiming rectangle. The reader scans the whole frame, so a box
+              promised a constraint that does not exist — and pointing a phone
+              at a carton is already the whole instruction. */}
           {phase.step === "scanning" && (
-            <>
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-8 top-1/2 h-24 -translate-y-1/2 rounded-xl border-2 border-white/80"
-              />
-              <span className="absolute bottom-1.5 left-2 rounded bg-story-ink/55 px-1.5 py-0.5 text-[0.625rem] font-medium text-white/90">
-                Tap to focus
-              </span>
-              {resolution && (
-                <span className="absolute bottom-1.5 right-2 rounded bg-story-ink/55 px-1.5 py-0.5 text-[0.625rem] font-medium text-white/90">
-                  {engine === "native" ? "fast" : "zxing"} · {resolution} · {attempts}
-                </span>
-              )}
-            </>
+            <span className="absolute bottom-1.5 left-2 rounded bg-story-ink/55 px-1.5 py-0.5 text-[0.625rem] font-medium text-white/90">
+              Tap to focus
+            </span>
           )}
         </div>
-
-        {phase.step === "scanning" && (
-          <button
-            type="button"
-            onClick={() => setSeen(lastFrame.current?.() ?? null)}
-            className="story-hairline mt-1 rounded-full bg-white px-3 py-1.5 text-[0.8125rem] font-bold text-story-ink"
-          >
-            Show what it sees
-          </button>
-        )}
-
-        {seen && (
-          <div className="mt-1">
-            <img src={seen} alt="The frame the scanner is reading" className="w-full rounded-xl" />
-            <p className="mt-1 text-[0.75rem] text-story-muted">
-              This is the frame being decoded. If the bars are soft or missing here, the camera is the problem, not the code.
-            </p>
-          </div>
-        )}
 
         {phase.step === "scanning" && (
           <button

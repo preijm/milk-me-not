@@ -53,14 +53,14 @@ export default function SecuritySettings() {
               <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                 New Password
               </label>
-              <Input type="password" placeholder="Enter new password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={6} showPasswordToggle className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green" />
+              <Input type="password" placeholder="Enter new password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={6} showPasswordToggle />
             </div>
             
             <div>
               <label className="mb-1.5 block text-[0.8125rem] font-bold text-story-ink-2">
                 Confirm New Password
               </label>
-              <Input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={6} showPasswordToggle className="story-hairline rounded-xl border-0 bg-story-cream text-story-ink placeholder:text-story-muted-2 focus-visible:ring-story-green" />
+              <Input type="password" placeholder="Confirm new password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={6} showPasswordToggle />
             </div>
             
             <StoryButton type="submit" disabled={isChangingPassword || !newPassword || !confirmPassword}>

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useNotifications } from "@/hooks/useNotifications";
+import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StoryButton, ArrowRight } from "@/components/story/primitives";
 import { DropGlyph } from "@/components/story/motifs";
-import { BrandMark } from "@/components/story/BrandMark";
+import { ProductIdentity } from "@/components/story/ProductIdentity";
 import { QuickRateSheet } from "@/components/story/QuickRateSheet";
 import { getTier } from "@/components/story/tiers";
 import type { MilkTestResult } from "@/types/milk-test";
@@ -55,6 +57,7 @@ export const ProfileContent = ({
   ratings = [],
 }: ProfileContentProps) => {
   const navigate = useNavigate();
+  const { unreadCount } = useNotifications();
   const [editing, setEditing] = useState<MilkTestResult | null>(null);
 
   return (
@@ -107,16 +110,40 @@ export const ProfileContent = ({
         </dl>
       </section>
 
+      {/* Notifications lost their own tab when the bar made room for the feed,
+          so this is now the way in. It leads the section when something is
+          waiting and drops to a quiet row when nothing is. */}
       <section>
         <h3 className="story-kicker mb-3 px-1 text-story-muted-2">Carry on</h3>
         <div className="grid gap-3 sm:grid-cols-2">
+          <button
+            onClick={() => navigate("/notifications")}
+            className={cn(
+              "group flex items-center justify-between rounded-2xl p-4 text-left transition-colors sm:col-span-2",
+              unreadCount > 0
+                ? "bg-story-ink text-story-cream hover:brightness-[1.15]"
+                : "story-hairline bg-white hover:bg-story-cream-2",
+            )}
+          >
+            <span>
+              <span className={cn("block text-[0.9375rem] font-bold", unreadCount === 0 && "text-story-ink")}>
+                {unreadCount > 0
+                  ? `${unreadCount} thing${unreadCount === 1 ? "" : "s"} you have not read`
+                  : "Replies and likes"}
+              </span>
+              <span className={cn("block text-[0.8125rem]", unreadCount > 0 ? "text-white/70" : "text-story-muted")}>
+                {unreadCount > 0 ? "Someone reacted to a rating you left" : "Nothing new right now"}
+              </span>
+            </span>
+            <ArrowRight className="shrink-0" />
+          </button>
           <button
             onClick={() => navigate("/results", { state: { myResultsOnly: true } })}
             className="story-hairline group flex items-center justify-between rounded-2xl bg-white p-4 text-left transition-colors hover:bg-story-cream-2"
           >
             <span>
               <span className="block text-[0.9375rem] font-bold text-story-ink">Everything you rated</span>
-              <span className="block text-[0.8125rem] text-story-muted">Your scores on the board</span>
+              <span className="block text-[0.8125rem] text-story-muted">Where your scores sit on the board</span>
             </span>
             <ArrowRight className="shrink-0 text-story-muted-2 transition-colors group-hover:text-story-green-dark" />
           </button>
@@ -157,29 +184,34 @@ export const ProfileContent = ({
                     onClick={() => setEditing(r)}
                     className="story-hairline flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left transition-colors hover:bg-story-cream-2"
                   >
-                    <BrandMark
-                      brand={r.brand_name}
-                      product={r.product_name}
-                      className="h-11 w-11 shrink-0"
-                      radius="rounded-xl"
-                    />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[0.9375rem] font-bold text-story-ink">
-                        {r.product_name || "Unknown product"}
-                      </span>
-                      <span className="block truncate text-[0.8125rem] text-story-muted">
-                        {r.brand_name || "Unknown brand"}
-                        {r.notes ? ` — ${r.notes}` : ""}
-                      </span>
-                      {/* The rating form has always asked where you bought it and
-                          nothing ever showed the answer back. It belongs here and
-                          only here: the private view already withholds shop_name
-                          from anonymous readers, so it is your record, not the
-                          product's. */}
-                      {r.shop_name && (
-                        <span className="mt-0.5 flex items-center gap-1 text-[0.75rem] text-story-muted-2">
-                          <PinGlyph />
-                          <span className="truncate">{r.shop_name}</span>
+                      <ProductIdentity
+                        brand={r.brand_name}
+                        product={r.product_name}
+                        properties={r.property_names}
+                        flavors={r.flavor_names}
+                        isBarista={r.is_barista}
+                        size="sm"
+                      />
+                      {/* Your note and where you bought it are context, not part
+                          of the product's name. The note used to be glued to the
+                          brand with an em dash, which read as though the carton
+                          were called "Oatly — Coconut shouldn't be a flavor".
+                          shop_name belongs here and only here: the public view
+                          withholds it, so it is your record, not the product's. */}
+                      {(r.notes || r.shop_name) && (
+                        <span className="mt-1.5 block space-y-0.5 pl-[3.125rem]">
+                          {r.notes && (
+                            <span className="block truncate text-[0.8125rem] italic text-story-muted">
+                              “{r.notes}”
+                            </span>
+                          )}
+                          {r.shop_name && (
+                            <span className="flex items-center gap-1 text-[0.75rem] text-story-muted-2">
+                              <PinGlyph />
+                              <span className="truncate">{r.shop_name}</span>
+                            </span>
+                          )}
                         </span>
                       )}
                     </span>
