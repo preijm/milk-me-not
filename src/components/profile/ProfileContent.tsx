@@ -143,7 +143,7 @@ export const ProfileContent = ({
           >
             <span>
               <span className="block text-[0.9375rem] font-bold text-story-ink">Everything you rated</span>
-              <span className="block text-[0.8125rem] text-story-muted">Where your scores sit in the rankings</span>
+              <span className="block text-[0.8125rem] text-story-muted">Where your scores sit on the board</span>
             </span>
             <ArrowRight className="shrink-0 text-story-muted-2 transition-colors group-hover:text-story-green-dark" />
           </button>

@@ -58,7 +58,7 @@ export const ResultsHero = ({ stats, isLoading }: ResultsHeroProps) => {
       {user && (
         <MemberPageHead
           kicker="The full catalogue"
-          title="Rankings"
+          title="Every plant milk"
           meta={isLoading ? "Loading the shelf…" : `${formatCount(stats.products)} products, ${formatCount(stats.ratings)} ratings`}
           className="lg:hidden"
         />

@@ -9,7 +9,7 @@ import { StoryAccountMenu } from "./StoryAccountMenu";
 import { MEMBER_DRAWER_LINKS, SECONDARY_LINKS } from "./memberNav";
 
 const PUBLIC_LINKS = [
-  { to: "/results", label: "Rankings" },
+  { to: "/results", label: "Discover" },
   { to: "/feed", label: "Feed" },
   { to: "/about", label: "About" },
   { to: "/faq", label: "How it works" },

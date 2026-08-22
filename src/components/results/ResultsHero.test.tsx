@@ -45,12 +45,13 @@ describe("ResultsHero", () => {
   it("gives a member a compact head instead", () => {
     auth.user = { id: "u1" };
     renderHero();
-    expect(screen.getByRole("heading", { name: "Rankings" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Every plant milk" })).toBeInTheDocument();
   });
 
   it("gives a visitor no compact head, since they have the hero", () => {
     renderHero();
-    expect(screen.queryByRole("heading", { name: "Rankings" })).not.toBeInTheDocument();
+    // The visitor gets the full hero, whose headline runs onto a second line.
+    expect(screen.queryByRole("heading", { name: "Every plant milk" })).not.toBeInTheDocument();
   });
 
   // The legend is the key to the word on every row below, so it is reference

@@ -57,14 +57,19 @@ const PersonIcon = () => (
  * had none. Notifications keep their route for email links, the unread dot
  * moves to You, and the profile page leads with them when anything is unread.
  *
- * "Rankings", not "Board". That destination answered to five different names —
+ * "Discover", not "Board". That destination answered to five different names —
  * Board here, Discover in the header, All ratings in the footer, The full
  * catalogue on the page, Results in the title — and "Board" was the only place
  * that word appeared at all.
+ *
+ * Not "Rankings" either, which was the first attempt: the page holds a view
+ * switcher whose tabs are Ranking, Charts and Map, so naming the whole
+ * destination after one of its three views invites the question of whether
+ * they are the same thing.
  */
 const TABS = [
   { to: "/feed", label: "Feed", icon: FeedIcon, match: (p: string) => p.startsWith("/feed") },
-  { to: "/results", label: "Rankings", icon: BoardIcon, match: (p: string) => p.startsWith("/results") },
+  { to: "/results", label: "Discover", icon: BoardIcon, match: (p: string) => p.startsWith("/results") },
   {
     to: "/profile",
     label: "You",
