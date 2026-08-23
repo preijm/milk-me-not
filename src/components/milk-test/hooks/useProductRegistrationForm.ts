@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useProductFlavors } from "./useProductFlavors";
 import { handleProductSubmit, resetFormState } from "./product-registration";
@@ -21,8 +21,23 @@ export const useProductRegistrationForm = ({
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const { toast } = useToast();
 
-  // Reset form when dialog opens or populate with existing data
-  useEffect(() => {
+  // Fill the form as the dialog opens — with the existing product in edit mode,
+  // or blank for a new one. Compared during render rather than in an effect, so
+  // the dialog never paints the previous product's values for a frame first.
+  const [seenDialog, setSeenDialog] = useState<{
+    open: boolean;
+    editProductId: typeof editProductId;
+    productDetails: typeof productDetails;
+  } | null>(null);
+
+  if (
+    !seenDialog ||
+    seenDialog.open !== open ||
+    seenDialog.editProductId !== editProductId ||
+    seenDialog.productDetails !== productDetails
+  ) {
+    setSeenDialog({ open, editProductId, productDetails });
+
     if (open) {
       if (editProductId && productDetails) {
         // Edit mode - populate form with existing data
@@ -51,7 +66,7 @@ export const useProductRegistrationForm = ({
         });
       }
     }
-  }, [open, editProductId, productDetails]);
+  }
 
   // Fetch product_flavors
   const flavorsResult = useProductFlavors();

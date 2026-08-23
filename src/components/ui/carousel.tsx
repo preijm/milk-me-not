@@ -107,6 +107,13 @@ const Carousel = React.forwardRef<
         return
       }
 
+      // Reads Embla's current position at the moment we subscribe, so the
+      // arrows are right before the first "select" fires. useSyncExternalStore
+      // would be the idiomatic form, but its snapshot has to be reference-stable
+      // and Embla only exposes this as two separate method calls — caching that
+      // by hand is more machinery than this one call is worth, in a file that
+      // otherwise tracks shadcn upstream.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       onSelect(api)
       api.on("reInit", onSelect)
       api.on("select", onSelect)

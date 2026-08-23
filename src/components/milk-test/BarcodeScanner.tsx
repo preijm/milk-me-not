@@ -85,6 +85,10 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
   useEffect(() => {
     if (!open || !videoEl) return;
     let cancelled = false;
+    // Opening the camera and starting a decoder is imperative work that can only
+    // begin after commit; `phase` reports how far that work has got. It is a
+    // description of an ongoing side effect, not something derivable from props.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPhase({ step: "starting" });
     setTorch(false);
 

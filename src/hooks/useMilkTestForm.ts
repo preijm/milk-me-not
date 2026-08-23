@@ -85,12 +85,29 @@ export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFor
     }
   }, [editTest]);
 
-  // Set default country when profile loads (only for new tests)
-  useEffect(() => {
+  // Fill in the member's default country once the profile arrives, for a new
+  // test with the field still empty. Compared during render rather than in an
+  // effect, so the select is never briefly blank before filling itself in.
+  //
+  // Country is in the comparison because it was in the old effect's dependency
+  // list: clearing the field re-applies the default, and that is preserved here.
+  const [seenDefaults, setSeenDefaults] = useState<{
+    profile: typeof profile;
+    country: string;
+    editTest: typeof editTest;
+  } | null>(null);
+
+  if (
+    !seenDefaults ||
+    seenDefaults.profile !== profile ||
+    seenDefaults.country !== country ||
+    seenDefaults.editTest !== editTest
+  ) {
+    setSeenDefaults({ profile, country, editTest });
     if (profile?.default_country_code && !country && !editTest) {
       setCountry(profile.default_country_code);
     }
-  }, [profile, country, editTest]);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
