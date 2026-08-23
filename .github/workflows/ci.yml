@@ -14,20 +14,55 @@ jobs:
   lint-and-typecheck:
     name: Lint & Type Check
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
         run: bun install
+
+      - name: Run ESLint
+        run: bun run lint
+
+      # `tsc --noEmit` checks nothing here: the root tsconfig has "files": []
+      # and only project references, which plain tsc does not follow. Build
+      # mode walks them, so this covers src and vite.config.ts alike.
+      - name: Run TypeScript type check
+        run: bunx tsc --build
+
+  lockfiles:
+    name: Refresh lockfiles
+    # Dependabot reads package-lock.json, which bun does not produce, so main
+    # has to carry one. Regenerating it is the easy half; where to do it is the
+    # part that went wrong.
+    #
+    # This used to be two steps inside Lint & Type Check, which pushed the
+    # result straight back to the branch under test. On a pull request that did
+    # three bad things at once. It rewrote the head *before* lint and tsc ran,
+    # so the checks reported against a commit that was no longer the tip and
+    # the real head went unverified — that is how #109 merged with no checks.
+    # It needed `[skip ci]` to avoid triggering itself, which guaranteed the
+    # new head had none. And on a Dependabot branch, a commit from
+    # github-actions[bot] makes Dependabot treat the PR as edited by someone
+    # else and abandon it: no more rebases, no recreation, forever. Twelve
+    # dependency PRs were frozen that way.
+    #
+    # So it runs on main and nowhere near a pull request. `[skip ci]` stays,
+    # but only as the loop guard it was meant to be — a lockfile-only commit on
+    # main has nothing for CI or Deploy to say about it.
+    if: github.event_name == 'push'
+    needs: lint-and-typecheck
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js for lockfile generation
         uses: actions/setup-node@v4
@@ -38,25 +73,17 @@ jobs:
         run: |
           rm -f package-lock.json
           npm install --package-lock-only --ignore-scripts
-      
-      - name: Commit updated lockfiles
+
+      - name: Commit the lockfile if it moved
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bun.lock bun.lockb package-lock.json
+          # bun.lockb is not in this repo; naming it here would fail the add.
+          git add package-lock.json
           if ! git diff --cached --quiet; then
             git commit -m "chore: update lockfiles [skip ci]"
             git push
           fi
-
-      - name: Run ESLint
-        run: bun run lint
-
-      # `tsc --noEmit` checks nothing here: the root tsconfig has "files": []
-      # and only project references, which plain tsc does not follow. Build
-      # mode walks them, so this covers src and vite.config.ts alike.
-      - name: Run TypeScript type check
-        run: bunx tsc --build
 
   test:
     name: Test
