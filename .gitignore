@@ -44,3 +44,6 @@ supabase/.temp/
 
 # Wrangler's local build and state cache
 .wrangler/
+
+# Local Supabase stack state, written by `supabase start`
+supabase/.branches/
