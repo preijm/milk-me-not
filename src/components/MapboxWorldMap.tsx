@@ -179,12 +179,47 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
       }), 'bottom-right');
 
 
-      // If load never fires (token/style/network), surface an error instead of staying blank
-      if (loadTimeoutRef.current) window.clearTimeout(loadTimeoutRef.current);
-      loadTimeoutRef.current = window.setTimeout(() => {
-        console.error('MapboxWorldMap: Map load timeout');
-        setMapError('Map took too long to load. Please retry or check your network connection.');
-      }, 12000);
+      // A blank map with no explanation is worse than an error, so give up
+      // eventually — but measure silence, not elapsed time.
+      //
+      // This was a flat 12s deadline from construction. On a slow connection a
+      // map that is downloading steadily would be declared broken and replaced
+      // with "Try again" mid-download, and retrying only restarts the same
+      // slow fetch. What actually distinguishes a stalled map from a slow one
+      // is whether anything is still arriving, and Mapbox says so: `dataloading`
+      // and `data` fire for the style, each source and every tile.
+      //
+      // So the clock resets on progress. A map trickling in over a minute on
+      // bad mobile data never trips it; one that fetches its style and then
+      // stops dead still reports in twelve seconds.
+      const STALL_MS = 12000;
+      // The watchdog covers the first load only. `data` keeps firing for the
+      // life of the map — every tile fetched while panning — so leaving it
+      // armed afterwards would put an error over a working map the moment the
+      // reader sat still for twelve seconds.
+      let loaded = false;
+      const armStallTimer = () => {
+        if (loaded) return;
+        if (loadTimeoutRef.current) window.clearTimeout(loadTimeoutRef.current);
+        loadTimeoutRef.current = window.setTimeout(() => {
+          console.error(`MapboxWorldMap: no map data for ${STALL_MS}ms — treating as stalled`);
+          setMapError('Map took too long to load. Please retry or check your network connection.');
+        }, STALL_MS);
+      };
+      const stopStallTimer = () => {
+        loaded = true;
+        if (loadTimeoutRef.current) {
+          window.clearTimeout(loadTimeoutRef.current);
+          loadTimeoutRef.current = null;
+        }
+        map.current?.off('dataloading', armStallTimer);
+        map.current?.off('data', armStallTimer);
+      };
+      armStallTimer();
+
+      // Any sign of life pushes the deadline back.
+      map.current.on('dataloading', armStallTimer);
+      map.current.on('data', armStallTimer);
 
       map.current.on('error', (e) => {
         console.error('Mapbox map error event:', e);
@@ -194,10 +229,7 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
       map.current.on('load', () => {
-        if (loadTimeoutRef.current) {
-          window.clearTimeout(loadTimeoutRef.current);
-          loadTimeoutRef.current = null;
-        }
+        stopStallTimer();
         setIsMapInitialized(true);
         setMapError(null);
         
