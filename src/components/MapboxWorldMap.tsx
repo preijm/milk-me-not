@@ -269,7 +269,12 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
           // against.
           map.current.setFog({
             color: 'hsl(145, 68%, 95%)',        // --story-green-wash, horizon haze
-            'high-color': 'hsl(151, 100%, 37%)', // --story-green, so the limb is an edge
+            // --story-green at full strength drew a rim brighter than the
+            // countries it framed — only Germany matched it, so the loudest
+            // thing on a map about ratings was its own edge. Same hue, pulled
+            // back: still definite against the cream, no longer competing
+            // with the data.
+            'high-color': 'hsl(151, 70%, 55%)',
             // 0.03 is where this started, when the atmosphere was
             // --story-green-light and the edge was mush. Raising the blend to
             // 0.09 and the colour together overshot twice: the haze filled a
