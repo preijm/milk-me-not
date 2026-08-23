@@ -46,19 +46,6 @@ export const setSecurityHeaders = () => {
 };
 
 /**
- * Validate origin for sensitive operations
- */
-export const validateOrigin = (): boolean => {
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://your-domain.com' // Replace with your actual domain
-  ];
-  
-  return allowedOrigins.includes(window.location.origin);
-};
-
-/**
  * Check if running in secure context
  */
 export const isSecureContext = (): boolean => {
