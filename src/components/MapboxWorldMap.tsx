@@ -91,6 +91,25 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
   };
 
 
+  /**
+   * A zoom at which the whole globe fits the card.
+   *
+   * In globe projection the sphere is `512 * 2^zoom / π` pixels across, so a
+   * fixed zoom shows a different amount of planet in every window — at zoom 2
+   * the globe is 652px wide and the card is 416px tall on a phone, which is
+   * why it was arriving cropped at the top and bottom.
+   *
+   * Solving that for the height we have, less a margin so the globe sits in
+   * the card rather than touching it, gives a planet on the page at any size.
+   */
+  const fitZoomForHeight = (heightPx: number) => {
+    const GLOBE_PX_AT_ZOOM_0 = 512 / Math.PI;
+    const target = heightPx * 0.86;
+    const zoom = Math.log2(target / GLOBE_PX_AT_ZOOM_0);
+    // Clamped so a freak container size cannot send the camera somewhere absurd.
+    return Math.min(2.2, Math.max(0.6, zoom));
+  };
+
   // Interpolate between colors for smooth heatmap gradient (grey to green)
   const interpolateColor = (value: number, min: number, max: number): string => {
     // Normalize value between 0 and 1 using logarithmic scale for better distribution
@@ -164,7 +183,7 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/light-v11',
-        zoom: 2,
+        zoom: fitZoomForHeight(mapContainer.current.clientHeight),
         center: [0, 30],
         projection: 'globe',
         attributionControl: false,
@@ -250,8 +269,8 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
           // against.
           map.current.setFog({
             color: 'hsl(145, 68%, 95%)',        // --story-green-wash, horizon haze
-            'high-color': 'hsl(144, 67%, 88%)', // --story-green-light, upper atmosphere
-            'horizon-blend': 0.03,
+            'high-color': 'hsl(151, 100%, 37%)', // --story-green, so the limb is an edge
+            'horizon-blend': 0.09,
             'space-color': 'hsl(135, 29%, 97%)', // --story-cream, same ground as the page
             'star-intensity': 0,
           });
