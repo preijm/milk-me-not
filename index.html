@@ -65,16 +65,56 @@
 
     <!-- Counterscale: cookieless analytics, same Worker as peterandco.nl, separate site-id.
          Gated on the live hostname so `bun dev`, preview deploys and the workers.dev URL
-         never write into the production dataset. -->
+         never write into the production dataset, and on an opt-out remembered per browser
+         so my own visits to check a change don't inflate the numbers. `?notrack=1` to stop
+         counting this browser, `?notrack=0` to start again. -->
     <script>
-      if (/(^|\.)milkmenot\.com$/.test(location.hostname) && !navigator.webdriver) {
+      (function () {
+        var KEY = 'pco-notrack', excluded = false, note = '';
+
+        // The switch lives in the tracking dashboard, which links here with the
+        // parameter set. The flag still has to be written on this origin --
+        // localStorage is origin-scoped, so nothing running on localhost can set
+        // it for milkmenot.com.
+        try {
+          var v = new URLSearchParams(location.search).get('notrack');
+          if (v === '1') { localStorage.setItem(KEY, '1'); note = 'This browser is no longer counted.'; }
+          if (v === '0') { localStorage.removeItem(KEY); note = 'This browser is counted again.'; }
+          excluded = !!localStorage.getItem(KEY);
+        } catch (e) {} // private mode: count the visit rather than lose it
+
+        // Confirmation for an explicit ?notrack=1/0 arrival only, so the action is
+        // something I can trust rather than take on faith. A visitor never carries
+        // the parameter and so never sees this. Appended to body as a sibling of
+        // #root, so React never sees it either. Never blocks a click.
+        if (note) {
+          var toast = function () {
+            var el = document.createElement('div');
+            el.setAttribute('role', 'status');
+            el.textContent = note;
+            el.style.cssText = 'position:fixed;left:16px;bottom:16px;z-index:2147483647;' +
+              'font:500 13px/1 ui-sans-serif,system-ui,sans-serif;padding:11px 16px;' +
+              'border-radius:999px;background:#0a0a0a;color:#fff;' +
+              'border:1px solid rgba(255,255,255,.25);pointer-events:none;' +
+              'opacity:1;transition:opacity .6s';
+            document.body.appendChild(el);
+            setTimeout(function () { el.style.opacity = '0'; }, 3600);
+            setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 4400);
+          };
+          if (document.body) toast();
+          else document.addEventListener('DOMContentLoaded', toast);
+        }
+
+        if (excluded) return;
+        if (!/(^|\.)milkmenot\.com$/.test(location.hostname) || navigator.webdriver) return;
+
         var csScript = document.createElement('script');
         csScript.id = 'counterscale-script';
         csScript.src = 'https://counterscale.peterreijm.workers.dev/tracker.js';
         csScript.setAttribute('data-site-id', 'milkmenot.com');
         csScript.defer = true;
         document.head.appendChild(csScript);
-      }
+      })();
     </script>
   </head>
   <body>
