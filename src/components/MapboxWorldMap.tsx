@@ -97,9 +97,11 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
     const normalized = Math.log(value + 1) / Math.log(max + 1);
     const clamped = Math.max(0, Math.min(1, normalized));
     
-    // Gradient from grey (#e5e7eb) to green (#00bf63)
-    const grey = [229, 231, 235];  // #e5e7eb
-    const green = [0, 191, 99];    // #00bf63
+    // From --story-cream-3 to --story-green: unrated land is the palette's
+    // quietest paper rather than Tailwind's grey-200, which belonged to
+    // nothing here.
+    const grey = [222, 231, 224];  // #dee7e0 — hsl(140 15% 88%)
+    const green = [0, 191, 99];    // #00bf63 — hsl(151 100% 37%)
     
     const r = Math.round(grey[0] + clamped * (green[0] - grey[0]));
     const g = Math.round(grey[1] + clamped * (green[1] - grey[1]));
@@ -109,7 +111,7 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
   };
 
   const getCountryColor = (testCount: number): string => {
-    if (testCount === 0) return '#e5e7eb'; // Light gray for no data
+    if (testCount === 0) return '#dee7e0'; // --story-cream-3: reported by nobody yet
     
     // Find max for scaling (use 150 as reasonable max for good distribution)
     const maxForScale = 150;
@@ -235,12 +237,23 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
         
         // Add atmosphere for globe
         if (map.current) {
+          // Mapbox's stock night sky — near-black space, electric blue
+          // atmosphere — was the only dark rectangle on a cream site, so the
+          // map read as a window into a different application. Its
+          // `high-color` was rgb(36,92,223), within a shade of the old design
+          // system's #2144ff, which this redesign spent its time removing.
+          //
+          // Cream space instead: the globe sits on the page like the charts
+          // rather than punching a hole in it, and the green shading — the
+          // only thing here carrying data — stops competing with a blue glow.
+          // Stars go with the darkness; there is no night left to see them
+          // against.
           map.current.setFog({
-            color: 'rgb(186, 210, 235)',
-            'high-color': 'rgb(36, 92, 223)',
-            'horizon-blend': 0.02,
-            'space-color': 'rgb(11, 11, 25)',
-            'star-intensity': 0.6,
+            color: 'hsl(145, 68%, 95%)',        // --story-green-wash, horizon haze
+            'high-color': 'hsl(144, 67%, 88%)', // --story-green-light, upper atmosphere
+            'horizon-blend': 0.03,
+            'space-color': 'hsl(135, 29%, 97%)', // --story-cream, same ground as the page
+            'star-intensity': 0,
           });
         }
       });
@@ -512,7 +525,9 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
         <span
           aria-hidden
           className="h-2 w-full max-w-xs rounded-full"
-          style={{ background: 'linear-gradient(to right, #e5e7eb, #00bf63)' }}
+          // The same two stops the map interpolates between, so the key
+          // describes the thing it sits above rather than approximating it.
+          style={{ background: 'linear-gradient(to right, #dee7e0, #00bf63)' }}
         />
         <span className="text-[0.6875rem] font-bold uppercase tracking-widest text-story-muted-2">Most</span>
       </div>
