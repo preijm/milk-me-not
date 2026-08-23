@@ -270,7 +270,14 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
           map.current.setFog({
             color: 'hsl(145, 68%, 95%)',        // --story-green-wash, horizon haze
             'high-color': 'hsl(151, 100%, 37%)', // --story-green, so the limb is an edge
-            'horizon-blend': 0.09,
+            // 0.03 is where this started, when the atmosphere was
+            // --story-green-light and the edge was mush. Raising the blend to
+            // 0.09 and the colour together overshot twice: the haze filled a
+            // third of the card and outshone the countries it was meant to
+            // frame, and Mapbox's fog dithers into visible rings at that
+            // width. The colour was the half worth keeping — full green at
+            // this tightness is a rim rather than a cloud.
+            'horizon-blend': 0.03,
             'space-color': 'hsl(135, 29%, 97%)', // --story-cream, same ground as the page
             'star-intensity': 0,
           });
