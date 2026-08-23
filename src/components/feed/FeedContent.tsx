@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import { MilkTestResult } from "@/types/milk-test";
 import { StoryButton } from "@/components/story";
 import { FeedGrid } from "./FeedGrid";
 import { FeedMobileStream } from "./FeedMobileStream";
 import { FeedEmptyState } from "./FeedEmptyState";
 import { FeedSkeleton } from "./FeedSkeleton";
+import { usePagedCount } from "@/hooks/usePagedCount";
 
 interface FeedContentProps {
   items: MilkTestResult[];
@@ -23,11 +23,7 @@ const PAGE_SIZE = 9;
  * asks fighting for one screen.
  */
 export const FeedContent = ({ items, isLoading, isAuthenticated, variant }: FeedContentProps) => {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [items.length]);
+  const [visibleCount, setVisibleCount] = usePagedCount(PAGE_SIZE, [items.length]);
 
   if (isLoading) {
     return <FeedSkeleton variant={variant} />;

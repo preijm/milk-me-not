@@ -3,65 +3,43 @@ import * as React from "react"
 const MOBILE_BREAKPOINT = 768
 const TABLET_BREAKPOINT = 1024
 
+/**
+ * Subscribe to a media query as an external store.
+ *
+ * These used to be useState plus an effect that set the initial value on mount.
+ * That meant the first render always answered `false` — desktop — and the real
+ * answer arrived one render later, so anything gated on mobile flashed the
+ * wrong layout before correcting itself. Reading the query during render
+ * removes the flash, and removes the setState-in-effect the compiler rules
+ * flag.
+ */
+const subscribeTo = (query: string) => (onChange: () => void) => {
+  const mql = window.matchMedia(query)
+  mql.addEventListener("change", onChange)
+  return () => mql.removeEventListener("change", onChange)
+}
+
+const useMediaQuery = (query: string) =>
+  React.useSyncExternalStore(
+    React.useMemo(() => subscribeTo(query), [query]),
+    () => window.matchMedia(query).matches,
+    // Only reached under a server render, which this app never does. Present so
+    // the hook degrades to "desktop" rather than throwing if that ever changes.
+    () => false,
+  )
+
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
-
-  React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
-
-  return !!isMobile
+  return useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
 }
 
 export function useIsMobileOrTablet() {
-  const [isMobileOrTablet, setIsMobileOrTablet] = React.useState<boolean | undefined>(undefined)
-
-  React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${TABLET_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobileOrTablet(window.innerWidth < TABLET_BREAKPOINT)
-    }
-    mql.addEventListener("change", onChange)
-    setIsMobileOrTablet(window.innerWidth < TABLET_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
-
-  return !!isMobileOrTablet
+  return useMediaQuery(`(max-width: ${TABLET_BREAKPOINT - 1}px)`)
 }
 
-export function useBreakpoint() {
-  const [breakpoint, setBreakpoint] = React.useState<"mobile" | "tablet" | "desktop">("desktop")
-
-  React.useEffect(() => {
-    const updateBreakpoint = () => {
-      const width = window.innerWidth
-      if (width < MOBILE_BREAKPOINT) {
-        setBreakpoint("mobile")
-      } else if (width < TABLET_BREAKPOINT) {
-        setBreakpoint("tablet")
-      } else {
-        setBreakpoint("desktop")
-      }
-    }
-
-    const mqlMobile = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const mqlTablet = window.matchMedia(`(max-width: ${TABLET_BREAKPOINT - 1}px)`)
-
-    mqlMobile.addEventListener("change", updateBreakpoint)
-    mqlTablet.addEventListener("change", updateBreakpoint)
-    updateBreakpoint()
-
-    return () => {
-      mqlMobile.removeEventListener("change", updateBreakpoint)
-      mqlTablet.removeEventListener("change", updateBreakpoint)
-    }
-  }, [])
-
-  return breakpoint
+export function useBreakpoint(): "mobile" | "tablet" | "desktop" {
+  const isMobile = useIsMobile()
+  const isTablet = useIsMobileOrTablet()
+  if (isMobile) return "mobile"
+  if (isTablet) return "tablet"
+  return "desktop"
 }

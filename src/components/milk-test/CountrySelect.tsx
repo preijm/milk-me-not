@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,7 +18,6 @@ interface CountrySelectProps {
 const NO_COUNTRIES: { code: string; name: string }[] = [];
 
 export const CountrySelect = ({ country, setCountry }: CountrySelectProps) => {
-  const [suggestions, setSuggestions] = useState<{ code: string; name: string }[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isUserTyping, setIsUserTyping] = useState(false);
 
@@ -35,18 +34,16 @@ export const CountrySelect = ({ country, setCountry }: CountrySelectProps) => {
     },
   });
 
-  useEffect(() => {
-    if (inputValue.trim() === '') {
-      setSuggestions([]);
-      return;
-    }
+  // A pure function of the typed text and the fetched list, so computed rather
+  // than stored behind an effect.
+  const suggestions = useMemo(() => {
+    if (inputValue.trim() === '') return NO_COUNTRIES;
 
-    const filteredCountries = countries.filter(c => 
-      c.name.toLowerCase().includes(inputValue.toLowerCase()) ||
-      c.code.toLowerCase().includes(inputValue.toLowerCase())
+    const term = inputValue.toLowerCase();
+    return countries.filter(c =>
+      c.name.toLowerCase().includes(term) ||
+      c.code.toLowerCase().includes(term)
     );
-
-    setSuggestions(filteredCountries);
   }, [inputValue, countries]);
 
   const getCountryFlag = (code: string) => {
@@ -65,19 +62,26 @@ export const CountrySelect = ({ country, setCountry }: CountrySelectProps) => {
   const handleSelectCountry = (selectedCountry: { code: string; name: string }) => {
     setInputValue(selectedCountry.name);
     setCountry(selectedCountry.code);
-    setSuggestions([]);
+    // No need to clear suggestions: the panel below renders only while
+    // isUserTyping, which this turns off.
     setIsUserTyping(false);
   };
 
-  // Find the selected country to display its name in the input
-  useEffect(() => {
-    if (country && countries.length > 0) {
+  // Show the selected country's name once there is a list to look it up in —
+  // on first render, when the query resolves, or when the prop changes from
+  // outside. Guarded by isUserTyping so it never overwrites a half-typed word.
+  // Done during render rather than in an effect, so the input does not paint
+  // once empty before filling in.
+  const [seen, setSeen] = useState<
+    { country: string | null; countries: typeof countries } | null
+  >(null);
+  if (!seen || seen.country !== country || seen.countries !== countries) {
+    setSeen({ country, countries });
+    if (country && countries.length > 0 && !isUserTyping) {
       const selectedCountry = countries.find(c => c.code === country);
-      if (selectedCountry && !isUserTyping) {
-        setInputValue(selectedCountry.name);
-      }
+      if (selectedCountry) setInputValue(selectedCountry.name);
     }
-  }, [country, countries, isUserTyping]);
+  }
 
   return (
     <div className="relative">
