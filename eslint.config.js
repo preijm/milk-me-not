@@ -18,7 +18,17 @@ export default tseslint.config(
       "react-refresh": reactRefresh,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
+      // These two are what eslint-plugin-react-hooks 5 shipped as its
+      // recommended set, spelled out rather than spread.
+      //
+      // Version 7 was needed because 5 declares a peer of eslint ^3-^9 against
+      // the pinned ^10, which npm refuses to resolve. But 7's recommended set
+      // also folds in the React Compiler rules, and those flag 27 issues in
+      // this codebase — 24 of them setState called inside an effect. Worth
+      // fixing, and tracked separately; adopting them here would have turned a
+      // dependency bump into a rewrite of effect logic across twenty files.
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
