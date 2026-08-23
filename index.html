@@ -58,10 +58,10 @@
     <link rel="preconnect" href="https://jtabjndnietpewvknjrm.supabase.co" crossorigin>
     <link rel="dns-prefetch" href="https://jtabjndnietpewvknjrm.supabase.co">
 
-    <!-- Security meta tags (static, no JS needed) -->
+    <!-- Referrer policy is honoured as a meta tag. The rest are real headers,
+         served from public/_headers -- X-Content-Type-Options and friends are
+         ignored by browsers in meta form. -->
     <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
 
     <!-- Counterscale: cookieless analytics, same Worker as peterandco.nl, separate site-id.
          Gated on the live hostname so `bun dev`, preview deploys and the workers.dev URL
