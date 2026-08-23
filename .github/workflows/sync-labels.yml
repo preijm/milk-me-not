@@ -11,6 +11,13 @@ jobs:
   sync-labels:
     name: Sync Labels
     runs-on: ubuntu-latest
+    # Creating a label is an issues-API write, and the default token here is
+    # read-only, so every run 403s on the first POST /labels. The header
+    # GitHub sends back names the grant it wants: `issues=write;
+    # pull_requests=write`. Nothing else in this job writes anything.
+    permissions:
+      issues: write
+      pull-requests: write
     
     steps:
       - name: Checkout code
