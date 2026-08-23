@@ -27,7 +27,7 @@ export const EmptyNotifications = ({ onPage = false }: { onPage?: boolean }) => 
     >
       Nothing yet.
     </p>
-    <p className="mt-2 max-w-[26rem] text-[0.9375rem] text-story-muted">
+    <p className="mt-2 max-w-104 text-[0.9375rem] text-story-muted">
       When someone likes a rating you left, or replies to it, it turns up here.
     </p>
     {onPage && (

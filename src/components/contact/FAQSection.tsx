@@ -33,14 +33,14 @@ export const FAQSection = ({ title, items }: FAQSectionProps) => {
 
       <Accordion type="single" collapsible className="w-full">
         {items.map((item, index) =>
-        <AccordionItem key={index} value={`item-${index + 1}`} className="border-story-ink/[0.08]">
+        <AccordionItem key={index} value={`item-${index + 1}`} className="border-story-ink/8">
             <AccordionTrigger className="story-serif gap-4 text-left text-[1.0625rem] font-bold text-story-ink hover:no-underline">
               <span className="flex items-center gap-3">
-                <DropGlyph size={13} className="flex-shrink-0 text-story-green" />
+                <DropGlyph size={13} className="shrink-0 text-story-green" />
                 {item.question}
               </span>
             </AccordionTrigger>
-            <AccordionContent className="pl-[1.625rem] text-[0.9375rem] leading-relaxed text-story-muted">
+            <AccordionContent className="pl-6.5 text-[0.9375rem] leading-relaxed text-story-muted">
               {item.answer}
             </AccordionContent>
           </AccordionItem>

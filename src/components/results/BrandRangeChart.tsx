@@ -25,8 +25,8 @@ const pct = (value: number) => (value / SCALE_MAX) * 100;
  * the plot. Narrow on a phone: the plot is the chart, so the name and the
  * number give up what they can spare.
  */
-const LABEL_COL = "w-[5.75rem] flex-shrink-0 sm:w-[11rem]";
-const VALUE_COL = "w-8 flex-shrink-0 text-right sm:w-12";
+const LABEL_COL = "w-23 shrink-0 sm:w-44";
+const VALUE_COL = "w-8 shrink-0 text-right sm:w-12";
 
 const BrandRangeRow = ({ row }: { row: BrandRange }) => {
   const left = pct(row.min);
@@ -45,7 +45,7 @@ const BrandRangeRow = ({ row }: { row: BrandRange }) => {
 
       <span className="relative h-8 min-w-0 flex-1">
         {/* The unscored remainder of the scale, so a short bar still reads as short. */}
-        <span aria-hidden className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-story-ink/[0.06]" />
+        <span aria-hidden className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-story-ink/6" />
 
         {/* Lowest to highest this brand has ever scored. */}
         <span
@@ -130,9 +130,9 @@ export const BrandRangeChart = ({ rows, minRatings }: { rows: BrandRange[]; minR
           Show the numbers
         </summary>
         <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[26rem] border-collapse text-left">
+          <table className="w-full min-w-104 border-collapse text-left">
             <thead>
-              <tr className="border-b border-story-ink/10 text-[0.6875rem] uppercase tracking-[0.1em] text-story-muted-2">
+              <tr className="border-b border-story-ink/10 text-[0.6875rem] uppercase tracking-widest text-story-muted-2">
                 <th scope="col" className="py-2 pr-3 font-bold">Brand</th>
                 <th scope="col" className="py-2 pr-3 text-right font-bold">Ratings</th>
                 <th scope="col" className="py-2 pr-3 text-right font-bold">Lowest</th>
@@ -143,7 +143,7 @@ export const BrandRangeChart = ({ rows, minRatings }: { rows: BrandRange[]; minR
             </thead>
             <tbody className="tabular-nums text-story-ink-2">
               {rows.map((row) => (
-                <tr key={row.brand} className="border-b border-story-ink/[0.06] last:border-0">
+                <tr key={row.brand} className="border-b border-story-ink/6 last:border-0">
                   <th scope="row" className="py-2 pr-3 text-left font-bold text-story-ink">{row.brand}</th>
                   <td className="py-2 pr-3 text-right">{row.n}</td>
                   <td className="py-2 pr-3 text-right">{row.min.toFixed(1)}</td>

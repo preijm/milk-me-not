@@ -25,7 +25,7 @@ const headingVariants = cva(
         // Fluid page heading: scales from 1.5rem to 3rem for secondary pages
         page: "text-[clamp(1.5rem,3vw+0.5rem,3rem)] leading-[1.2] font-bold",
         // Fluid section heading: scales from 1.25rem to 2rem
-        section: "text-[clamp(1.25rem,2vw+0.5rem,2rem)] leading-[1.25] font-semibold",
+        section: "text-[clamp(1.25rem,2vw+0.5rem,2rem)] leading-tight font-semibold",
         none: "",
       },
     },

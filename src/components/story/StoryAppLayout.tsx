@@ -61,7 +61,7 @@ export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = 
       <StoryHeader hideCta={onRateFlow} />
 
       <main className="flex-1 px-5 pb-24 pt-8 sm:px-8 lg:px-10 lg:pb-16 lg:pt-12">
-        <div className={cn("mx-auto w-full", width === "narrow" ? "max-w-2xl" : "max-w-[76rem]")}>
+        <div className={cn("mx-auto w-full", width === "narrow" ? "max-w-2xl" : "max-w-304")}>
           {back && (
             <Link
               to={back.to}
@@ -101,7 +101,7 @@ export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = 
         </div>
       </main>
 
-      <div className="pb-[4.75rem] lg:pb-0">
+      <div className="pb-19 lg:pb-0">
         <StoryFooter variant="member" />
       </div>
       <StoryAppBar />

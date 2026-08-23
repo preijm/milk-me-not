@@ -130,7 +130,7 @@ export const ProfileEditDialog = ({
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div className="flex items-center gap-5">
-          <Avatar className="h-20 w-20 flex-shrink-0">
+          <Avatar className="h-20 w-20 shrink-0">
             <AvatarImage src={previewUrl || undefined} />
             <AvatarFallback className="bg-story-green-wash">
               <User className="h-9 w-9 text-story-green-dark" />
@@ -140,7 +140,7 @@ export const ProfileEditDialog = ({
           <div className="flex flex-col items-start gap-2">
             <label
               htmlFor="avatar"
-              className="inline-flex cursor-pointer items-center gap-2 rounded-full border-[1.5px] border-story-ink/15 px-5 py-2.5 font-sans text-sm font-bold tracking-[-0.01em] text-story-ink transition-colors hover:bg-story-ink/[0.05] focus-within:ring-2 focus-within:ring-story-green focus-within:ring-offset-2"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-full border-[1.5px] border-story-ink/15 px-5 py-2.5 font-sans text-sm font-bold tracking-[-0.01em] text-story-ink transition-colors hover:bg-story-ink/5 focus-within:ring-2 focus-within:ring-story-green focus-within:ring-offset-2"
             >
               <Upload className="h-4 w-4" />
               {previewUrl ? "Change picture" : "Add a picture"}

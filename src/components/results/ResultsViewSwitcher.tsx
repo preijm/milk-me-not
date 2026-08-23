@@ -22,7 +22,7 @@ export const ResultsViewSwitcher = ({ view, onViewChange, available, className }
     role="tablist"
     aria-label="Results view"
     className={cn(
-      "inline-flex flex-shrink-0 items-center gap-1 rounded-full border-[1.5px] border-story-ink/10 bg-white p-1",
+      "inline-flex shrink-0 items-center gap-1 rounded-full border-[1.5px] border-story-ink/10 bg-white p-1",
       className,
     )}
   >

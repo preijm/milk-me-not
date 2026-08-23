@@ -16,7 +16,7 @@ import { useRateCta } from "./useRateCta";
 const MobileCtaBar = ({ hint }: { hint?: string }) => {
   const cta = useRateCta();
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-story-ink/[0.07] bg-story-cream/[0.92] px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl lg:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-story-ink/[0.07] bg-story-cream/92 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl lg:hidden">
       <StoryButton onClick={cta.go} size="md" className="w-full">
         {cta.label}
         <ArrowRight />
@@ -70,7 +70,7 @@ export const StoryLayout = ({
       {/* The sticky bar is fixed, so the *last* thing on the page has to reserve
           room for it — padding `main` left the footer's own tagline sitting
           underneath the bar at the true bottom of the scroll. */}
-      <div className={cn(memberBar ? "pb-[4.75rem] lg:pb-0" : showCtaBar && "pb-[5.25rem] lg:pb-0")}>
+      <div className={cn(memberBar ? "pb-19 lg:pb-0" : showCtaBar && "pb-21 lg:pb-0")}>
         <StoryFooter variant={memberBar ? "member" : "full"} />
       </div>
       {memberBar ? <StoryAppBar /> : showCtaBar && <MobileCtaBar hint={mobileCtaHint} />}

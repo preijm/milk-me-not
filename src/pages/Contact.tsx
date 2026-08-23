@@ -68,7 +68,7 @@ const Contact = () => {
               <br />
               <span className="text-story-green">read this inbox.</span>
             </Display>
-            <Lede className="mt-6 max-w-[34rem]">
+            <Lede className="mt-6 max-w-136">
               Four ways to reach us are listed below. One of them works. See if you can guess which before you
               scroll.
             </Lede>
@@ -84,13 +84,13 @@ const Contact = () => {
           {/* Desktop only: the drop, solid and cropped, the way the home and
               about heroes carry their weight — Contact gets its own colour
               (blue) so the page reads as itself, not a repeat. */}
-          <div className="relative hidden lg:block lg:min-h-[24rem]">
-            <div aria-hidden className="absolute -right-10 top-0 h-[24rem] w-[24rem] rounded-full bg-story-blue" />
+          <div className="relative hidden lg:block lg:min-h-96">
+            <div aria-hidden className="absolute -right-10 top-0 h-96 w-[24rem] rounded-full bg-story-blue" />
             <div aria-hidden className="pointer-events-none absolute right-6 top-12 text-story-blue-light">
               <MilkDrop size={210} variant="solid" />
             </div>
             <div aria-hidden className="absolute bottom-3 left-2 h-14 w-14 rounded-full bg-story-amber" />
-            <div className="absolute bottom-0 left-0 w-[19rem]">
+            <div className="absolute bottom-0 left-0 w-76">
               <StoryCard className="story-lift p-6 sm:p-7">
                 <p className="story-kicker text-story-muted-2">Since the spreadsheet</p>
                 <p className="story-serif mt-3 text-[1.4rem] font-bold leading-snug text-story-ink">
@@ -188,7 +188,7 @@ const Contact = () => {
             </div>
             <p className="story-kicker relative text-white/70">Who actually replies</p>
             <p className="story-num relative mt-4 text-[3.75rem] leading-none text-white">2</p>
-            <p className="relative mt-2 text-[0.8125rem] font-bold uppercase tracking-[0.1em] text-white/80">
+            <p className="relative mt-2 text-[0.8125rem] font-bold uppercase tracking-widest text-white/80">
               People. Not a bot.
             </p>
             <DropList

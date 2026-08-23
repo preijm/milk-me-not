@@ -172,7 +172,7 @@ const ProductDetails = () => {
                 {chips.map((c) => (
                   <li
                     key={c}
-                    className="rounded-full border-[1.5px] border-story-ink/[0.12] px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em] text-story-ink-2"
+                    className="rounded-full border-[1.5px] border-story-ink/12 px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em] text-story-ink-2"
                   >
                     {c}
                   </li>
@@ -180,7 +180,7 @@ const ProductDetails = () => {
               </ul>
             )}
 
-            <Lede className="mt-6 max-w-[32rem]">
+            <Lede className="mt-6 max-w-lg">
               {story.count > 0
                 ? `${story.count} ${story.count === 1 ? "person has" : "people have"} rated this. Here's the verdict.`
                 : "Nobody has rated this one yet. Yours would be the first."}
@@ -201,12 +201,12 @@ const ProductDetails = () => {
             </div>
           </div>
 
-          <div className="relative hidden lg:block lg:min-h-[24rem]">
-            <div aria-hidden className="absolute -right-8 top-0 h-[24rem] w-[24rem] rounded-full" style={{ backgroundColor: story.tier.light }} />
-            <div aria-hidden className="pointer-events-none absolute right-[1rem] top-[3.25rem]" style={{ color: story.tier.color }}>
+          <div className="relative hidden lg:block lg:min-h-96">
+            <div aria-hidden className="absolute -right-8 top-0 h-96 w-[24rem] rounded-full" style={{ backgroundColor: story.tier.light }} />
+            <div aria-hidden className="pointer-events-none absolute right-4 top-13" style={{ color: story.tier.color }}>
               <MilkDrop size={190} variant="solid" />
             </div>
-            <div className="absolute bottom-0 left-0 w-[22rem]">
+            <div className="absolute bottom-0 left-0 w-88">
               <VerdictCard story={story} />
             </div>
           </div>
@@ -238,7 +238,7 @@ const ProductDetails = () => {
             <p className="max-w-md text-[0.9375rem] text-story-muted">
               No scores yet for {story.brandName} {story.productName}.
             </p>
-            <StoryButton onClick={cta.go} size="md" className="flex-shrink-0">
+            <StoryButton onClick={cta.go} size="md" className="shrink-0">
               Be the first to rate it
               <ArrowRight />
             </StoryButton>
@@ -287,7 +287,7 @@ const VerdictCard = ({ story, className }: { story: ProductStory; className?: st
 
     <p className="relative mt-3 max-w-xs text-[0.9375rem] leading-snug text-story-muted">{story.tier.blurb}</p>
 
-    <div className="relative mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-story-ink/[0.08] pt-5">
+    <div className="relative mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-story-ink/8 pt-5">
       <span className="text-[0.8125rem] font-bold text-story-ink">
         {story.count > 0 ? `${story.count} ${story.count === 1 ? "rating" : "ratings"}` : "No ratings yet"}
       </span>

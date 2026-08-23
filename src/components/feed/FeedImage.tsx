@@ -23,11 +23,11 @@ export const FeedImage = ({ picturePath, brandName, productName, compact = false
           compact ? "h-20" : "h-56 sm:h-64",
         )}
       >
-        <span className="text-story-ink/[0.08]" aria-hidden>
+        <span className="text-story-ink/8" aria-hidden>
           <MilkDrop size={compact ? 60 : 150} variant="solid" />
         </span>
         {!compact && (
-          <p className="absolute bottom-3 text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-story-muted-2">
+          <p className="absolute bottom-3 text-[0.6875rem] font-bold uppercase tracking-widest text-story-muted-2">
             No photo this time
           </p>
         )}

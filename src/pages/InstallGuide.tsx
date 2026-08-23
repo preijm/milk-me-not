@@ -94,7 +94,7 @@ const InstallGuide = () => {
               <br />
               <span className="text-story-green">warning you should expect.</span>
             </Display>
-            <Lede className="mt-6 max-w-[34rem]">
+            <Lede className="mt-6 max-w-136">
               The whole thing takes about a minute. Here is every screen you will pass through, in order.
             </Lede>
 
@@ -102,7 +102,7 @@ const InstallGuide = () => {
                 button. On a phone the grid collapses in DOM order, so this has
                 to sit above the download or the warning arrives too late. */}
             <div className="story-hairline mt-8 flex gap-4 rounded-[1.25rem] bg-story-amber p-5 sm:p-6 lg:hidden">
-              <AlertTriangle className="h-6 w-6 flex-shrink-0 text-story-ink" strokeWidth={2.2} aria-hidden />
+              <AlertTriangle className="h-6 w-6 shrink-0 text-story-ink" strokeWidth={2.2} aria-hidden />
               <div>
                 <h2 className="story-serif text-[1.15rem] font-bold text-story-ink">Expect this screen</h2>
                 <p className="mt-2 text-[0.9375rem] leading-relaxed text-story-ink/75">
@@ -126,7 +126,7 @@ const InstallGuide = () => {
 
           <div className="hidden lg:block">
             <div className="story-hairline flex gap-4 rounded-[1.25rem] bg-story-amber p-6">
-              <AlertTriangle className="h-6 w-6 flex-shrink-0 text-story-ink" strokeWidth={2.2} aria-hidden />
+              <AlertTriangle className="h-6 w-6 shrink-0 text-story-ink" strokeWidth={2.2} aria-hidden />
               <div>
                 <h2 className="story-serif text-[1.15rem] font-bold text-story-ink">Expect this screen</h2>
                 <p className="mt-2 text-[0.9375rem] leading-relaxed text-story-ink/75">
@@ -167,8 +167,8 @@ const InstallGuide = () => {
         <ol className="mt-12 flex flex-col">
           {STEPS.map((step, i) => (
             <li key={step.title} className="relative flex gap-5 sm:gap-8">
-              <div className="flex flex-shrink-0 flex-col items-center">
-                <span className="story-num flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-story-ink text-[1.05rem] text-story-cream sm:h-12 sm:w-12 sm:text-[1.15rem]">
+              <div className="flex shrink-0 flex-col items-center">
+                <span className="story-num flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-story-ink text-[1.05rem] text-story-cream sm:h-12 sm:w-12 sm:text-[1.15rem]">
                   {i + 1}
                 </span>
                 {i < STEPS.length - 1 && <span aria-hidden className="mt-2 w-px flex-1 bg-story-ink/15" />}
@@ -177,7 +177,7 @@ const InstallGuide = () => {
               <div className={cnStep(i === STEPS.length - 1)}>
                 <div className="flex items-start gap-4 sm:gap-5">
                   <span
-                    className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl ${ICON_TONE[step.tone]}`}
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${ICON_TONE[step.tone]}`}
                   >
                     <step.icon className="h-6 w-6" strokeWidth={2.2} aria-hidden />
                   </span>

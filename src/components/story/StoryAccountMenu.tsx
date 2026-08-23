@@ -37,7 +37,7 @@ export const StoryAccountMenu = ({ className }: { className?: string }) => {
         className={cn(
           "relative flex h-10 w-10 items-center justify-center rounded-full border border-story-ink/10",
           "font-display text-[0.9375rem] font-extrabold transition-colors",
-          "hover:brightness-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green",
+          "hover:brightness-[0.97] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green",
           tone.bg,
           tone.fg,
           className,
@@ -56,7 +56,7 @@ export const StoryAccountMenu = ({ className }: { className?: string }) => {
       <DropdownMenuContent
         align="end"
         sideOffset={10}
-        className="w-60 rounded-2xl border-story-ink/10 bg-white p-1.5 shadow-[0_24px_50px_-30px_hsl(160_14%_12%_/_0.45)]"
+        className="w-60 rounded-2xl border-story-ink/10 bg-white p-1.5 shadow-[0_24px_50px_-30px_hsl(160_14%_12%/0.45)]"
       >
         <p className="truncate px-3 py-2 text-[0.75rem] font-semibold text-story-muted-2">{user.email}</p>
         <DropdownMenuSeparator className="bg-story-ink/[0.07]" />

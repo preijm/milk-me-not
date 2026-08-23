@@ -57,7 +57,7 @@ export const BrandMark = ({ brand, className, radius = "rounded-2xl" }: BrandMar
     return (
       <span
         className={cn(
-          "flex flex-shrink-0 items-center justify-center overflow-hidden",
+          "flex shrink-0 items-center justify-center overflow-hidden",
           fullBleed ? "" : "story-hairline bg-white p-1",
           radius,
           className,
@@ -79,7 +79,7 @@ export const BrandMark = ({ brand, className, radius = "rounded-2xl" }: BrandMar
   return (
     <span
       className={cn(
-        "story-serif flex flex-shrink-0 items-center justify-center font-extrabold tracking-[0.02em]",
+        "story-serif flex shrink-0 items-center justify-center font-extrabold tracking-[0.02em]",
         radius,
         tone.bg,
         tone.fg,

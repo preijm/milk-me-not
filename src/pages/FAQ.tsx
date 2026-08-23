@@ -117,7 +117,7 @@ const FAQ = () => {
             <br />
             <span className="text-story-green">not a vibe.</span>
           </Display>
-          <Lede className="mt-6 max-w-[36rem]">
+          <Lede className="mt-6 max-w-xl">
             Every number on this site came out of someone's actual mouth. Here is exactly how a carton gets from
             fridge to feed to leaderboard — and the four things that stop the scale being bought, gamed or averaged
             into meaninglessness.
@@ -174,7 +174,7 @@ const FAQ = () => {
               <MilkDrop size={150} variant="solid" />
             </span>
             <p className="story-kicker relative text-story-muted-2">Logged so far</p>
-            <dl className="relative mt-6 grid grid-cols-3 gap-4 border-b border-story-ink/[0.08] pb-7">
+            <dl className="relative mt-6 grid grid-cols-3 gap-4 border-b border-story-ink/8 pb-7">
               {[
                 { value: data?.totalRatings, label: "Ratings" },
                 { value: data?.products, label: "Products" },
@@ -218,7 +218,7 @@ const FAQ = () => {
                 </span>
               )}
             </div>
-            <p className="mt-5 border-t border-story-ink/[0.08] pt-5 text-[0.9375rem] leading-relaxed text-story-muted">
+            <p className="mt-5 border-t border-story-ink/8 pt-5 text-[0.9375rem] leading-relaxed text-story-muted">
               Tastes like a 9.2. Costs like it knows it.
             </p>
           </StoryCard>
@@ -236,7 +236,7 @@ const FAQ = () => {
                 </span>
               )}
             </div>
-            <p className="mt-5 border-t border-story-ink/[0.08] pt-5 text-[0.9375rem] leading-relaxed text-story-muted">
+            <p className="mt-5 border-t border-story-ink/8 pt-5 text-[0.9375rem] leading-relaxed text-story-muted">
               Tastes exactly like a 9.2. Costs a third of the price.
             </p>
           </StoryCard>

@@ -473,20 +473,20 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
       >
       {/* Legend. The fill is a single-hue ramp, so the scale reads left to right. */}
       <div className="flex items-center gap-3">
-        <span className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-story-muted-2">None</span>
+        <span className="text-[0.6875rem] font-bold uppercase tracking-widest text-story-muted-2">None</span>
         <span
           aria-hidden
           className="h-2 w-full max-w-xs rounded-full"
           style={{ background: 'linear-gradient(to right, #e5e7eb, #00bf63)' }}
         />
-        <span className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-story-muted-2">Most</span>
+        <span className="text-[0.6875rem] font-bold uppercase tracking-widest text-story-muted-2">Most</span>
       </div>
 
-      <div className="story-hairline relative mt-5 h-[26rem] w-full overflow-hidden rounded-[1.25rem] sm:h-[34rem]">
+      <div className="story-hairline relative mt-5 h-104 w-full overflow-hidden rounded-[1.25rem] sm:h-136">
         <div ref={mapContainer} className="h-full w-full" />
 
         {(isLoading || isInitializing) && !mapError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-story-cream/80 backdrop-blur-sm">
+          <div className="absolute inset-0 flex items-center justify-center bg-story-cream/80 backdrop-blur-xs">
             <p className="text-[0.9375rem] font-medium text-story-muted">
               {isLoading ? 'Loading map data…' : 'Waking the globe up…'}
             </p>
@@ -494,7 +494,7 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
         )}
 
         {mapError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-story-cream/90 p-6 backdrop-blur-sm">
+          <div className="absolute inset-0 flex items-center justify-center bg-story-cream/90 p-6 backdrop-blur-xs">
             <div className="max-w-md text-center">
               <p className="story-serif text-[1.125rem] font-bold text-story-ink">{mapError}</p>
               <p className="mt-2 text-[0.875rem] leading-relaxed text-story-muted">
@@ -554,14 +554,14 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
                     style={{ width: `${percentage}%` }}
                   />
                   <span className="relative flex min-w-0 items-center gap-3">
-                    <span className="story-num w-5 flex-shrink-0 text-[0.8125rem] tabular-nums text-story-muted-2">
+                    <span className="story-num w-5 shrink-0 text-[0.8125rem] tabular-nums text-story-muted-2">
                       {index + 1}
                     </span>
                     <span className="truncate text-[0.9375rem] font-bold text-story-ink">
                       {countryName(country.country_code)}
                     </span>
                   </span>
-                  <span className="relative flex flex-shrink-0 items-baseline gap-4 pl-3 sm:gap-6">
+                  <span className="relative flex shrink-0 items-baseline gap-4 pl-3 sm:gap-6">
                     <span className="story-num w-10 text-right text-[0.9375rem] tabular-nums text-story-muted sm:w-12">
                       {country.test_count}
                     </span>

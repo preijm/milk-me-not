@@ -1,10 +1,317 @@
-@import './styles/colors.css';
-@import './styles/design-tokens.css';
-@import './styles/story.css';
+@import './styles/colors.css' layer(base);
+@import './styles/design-tokens.css' layer(base);
+@import './styles/story.css' layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-score-excellent: hsl(var(--score-excellent));
+  --color-score-good: hsl(var(--score-good));
+  --color-score-fair: hsl(var(--score-fair));
+  --color-score-poor: hsl(var(--score-poor));
+
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+
+  --color-error: hsl(var(--error));
+  --color-error-foreground: hsl(var(--error-foreground));
+
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+
+  --color-brand-primary: hsl(var(--brand-primary));
+  --color-brand-primary-foreground: hsl(var(--brand-primary-foreground));
+  --color-brand-secondary: hsl(var(--brand-secondary));
+  --color-brand-secondary-foreground: hsl(var(--brand-secondary-foreground));
+  --color-brand-tertiary: hsl(var(--brand-tertiary));
+  --color-brand-tertiary-foreground: hsl(var(--brand-tertiary-foreground));
+
+  --color-heatmap-very-high: hsl(var(--heatmap-very-high));
+  --color-heatmap-high: hsl(var(--heatmap-high));
+  --color-heatmap-medium-high: hsl(var(--heatmap-medium-high));
+  --color-heatmap-medium: hsl(var(--heatmap-medium));
+  --color-heatmap-low-medium: hsl(var(--heatmap-low-medium));
+  --color-heatmap-low: hsl(var(--heatmap-low));
+  --color-heatmap-none: hsl(var(--heatmap-none));
+
+  --color-surface: hsl(var(--surface));
+  --color-surface-container-lowest: hsl(var(--surface-container-lowest));
+  --color-surface-container-low: hsl(var(--surface-container-low));
+  --color-surface-container: hsl(var(--surface-container));
+
+  --color-on-surface: hsl(var(--on-surface));
+  --color-outline-variant: hsl(var(--outline-variant));
+  --color-primary-container: hsl(var(--primary-container));
+
+  --color-story-ink: hsl(var(--story-ink));
+  --color-story-ink-2: hsl(var(--story-ink-2));
+  --color-story-muted: hsl(var(--story-muted));
+  --color-story-muted-2: hsl(var(--story-muted-2));
+  --color-story-paper: hsl(var(--story-paper));
+  --color-story-cream: hsl(var(--story-cream));
+  --color-story-cream-2: hsl(var(--story-cream-2));
+  --color-story-cream-3: hsl(var(--story-cream-3));
+  --color-story-green: hsl(var(--story-green));
+  --color-story-green-dark: hsl(var(--story-green-dark));
+  --color-story-green-deep: hsl(var(--story-green-deep));
+  --color-story-green-light: hsl(var(--story-green-light));
+  --color-story-green-wash: hsl(var(--story-green-wash));
+  --color-story-blue: hsl(var(--story-blue));
+  --color-story-blue-dark: hsl(var(--story-blue-dark));
+  --color-story-blue-light: hsl(var(--story-blue-light));
+  --color-story-blue-wash: hsl(var(--story-blue-wash));
+  --color-story-blue-deep: hsl(var(--story-blue-deep));
+  --color-story-tint-sand: hsl(var(--story-tint-sand));
+  --color-story-tint-clay: hsl(var(--story-tint-clay));
+  --color-story-tint-mint: hsl(var(--story-tint-mint));
+  --color-story-tint-sky: hsl(var(--story-tint-sky));
+  --color-story-amber: hsl(var(--story-amber));
+  --color-story-amber-dark: hsl(var(--story-amber-dark));
+  --color-story-amber-light: hsl(var(--story-amber-light));
+
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--font-weight: 700;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-heading-1: var(--font-size-5xl);
+  --text-heading-1--line-height: var(--line-height-tight);
+  --text-heading-1--font-weight: var(--font-weight-bold);
+  --text-heading-2: var(--font-size-4xl);
+  --text-heading-2--line-height: var(--line-height-tight);
+  --text-heading-2--font-weight: var(--font-weight-bold);
+  --text-heading-3: var(--font-size-3xl);
+  --text-heading-3--line-height: var(--line-height-tight);
+  --text-heading-3--font-weight: var(--font-weight-semibold);
+  --text-heading-4: var(--font-size-2xl);
+  --text-heading-4--line-height: var(--line-height-tight);
+  --text-heading-4--font-weight: var(--font-weight-semibold);
+  --text-heading-5: var(--font-size-xl);
+  --text-heading-5--line-height: var(--line-height-normal);
+  --text-heading-5--font-weight: var(--font-weight-medium);
+  --text-heading-6: var(--font-size-lg);
+  --text-heading-6--line-height: var(--line-height-normal);
+  --text-heading-6--font-weight: var(--font-weight-medium);
+  --text-body-lg: var(--font-size-lg);
+  --text-body-lg--line-height: var(--line-height-relaxed);
+  --text-body: var(--font-size-base);
+  --text-body--line-height: var(--line-height-normal);
+  --text-body-sm: var(--font-size-sm);
+  --text-body-sm--line-height: var(--line-height-normal);
+  --text-body-xs: var(--font-size-xs);
+  --text-body-xs--line-height: var(--line-height-normal);
+
+  --radius-2xl: 2rem;
+  --radius-xl: 1rem;
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-up: fade-up 0.5s ease-out;
+  --animate-scroll: scroll 8s linear infinite;
+  --animate-flip-up: flip-up 0.3s ease-out forwards;
+  --animate-flip-down: flip-down 0.3s ease-out forwards;
+  --animate-bounce-subtle: bounce-subtle 0.2s ease-out;
+
+  --font-display: Epilogue, Georgia, ui-serif, serif;
+  --font-sans:
+    Manrope, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji,
+    Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  --font-serif: ui-serif, Georgia, Cambria, Times New Roman, Times, serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono,
+    Courier New, monospace;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes fade-up {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes scroll {
+    0% {
+      transform: translateX(0%);
+    }
+    50% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  @keyframes flip-up {
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+    50% {
+      transform: rotate(-90deg) scale(1.1);
+    }
+    100% {
+      transform: rotate(-180deg) scale(1);
+    }
+  }
+  @keyframes flip-down {
+    0% {
+      transform: rotate(-180deg) scale(1);
+    }
+    50% {
+      transform: rotate(-90deg) scale(1.1);
+    }
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
+  }
+  @keyframes bounce-subtle {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility glass-surface {
+  background: hsl(var(--surface) / 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@utility ghost-border {
+  border: 1px solid hsl(var(--outline-variant) / 0.15);
+}
+
+@utility ambient-shadow {
+  box-shadow: var(--shadow-ambient-md);
+}
+
+@utility gradient-primary {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)),
+    hsl(var(--primary-container))
+  );
+}
+
+@utility btn-brand {
+  @apply bg-secondary text-white transition-all duration-200 ease-in-out rounded-lg py-3 px-6 font-medium;
+
+  &:hover:not(:disabled) {
+    @apply opacity-90 shadow-lg;
+  }
+
+  &:disabled {
+    @apply bg-gray-200! text-gray-500! cursor-not-allowed! opacity-100! transform-none! shadow-none!;
+  }
+  @media (hover: none) {
+    &:hover:not(:disabled) {
+      @apply bg-inherit shadow-none;
+    }
+  }
+}
+
+@utility inline-flex {
+  &.items-center.justify-center:disabled {
+    @apply bg-gray-200! text-gray-500!;
+  }
+}
+
+@utility items-center {
+  & .inline-flex.justify-center:disabled {
+    @apply bg-gray-200! text-gray-500!;
+  }
+}
+
+@utility justify-center {
+  & .inline-flex.items-center:disabled {
+    @apply bg-gray-200! text-gray-500!;
+  }
+}
 
 @layer base {
   :root {
@@ -144,42 +451,7 @@
 }
 
 @layer components {
-  .glass-surface {
-    background: hsl(var(--surface) / 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-
-  .ghost-border {
-    border: 1px solid hsl(var(--outline-variant) / 0.15);
-  }
-
-  .ambient-shadow {
-    box-shadow: var(--shadow-ambient-md);
-  }
-
-  .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-container)));
-  }
-
-  .btn-brand {
-    @apply bg-secondary text-white transition-all duration-200 ease-in-out rounded-lg py-3 px-6 font-medium;
-  }
-
-  .btn-brand:hover:not(:disabled) {
-    @apply opacity-90 shadow-lg;
-  }
-
-  .btn-brand:disabled {
-    @apply bg-gray-200 text-gray-500 cursor-not-allowed opacity-100 transform-none shadow-none !important;
-  }
-
   /* Apply disabled color to all UI buttons */
-  button:disabled,
-  .inline-flex.items-center.justify-center:disabled,
-  button[class*="inline-flex"]:disabled {
-    @apply bg-gray-200 text-gray-500 !important;
-  }
 
   @keyframes gentle-pulse {
     0%, 100% { transform: scale(1); opacity: 0.9; }
@@ -187,12 +459,6 @@
   }
 
   /* Disable hover effects on touch devices */
-  @media (hover: none) {
-    button:hover,
-    .btn-brand:hover:not(:disabled) {
-      @apply bg-inherit shadow-none;
-    }
-  }
 }
 
 

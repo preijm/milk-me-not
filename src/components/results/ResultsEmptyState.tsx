@@ -6,7 +6,7 @@ type ResultsEmptyStateProps = {
 
 /** A designed empty state instead of a bare "no results" string. */
 export const ResultsEmptyState = ({ onClear }: ResultsEmptyStateProps) => (
-  <div className="story-hairline flex flex-col items-center gap-4 rounded-[1.5rem] bg-white px-6 py-16 text-center">
+  <div className="story-hairline flex flex-col items-center gap-4 rounded-3xl bg-white px-6 py-16 text-center">
     <span className="text-story-green-light" aria-hidden>
       <MilkDrop size={64} variant="solid" />
     </span>

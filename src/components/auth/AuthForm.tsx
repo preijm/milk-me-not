@@ -88,7 +88,7 @@ const AuthForm = ({
     <>
       {isEmailConfirmed && (
         <div className="mb-6 flex items-start gap-3 rounded-xl bg-story-green-wash p-4">
-          <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-story-green text-white">
+          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-story-green text-white">
             <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>

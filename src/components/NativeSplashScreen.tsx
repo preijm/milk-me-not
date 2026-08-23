@@ -36,7 +36,7 @@ const NativeSplashScreen = ({ onComplete }: NativeSplashScreenProps) => {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-brand-primary via-brand-primary to-brand-secondary"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-linear-to-br from-brand-primary via-brand-primary to-brand-secondary"
         >
           {/* Animated Logo */}
           <motion.div

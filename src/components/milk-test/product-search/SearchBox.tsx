@@ -50,7 +50,7 @@ export const SearchBox = ({
         {searchTerm && (
           <button 
             onClick={onClear} 
-            className="absolute right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-story-muted-2 transition-colors hover:bg-story-ink/[0.06] hover:text-story-ink" 
+            className="absolute right-3 top-1/2 z-10 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-story-muted-2 transition-colors hover:bg-story-ink/6 hover:text-story-ink" 
             aria-label="Clear search"
           >
             ×
@@ -62,7 +62,7 @@ export const SearchBox = ({
         onClick={onAddNew} 
         variant="outline" 
         size="icon"
-        className="h-12 w-12 shrink-0 rounded-xl border-[1.5px] border-story-ink/[0.12]"
+        className="h-12 w-12 shrink-0 rounded-xl border-[1.5px] border-story-ink/12"
         aria-label="Add new product"
       >
         <Plus className="h-4 w-4" />

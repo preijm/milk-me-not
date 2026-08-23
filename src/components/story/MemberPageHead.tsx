@@ -27,7 +27,7 @@ export const MemberPageHead = ({
   meta?: string;
   className?: string;
 }) => (
-  <div className={cn("mx-auto w-full max-w-[76rem] px-5 pb-3 pt-5 sm:px-8", className)}>
+  <div className={cn("mx-auto w-full max-w-304 px-5 pb-3 pt-5 sm:px-8", className)}>
     <p className="story-kicker text-story-muted-2">{kicker}</p>
     <h1 className="story-display mt-1 text-[1.6rem] leading-[1.1] text-story-ink">{title}</h1>
     {meta && <p className="mt-1.5 text-[0.8125rem] text-story-muted">{meta}</p>}

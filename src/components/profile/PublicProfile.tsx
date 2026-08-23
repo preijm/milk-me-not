@@ -34,7 +34,7 @@ const RatingRow = ({ rating }: { rating: PublicRating }) => {
   const pq = getPriceQuality(rating.priceQuality);
 
   return (
-    <li className="border-t border-story-ink/[0.08] last:border-b">
+    <li className="border-t border-story-ink/8 last:border-b">
       <Link
         to={rating.productId ? `/product/${rating.productId}` : "/results"}
         className="group flex items-start gap-4 py-5 no-underline"
@@ -65,7 +65,7 @@ const RatingRow = ({ rating }: { rating: PublicRating }) => {
           </span>
         </span>
 
-        <span className="flex flex-shrink-0 flex-col items-end leading-none">
+        <span className="flex shrink-0 flex-col items-end leading-none">
           <span className="story-num text-[1.6rem]" style={{ color: tier.color }}>
             {rating.rating.toFixed(1)}
           </span>
@@ -155,7 +155,7 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
             <img
               src={data.avatarUrl}
               alt=""
-              className="h-20 w-20 flex-shrink-0 rounded-2xl object-cover sm:h-28 sm:w-28"
+              className="h-20 w-20 shrink-0 rounded-2xl object-cover sm:h-28 sm:w-28"
               width={112}
               height={112}
             />
@@ -170,7 +170,7 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
 
           <div className="min-w-0">
             <Kicker>{data.since ? `Rating since ${data.since}` : "Community member"}</Kicker>
-            <Display as="h1" size="xl" className="mt-3 break-words">
+            <Display as="h1" size="xl" className="mt-3 wrap-break-word">
               {data.username}
             </Display>
             <Lede className="mt-3">
@@ -180,7 +180,7 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
           </div>
         </div>
 
-        <dl className="mt-10 grid max-w-3xl grid-cols-2 gap-6 border-t border-story-ink/[0.08] pt-8 sm:grid-cols-4">
+        <dl className="mt-10 grid max-w-3xl grid-cols-2 gap-6 border-t border-story-ink/8 pt-8 sm:grid-cols-4">
           <div>
             <dd className="story-num text-[clamp(1.9rem,6vw,2.75rem)] leading-none text-story-ink">{data.total}</dd>
             <dt className="story-kicker mt-2 text-story-muted-2">Ratings</dt>

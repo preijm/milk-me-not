@@ -36,7 +36,7 @@ export const FeedPullQuote = ({ items, className }: FeedPullQuoteProps) => {
           <span className="story-num text-[2rem] leading-none" style={{ color: tier.color }}>
             {featured.rating.toFixed(1)}
           </span>
-          <span className="text-sm font-bold uppercase tracking-[0.1em]" style={{ color: tier.color }}>
+          <span className="text-sm font-bold uppercase tracking-widest" style={{ color: tier.color }}>
             {tier.name}
           </span>
           <span className="hidden text-white/40 sm:inline">·</span>

@@ -18,7 +18,7 @@ export const ProductResultItem = ({ product, onSelect, searchTerm: _searchTerm }
   
   return (
     <div 
-      className="flex cursor-pointer flex-col border-b border-story-ink/[0.08] px-4 py-3 transition-colors last:border-b-0 hover:bg-story-cream-2"
+      className="flex cursor-pointer flex-col border-b border-story-ink/8 px-4 py-3 transition-colors last:border-b-0 hover:bg-story-cream-2"
       onClick={handleItemClick}
     >
       <div className="text-[0.9375rem] font-bold text-story-ink"><span translate="no">{product.brand_name}</span> - {product.product_name}</div>

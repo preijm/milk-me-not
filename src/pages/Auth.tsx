@@ -121,7 +121,7 @@ const Auth = () => {
         {/* On a phone the order is pitch → form → proof, so a returning visitor
             reaches the form in one screen and a new one still gets sold first.
             On desktop the pitch and proof stack in the left column beside it. */}
-        <div className="mx-auto grid w-full max-w-[76rem] items-start gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 lg:px-10 lg:py-16">
+        <div className="mx-auto grid w-full max-w-304 items-start gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 lg:px-10 lg:py-16">
           {/* ── The pitch ─────────────────────────────────────────────── */}
           <div className="relative order-1 lg:col-start-1 lg:row-start-1">
             {/* Pale, and clear of the headline. This drop used to be
@@ -158,14 +158,14 @@ const Auth = () => {
               everywhere else. Same figures, same component, just placed where a
               phone needs them, so the evidence still lands before the ask. */}
           {data && (
-            <div className="order-2 border-t border-story-ink/[0.08] pt-6 lg:hidden">
+            <div className="order-2 border-t border-story-ink/8 pt-6 lg:hidden">
               <Stats data={data} className="grid" />
               <p className="mt-3 text-[0.8125rem] text-story-muted">No brand has ever paid for a point.</p>
             </div>
           )}
 
           {/* ── The form ──────────────────────────────────────────────── */}
-          <div className="story-hairline story-lift order-3 rounded-[1.5rem] bg-white p-6 sm:p-8 lg:col-start-2 lg:row-start-1 lg:row-span-2">
+          <div className="story-hairline story-lift order-3 rounded-3xl bg-white p-6 sm:p-8 lg:col-start-2 lg:row-start-1 lg:row-span-2">
             {shouldShowEmailPending ? (
               <EmailConfirmationPending
                 email={pendingEmail}
@@ -187,7 +187,7 @@ const Auth = () => {
               />
             )}
 
-            <p className="mt-6 border-t border-story-ink/[0.08] pt-5 text-center text-[0.75rem] leading-relaxed text-story-muted-2">
+            <p className="mt-6 border-t border-story-ink/8 pt-5 text-center text-[0.75rem] leading-relaxed text-story-muted-2">
               Plant milk, no spam — promise. Read{" "}
               <Link to="/faq" className="font-bold text-story-muted underline-offset-2 hover:underline">
                 how ratings work
@@ -198,7 +198,7 @@ const Auth = () => {
           {/* ── The proof ─────────────────────────────────────────────── */}
           <div className="order-4 lg:col-start-1 lg:row-start-2">
             <DropList className="max-w-md" items={sellPoints} />
-            {data && <Stats data={data} className="mt-8 hidden border-t border-story-ink/[0.08] pt-7 lg:grid" />}
+            {data && <Stats data={data} className="mt-8 hidden border-t border-story-ink/8 pt-7 lg:grid" />}
           </div>
         </div>
       </main>

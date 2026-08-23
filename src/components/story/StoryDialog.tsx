@@ -31,7 +31,7 @@ export const STORY_DIALOG_SURFACE =
   // it to near-black in dark mode. Naming a background here gives tailwind-merge
   // a conflict it can resolve in our favour, which is the one thing
   // `story-surface` exists to guarantee.
-  "story-surface bg-story-cream story-lift gap-0 rounded-[1.5rem] border-story-ink/10 p-6 sm:p-8 " +
+  "story-surface bg-story-cream story-lift gap-0 rounded-3xl border-story-ink/10 p-6 sm:p-8 " +
   // Tall dialogs (the registration form, the camera) must not run off a short
   // laptop window — the shell scrolls, the card keeps its shape.
   "max-h-[calc(100dvh-2rem)] overflow-y-auto";
@@ -48,7 +48,7 @@ export const STORY_ALERT_ACTION_CLASS =
 export const STORY_ALERT_CANCEL_CLASS =
   "mt-0 inline-flex items-center justify-center gap-2.5 rounded-full border-[1.5px] border-story-ink/15 " +
   "bg-transparent px-6 py-3.5 font-sans text-[0.9375rem] font-bold tracking-[-0.01em] text-story-ink " +
-  "transition-colors hover:bg-story-ink/[0.05]";
+  "transition-colors hover:bg-story-ink/5";
 
 const SIZE_CLASS = {
   sm: "sm:max-w-sm",
@@ -143,8 +143,8 @@ export const StoryDialogClose = ({ className, onClick }: { className?: string; o
       onClick={onClick}
       className={cn(
         "absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-story-muted",
-        "transition-colors hover:bg-story-ink/[0.06] hover:text-story-ink",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2",
+        "transition-colors hover:bg-story-ink/6 hover:text-story-ink",
+        "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2",
         className,
       )}
     >
@@ -174,8 +174,8 @@ export const StoryDialogActions = ({
 
 /** The one input look, so a field reads the same in every dialog and form. */
 export const storyInputClass =
-  "h-12 w-full rounded-xl border-[1.5px] border-story-ink/[0.12] bg-white px-4 font-sans text-[0.9375rem] " +
-  "text-story-ink placeholder:text-story-muted-2 focus-visible:outline-none focus-visible:ring-2 " +
+  "h-12 w-full rounded-xl border-[1.5px] border-story-ink/12 bg-white px-4 font-sans text-[0.9375rem] " +
+  "text-story-ink placeholder:text-story-muted-2 focus-visible:outline-hidden focus-visible:ring-2 " +
   "focus-visible:ring-story-green focus-visible:ring-offset-0 disabled:opacity-60";
 
 export const StoryInput = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(

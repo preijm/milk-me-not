@@ -8,7 +8,7 @@ interface FeedEmptyStateProps {
 export const FeedEmptyState = ({ isAuthenticated }: FeedEmptyStateProps) => {
   if (isAuthenticated) {
     return (
-      <div className="story-hairline flex flex-col items-center gap-4 rounded-[1.5rem] bg-white px-6 py-16 text-center">
+      <div className="story-hairline flex flex-col items-center gap-4 rounded-3xl bg-white px-6 py-16 text-center">
         <span className="text-story-green-light" aria-hidden>
           <MilkDrop size={64} variant="solid" />
         </span>
@@ -21,7 +21,7 @@ export const FeedEmptyState = ({ isAuthenticated }: FeedEmptyStateProps) => {
   }
 
   return (
-    <div className="story-hairline flex flex-col items-center gap-4 rounded-[1.5rem] bg-white px-6 py-16 text-center">
+    <div className="story-hairline flex flex-col items-center gap-4 rounded-3xl bg-white px-6 py-16 text-center">
       <span className="text-story-green-light" aria-hidden>
         <MilkDrop size={64} variant="solid" />
       </span>

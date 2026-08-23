@@ -28,10 +28,10 @@ const ScoreLegend = ({ className }: { className?: string }) => (
     {SCORE_TIERS.map((tier) => (
       <div
         key={tier.key}
-        className="flex flex-shrink-0 items-center gap-2 rounded-full py-2 pl-2.5 pr-3.5"
+        className="flex shrink-0 items-center gap-2 rounded-full py-2 pl-2.5 pr-3.5"
         style={{ backgroundColor: tier.light }}
       >
-        <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: tier.color }} />
+        <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: tier.color }} />
         <span className="text-[0.75rem] font-bold" style={{ color: tier.color }}>
           {tier.name}
         </span>
@@ -64,7 +64,7 @@ export const ResultsHero = ({ stats, isLoading }: ResultsHeroProps) => {
         />
       )}
       {user && (
-        <div className="mx-auto w-full max-w-[76rem] px-5 pb-4 sm:px-8 lg:hidden">
+        <div className="mx-auto w-full max-w-304 px-5 pb-4 sm:px-8 lg:hidden">
           <ScoreLegend />
         </div>
       )}
@@ -92,7 +92,7 @@ export const ResultsHero = ({ stats, isLoading }: ResultsHeroProps) => {
         </Lede>
       </div>
 
-      <dl className="relative mt-9 grid max-w-lg grid-cols-3 gap-6 border-t border-story-ink/[0.08] pt-7">
+      <dl className="relative mt-9 grid max-w-lg grid-cols-3 gap-6 border-t border-story-ink/8 pt-7">
         {figures.map((f) => (
           <StatFigure key={f.label} value={f.value} label={f.label} />
         ))}

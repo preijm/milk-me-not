@@ -20,7 +20,7 @@ interface ContactCardProps {
 const badgeStyles = {
   available: "bg-story-green/10 text-story-green-dark border-story-green/25",
   unavailable: "bg-story-amber/15 text-story-amber-dark border-story-amber/25",
-  neutral: "bg-story-ink/[0.06] text-story-muted border-story-ink/10",
+  neutral: "bg-story-ink/6 text-story-muted border-story-ink/10",
 };
 
 /**
@@ -63,16 +63,16 @@ export const ContactCard = ({
   return (
     <div
       onClick={onClick}
-      className={`bg-card story-hairline relative flex flex-col rounded-[1.25rem] p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md sm:p-7 ${onClick ? "cursor-pointer overflow-visible" : "overflow-hidden"}`}
+      className={`bg-card story-hairline relative flex flex-col rounded-[1.25rem] p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:shadow-md sm:p-7 ${onClick ? "cursor-pointer overflow-visible" : "overflow-hidden"}`}
     >
       {/* An oversized, near-invisible echo of the channel's own icon — the
           illustrated touch that keeps a disabled card from reading as a
           rendering fault rather than a joke. */}
-      <Icon aria-hidden className="pointer-events-none absolute -right-5 -top-6 h-28 w-28 rotate-[14deg] text-story-ink/[0.04]" />
+      <Icon aria-hidden className="pointer-events-none absolute -right-5 -top-6 h-28 w-28 rotate-14 text-story-ink/4" />
 
       {children}
       <div className="relative flex flex-1 flex-row items-start gap-4 sm:gap-5">
-        <div className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl sm:h-16 sm:w-16 ${iconColorClass}`}>
+        <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl sm:h-16 sm:w-16 ${iconColorClass}`}>
           <Icon className="h-6 w-6 sm:h-7 sm:w-7" />
         </div>
         <div className="min-w-0 flex-1">

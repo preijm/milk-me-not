@@ -75,7 +75,7 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
           reported there was no numeral telling you what you were submitting. */}
       <label
         className={cn(
-          "flex h-[4.5rem] w-[4.5rem] shrink-0 cursor-text flex-col items-center justify-center rounded-2xl transition-colors",
+          "flex h-18 w-18 shrink-0 cursor-text flex-col items-center justify-center rounded-2xl transition-colors",
           !scored && "story-hairline bg-story-cream",
         )}
         style={{ backgroundColor: scored ? tier.color : undefined }}
@@ -95,7 +95,7 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
           onBlur={commit}
           onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
           className={cn(
-            "story-num h-11 w-full bg-transparent text-center text-[1.6rem] leading-none outline-none",
+            "story-num h-11 w-full bg-transparent text-center text-[1.6rem] leading-none outline-hidden",
             scored ? "text-white placeholder:text-white/60" : "text-story-ink-2 placeholder:text-story-muted",
           )}
         />
@@ -134,7 +134,7 @@ export const RatingSelect = ({ rating, setRating }: RatingSelectProps) => {
             <SliderPrimitive.Thumb
               className={cn(
                 "flex h-11 w-11 cursor-grab touch-none select-none items-center justify-center rounded-full active:cursor-grabbing",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
+                "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
               )}
             >
               <span

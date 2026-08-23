@@ -36,8 +36,8 @@ const SIZE_CLASS = {
 
 const WIDTH_CLASS = {
   narrow: "mx-auto w-full max-w-3xl px-5 sm:px-8",
-  prose: "mx-auto w-full max-w-[46rem] px-5 sm:px-8",
-  wide: "mx-auto w-full max-w-[76rem] px-5 sm:px-8 lg:px-10",
+  prose: "mx-auto w-full max-w-184 px-5 sm:px-8",
+  wide: "mx-auto w-full max-w-304 px-5 sm:px-8 lg:px-10",
   full: "w-full",
 } as const;
 
@@ -98,7 +98,7 @@ export const Kicker = ({
     <span
       aria-hidden
       className={cn(
-        "h-px w-7 flex-shrink-0",
+        "h-px w-7 shrink-0",
         tone === "green" && "bg-story-green",
         tone === "ink" && "bg-story-muted/50",
         tone === "light" && "bg-white/50",
@@ -136,7 +136,7 @@ export const Lede = ({
 const BUTTON_BASE =
   "inline-flex items-center justify-center gap-2.5 rounded-full font-sans font-bold tracking-[-0.01em] " +
   "transition-[transform,filter,background-color,color] duration-150 active:scale-[0.985] " +
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-story-green " +
+  "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-story-green " +
   "disabled:pointer-events-none disabled:opacity-50";
 
 const BUTTON_SIZE = {
@@ -149,7 +149,7 @@ const BUTTON_TONE = {
   green: "bg-story-green text-white story-lift-green hover:brightness-[1.07]",
   ink: "bg-story-ink text-story-cream hover:brightness-125",
   paper: "bg-white text-story-ink shadow-[0_10px_26px_-14px_rgba(27,36,33,0.5)] hover:bg-story-cream",
-  outline: "border-[1.5px] border-story-ink/15 bg-transparent text-story-ink hover:bg-story-ink/[0.05]",
+  outline: "border-[1.5px] border-story-ink/15 bg-transparent text-story-ink hover:bg-story-ink/5",
   "outline-light": "border-[1.5px] border-white/35 bg-transparent text-white hover:bg-white/10",
 } as const;
 
@@ -308,7 +308,7 @@ export const SectionHead = ({
       </Display>
       {lede && <Lede tone={tone === "light" ? "light" : "muted"} className="mt-4">{lede}</Lede>}
     </div>
-    {trailing && <div className="flex-shrink-0">{trailing}</div>}
+    {trailing && <div className="shrink-0">{trailing}</div>}
   </div>
 );
 
@@ -325,7 +325,7 @@ export const DropList = ({
   <ul className={cn("flex flex-col gap-3", className)}>
     {items.map((item, i) => (
       <li key={i} className="flex items-start gap-3">
-        <DropGlyph size={14} className={cn("mt-1 flex-shrink-0", tone === "light" ? "text-story-green-light" : "text-story-green")} />
+        <DropGlyph size={14} className={cn("mt-1 shrink-0", tone === "light" ? "text-story-green-light" : "text-story-green")} />
         <span className={cn("text-[0.9375rem] leading-relaxed", tone === "light" ? "text-white/80" : "text-story-ink-2")}>
           {item}
         </span>

@@ -60,7 +60,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Product</h2>
-              <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
+              <div className="h-px flex-1 bg-story-ink/9"></div>
             </div>
             <div className="story-hairline rounded-2xl bg-white p-4 sm:p-5">
               <ProductInformation 
@@ -76,7 +76,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Rating</h2>
-              <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
+              <div className="h-px flex-1 bg-story-ink/9"></div>
             </div>
             <div className="story-hairline rounded-2xl bg-white p-4 sm:p-5">
               <RatingSelect rating={formState.rating} setRating={formSetters.setRating} />
@@ -97,7 +97,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Price-to-Quality Ratio</h2>
-              <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
+              <div className="h-px flex-1 bg-story-ink/9"></div>
             </div>
             <div className="story-hairline rounded-2xl bg-white p-4 sm:p-5">
               <PriceInput 
@@ -113,7 +113,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Buying Location</h2>
-              <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
+              <div className="h-px flex-1 bg-story-ink/9"></div>
             </div>
             <div className="story-hairline space-y-3 rounded-2xl bg-white p-4 sm:p-5">
               <div>
@@ -142,7 +142,7 @@ export const AddMilkTest = () => {
           <div className="space-y-3 md:space-y-4">
             <div className="relative flex items-center gap-3">
               <h2 className="story-serif whitespace-nowrap text-[1.15rem] font-bold text-story-ink">Drinking Style</h2>
-              <div className="h-px flex-1 bg-story-ink/[0.09]"></div>
+              <div className="h-px flex-1 bg-story-ink/9"></div>
             </div>
             <div className="story-hairline rounded-2xl bg-white p-4 sm:p-5">
               <DrinkPreference 

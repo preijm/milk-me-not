@@ -179,7 +179,7 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
                       size="sm"
                     />
                     {stage.scanned.quantity && (
-                      <span className="mt-1 block pl-[3.125rem] text-[0.75rem] text-story-muted-2">
+                      <span className="mt-1 block pl-12.5 text-[0.75rem] text-story-muted-2">
                         {stage.scanned.quantity}
                       </span>
                     )}

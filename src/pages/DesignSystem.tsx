@@ -15,7 +15,7 @@ const ColorSwatch = ({
   className: string;
 }) => (
   <div className="flex flex-col items-center gap-2">
-    <div className={`w-16 h-16 rounded-lg border border-border shadow-sm ${className}`} />
+    <div className={`w-16 h-16 rounded-lg border border-border shadow-xs ${className}`} />
     <Text size="sm" weight="medium" className="text-center">{name}</Text>
     <Text size="xs" variant="muted" className="text-center font-mono">{token}</Text>
   </div>

@@ -39,7 +39,7 @@ export const SelectedProduct = ({
               e.stopPropagation();
               onEdit();
             }}
-            className="h-8 w-8 shrink-0 rounded-full p-0 text-story-muted hover:bg-story-ink/[0.06] hover:text-story-ink"
+            className="h-8 w-8 shrink-0 rounded-full p-0 text-story-muted hover:bg-story-ink/6 hover:text-story-ink"
           >
             <Edit className="h-4 w-4" />
           </Button>

@@ -19,7 +19,7 @@ interface ImageModalProps {
 export const ImageModal = ({ imageUrl, isOpen, onClose }: ImageModalProps) => (
   <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
     <DialogPortal>
-      <DialogOverlay className="bg-story-ink/80 backdrop-blur-sm" />
+      <DialogOverlay className="bg-story-ink/80 backdrop-blur-xs" />
       <DialogContent
         closeButton={false}
         className="w-full max-w-7xl overflow-visible border-0 bg-transparent p-0 shadow-none"
