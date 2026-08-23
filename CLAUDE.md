@@ -98,6 +98,26 @@ src/
 ### Path Aliases
 Use `@/*` to resolve to `src/*` in imports (configured in `tsconfig.app.json`).
 
+### Every dialog is the same object
+`StoryDialog` (`src/components/story/StoryDialog.tsx`) is the shell for overlays:
+kicker, display title, lede, story buttons. Reach for it rather than
+`DialogContent` directly, or the overlay arrives in whichever palette it happens
+to import — that is how a `#2144ff` Save button ended up under a green avatar.
+
+Two things it encodes that are easy to undo by accident:
+
+- `bg-story-cream` on the surface is load-bearing. `DialogContent` carries
+  `bg-background`, a *utility*, while `story-surface` paints in the *base*
+  layer, so the utility wins and the card follows the app's token to near-black
+  in dark mode. Naming a background gives tailwind-merge a conflict it resolves
+  our way.
+- Destructive confirmations stay Radix `AlertDialog` — a stray click outside
+  must not answer "are you sure". They cannot host a `StoryButton` without
+  losing close-on-select, so they borrow `STORY_DIALOG_SURFACE` and
+  `STORY_ALERT_ACTION_CLASS` instead.
+
+The palette has no red on purpose. Destructive actions use amber.
+
 ### Styling Conventions
 - Semantic HSL colour tokens (score, brand, heatmap) in `src/index.css`, now
   inside the `@theme` block rather than a JS config. Tailwind emits them as
@@ -128,6 +148,31 @@ Five, not one:
   main that touches that file, so editing it is what deploys it. It runs
   `delete-other-labels: true`: a label removed from the file is removed from
   the repository.
+
+### `main` is protected
+Two rulesets apply to it, both with a repository-admin bypass:
+
+- **checks must pass** — `Lint & Type Check`, `Test` and `Build` must be green
+  before a pull request merges.
+- **delforcepush** — no deletion, no force-push.
+
+Auto-merge is enabled, so `gh pr merge --auto` genuinely queues until the checks
+pass rather than merging immediately. Before it was enabled, `--auto` silently
+fell through to an instant merge, which is how a pull request once landed with
+its checks still running.
+
+### Do not hand-regenerate `package-lock.json`
+CI writes it with Node 20. A newer local npm produces a *different* file from
+the same command, so committing your version starts a tug-of-war where each
+run reverts the other. The lockfile exists only for Dependabot; let the
+workflow own it.
+
+### Never write the CI skip marker into a commit message
+GitHub scans the whole commit message, not just the subject. A commit that
+merely *discusses* the marker skips its own workflows — which happened here to
+the very commit that fixed the job it was describing. Write "skip-ci marker"
+in prose, and remember a squash-merge turns a PR body into a commit message
+too.
 
 ### Deployment
 The site is hosted on **Cloudflare Workers**, not Lovable. `deploy.yml` runs on
