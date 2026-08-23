@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import { Loader } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { useAggregatedResults } from "@/hooks/useAggregatedResults";
@@ -6,6 +6,7 @@ import { useResultsUrlState, useResultsFiltering } from "@/hooks/useResultsState
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePagedCount } from "@/hooks/usePagedCount";
 import { Band, SectionHead, StoryButton, StoryLayout } from "@/components/story";
 import { ResultsViewSwitcher } from "@/components/results/ResultsViewSwitcher";
 import { ResultsCharts } from "@/components/results/ResultsCharts";
@@ -42,10 +43,11 @@ const Results = () => {
 
   // 220 rows at once makes a 23,000px page nobody reaches the bottom of, so the
   // list arrives a screenful at a time. Any change to the query starts over.
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [searchTerm, filters, sortConfig]);
+  const [visibleCount, setVisibleCount] = usePagedCount(PAGE_SIZE, [
+    searchTerm,
+    filters,
+    sortConfig,
+  ]);
   const visibleResults = filteredResults.slice(0, visibleCount);
   const remaining = filteredResults.length - visibleResults.length;
 

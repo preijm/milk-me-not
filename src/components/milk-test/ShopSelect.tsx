@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -18,10 +18,8 @@ interface ShopSelectProps {
 const NO_SHOPS: { name: string; country_code: string }[] = [];
 
 export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) => {
-  const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState<{ name: string; country_code: string }[]>([]);
+  const [inputValue, setInputValue] = useState(shop ?? "");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [showAddNew, setShowAddNew] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
 
@@ -44,33 +42,30 @@ export const ShopSelect = ({ shop, setShop, selectedCountry }: ShopSelectProps) 
     },
   });
 
-  // Initialize input value from prop
-  useEffect(() => {
-    if (shop) {
-      setInputValue(shop);
-    }
-  }, [shop]);
+  // Follow the prop when it changes from outside — picking a shop elsewhere, or
+  // the form resetting. Typing clears `shop` (see handleInputChange), so this
+  // never fights the user mid-word. Compared during render rather than in an
+  // effect so the input never paints one frame of the stale name.
+  const [seenShop, setSeenShop] = useState(shop);
+  if (shop !== seenShop) {
+    setSeenShop(shop);
+    if (shop) setInputValue(shop);
+  }
 
-  // Update suggestions when input changes
-  useEffect(() => {
+  // Suggestions and the "add new" affordance are a pure function of what has
+  // been typed and what the query returned, so they are computed rather than
+  // stored. They used to live in state, written by an effect, which meant every
+  // keystroke rendered once with the previous word's matches.
+  const { suggestions, showAddNew } = useMemo(() => {
     if (inputValue.trim() === '') {
-      setSuggestions([]);
-      setShowAddNew(false);
-      return;
+      return { suggestions: NO_SHOPS, showAddNew: false };
     }
 
     const searchTerm = inputValue.toLowerCase();
-    const filteredShops = shops.filter(s => 
-      s.name.toLowerCase().includes(searchTerm)
-    );
-
-    setSuggestions(filteredShops);
-    
-    // Show "Add new" option if there's no exact match
-    const exactMatch = shops.some(s => 
-      s.name.toLowerCase() === searchTerm
-    );
-    setShowAddNew(!exactMatch && inputValue.trim().length > 0);
+    return {
+      suggestions: shops.filter(s => s.name.toLowerCase().includes(searchTerm)),
+      showAddNew: !shops.some(s => s.name.toLowerCase() === searchTerm),
+    };
   }, [inputValue, shops]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
