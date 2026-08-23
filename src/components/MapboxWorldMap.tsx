@@ -342,21 +342,24 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
       const feature = e.features[0];
       const properties = feature.properties as { iso_3166_1?: string; name?: string } | null;
       const countryCode = properties?.iso_3166_1;
-      const countryName = properties?.name;
       const country = countryData.find((c) => c.country_code === countryCode);
       const testCount = country ? country.test_count : 0;
 
-      // Raw HTML sits outside React and Tailwind, so the story palette comes in
-      // as literals here — the same compromise `tiers.ts` makes for SVG fills.
+      // `properties.name` is the country's name in its own language, so this
+      // popup was the one place on an English page that said "Deutschland".
+      // The page-wide helper is used everywhere else; a local `const
+      // countryName` here had been shadowing it.
+      const label = countryCode ? countryName(countryCode) : (properties?.name ?? 'Unknown');
+
       const popup = document.createElement('div');
-      popup.style.cssText = 'padding:14px 16px;min-width:150px';
+      popup.className = 'map-popup';
 
       const name = document.createElement('h3');
-      name.style.cssText = 'font-weight:800;font-size:17px;margin:0 0 6px;color:#1b2421;letter-spacing:-0.01em';
-      name.textContent = countryName || countryCode || 'Unknown';
+      name.className = 'map-popup__name';
+      name.textContent = label;
 
       const count = document.createElement('p');
-      count.style.cssText = 'font-size:14px;font-weight:600;margin:0;color:#5d6b65';
+      count.className = 'map-popup__count';
       count.textContent = `${testCount} ${testCount === 1 ? 'rating' : 'ratings'}`;
 
       popup.append(name, count);
