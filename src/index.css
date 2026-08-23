@@ -462,24 +462,75 @@
 }
 
 
-/* Mapbox popup custom styles */
+/* The country popup on the world map.
+   Mapbox builds this chrome itself, outside React, so it is dressed here
+   rather than with utilities. It is the story card: cream, hairline, the same
+   radius and lift, and the round close affordance the dialogs use. */
+.mapboxgl-popup-content {
+  padding: 0;
+  border-radius: 1.25rem;
+  background: hsl(var(--story-cream));
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--story-line)),
+    0 18px 40px -22px hsl(160 14% 12% / 0.45);
+}
+
+/* The tip is a separate element and keeps its own colour, so it has to be told
+   about the cream too or it points at the card in the wrong shade. */
+.mapboxgl-popup-tip {
+  border-top-color: hsl(var(--story-cream)) !important;
+  border-bottom-color: hsl(var(--story-cream)) !important;
+  border-left-color: hsl(var(--story-cream)) !important;
+  border-right-color: hsl(var(--story-cream)) !important;
+}
+
+.map-popup {
+  /* The close button is absolutely positioned over this box, so the text needs
+     room on the right or a long name runs underneath it — which is what
+     "Deutschland" was doing. */
+  padding: 0.9rem 3rem 0.95rem 1.1rem;
+  min-width: 9.5rem;
+}
+
+.map-popup__name {
+  font-family: Epilogue, Georgia, serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: 1.0625rem;
+  line-height: 1.15;
+  margin: 0 0 0.2rem;
+  color: hsl(var(--story-ink));
+}
+
+.map-popup__count {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--story-muted));
+}
+
 .mapboxgl-popup-close-button {
-  font-size: 20px;
-  padding: 4px 10px;
-  color: #6b7280;
-  font-weight: bold;
-  right: 4px;
-  top: 4px;
+  right: 0.4rem;
+  top: 0.4rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.05rem;
+  line-height: 1;
+  border-radius: 999px;
+  color: hsl(var(--story-muted));
+  transition: background-color 120ms, color 120ms;
 }
 
 .mapboxgl-popup-close-button:hover {
-  color: #1f2937;
-  background-color: #f3f4f6;
-  border-radius: 4px;
+  color: hsl(var(--story-ink));
+  background-color: hsl(var(--story-ink) / 0.06);
 }
 
-.mapboxgl-popup-content {
-  border-radius: 12px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  padding: 0;
+.mapboxgl-popup-close-button:focus-visible {
+  outline: 2px solid hsl(var(--story-green));
+  outline-offset: 2px;
 }
