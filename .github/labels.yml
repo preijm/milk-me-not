@@ -95,3 +95,11 @@
 - name: "dependencies"
   color: "0366d6"
   description: "Dependency updates"
+
+- name: "npm"
+  color: "cb3837"
+  description: "An npm package update"
+
+- name: "github-actions"
+  color: "2088ff"
+  description: "A GitHub Actions workflow update"
