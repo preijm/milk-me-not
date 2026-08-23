@@ -20,9 +20,10 @@ concurrency:
 
 jobs:
   # Runs alongside the tests rather than before them: nothing here depends on
-  # the other, and the deploy waits for both. Deliberately not a copy of ci.yml's
-  # first job — that one also regenerates package-lock.json and commits it back
-  # to the branch, which must never happen on a push to main.
+  # the other, and the deploy waits for both. Still not a copy of ci.yml's first
+  # job, but no longer because that one writes to the branch — it does not any
+  # more. Lockfile refresh is its own job there now, and it stays there: one
+  # writer on main is the point, and a deploy has no business committing.
   lint-and-typecheck:
     name: Lint & Type Check
     runs-on: ubuntu-latest

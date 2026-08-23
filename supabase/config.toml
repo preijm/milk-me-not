@@ -1,4 +1,10 @@
 project_id = "jtabjndnietpewvknjrm"
 
+# Reference data for a local database. Recent CLI versions pick `seed.sql` up
+# on their own, but this file is otherwise bare, so it is said out loud.
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
 [functions.check-rate-limit]
 verify_jwt = false
