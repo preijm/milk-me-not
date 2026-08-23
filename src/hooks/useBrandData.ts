@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,9 +15,6 @@ export interface Brand {
 const NO_BRANDS: Brand[] = [];
 
 export const useBrandData = (inputValue: string, brandId: string, setBrandId: (id: string) => void) => {
-  const [suggestions, setSuggestions] = useState<Brand[]>([]);
-  const [showAddNew, setShowAddNew] = useState(false);
-  const [closeMatch, setCloseMatch] = useState<Brand | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -39,47 +36,68 @@ export const useBrandData = (inputValue: string, brandId: string, setBrandId: (i
     },
   });
 
-  // Update suggestions when input changes
-  useEffect(() => {
+  // What the typed text matches is a pure function of the text and the fetched
+  // list, so it is computed rather than kept in three pieces of state written by
+  // an effect. Every keystroke used to render once against the previous word's
+  // matches before the effect caught up.
+  const { suggestions, showAddNew, closeMatch, exactMatchId } = useMemo(() => {
     if (inputValue.trim() === '') {
-      setSuggestions([]);
-      setShowAddNew(false);
-      setCloseMatch(null);
-      return;
+      return {
+        suggestions: NO_BRANDS,
+        showAddNew: false,
+        closeMatch: null,
+        exactMatchId: null,
+      };
     }
 
-    const filteredBrands = brands.filter(brand => 
+    const filteredBrands = brands.filter(brand =>
       brand.name.toLowerCase().includes(inputValue.toLowerCase())
     );
 
-    setSuggestions(filteredBrands);
-    
     // Check for exact match (case-insensitive)
     const exactMatch = brands.find(
       brand => brand.name.toLowerCase() === inputValue.trim().toLowerCase()
     );
-    
+
     if (exactMatch) {
-      setBrandId(exactMatch.id);
-      setShowAddNew(false);
-      setCloseMatch(null);
-    } else {
-      // Only clear brandId if the input has changed
-      if (brandId) {
-        const currentBrand = brands.find(brand => brand.id === brandId);
-        if (currentBrand && currentBrand.name.toLowerCase() !== inputValue.trim().toLowerCase()) {
-          setBrandId('');
-        }
-      }
-      
-      // Find close match using fuzzy matching
-      const match = findClosestMatch(inputValue, brands, 0.75);
-      setCloseMatch(match);
-      
-      // Only show "Add new" when there's no close match
-      setShowAddNew(inputValue.trim() !== '' && !match);
+      return {
+        suggestions: filteredBrands,
+        showAddNew: false,
+        closeMatch: null,
+        exactMatchId: exactMatch.id,
+      };
     }
-  }, [inputValue, brands, brandId, setBrandId]);
+
+    // Find close match using fuzzy matching
+    const match = findClosestMatch(inputValue, brands, 0.75);
+    return {
+      suggestions: filteredBrands,
+      // Only show "Add new" when there's no close match
+      showAddNew: !match,
+      closeMatch: match,
+      exactMatchId: null,
+    };
+  }, [inputValue, brands]);
+
+  // Reporting the resolved brand up to the form is a real side effect, so it
+  // stays in an effect. An empty box is left alone, exactly as before — the old
+  // code returned early rather than clearing the selection.
+  useEffect(() => {
+    if (inputValue.trim() === '') return;
+
+    if (exactMatchId) {
+      setBrandId(exactMatchId);
+      return;
+    }
+
+    // Only clear brandId if the input has changed
+    if (brandId) {
+      const currentBrand = brands.find(brand => brand.id === brandId);
+      if (currentBrand && currentBrand.name.toLowerCase() !== inputValue.trim().toLowerCase()) {
+        setBrandId('');
+      }
+    }
+  }, [exactMatchId, inputValue, brands, brandId, setBrandId]);
 
   // Add new brand to database
   const addNewBrand = async (brandName: string) => {

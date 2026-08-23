@@ -649,10 +649,21 @@ const SidebarMenuSkeleton = React.forwardRef<
     showIcon?: boolean
   }
 >(({ className, showIcon = false, ...props }, ref) => {
-  // Random width between 50 to 90%.
+  // A width between 50% and 90%, varied per row so the skeleton does not look
+  // like a stack of identical bars.
+  //
+  // This used to call Math.random() during render. That is impure: the width
+  // changed on any re-render, so a skeleton could visibly twitch while it was
+  // still loading. useId is stable for the life of the instance, so hashing it
+  // keeps the variety without the twitch.
+  const id = React.useId()
   const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`
-  }, [])
+    let hash = 0
+    for (let i = 0; i < id.length; i++) {
+      hash = (hash * 31 + id.charCodeAt(i)) | 0
+    }
+    return `${(Math.abs(hash) % 40) + 50}%`
+  }, [id])
 
   return (
     <div
