@@ -62,6 +62,20 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+
+    <!-- Counterscale: cookieless analytics, same Worker as peterandco.nl, separate site-id.
+         Gated on the live hostname so `bun dev`, preview deploys and the workers.dev URL
+         never write into the production dataset. -->
+    <script>
+      if (/(^|\.)milkmenot\.com$/.test(location.hostname) && !navigator.webdriver) {
+        var csScript = document.createElement('script');
+        csScript.id = 'counterscale-script';
+        csScript.src = 'https://counterscale.peterreijm.workers.dev/tracker.js';
+        csScript.setAttribute('data-site-id', 'milkmenot.com');
+        csScript.defer = true;
+        document.head.appendChild(csScript);
+      }
+    </script>
   </head>
   <body>
     <!-- Native app splash screen - shows immediately before React loads -->
