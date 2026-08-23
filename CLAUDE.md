@@ -31,6 +31,11 @@ bunx vitest          # Watch mode
 
 # Run a single test file
 bunx vitest run src/lib/security.test.ts
+
+# Local database. Needs Docker Desktop running. See the Supabase notes below —
+# `db reset` is local, `db reset --linked` destroys production.
+npx supabase start
+npx supabase stop
 ```
 
 ## Architecture
@@ -276,26 +281,97 @@ Husky + lint-staged run ESLint on staged files before each commit.
 - Edge Functions live under `supabase/functions/` (e.g., `check-rate-limit`)
 - Migrations in `supabase/migrations/`
 
-### The migrations are not a complete schema
-`supabase/migrations/` cannot rebuild the database. It has no baseline: ten of
-the tables the app reads — `products`, `milk_tests`, `profiles`, `brands`,
-`shops`, `flavors`, `properties`, `names`, `product_flavors`,
-`product_properties` — are never created by any migration, and the earliest
-file already does `INSERT INTO public.profiles`. The original schema was
-created outside migrations and the folder starts mid-life, so every file
-assumes a database that already exists.
+### The Supabase anon key is public on purpose
+`src/integrations/supabase/client.ts` has the project URL and anon key written
+into it, and they ship in the bundle to every visitor. The same key sits in
+older commits of `.env`, which looks alarming and is not: it is the same value
+the website already serves, and it carries `"role":"anon"`.
 
-What this means in practice: the deployed database is the source of truth, not
-this folder. Read the schema from `src/integrations/supabase/types.ts`, which
-is generated from the live database. Do not assume a migration you are looking
-at ever ran, and do not assume adding one makes a fresh environment work.
+Rotating it would sign every user out and buy nothing. What actually protects
+the data is RLS — every table has it enabled, and every write policy carries a
+real condition (`auth.uid() = user_id`, `is_admin()`, or `TO service_role`).
+Treat RLS as the control, and check it whenever a table is added.
 
-Fixing it means capturing a baseline from the live database, which needs
-credentials this repo does not carry:
+A `service_role` key would be a different matter entirely. None has ever been
+committed; keep it that way.
+
+`.env` is gitignored and untracked. `.env.example` carries the names. The only
+variable the app actually reads is `VITE_MAPBOX_PUBLIC_KEY` — without it the
+map renders its "not configured" state and everything else works.
+
+### The migrations start from a baseline, and three of them are load-bearing
+`supabase/migrations/` was 94 files that could not rebuild anything: ten tables
+the app reads were never created by any of them, 24 were skipped outright by
+the CLI for not matching its `<timestamp>_name.sql` filename format, and 55
+more duplicated changes the Lovable dashboard had already applied a second
+earlier under a different version. It is now a schema dump of the deployed
+database plus what came after.
+
+`00000000000000_baseline.sql` is generated, not written. Do not hand-edit it;
+regenerate it if it ever needs to change.
+
+The two files beside it exist because a `--schema public` dump cannot carry
+them, and both fail in ways that look fine until they don't:
+
+- **`00000000000001_auth_user_triggers.sql`** — `on_auth_user_created` and
+  `on_auth_user_created_assign_role` live on `auth.users`, outside the dumped
+  schema. Without them a rebuilt database is healthy until someone signs up
+  and gets an account with no profile row and no role.
+- **`00000000000002_storage_buckets_and_policies.sql`** — the buckets and
+  their eight policies live in `storage`, and buckets are *rows*, so not even
+  a `storage` dump would carry them. The app runs until the first upload.
+
+If you ever regenerate the baseline, those two still have to be written by
+hand. A dump will not remind you.
+
+### The local database is real, and worth using
+`supabase start` builds the whole schema from the baseline and seeds it, which
+means policy and migration changes can be tried against a throwaway database
+before they reach production. It needs Docker Desktop running.
 
 ```bash
-supabase db dump --schema public -f supabase/migrations/00000000000000_baseline.sql
+npx supabase start     # first run pulls images, several minutes
+npx supabase db reset  # rebuild from migrations + seed.sql
+npx supabase stop      # snapshots on exit, so the next start is fast
 ```
 
-That file would have to sort before every existing migration, and the existing
-ones would then need to tolerate re-running against it.
+`supabase db reset` **resets the local database**. `supabase db reset --linked`
+drops and rebuilds *production*. One flag apart; never type the second.
+
+`supabase/seed.sql` holds the country list — 257 ISO regions, minus entries
+that are not places (European Union, Eurozone, pseudo-locales) and minus
+withdrawn codes that CLDR still resolves to a successor, which would otherwise
+list a dozen countries twice and let someone file a rating from East Germany.
+It is reference data only; user data never belongs in this repo.
+
+### Migration state is honest now, so trust `migration list`
+Local and remote were once 58 files apart, which made `supabase db push`
+genuinely dangerous — it would have re-run 55 already-applied migrations, many
+of them bare `CREATE TABLE` and `DROP POLICY`. They now match exactly.
+
+```bash
+npx supabase migration list --linked   # what is pending, truthfully
+npx supabase db push                   # applies only what is genuinely new
+```
+
+That gap is also how barcode scanning shipped broken: `ScanFlow.tsx` called
+`get_product_by_barcode` for weeks while the function did not exist in
+production. The call failed softly, so nothing looked wrong. Check this after
+merging anything with a migration in it.
+
+### Backups, because the Free plan has none
+`scripts/backup-supabase.ps1` runs monthly through Task Scheduler, registered
+by `scripts/register-backup-task.ps1`. Two dumps, deliberately kept apart:
+
+- **community** — public schema only, no auth, no password hashes, no
+  addresses. Goes to OneDrive, so it survives the laptop.
+- **full** — everything including `auth`: bcrypt hashes and live refresh
+  tokens. Stays on the machine. Treat it as a credential store; never commit
+  it, never sync it, never paste it anywhere.
+
+The irreplaceable half is the community data. Accounts can be recreated; other
+people's ratings cannot.
+
+The task runs only while signed in — storing a Windows password with it is not
+a trade worth making — so `backup.log` beside the full dump is what tells you
+it is still firing.
