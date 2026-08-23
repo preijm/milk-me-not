@@ -5,17 +5,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Install dependencies
-npm install
+# Install dependencies. Bun is not optional: predev and prebuild both shell out
+# to `bunx tsx`, so an npm-only machine cannot run dev or build.
+bun install
 
-# Development server (port 8080)
+# Development server (port 8080, override with PORT)
 npm run dev
 
 # Build
 npm run build        # Production
 npm run build:dev    # Development build with full debugging
 
-# Lint (max-warnings=0)
+# Lint. The script is plain `eslint .` — warnings do not fail it, and neither
+# does CI. Only lint-staged applies --max-warnings=0, on staged files.
 npm run lint
 
 # Type check — build mode, NOT `tsc --noEmit`.
@@ -36,7 +38,7 @@ bunx vitest run src/lib/security.test.ts
 **MilkMeNot** is a community platform for rating plant-based milk alternatives. React 19 + TypeScript SPA built with Vite, Supabase for backend, and Capacitor for mobile.
 
 ### Key Libraries
-- **Routing:** React Router 7 with 17 lazy-loaded page routes (`src/App.tsx`)
+- **Routing:** React Router 7, every page route lazy-loaded (`src/App.tsx`)
 - **Server state:** TanStack React Query (5-min stale time)
 - **UI:** shadcn/ui (Radix UI primitives) + Tailwind CSS with HSL design tokens
 - **Forms:** React Hook Form + Zod validation
@@ -75,7 +77,7 @@ that limitation where it bites.
 src/
 ├── pages/          # Route-level components (lazy-loaded)
 ├── components/     # Feature components
-│   └── ui/        # 49 shadcn/ui base components
+│   └── ui/        # shadcn/ui base components
 ├── hooks/          # Custom hooks (20+ hooks extracting complex logic)
 ├── contexts/       # AuthContext, NotificationContext, VersionContext
 ├── lib/            # Utility functions and helpers
@@ -86,7 +88,8 @@ src/
 
 ### Data Flow
 - **`useAggregatedResults`** — fetches aggregated milk test ratings from Supabase
-- **`useResultsState`** / **`useResultsUrlState`** — Results page filter/sort/search state stored in URL params
+- **`useResultsUrlState`** / **`useResultsFiltering`** — Results page filter/sort/search.
+  Both live in `src/hooks/useResultsState.ts`; there is no hook named after that file.
 - **`useMilkTestForm`** — form validation for test submissions
 - **`useAuthFlow`** — Supabase auth with email/password + recovery
 
@@ -94,16 +97,48 @@ src/
 Use `@/*` to resolve to `src/*` in imports (configured in `tsconfig.app.json`).
 
 ### Styling Conventions
-- Tailwind CSS with semantic HSL color tokens (score, status, brand, heatmap) defined in `src/index.css`
+- Tailwind CSS with semantic HSL color tokens (score, brand, heatmap) defined in `src/index.css`
 - Dark mode via class strategy
-- `isMobile` hook for responsive logic
+- `useIsMobile` / `useIsMobileOrTablet` (`src/hooks/use-mobile.tsx`) for responsive logic
 
 ### Testing Setup
 - Vitest with jsdom; setup file at `src/test/setup.ts` mocks `matchMedia`, `ResizeObserver`, `IntersectionObserver`
 - Tests colocated with source: `src/**/*.{test,spec}.{ts,tsx}`
 
-### CI Pipeline (`.github/workflows/ci.yml`)
-Three sequential stages: **Lint + Type Check → Test → Build**. Uses Bun. Cancels in-progress runs on new push.
+### Workflows (`.github/workflows/`)
+Five, not one:
+
+- **`ci.yml`** — three sequential stages, **Lint + Type Check → Test → Build**, on
+  every PR and push to main. Uses Bun. Cancels in-progress runs on new push. Its
+  first job also regenerates `package-lock.json` for Dependabot and commits it
+  back to the branch, which is why a dependency PR gains an extra commit.
+- **`deploy.yml`** — see Deployment below.
+- **`codeql.yml`** — static analysis on PRs, pushes to main, and weekly.
+- **`release.yml`** — versioning and changelog on push to main.
+- **`sync-labels.yml`** — keeps `.github/labels.yml` applied.
+
+### Deployment
+The site is hosted on **Cloudflare Workers**, not Lovable. `deploy.yml` runs on
+every push to `main`: test, build, then `bunx wrangler@4 deploy`. No manual
+publish step anywhere.
+
+`wrangler.toml` declares an assets-only Worker — there is no `main` script, so
+requests are served from the edge without invoking Worker code, which keeps them
+free and unmetered. `not_found_handling = "single-page-application"` is what
+makes deep links like `/product/:productId` resolve instead of 404ing.
+
+Three repo secrets are required: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
+and `VITE_MAPBOX_PUBLIC_KEY`. The Mapbox key is set on the *build* step, because
+Vite inlines `VITE_*` at build time — setting it on the Worker afterwards is too
+late.
+
+Deploy does not use `cloudflare/wrangler-action`. That action installs wrangler
+with npm, and npm resolution here has been fragile enough to kill a deploy
+before wrangler ever ran. `bunx` uses the same toolchain as every other step.
+
+`milkmenot.com` is on Cloudflare DNS, but mail still runs through IONOS — nine
+of the zone's ten records are mail, including three DKIM CNAMEs. Do not touch
+DNS records casually.
 
 ### Pre-commit Hooks
 Husky + lint-staged run ESLint on staged files before each commit.
