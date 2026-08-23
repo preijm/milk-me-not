@@ -1,28 +1,26 @@
 /**
- * Member destinations, shared by the desktop account menu and the mobile
- * drawer. Kept out of the component files so fast refresh keeps working —
- * see the react-refresh/only-export-components rule.
+ * Member destinations, shared by the desktop account menu and the Settings
+ * page. Kept out of the component files so fast refresh keeps working — see
+ * the react-refresh/only-export-components rule.
+ */
+
+/**
+ * What the desktop account menu offers.
+ *
+ * Notifications used to be here too. They have a bell in the header now, on
+ * both breakpoints, so listing them again a click away was the same
+ * destination twice in the same corner of the screen.
  */
 export const MEMBER_LINKS = [
   { to: "/profile", label: "My ratings" },
-  { to: "/notifications", label: "Notifications" },
-  { to: "/account", label: "Account settings" },
+  { to: "/account", label: "Settings" },
 ];
 
 /**
- * What the mobile drawer carries once you are signed in.
+ * Occasional-use destinations. A signed-in reader finds these under Settings,
+ * a visitor finds them in the footer.
  *
- * The bottom bar already holds Board, Rate, Alerts and You. Listing those again
- * in the drawer is what made a member page feel like it had two navigations
- * arguing with each other, so this is only what the bar has no room for.
- */
-export const MEMBER_DRAWER_LINKS = [
-  { to: "/notifications", label: "Notifications" },
-  { to: "/account", label: "Account settings" },
-];
-
-/**
- * Occasional-use destinations: demoted once you are signed in, never hidden.
+ * They used to live in a mobile drawer as well, which existed for little else.
  * Nobody opens "About" twice a week, but help and a route to a human have to
  * stay findable — signed-in readers are exactly the people who go looking.
  */

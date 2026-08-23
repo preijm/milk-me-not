@@ -20,6 +20,9 @@ interface FeedEngagementProps {
   onLike: () => void;
   onToggleComments: () => void;
   onEdit: () => void;
+  /** Drop the dividing rule and tighten up, for an inline footer row. */
+  bare?: boolean;
+  className?: string;
 }
 
 export const FeedEngagement = ({
@@ -31,7 +34,9 @@ export const FeedEngagement = ({
   showComments: _showComments,
   onLike,
   onToggleComments,
-  onEdit
+  onEdit,
+  bare = false,
+  className,
 }: FeedEngagementProps) => {
   const [showLikesPopover, setShowLikesPopover] = useState(false);
 
@@ -41,7 +46,15 @@ export const FeedEngagement = ({
 
 
   return (
-    <div className="flex items-center justify-between border-t border-story-ink/8 pt-3.5">
+    <div
+      className={cn(
+        "flex items-center justify-between",
+        // The horizontal mobile card puts this on the same line as the byline,
+        // where a rule across the top would cut the card in half.
+        bare ? "gap-1" : "border-t border-story-ink/8 pt-3.5",
+        className,
+      )}
+    >
       <div className="flex items-center gap-1">
         {/* Like button with count */}
         <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>
@@ -66,7 +79,8 @@ export const FeedEngagement = ({
                 onClick={handleLikeClick}
                 disabled={isLikePending}
                 className={cn(
-                  "flex items-center gap-2 rounded-full px-3 py-1.5 font-bold transition-all duration-200",
+                  "flex items-center gap-1.5 rounded-full py-1.5 font-bold transition-all duration-200",
+                  bare ? "gap-1 px-1.5" : "gap-2 px-3",
                   isLiked ? "text-[#d8453a] hover:bg-[#d8453a]/10" : "text-story-muted hover:bg-story-green/10 hover:text-story-ink",
                 )}
               >
@@ -117,7 +131,10 @@ export const FeedEngagement = ({
           variant="ghost"
           size="sm"
           onClick={onToggleComments}
-          className="flex items-center gap-2 rounded-full px-3 py-1.5 font-bold text-story-muted transition-all duration-200 hover:bg-story-green/10 hover:text-story-ink"
+          className={cn(
+            "flex items-center rounded-full py-1.5 font-bold text-story-muted transition-all duration-200 hover:bg-story-green/10 hover:text-story-ink",
+            bare ? "gap-1 px-1.5" : "gap-2 px-3",
+          )}
         >
           <MessageCircle className="h-4 w-4" />
           <span className="text-sm">{commentsCount}</span>

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import logoImg from "@/assets/logo-96.png";
 import { StoryButton, ArrowRight } from "./primitives";
 import { useRateCta } from "./useRateCta";
 import { StoryAccountMenu } from "./StoryAccountMenu";
-import { MEMBER_DRAWER_LINKS, SECONDARY_LINKS } from "./memberNav";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const PUBLIC_LINKS = [
   { to: "/results", label: "Discover" },
@@ -27,6 +27,30 @@ const Wordmark = ({ tone, to = "/" }: { tone: "ink" | "light"; to?: string }) =>
     >
       Milk Me Not
     </span>
+  </Link>
+);
+
+/**
+ * Notifications, from anywhere.
+ *
+ * They used to be reached through a tab, then through the profile page and a
+ * drawer entry. A bell in the corner is where a reader looks for them, costs no
+ * tab slot, and works the same on a phone and a desktop — which is what let the
+ * mobile drawer go away entirely.
+ */
+const NotificationBell = ({ unread }: { unread: number }) => (
+  <Link
+    to="/notifications"
+    aria-label={unread > 0 ? `Notifications, ${unread} unread` : "Notifications"}
+    className="relative flex h-10 w-10 items-center justify-center rounded-full border border-story-ink/10 bg-white text-story-ink no-underline transition-colors hover:bg-story-cream-2"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" className="h-[1.15rem] w-[1.15rem]" aria-hidden>
+      <path d="M18 8.5a6 6 0 1 0-12 0c0 5-2 6.5-2 6.5h16s-2-1.5-2-6.5" />
+      <path d="M10.3 19a2 2 0 0 0 3.4 0" />
+    </svg>
+    {unread > 0 && (
+      <span aria-hidden className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-story-cream bg-story-amber" />
+    )}
   </Link>
 );
 
@@ -71,8 +95,8 @@ export const StoryHeader = ({
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
+  const { unreadCount } = useNotifications();
   const cta = useRateCta();
   const onAuthPage = location.pathname === "/auth";
   const home = user ? "/feed" : "/";
@@ -137,7 +161,7 @@ export const StoryHeader = ({
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            {!user && !onAuthPage && (
+            {!onAuthPage && (
               <Link
                 to="/auth"
                 className="hidden rounded-full px-4 py-2 text-[0.875rem] font-bold text-story-ink-2 no-underline transition-colors hover:bg-story-ink/5 lg:inline-flex"
@@ -151,17 +175,23 @@ export const StoryHeader = ({
                 <ArrowRight />
               </StoryButton>
             )}
+            {user && <NotificationBell unread={unreadCount} />}
             {user && <StoryAccountMenu className="hidden lg:flex" />}
 
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              aria-expanded={open}
-              aria-label={open ? "Close menu" : "Open menu"}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-story-ink/10 bg-white text-story-ink transition-colors hover:bg-story-cream-2 lg:hidden"
-            >
-              <Burger open={open} />
-            </button>
+            {/* Signed out only. A member has the bar for the day-to-day, the
+                bell for replies and Settings for everything occasional, so the
+                drawer had nothing left to hold. */}
+            {!user && (
+              <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                aria-expanded={open}
+                aria-label={open ? "Close menu" : "Open menu"}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-story-ink/10 bg-white text-story-ink transition-colors hover:bg-story-cream-2 lg:hidden"
+              >
+                <Burger open={open} />
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -203,12 +233,12 @@ export const StoryHeader = ({
             </button>
           </div>
 
-          {/* Signed out, this drawer is the whole navigation. Signed in, the
-              bottom bar is — so the drawer drops Discover, My ratings and
-              Notifications, which are Board, You and Alerts one thumb-width
-              below it, and carries what the bar has no room for instead. */}
+          {/* Signed-out only, so it is the visitor's whole navigation and
+              nothing else. A member never opens this: the bar carries the
+              day-to-day, the bell carries replies, and Settings carries
+              everything occasional. */}
           <nav className="flex flex-col overflow-y-auto px-5 pt-4" aria-label="Mobile">
-            {(user ? MEMBER_DRAWER_LINKS : PUBLIC_LINKS).map((link) => (
+            {PUBLIC_LINKS.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -219,28 +249,10 @@ export const StoryHeader = ({
                 <ArrowRight className="text-story-muted-2" />
               </Link>
             ))}
-            {user && (
-              <>
-                <p className="story-kicker mt-7 pb-1 text-story-muted-2">More</p>
-                {SECONDARY_LINKS.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    tabIndex={open ? 0 : -1}
-                    className="flex items-center justify-between border-t border-story-ink/8 py-3.5 font-sans text-[0.9375rem] font-bold text-story-muted no-underline"
-                  >
-                    {link.label}
-                    <ArrowRight className="text-story-muted-2" />
-                  </Link>
-                ))}
-              </>
-            )}
           </nav>
 
           <div className="mt-auto flex shrink-0 flex-col gap-2.5 p-5 pb-8">
-            {/* No rating button for members: RATE is the centre of the bottom
-                bar on every page, and a second one here is the same ask twice. */}
-            {!hideCta && !user && (
+            {!hideCta && (
               <StoryButton tabIndex={open ? 0 : -1} onClick={cta.go} className="w-full">
                 {cta.label}
                 <ArrowRight />
@@ -254,19 +266,6 @@ export const StoryHeader = ({
               >
                 Log in
               </Link>
-            )}
-            {user && (
-              <button
-                type="button"
-                tabIndex={open ? 0 : -1}
-                onClick={async () => {
-                  await signOut();
-                  navigate("/");
-                }}
-                className="rounded-full border-[1.5px] border-story-ink/12 py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-muted"
-              >
-                Sign out
-              </button>
             )}
           </div>
         </div>
