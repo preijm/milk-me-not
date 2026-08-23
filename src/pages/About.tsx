@@ -47,7 +47,7 @@ const About = () => {
               <br />
               <span className="text-story-green">soy sauce.</span>
             </Display>
-            <Lede className="mt-6 max-w-[34rem]">
+            <Lede className="mt-6 max-w-136">
               A colleague asked whether soy milk meant mixing soy sauce into milk. It was a joke. Someone tried it
               anyway. Nobody has fully recovered.
             </Lede>
@@ -79,7 +79,7 @@ const About = () => {
                   src={photo.src}
                   alt={photo.alt}
                   loading="eager"
-                  className="aspect-[3/4] w-full rounded-xl object-cover"
+                  className="aspect-3/4 w-full rounded-xl object-cover"
                 />
                 <span className="mt-2 block text-center text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-story-muted-2">
                   {photo.caption}
@@ -184,7 +184,7 @@ const About = () => {
               src={TASTING.src}
               alt={TASTING.alt}
               loading="lazy"
-              className="aspect-[4/3] w-full rounded-xl object-cover"
+              className="aspect-4/3 w-full rounded-xl object-cover"
             />
             <span className="mt-3 block px-2 pb-1 text-[0.8125rem] font-medium italic text-white/55">
               {TASTING.caption}
@@ -195,7 +195,7 @@ const About = () => {
 
       {/* ── The cartons ──────────────────────────────────────────────── */}
       <Band ground="cream" size="lg" width="full" innerClassName="">
-        <div className="mx-auto w-full max-w-[76rem] px-5 sm:px-8 lg:px-10">
+        <div className="mx-auto w-full max-w-304 px-5 sm:px-8 lg:px-10">
           <Kicker>The evidence</Kicker>
           <Display size="lg" className="mt-4 max-w-2xl">
             Some of the cartons that got us here
@@ -210,7 +210,7 @@ const About = () => {
         <div className="relative mt-10">
           <ul className="story-rail flex gap-4 px-5 pb-2 sm:px-8 lg:px-10">
           {CARTONS.map((photo) => (
-            <li key={photo.src} className="flex-shrink-0">
+            <li key={photo.src} className="shrink-0">
               <button
                 type="button"
                 onClick={() => setZoomed(photo.src)}
@@ -220,7 +220,7 @@ const About = () => {
                   src={photo.src}
                   alt={photo.alt}
                   loading="lazy"
-                  className="aspect-[3/4] w-full rounded-xl object-cover"
+                  className="aspect-3/4 w-full rounded-xl object-cover"
                 />
               </button>
               </li>
@@ -228,7 +228,7 @@ const About = () => {
           </ul>
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-story-cream to-transparent sm:w-24"
+            className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-linear-to-l from-story-cream to-transparent sm:w-24"
           />
         </div>
       </Band>

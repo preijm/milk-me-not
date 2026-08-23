@@ -354,7 +354,7 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
                 );
             }}
             ref={setVideoEl}
-            className="aspect-[4/3] w-full object-cover"
+            className="aspect-4/3 w-full object-cover"
             autoPlay
             muted
             playsInline

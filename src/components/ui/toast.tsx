@@ -14,7 +14,7 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      "fixed top-0 z-100 flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
       className
     )}
     {...props}
@@ -23,13 +23,13 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-2xl border-[1.5px] p-5 pr-9 shadow-[0_18px_40px_-18px_hsl(var(--story-ink)/0.35)] transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-2xl border-[1.5px] p-5 pr-9 shadow-[0_18px_40px_-18px_hsl(var(--story-ink)/0.35)] transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-(--radix-toast-swipe-end-x) data-[swipe=move]:translate-x-(--radix-toast-swipe-move-x) data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full sm:data-[state=open]:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
         // Toasts fire on every save, edit and delete, so they were the most
         // frequently seen thing left on the old palette.
-        default: "border-story-ink/[0.12] bg-white text-story-ink",
+        default: "border-story-ink/12 bg-white text-story-ink",
         destructive:
           "destructive group border-error/30 bg-error text-white",
       },
@@ -62,7 +62,7 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-9 shrink-0 items-center justify-center rounded-full border-[1.5px] border-story-ink/[0.12] bg-transparent px-4 text-[0.8125rem] font-bold text-story-ink transition-colors hover:bg-story-cream-2 focus:outline-none focus:ring-2 focus:ring-story-green focus:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-white/30 group-[.destructive]:text-white group-[.destructive]:hover:bg-white/10",
+      "inline-flex h-9 shrink-0 items-center justify-center rounded-full border-[1.5px] border-story-ink/12 bg-transparent px-4 text-[0.8125rem] font-bold text-story-ink transition-colors hover:bg-story-cream-2 focus:outline-hidden focus:ring-2 focus:ring-story-green focus:ring-offset-0 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-white/30 group-[.destructive]:text-white hover:group-[.destructive]:bg-white/10",
       className
     )}
     {...props}
@@ -77,7 +77,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2.5 top-2.5 rounded-full p-1.5 text-story-muted-2 opacity-0 transition-opacity hover:bg-story-ink/[0.06] hover:text-story-ink focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-story-green group-hover:opacity-100 group-[.destructive]:text-white/70 group-[.destructive]:hover:bg-white/15 group-[.destructive]:hover:text-white",
+      "absolute right-2.5 top-2.5 rounded-full p-1.5 text-story-muted-2 opacity-0 transition-opacity hover:bg-story-ink/6 hover:text-story-ink focus:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-story-green group-hover:opacity-100 group-[.destructive]:text-white/70 hover:group-[.destructive]:bg-white/15 hover:group-[.destructive]:text-white",
       className
     )}
     toast-close=""

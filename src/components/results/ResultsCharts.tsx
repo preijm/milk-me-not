@@ -43,7 +43,7 @@ export const ResultsCharts = ({ visibleProductIds }: { visibleProductIds: Set<st
 
   if (isLoading) {
     return (
-      <div className="story-hairline h-64 animate-pulse rounded-[1.5rem] bg-white" aria-hidden />
+      <div className="story-hairline h-64 animate-pulse rounded-3xl bg-white" aria-hidden />
     );
   }
 

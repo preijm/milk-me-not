@@ -91,7 +91,7 @@ export const FeedHero = ({ items, isLoading, isAuthenticated }: FeedHeroProps) =
         </div>
       </div>
 
-      <dl className="relative mt-9 grid max-w-lg grid-cols-3 gap-6 border-t border-story-ink/[0.08] pt-7">
+      <dl className="relative mt-9 grid max-w-lg grid-cols-3 gap-6 border-t border-story-ink/8 pt-7">
         {figures.map((f) => (
           <StatFigure key={f.label} value={f.value} label={f.label} />
         ))}

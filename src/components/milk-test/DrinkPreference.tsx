@@ -105,8 +105,8 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
             onClick={() => setPreference(value)}
             aria-pressed={active}
             className={cn(
-              "flex min-h-[5rem] flex-col items-center justify-center gap-1 rounded-xl p-3 transition-colors",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
+              "flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl p-3 transition-colors",
+              "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
               // Solid fill is how a chosen value reads everywhere else on the
               // site; the wash is reserved for "this is the page you are on".
               active

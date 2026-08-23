@@ -128,7 +128,7 @@ const RateDeepLink = () => {
         <p className="story-kicker relative text-story-green-dark">You're rating</p>
 
         <div className="relative mt-4 flex items-start gap-4">
-          <span className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-story-green-wash text-story-green-dark">
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-story-green-wash text-story-green-dark">
             <Carton size={36} />
           </span>
           <div className="min-w-0">

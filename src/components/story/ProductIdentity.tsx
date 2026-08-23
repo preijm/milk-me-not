@@ -41,7 +41,7 @@ const SIZES = {
     radius: "rounded-xl",
     brand: "text-[0.625rem]",
     product: "text-[0.875rem]",
-    pill: "px-1.5 py-[0.0625rem] text-[0.625rem]",
+    pill: "px-1.5 py-0.25 text-[0.625rem]",
     meta: "text-[0.6875rem]",
     gap: "gap-2.5",
     badges: 2,
@@ -122,7 +122,7 @@ export const ProductIdentity = ({
   const badges = [
     ...(isBarista ? [{ key: "barista", label: "Barista", tone: "bg-story-green text-white" }] : []),
     ...flavorLabels.map((label) => ({ key: `f:${label}`, label, tone: "bg-story-amber-light text-story-amber-dark" })),
-    ...propertyLabels.map((label) => ({ key: `p:${label}`, label, tone: "bg-story-ink/[0.06] text-story-muted" })),
+    ...propertyLabels.map((label) => ({ key: `p:${label}`, label, tone: "bg-story-ink/6 text-story-muted" })),
   ];
   const shown = badges.slice(0, maxBadges ?? s.badges);
   const hidden = badges.length - shown.length;
@@ -130,13 +130,13 @@ export const ProductIdentity = ({
   const badgeLine = (shown.length > 0 || meta) && (
     <span className={cn("flex min-w-0 flex-nowrap items-center gap-1.5", badgesBelow ? "mt-2" : "mt-1")}>
       {shown.map((b) => (
-        <span key={b.key} className={cn("max-w-[10rem] truncate rounded-full font-bold", s.pill, b.tone)}>
+        <span key={b.key} className={cn("max-w-40 truncate rounded-full font-bold", s.pill, b.tone)}>
           {b.label}
         </span>
       ))}
-      {hidden > 0 && <span className={cn("flex-shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>}
+      {hidden > 0 && <span className={cn("shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>}
       {meta && (
-        <span className={cn("min-w-0 flex-shrink truncate text-story-muted-2", s.meta)}>
+        <span className={cn("min-w-0 shrink truncate text-story-muted-2", s.meta)}>
           {shown.length > 0 && <span className="mr-1.5" aria-hidden>·</span>}
           {meta}
         </span>
@@ -147,7 +147,7 @@ export const ProductIdentity = ({
   const identity = (
     <span className={cn("flex min-w-0 items-center", s.gap, badgesBelow ? "" : className)}>
       {showMark && (
-        <BrandMark brand={brand} className={cn("flex-shrink-0", s.mark)} radius={s.radius} />
+        <BrandMark brand={brand} className={cn("shrink-0", s.mark)} radius={s.radius} />
       )}
 
       <span className="min-w-0 flex-1">

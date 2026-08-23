@@ -41,7 +41,7 @@ export const FeedEngagement = ({
 
 
   return (
-    <div className="flex items-center justify-between border-t border-story-ink/[0.08] pt-3.5">
+    <div className="flex items-center justify-between border-t border-story-ink/8 pt-3.5">
       <div className="flex items-center gap-1">
         {/* Like button with count */}
         <Popover open={showLikesPopover} onOpenChange={setShowLikesPopover}>

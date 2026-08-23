@@ -132,7 +132,7 @@ const Home = () => {
               <span className="text-story-green">Find your new.</span>
             </Display>
 
-            <Lede className="mt-6 max-w-[34rem]">
+            <Lede className="mt-6 max-w-136">
               {data?.products ? `${data.products} plant milks` : "Hundreds of plant milks"} have been drunk, scored and
               argued about by people obsessed with taste. No brand has ever paid for a point.
             </Lede>
@@ -152,7 +152,7 @@ const Home = () => {
                 where it does the most work. */}
             <TopVerdictBar entry={leaderboard[0]} loading={isLoading} className="mt-8 lg:hidden" />
 
-            <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-story-ink/[0.08] pt-8 lg:mt-12">
+            <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-story-ink/8 pt-8 lg:mt-12">
               {stats.map((s) => (
                 <div key={s.label}>
                   <dd className="story-num text-[clamp(1.9rem,7vw,2.75rem)] leading-none text-story-ink">{s.value}</dd>
@@ -165,13 +165,13 @@ const Home = () => {
           {/* Desktop: a solid green disc with the drop cropped across it is the
               object this page has instead of a product photograph. The verdict
               card overlaps it so the fold reads as one composition. */}
-          <div className="relative hidden lg:block lg:min-h-[26rem]">
-            <div aria-hidden className="absolute -right-8 top-0 h-[26rem] w-[26rem] rounded-full bg-story-green" />
-            <div aria-hidden className="pointer-events-none absolute right-[0.75rem] top-[3.5rem] text-story-green-light">
+          <div className="relative hidden lg:block lg:min-h-104">
+            <div aria-hidden className="absolute -right-8 top-0 h-104 w-104 rounded-full bg-story-green" />
+            <div aria-hidden className="pointer-events-none absolute right-3 top-14 text-story-green-light">
               <MilkDrop size={215} variant="solid" />
             </div>
-            <div aria-hidden className="absolute bottom-1 right-[24rem] h-16 w-16 rounded-full bg-story-blue" />
-            <div className="absolute bottom-0 left-0 w-[21rem]">
+            <div aria-hidden className="absolute bottom-1 right-96 h-16 w-16 rounded-full bg-story-blue" />
+            <div className="absolute bottom-0 left-0 w-84">
               <TopVerdictCard entry={leaderboard[0]} loading={isLoading} />
             </div>
           </div>
@@ -213,12 +213,12 @@ const Home = () => {
             const entry = raw as (typeof leaderboard)[number] | undefined;
             const tier = getTier(entry?.score);
             return (
-              <li key={entry?.productId ?? i} className="border-t border-story-ink/[0.08] last:border-b">
+              <li key={entry?.productId ?? i} className="border-t border-story-ink/8 last:border-b">
                 <Link
                   to={entry ? `/product/${entry.productId}` : "/results"}
                   className="group flex items-center gap-4 py-5 no-underline sm:gap-6 sm:py-6"
                 >
-                  <span className="story-num w-7 flex-shrink-0 text-[1.5rem] leading-none text-story-muted-2 sm:w-10 sm:text-[2rem]">
+                  <span className="story-num w-7 shrink-0 text-[1.5rem] leading-none text-story-muted-2 sm:w-10 sm:text-[2rem]">
                     {i + 1}
                   </span>
 
@@ -238,8 +238,8 @@ const Home = () => {
                     </span>
                   </span>
 
-                  <ScoreMark score={entry?.score} size="md" className="flex-shrink-0 flex-col items-end gap-0 sm:flex-row sm:items-baseline sm:gap-2.5" />
-                  <ArrowRight className="hidden flex-shrink-0 text-story-muted-2 sm:block" />
+                  <ScoreMark score={entry?.score} size="md" className="shrink-0 flex-col items-end gap-0 sm:flex-row sm:items-baseline sm:gap-2.5" />
+                  <ArrowRight className="hidden shrink-0 text-story-muted-2 sm:block" />
                 </Link>
               </li>
             );
@@ -443,7 +443,7 @@ const TopVerdictCard = ({
         </div>
       </div>
 
-      <div className="relative mt-7 flex items-end justify-between border-t border-story-ink/[0.08] pt-6">
+      <div className="relative mt-7 flex items-end justify-between border-t border-story-ink/8 pt-6">
         <ScoreMark score={entry?.score} size="lg" showTier={false} />
         <div className="text-right">
           <p className="story-serif text-[1.25rem] font-bold italic" style={{ color: tier.color }}>

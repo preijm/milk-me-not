@@ -64,7 +64,7 @@ export const StoryFooter = ({ variant = "full" }: { variant?: "full" | "member" 
   if (variant === "member") {
     return (
       <footer className="relative hidden overflow-hidden bg-story-green-deep text-story-cream lg:block">
-        <div className="relative z-10 mx-auto w-full max-w-[76rem] px-5 py-9 sm:px-8 lg:px-10">
+        <div className="relative z-10 mx-auto w-full max-w-304 px-5 py-9 sm:px-8 lg:px-10">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2.5">
               <img src={logoImg} alt="" className="h-8 w-8 rounded-[0.5rem] object-contain" width={32} height={32} />
@@ -101,7 +101,7 @@ export const StoryFooter = ({ variant = "full" }: { variant?: "full" | "member" 
         <Sprig size={220} />
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-[76rem] px-5 py-16 sm:px-8 sm:py-20 lg:px-10">
+      <div className="relative z-10 mx-auto w-full max-w-304 px-5 py-16 sm:px-8 sm:py-20 lg:px-10">
         <div className="max-w-2xl">
           <Display as="p" size="xl" className="text-white">
             Your turn.

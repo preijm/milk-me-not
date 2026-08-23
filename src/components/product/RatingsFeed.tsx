@@ -37,7 +37,7 @@ const RatingRow = ({ test, isAuthed }: { test: MilkTestResult; isAuthed: boolean
   const when = relativeDate(test.created_at);
 
   return (
-    <li className="flex flex-col gap-2.5 border-t border-story-ink/[0.08] py-4 first:border-t-0 sm:py-5">
+    <li className="flex flex-col gap-2.5 border-t border-story-ink/8 py-4 first:border-t-0 sm:py-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[0.8125rem] font-medium text-story-muted-2">
           {isAuthed && test.username && (
@@ -51,7 +51,7 @@ const RatingRow = ({ test, isAuthed }: { test: MilkTestResult; isAuthed: boolean
           )}
           {when && <span>{when}</span>}
         </div>
-        <ScoreMark score={test.rating} size="sm" showTier={false} className="flex-shrink-0" />
+        <ScoreMark score={test.rating} size="sm" showTier={false} className="shrink-0" />
       </div>
       {isAuthed && note && (
         <p className="story-serif text-[0.9375rem] italic leading-snug text-story-ink-2">&ldquo;{note}&rdquo;</p>
@@ -62,12 +62,12 @@ const RatingRow = ({ test, isAuthed }: { test: MilkTestResult; isAuthed: boolean
 
 /** The one honest gate: no note text exists in the payload to begin with. */
 const SignInTease = ({ onGo }: { onGo: () => void }) => (
-  <li className="border-t border-story-ink/[0.08] pt-5">
+  <li className="border-t border-story-ink/8 pt-5">
     <StoryCard className="flex flex-col items-start gap-3 bg-story-ink px-5 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <p className="text-[0.9375rem] font-medium leading-snug text-white/85">
         Names and tasting notes are for members only — sign in to see who wrote what.
       </p>
-      <StoryButton onClick={onGo} tone="paper" size="md" className="w-full flex-shrink-0 sm:w-auto">
+      <StoryButton onClick={onGo} tone="paper" size="md" className="w-full shrink-0 sm:w-auto">
         Sign in
         <ArrowRight />
       </StoryButton>

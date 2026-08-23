@@ -20,10 +20,10 @@ const CaptureTile = React.forwardRef<
     onClick={onClick}
     disabled={disabled}
     className={cn(
-      "flex min-h-[4.5rem] w-full flex-col items-center justify-center gap-1.5 rounded-xl",
-      "border-[1.5px] border-dashed border-story-ink/[0.18] bg-white/60 text-story-muted transition-colors",
+      "flex min-h-18 w-full flex-col items-center justify-center gap-1.5 rounded-xl",
+      "border-[1.5px] border-dashed border-story-ink/18 bg-white/60 text-story-muted transition-colors",
       "hover:border-story-green hover:bg-story-green-wash hover:text-story-green-dark",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green",
+      "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green",
       "disabled:pointer-events-none disabled:opacity-50",
     )}
   >

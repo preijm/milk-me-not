@@ -15,7 +15,7 @@
 
 /** The floating panel itself. Pairs with a `relative` positioned parent. */
 export const SUGGESTION_PANEL =
-  "absolute z-50 mt-2 w-full overflow-hidden rounded-xl border-[1.5px] border-story-ink/[0.12] bg-white shadow-[0_18px_40px_-18px_hsl(var(--story-ink)/0.35)]";
+  "absolute z-50 mt-2 w-full overflow-hidden rounded-xl border-[1.5px] border-story-ink/12 bg-white shadow-[0_18px_40px_-18px_hsl(var(--story-ink)/0.35)]";
 
 /** Add when the list can run long enough to need scrolling. */
 export const SUGGESTION_SCROLL = "max-h-64 overflow-y-auto";
@@ -30,7 +30,7 @@ export const SUGGESTION_ROW_MUTED =
 
 /** The "did you mean…" row: a correction offered, not a choice in the list. */
 export const SUGGESTION_ROW_HINT =
-  "flex cursor-pointer items-center gap-2 border-b border-story-ink/[0.08] bg-story-green-wash px-4 py-2.5 text-left text-[0.875rem] text-story-green-dark transition-colors hover:bg-story-green-light";
+  "flex cursor-pointer items-center gap-2 border-b border-story-ink/8 bg-story-green-wash px-4 py-2.5 text-left text-[0.875rem] text-story-green-dark transition-colors hover:bg-story-green-light";
 
 /** Non-interactive states: loading, nothing found. */
 export const SUGGESTION_NOTE = "px-4 py-3 text-[0.875rem] text-story-muted-2";

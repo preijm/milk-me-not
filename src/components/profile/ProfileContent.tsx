@@ -95,7 +95,7 @@ export const ProfileContent = ({
           </StoryButton>
         </div>
 
-        <dl className="mt-6 grid grid-cols-2 gap-5 border-t border-story-ink/[0.08] pt-5 sm:grid-cols-4">
+        <dl className="mt-6 grid grid-cols-2 gap-5 border-t border-story-ink/8 pt-5 sm:grid-cols-4">
           {[
             { value: String(totalTests), label: "Ratings" },
             { value: totalTests > 0 ? avgRating : "—", label: "Your average" },
@@ -200,7 +200,7 @@ export const ProfileContent = ({
                           shop_name belongs here and only here: the public view
                           withholds it, so it is your record, not the product's. */}
                       {(r.notes || r.shop_name) && (
-                        <span className="mt-1.5 block space-y-0.5 pl-[3.125rem]">
+                        <span className="mt-1.5 block space-y-0.5 pl-12.5">
                           {r.notes && (
                             <span className="block truncate text-[0.8125rem] italic text-story-muted">
                               “{r.notes}”

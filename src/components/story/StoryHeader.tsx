@@ -110,7 +110,7 @@ export const StoryHeader = ({
           solid ? "border-b border-story-ink/[0.07] bg-story-cream/90 backdrop-blur-xl" : "bg-transparent",
         )}
       >
-        <div className="mx-auto flex h-16 w-full max-w-[76rem] items-center gap-4 px-5 sm:px-8 lg:h-[4.5rem] lg:px-10">
+        <div className="mx-auto flex h-16 w-full max-w-304 items-center gap-4 px-5 sm:px-8 lg:h-18 lg:px-10">
           {/* For a member, home is the feed — `/` redirects there anyway, so
               linking straight at it saves a render hop and keeps the Feed nav
               item correctly marked as current. */}
@@ -127,7 +127,7 @@ export const StoryHeader = ({
                     "rounded-full px-3.5 py-2 text-[0.875rem] font-bold no-underline transition-colors",
                     active
                       ? "bg-story-green-wash text-story-green-dark"
-                      : "text-story-ink-2 hover:bg-story-ink/[0.05]",
+                      : "text-story-ink-2 hover:bg-story-ink/5",
                   )}
                 >
                   {link.label}
@@ -140,7 +140,7 @@ export const StoryHeader = ({
             {!user && !onAuthPage && (
               <Link
                 to="/auth"
-                className="hidden rounded-full px-4 py-2 text-[0.875rem] font-bold text-story-ink-2 no-underline transition-colors hover:bg-story-ink/[0.05] lg:inline-flex"
+                className="hidden rounded-full px-4 py-2 text-[0.875rem] font-bold text-story-ink-2 no-underline transition-colors hover:bg-story-ink/5 lg:inline-flex"
               >
                 Log in
               </Link>
@@ -169,7 +169,7 @@ export const StoryHeader = ({
       {/* Drawer — full-height on phones so the menu is a place, not a dropdown. */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] lg:hidden",
+          "fixed inset-0 z-60 lg:hidden",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
         aria-hidden={!open}
@@ -186,7 +186,7 @@ export const StoryHeader = ({
         />
         <div
           className={cn(
-            "absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col bg-story-cream shadow-[-30px_0_70px_rgba(27,36,33,0.25)] transition-transform duration-[250ms] ease-out",
+            "absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col bg-story-cream shadow-[-30px_0_70px_rgba(27,36,33,0.25)] transition-transform duration-250 ease-out",
             open ? "translate-x-0" : "translate-x-full",
           )}
         >
@@ -213,7 +213,7 @@ export const StoryHeader = ({
                 key={link.to}
                 to={link.to}
                 tabIndex={open ? 0 : -1}
-                className="flex items-center justify-between border-t border-story-ink/[0.08] py-4 font-display text-[1.4rem] font-bold tracking-[-0.03em] text-story-ink no-underline"
+                className="flex items-center justify-between border-t border-story-ink/8 py-4 font-display text-[1.4rem] font-bold tracking-[-0.03em] text-story-ink no-underline"
               >
                 {link.label}
                 <ArrowRight className="text-story-muted-2" />
@@ -227,7 +227,7 @@ export const StoryHeader = ({
                     key={link.to}
                     to={link.to}
                     tabIndex={open ? 0 : -1}
-                    className="flex items-center justify-between border-t border-story-ink/[0.08] py-3.5 font-sans text-[0.9375rem] font-bold text-story-muted no-underline"
+                    className="flex items-center justify-between border-t border-story-ink/8 py-3.5 font-sans text-[0.9375rem] font-bold text-story-muted no-underline"
                   >
                     {link.label}
                     <ArrowRight className="text-story-muted-2" />
@@ -250,7 +250,7 @@ export const StoryHeader = ({
               <Link
                 to="/auth"
                 tabIndex={open ? 0 : -1}
-                className="rounded-full border-[1.5px] border-story-ink/[0.12] py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-ink no-underline"
+                className="rounded-full border-[1.5px] border-story-ink/12 py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-ink no-underline"
               >
                 Log in
               </Link>
@@ -263,7 +263,7 @@ export const StoryHeader = ({
                   await signOut();
                   navigate("/");
                 }}
-                className="rounded-full border-[1.5px] border-story-ink/[0.12] py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-muted"
+                className="rounded-full border-[1.5px] border-story-ink/12 py-3.5 text-center font-sans text-[0.9375rem] font-bold text-story-muted"
               >
                 Sign out
               </button>

@@ -23,7 +23,7 @@ describe("RatingSelect", () => {
     expect(screen.getByText("Gem")).toBeInTheDocument();
   });
 
-  it("takes a typed score on blur", () => {
+  it("takes a typed score on blur-sm", () => {
     const setRating = vi.fn();
     render(<RatingSelect rating={5} setRating={setRating} />);
     fireEvent.change(scoreBox(), { target: { value: "7.3" } });

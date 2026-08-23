@@ -32,7 +32,7 @@ export const UserMark = ({ name, letters = 1, className, radius = "rounded-full"
     <span
       aria-hidden
       className={cn(
-        "flex flex-shrink-0 items-center justify-center font-extrabold",
+        "flex shrink-0 items-center justify-center font-extrabold",
         radius,
         tone.bg,
         tone.fg,

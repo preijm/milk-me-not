@@ -36,15 +36,15 @@ describe("FeedHeader", () => {
     expect(screen.getByText(/ago/i)).toBeInTheDocument();
   });
 
-  it("applies blur class when blurred", () => {
+  it("applies blur-sm class when blurred", () => {
     render(<FeedHeader {...defaultProps} blurred />);
     const username = screen.getByText("TestUser");
-    expect(username.className).toContain("blur-sm");
+    expect(username.className).toContain("blur-xs");
   });
 
-  it("does not apply blur class when not blurred", () => {
+  it("does not apply blur-sm class when not blurred", () => {
     render(<FeedHeader {...defaultProps} blurred={false} />);
     const username = screen.getByText("TestUser");
-    expect(username.className).not.toContain("blur-sm");
+    expect(username.className).not.toContain("blur-xs");
   });
 });

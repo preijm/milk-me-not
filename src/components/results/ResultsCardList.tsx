@@ -26,7 +26,7 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
             to={`/product/${r.product_id}`}
             className="story-hairline flex w-full items-center gap-3.5 rounded-[1.25rem] bg-white p-4 text-left no-underline"
           >
-            <span className="story-num flex-shrink-0 text-[1.05rem] leading-none text-story-muted-2">{i + 1}</span>
+            <span className="story-num shrink-0 text-[1.05rem] leading-none text-story-muted-2">{i + 1}</span>
             <span className="min-w-0 flex-1">
               <ProductIdentity
                 brand={r.brand_name}
@@ -44,9 +44,9 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
                 thirty are different claims — and on the badge line it was
                 arbitrary furniture competing for the 5px that made a flavour
                 render as "Pumpkin spic…". */}
-            <span className="flex flex-shrink-0 flex-col items-end gap-0.5">
+            <span className="flex shrink-0 flex-col items-end gap-0.5">
               <ScoreMark score={r.avg_rating} size="md" showTier={false} />
-              <span className="text-[0.625rem] font-bold uppercase tracking-[0.1em]" style={{ color: tier.color }}>
+              <span className="text-[0.625rem] font-bold uppercase tracking-widest" style={{ color: tier.color }}>
                 {tier.name}
               </span>
               <span className="text-[0.6875rem] font-medium text-story-muted-2">

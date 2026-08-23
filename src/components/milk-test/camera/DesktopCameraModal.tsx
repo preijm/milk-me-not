@@ -116,7 +116,7 @@ export const DesktopCameraModal: React.FC<DesktopCameraModalProps> = ({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
         closeButton={false}
-        className="max-w-4xl overflow-hidden rounded-[1.5rem] border-0 bg-story-ink p-0"
+        className="max-w-4xl overflow-hidden rounded-3xl border-0 bg-story-ink p-0"
       >
         <DialogTitle className="sr-only">Take a photo</DialogTitle>
         <div className="relative bg-black">
@@ -153,7 +153,7 @@ export const DesktopCameraModal: React.FC<DesktopCameraModalProps> = ({
                 type="button"
                 onClick={capturePhoto}
                 aria-label="Take the photo"
-                className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-story-ink shadow-[0_10px_30px_-8px_rgba(0,0,0,0.8)] ring-4 ring-white/25 transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-story-green"
+                className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-story-ink shadow-[0_10px_30px_-8px_rgba(0,0,0,0.8)] ring-4 ring-white/25 transition-transform active:scale-95 focus-visible:outline-hidden focus-visible:ring-4 focus-visible:ring-story-green"
               >
                 <Camera className="h-6 w-6" />
               </button>

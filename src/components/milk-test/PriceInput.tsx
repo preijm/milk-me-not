@@ -76,8 +76,8 @@ export const PriceInput = ({ price, setPrice, hasChanged, setHasChanged }: Price
             aria-pressed={active}
             style={active && tier ? { backgroundColor: tier.color } : undefined}
             className={cn(
-              "flex min-h-[4.25rem] flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2.5 transition-colors",
-              "focus:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
+              "flex min-h-17 flex-col items-center justify-center gap-1.5 rounded-xl px-1 py-2.5 transition-colors",
+              "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
               !active && "story-hairline bg-white text-story-muted hover:bg-story-cream-2",
             )}
           >

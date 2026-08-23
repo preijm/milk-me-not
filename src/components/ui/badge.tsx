@@ -26,10 +26,10 @@ const badgeVariants = cva(
         
         // Property badges with distinct colors for each type
         // Note: hover styles removed to prevent conflicts when selected state is applied via className
-        property: "bg-surface-container text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium whitespace-nowrap",
-        barista: "bg-primary/10 text-primary border border-primary/20 rounded-md !px-1.5 !py-0.5 text-xs font-medium whitespace-nowrap",
-        category: "bg-surface-container text-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium whitespace-nowrap",
-        flavor: "bg-muted text-muted-foreground border border-border rounded-md !px-1.5 !py-0.5 text-xs font-medium whitespace-nowrap",
+        property: "bg-surface-container text-foreground border border-border rounded-md px-1.5! py-0.5! text-xs font-medium whitespace-nowrap",
+        barista: "bg-primary/10 text-primary border border-primary/20 rounded-md px-1.5! py-0.5! text-xs font-medium whitespace-nowrap",
+        category: "bg-surface-container text-foreground border border-border rounded-md px-1.5! py-0.5! text-xs font-medium whitespace-nowrap",
+        flavor: "bg-muted text-muted-foreground border border-border rounded-md px-1.5! py-0.5! text-xs font-medium whitespace-nowrap",
         
         // Score outline variants (for tables/lists) - using design tokens
         score: "bg-transparent rounded px-2 py-1 text-[11px] font-medium",
@@ -39,11 +39,11 @@ const badgeVariants = cva(
         scorePoor: "bg-transparent text-score-poor border-score-poor rounded px-2 py-1 text-[11px] font-medium",
         
         // Score badge variants (for cards with background) - using design tokens
-        scoreBadge: "bg-background/80 backdrop-blur-sm border rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
-        scoreBadgeExcellent: "bg-background/80 backdrop-blur-sm text-score-excellent border border-score-excellent rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
-        scoreBadgeGood: "bg-background/80 backdrop-blur-sm text-score-good border border-score-good rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
-        scoreBadgeFair: "bg-background/80 backdrop-blur-sm text-score-fair border border-score-fair rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
-        scoreBadgePoor: "bg-background/80 backdrop-blur-sm text-score-poor border border-score-poor rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
+        scoreBadge: "bg-background/80 backdrop-blur-xs border rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
+        scoreBadgeExcellent: "bg-background/80 backdrop-blur-xs text-score-excellent border border-score-excellent rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
+        scoreBadgeGood: "bg-background/80 backdrop-blur-xs text-score-good border border-score-good rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
+        scoreBadgeFair: "bg-background/80 backdrop-blur-xs text-score-fair border border-score-fair rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
+        scoreBadgePoor: "bg-background/80 backdrop-blur-xs text-score-poor border border-score-poor rounded-md px-2.5 py-1.5 text-sm font-bold min-w-[50px] justify-center",
         
         // Circular score badges - using design tokens
         circularScore: "text-white rounded-full h-12 w-12 text-sm font-bold flex items-center justify-center shadow-lg",

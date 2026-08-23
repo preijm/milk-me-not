@@ -38,7 +38,7 @@ const ResetPassword = () => {
       <StoryHeader hideCta />
 
       <main className="flex flex-1 items-center">
-        <div className="mx-auto grid w-full max-w-[76rem] items-center gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 lg:px-10">
+        <div className="mx-auto grid w-full max-w-304 items-center gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 lg:px-10">
           <div className="relative">
             <div aria-hidden className="pointer-events-none absolute -left-24 -top-64 hidden text-story-green-light lg:block">
               <MilkDrop size={240} variant="solid" />
@@ -60,7 +60,7 @@ const ResetPassword = () => {
             </div>
           </div>
 
-          <div className="story-hairline story-lift rounded-[1.5rem] bg-white p-6 sm:p-8">
+          <div className="story-hairline story-lift rounded-3xl bg-white p-6 sm:p-8">
             {isPasswordResetSuccess ? (
               <p className="text-[0.9375rem] text-story-muted">Redirecting…</p>
             ) : isPasswordReset ? (

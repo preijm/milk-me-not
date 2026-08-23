@@ -75,7 +75,7 @@ const DownloadApkButton = ({
     href={ANDROID_DOWNLOAD_URL}
     download
     className={cn(
-      "inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] no-underline transition-[transform,filter,background-color,color] duration-150 active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-story-green",
+      "inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] no-underline transition-[transform,filter,background-color,color] duration-150 active:scale-[0.985] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-story-green",
       tone === "green" && "bg-story-green text-white story-lift-green hover:brightness-[1.07]",
       tone === "paper" && "bg-white text-story-ink shadow-[0_10px_26px_-14px_rgba(27,36,33,0.5)] hover:bg-story-cream",
       className,
@@ -107,7 +107,7 @@ const MobileApp = () => {
               <span className="text-story-green">you leave the aisle.</span>
             </Display>
 
-            <Lede className="mt-6 max-w-[34rem]">
+            <Lede className="mt-6 max-w-136">
               Scan the barcode, see the verdict, add your score — all without pulling up a browser or typing a
               product name. That's the whole app.
             </Lede>
@@ -128,13 +128,13 @@ const MobileApp = () => {
           {/* Desktop: the app's actual job, drawn as a phone mid-scan, cropped
               across a solid green disc the way Home's verdict card is. Kept off
               the mobile hero entirely so it never lands on the headline. */}
-          <div className="relative hidden lg:block lg:min-h-[26rem]">
-            <div aria-hidden className="absolute -right-8 top-0 h-[26rem] w-[26rem] rounded-full bg-story-green" />
+          <div className="relative hidden lg:block lg:min-h-104">
+            <div aria-hidden className="absolute -right-8 top-0 h-104 w-104 rounded-full bg-story-green" />
             <div aria-hidden className="pointer-events-none absolute -left-4 bottom-6 text-story-blue opacity-90">
               <MilkDrop size={90} variant="solid" />
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <ScanPhone className="relative h-[24rem] w-auto drop-shadow-[0_30px_50px_rgba(27,36,33,0.28)]" />
+              <ScanPhone className="relative h-96 w-auto drop-shadow-[0_30px_50px_rgba(27,36,33,0.28)]" />
             </div>
           </div>
         </div>
@@ -191,7 +191,7 @@ const MobileApp = () => {
               </div>
               {/* QR code: pointless to scan on the phone reading this page,
                   so it only shows where scanning-from-another-device makes sense. */}
-              <div className="hidden flex-shrink-0 rounded-2xl bg-white p-3 lg:block">
+              <div className="hidden shrink-0 rounded-2xl bg-white p-3 lg:block">
                 <QRCodeSVG value={ANDROID_DOWNLOAD_URL} size={104} level="M" />
                 <p className="story-kicker mt-2 text-center text-[0.5625rem] text-story-muted-2">Scan on your phone</p>
               </div>

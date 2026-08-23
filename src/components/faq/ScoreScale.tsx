@@ -64,7 +64,7 @@ export const ScoreScale = () => (
           className="flex items-center gap-4 rounded-2xl px-5 py-4"
           style={{ backgroundColor: tier.color }}
         >
-          <span className="story-num w-12 flex-shrink-0 text-[1rem] text-story-ink/60">{rangeLabel(tier)}</span>
+          <span className="story-num w-12 shrink-0 text-[1rem] text-story-ink/60">{rangeLabel(tier)}</span>
           <div className="min-w-0">
             <p className="story-serif text-[1.25rem] font-bold leading-none text-story-ink">{tier.name}</p>
             <p className="mt-1.5 text-[0.8125rem] leading-snug text-story-ink/70">{tier.blurb}</p>

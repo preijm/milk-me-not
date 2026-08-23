@@ -49,7 +49,7 @@ export const FeedItem = ({ item }: FeedItemProps) => {
           createdAt={item.created_at}
           className="min-w-0 flex-1"
         />
-        <div className="flex-shrink-0 text-right">
+        <div className="shrink-0 text-right">
           <ScoreMark score={item.rating} size="lg" className="justify-end" />
           <p className="mt-1 text-[0.8125rem] font-medium italic leading-snug text-story-muted-2">{tier.blurb}</p>
         </div>

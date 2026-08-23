@@ -25,7 +25,7 @@ export const FeedHeader = ({ username, createdAt, blurred, className }: FeedHead
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
         <UserMark name={username} className="h-9 w-9 text-sm" />
         <div className="flex min-w-0 flex-col">
-          <span className={cn("truncate text-sm font-bold text-story-ink", blurred && "blur-sm")} translate="no">
+          <span className={cn("truncate text-sm font-bold text-story-ink", blurred && "blur-xs")} translate="no">
             {username}
           </span>
           <span className="text-[0.75rem] font-medium text-story-muted-2">{timeAgo}</span>

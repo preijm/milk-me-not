@@ -142,7 +142,7 @@ const QuickRateForm = ({
                 style={active ? { backgroundColor: getTier(n).color } : undefined}
                 className={cn(
                   "story-num rounded-xl py-3 text-[1.05rem] transition-colors",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
+                  "focus:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 focus-visible:ring-offset-story-cream",
                   active
                     ? "text-white"
                     : "story-hairline bg-white text-story-ink-2 hover:bg-story-cream-2",
@@ -153,7 +153,7 @@ const QuickRateForm = ({
             );
           })}
         </div>
-        <p className="mt-2 min-h-[1.25rem] text-[0.8125rem] font-bold text-story-muted">
+        <p className="mt-2 min-h-5 text-[0.8125rem] font-bold text-story-muted">
           {formState.rating > 0 ? `${tier.name} — ${tier.blurb}` : "Tap a score from 1 to 10"}
         </p>
       </div>
@@ -209,7 +209,7 @@ const QuickRateForm = ({
           onChange={(e) => formSetters.setNotes(e.target.value)}
           rows={2}
           placeholder="Splits in coffee, tastes like porridge…"
-          className="story-hairline w-full resize-none rounded-xl bg-white px-3.5 py-2.5 text-[0.9375rem] text-story-ink placeholder:text-story-muted-2 focus:outline-none focus:ring-2 focus:ring-story-green"
+          className="story-hairline w-full resize-none rounded-xl bg-white px-3.5 py-2.5 text-[0.9375rem] text-story-ink placeholder:text-story-muted-2 focus:outline-hidden focus:ring-2 focus:ring-story-green"
         />
       </div>
 

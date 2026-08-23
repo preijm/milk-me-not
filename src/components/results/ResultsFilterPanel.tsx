@@ -26,7 +26,7 @@ const Chip = ({
       "rounded-full border-[1.5px] px-3.5 py-2 text-[0.8125rem] font-bold leading-none transition-colors",
       active
         ? "border-story-green bg-story-green text-white"
-        : "border-story-ink/15 bg-transparent text-story-ink-2 hover:bg-story-ink/[0.05]",
+        : "border-story-ink/15 bg-transparent text-story-ink-2 hover:bg-story-ink/5",
     )}
   >
     {children}

@@ -84,7 +84,7 @@ export const PictureCapture: React.FC<PictureCaptureProps> = ({
             type="button"
             onClick={removePicture}
             aria-label="Remove photo"
-            className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-story-ink text-story-cream shadow-[0_4px_12px_-4px_rgba(27,36,33,0.8)] transition-[filter] hover:brightness-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2"
+            className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-story-ink text-story-cream shadow-[0_4px_12px_-4px_rgba(27,36,33,0.8)] transition-[filter] hover:brightness-125 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2"
           >
             <X className="h-3.5 w-3.5" />
           </button>

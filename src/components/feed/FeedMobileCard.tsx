@@ -54,7 +54,7 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
             <span className="block text-[0.6875rem] font-medium text-story-muted-2">{timeAgo}</span>
           </span>
         </div>
-        <ScoreMark score={item.rating} size="sm" className="flex-shrink-0" />
+        <ScoreMark score={item.rating} size="sm" className="shrink-0" />
       </div>
 
       {/* The mark comes back now that the score has moved off the left edge,
@@ -80,7 +80,7 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
       {(item.picture_path || item.notes) && (
         <div className="flex items-start gap-3">
           {item.picture_path && (
-            <div className="w-20 flex-shrink-0">
+            <div className="w-20 shrink-0">
               <FeedImage
                 compact
                 picturePath={item.picture_path}
