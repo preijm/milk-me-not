@@ -84,9 +84,14 @@ export const StoryHeader = ({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
+  // Close the menu when the route changes. Compared during render so the panel
+  // is already gone in the frame the new page paints, rather than lingering for
+  // one frame over it.
+  const [seenPath, setSeenPath] = useState(location.pathname);
+  if (seenPath !== location.pathname) {
+    setSeenPath(location.pathname);
     setOpen(false);
-  }, [location.pathname]);
+  }
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";

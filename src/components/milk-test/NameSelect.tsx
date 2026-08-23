@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,9 +20,6 @@ interface NameSelectProps {
 const NO_NAMES: Array<{ id: string; name: string }> = [];
 
 export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFocus = false }: NameSelectProps) => {
-  const [suggestions, setSuggestions] = useState<Array<{ id: string; name: string }>>([]);
-  const [showAddNew, setShowAddNew] = useState(false);
-  const [closeMatch, setCloseMatch] = useState<{ id: string; name: string } | null>(null);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const { toast } = useToast();
 
@@ -43,38 +40,53 @@ export const NameSelect = ({ productName, setProductName, onNameIdChange, autoFo
     },
   });
 
-  useEffect(() => {
+  // What the typed name matches is a pure function of the text and the fetched
+  // list, so it is computed rather than held in three pieces of state written by
+  // an effect. Every keystroke used to render once against the previous word's
+  // matches before the effect caught up.
+  const { suggestions, showAddNew, closeMatch, matchedNameId } = useMemo(() => {
     if (productName.trim() === '') {
-      setSuggestions([]);
-      setShowAddNew(false);
-      setCloseMatch(null);
-      if (onNameIdChange) onNameIdChange(null);
-      return;
+      return {
+        suggestions: NO_NAMES,
+        showAddNew: false,
+        closeMatch: null,
+        matchedNameId: null,
+      };
     }
 
-    const filteredNames = names.filter(name => 
+    const filteredNames = names.filter(name =>
       name.name.toLowerCase().includes(productName.toLowerCase())
     );
 
-    setSuggestions(filteredNames);
-    
     const exactMatch = names.find(
       name => name.name.toLowerCase() === productName.trim().toLowerCase()
     );
-    
-    if (exactMatch && onNameIdChange) {
-      onNameIdChange(exactMatch.id);
-      setCloseMatch(null);
-      setShowAddNew(false);
-    } else {
-      if (onNameIdChange) onNameIdChange(null);
-      
-      // Find close match using fuzzy matching
-      const match = findClosestMatch(productName, names, 0.75);
-      setCloseMatch(match);
-      setShowAddNew(!match && productName.trim() !== '');
+
+    if (exactMatch) {
+      return {
+        suggestions: filteredNames,
+        showAddNew: false,
+        closeMatch: null,
+        matchedNameId: exactMatch.id,
+      };
     }
-  }, [productName, names, onNameIdChange]);
+
+    // Find close match using fuzzy matching
+    const match = findClosestMatch(productName, names, 0.75);
+    return {
+      suggestions: filteredNames,
+      showAddNew: !match,
+      closeMatch: match,
+      matchedNameId: null,
+    };
+  }, [productName, names]);
+
+  // Telling the parent is a real side effect, so it stays in an effect — but it
+  // now fires when the matched id actually changes, rather than on every
+  // keystroke that leaves it null.
+  useEffect(() => {
+    onNameIdChange?.(matchedNameId);
+  }, [matchedNameId, onNameIdChange]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProductName(e.target.value);

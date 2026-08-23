@@ -21,6 +21,17 @@ export const ProductInformation = ({
   const location = useLocation();
   const isMobile = useIsMobile();
 
+  const handleSelectProduct = (productId: string, brandId: string) => {
+    console.log("ProductInformation: handleSelectProduct called with", {
+      productId,
+      brandId
+    });
+
+    // Update product and brand IDs
+    setProductId(productId);
+    setBrandId(brandId);
+  };
+
   // Check if we're returning from add-product page with a selected product
   useEffect(() => {
     if (location.state?.selectedProductId && location.state?.selectedBrandId) {
@@ -34,16 +45,6 @@ export const ProductInformation = ({
   // handleSelectProduct, location.pathname, navigate are stable — omitting avoids re-runs on every render
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
-  const handleSelectProduct = (productId: string, brandId: string) => {
-    console.log("ProductInformation: handleSelectProduct called with", {
-      productId,
-      brandId
-    });
-
-    // Update product and brand IDs
-    setProductId(productId);
-    setBrandId(brandId);
-  };
   const handleAddNewProduct = () => {
     // On mobile/tablet, navigate to full page; on desktop, show dialog
     if (isMobile) {

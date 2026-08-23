@@ -17,6 +17,12 @@ export function useProfileStats(
   milkTests: MilkTestResult[],
   profile: Profile | null | undefined
 ): ProfileStats {
+  // Read the one field this depends on up front. Depending on
+  // `profile?.created_at` inside the array while the body reads `profile` makes
+  // the declared and inferred dependencies disagree, which stops the compiler
+  // preserving the memo at all.
+  const createdAt = profile?.created_at;
+
   return useMemo(() => {
     const totalTests = milkTests.length;
     
@@ -32,10 +38,10 @@ export function useProfileStats(
       ? Math.max(...milkTests.map(t => Number(t.rating)))
       : 0;
     
-    const memberSince = profile?.created_at
-      ? format(new Date(profile.created_at), "MMM yyyy")
+    const memberSince = createdAt
+      ? format(new Date(createdAt), "MMM yyyy")
       : "Recently";
 
     return { totalTests, avgRating, bestScore, memberSince };
-  }, [milkTests, profile?.created_at]);
+  }, [milkTests, createdAt]);
 }

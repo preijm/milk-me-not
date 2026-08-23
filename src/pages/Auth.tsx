@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import AuthForm from "@/components/auth/AuthForm";
@@ -68,11 +68,16 @@ const Auth = () => {
     handlePasswordUpdate,
   } = useAuthFlow();
 
-  useEffect(() => {
+  // Open on the tab the caller asked for. Wrapped in a seen-check rather than an
+  // effect so the right tab is on screen from the first paint — the effect
+  // version flashed the login form before switching to signup.
+  const [seenNavState, setSeenNavState] = useState<{ value: unknown } | null>(null);
+  if (!seenNavState || seenNavState.value !== location.state) {
+    setSeenNavState({ value: location.state });
     const mode = (location.state as { mode?: string } | null)?.mode;
     if (mode === "signup") setIsLogin(false);
     if (mode === "login") setIsLogin(true);
-  }, [location.state]);
+  }
 
   const shouldShowEmailPending = emailPending || isEmailPending;
   const pendingEmail = emailPending || userEmail;
