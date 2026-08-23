@@ -75,6 +75,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Only run once on mount
     if (initialized) return;
     
+    // Marks the start of the async auth bootstrap kicked off just below. There
+    // is nothing to derive this from — it is the act of starting work, not a
+    // fact about props, so it belongs in an effect.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     
     // If the URL contains a recovery hash, mark recovery mode early.

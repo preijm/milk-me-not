@@ -94,6 +94,10 @@ export const DesktopCameraModal: React.FC<DesktopCameraModalProps> = ({
 
   useEffect(() => {
     if (open) {
+      // Acquiring and releasing a MediaStream is imperative and has to happen
+      // after commit — startCamera sets state as the device responds. There is
+      // no render-time form of "the camera is now on".
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       startCamera();
     } else {
       stopCamera();

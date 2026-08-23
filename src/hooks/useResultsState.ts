@@ -98,6 +98,15 @@ export function useResultsUrlState() {
   // Check if we should enable myResultsOnly filter from navigation state
   useEffect(() => {
     if (location.state?.myResultsOnly && user) {
+      // Responding to a one-off navigation, and consuming it so a back-and-
+      // forward does not re-apply the filter. The history mutation on the next
+      // line has to run after commit, and splitting the two would risk applying
+      // the filter without clearing the state that caused it.
+      //
+      // The cleaner fix is for the caller to pass this as an initial filter
+      // rather than as navigation state, which would remove the effect
+      // entirely. That is a change to every place that links here.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFilters((prev) => ({ ...prev, myResultsOnly: true }));
       window.history.replaceState({}, document.title);
     }

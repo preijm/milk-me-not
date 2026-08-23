@@ -433,6 +433,12 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
   useEffect(() => {
     if (discoveryPercentage > 0) {
       if (prefersReducedMotion()) {
+        // Skipping the count-up means landing on the final number immediately.
+        // Deriving it instead would mean calling prefersReducedMotion() during
+        // render, which reads a media query — impure, and a worse trade than
+        // this one line. The animating branch below sets state from a timer,
+        // which the rule allows.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setAnimatedPercentage(discoveryPercentage);
         return;
       }

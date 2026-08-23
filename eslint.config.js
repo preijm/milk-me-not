@@ -18,16 +18,20 @@ export default tseslint.config(
       "react-refresh": reactRefresh,
     },
     rules: {
-      // These two are what eslint-plugin-react-hooks 5 shipped as its
-      // recommended set, spelled out rather than spread.
+      // The full recommended set, React Compiler rules included. Turning these
+      // on found 27 real issues, mostly state that was being computed in an
+      // effect and set, so every keystroke rendered once against stale results.
       //
-      // Version 7 was needed because 5 declares a peer of eslint ^3-^9 against
-      // the pinned ^10, which npm refuses to resolve. But 7's recommended set
-      // also folds in the React Compiler rules, and those flag 27 issues in
-      // this codebase — 24 of them setState called inside an effect. Worth
-      // fixing, and tracked separately; adopting them here would have turned a
-      // dependency bump into a rewrite of effect logic across twenty files.
-      "react-hooks/rules-of-hooks": "error",
+      // Six places genuinely cannot satisfy the rules and carry an inline
+      // disable saying why: the camera and decoder lifecycles, the map's
+      // reduced-motion shortcut, the auth bootstrap, Embla's subscription, and
+      // the navigation-state filter on Results. Each of those is an imperative
+      // side effect, not derivable state. Reach for a disable only when the
+      // same is true — the other twenty-one turned out to be fixable.
+      ...reactHooks.configs.recommended.rules,
+
+      // Kept as a warning rather than the recommended error: the codebase has
+      // deliberate omissions with reasons written next to them.
       "react-hooks/exhaustive-deps": "warn",
       "react-refresh/only-export-components": [
         "warn",

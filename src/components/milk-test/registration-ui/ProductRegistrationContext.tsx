@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 
-import React, { createContext, useContext, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { 
   useProductRegistrationForm
 } from "../hooks/useProductRegistrationForm";
@@ -51,13 +51,14 @@ export const ProductRegistrationProvider: React.FC<ProductRegistrationProviderPr
     productDetails
   });
   
-  // Reset isSubmitting state when dialog opens/closes
-  useEffect(() => {
-    if (formProps.open) {
-      // When dialog opens, ensure isSubmitting is false
-      setIsSubmitting(false);
-    }
-  }, [formProps.open]);
+  // Clear any leftover submitting state as the dialog opens. Compared during
+  // render so the first paint of the dialog is never the previous attempt's
+  // spinner.
+  const [seenOpen, setSeenOpen] = useState(formProps.open);
+  if (seenOpen !== formProps.open) {
+    setSeenOpen(formProps.open);
+    if (formProps.open) setIsSubmitting(false);
+  }
   
   const value = {
     ...formState,
