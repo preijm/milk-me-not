@@ -40,7 +40,9 @@ bunx vitest run src/lib/security.test.ts
 ### Key Libraries
 - **Routing:** React Router 7, every page route lazy-loaded (`src/App.tsx`)
 - **Server state:** TanStack React Query (5-min stale time)
-- **UI:** shadcn/ui (Radix UI primitives) + Tailwind CSS with HSL design tokens
+- **UI:** shadcn/ui (Radix UI primitives) + Tailwind CSS **v4**. There is no
+  `tailwind.config.ts`; v4 is configured in CSS, so the theme lives in an
+  `@theme` block in `src/index.css`.
 - **Forms:** React Hook Form + Zod validation
 - **Maps:** Mapbox GL JS (lazy-loaded due to 200KB+ size)
 - **Backend:** Supabase (PostgreSQL, Auth, Edge Functions, Storage)
@@ -97,7 +99,10 @@ src/
 Use `@/*` to resolve to `src/*` in imports (configured in `tsconfig.app.json`).
 
 ### Styling Conventions
-- Tailwind CSS with semantic HSL color tokens (score, brand, heatmap) defined in `src/index.css`
+- Semantic HSL colour tokens (score, brand, heatmap) in `src/index.css`, now
+  inside the `@theme` block rather than a JS config. Tailwind emits them as
+  `oklab`/`oklch`, so a computed value read back in the browser will not
+  match the `hsl()` you wrote — it is the same colour, stated differently.
 - Dark mode via class strategy
 - `useIsMobile` / `useIsMobileOrTablet` (`src/hooks/use-mobile.tsx`) for responsive logic
 
@@ -109,13 +114,20 @@ Use `@/*` to resolve to `src/*` in imports (configured in `tsconfig.app.json`).
 Five, not one:
 
 - **`ci.yml`** — three sequential stages, **Lint + Type Check → Test → Build**, on
-  every PR and push to main. Uses Bun. Cancels in-progress runs on new push. Its
-  first job also regenerates `package-lock.json` for Dependabot and commits it
-  back to the branch, which is why a dependency PR gains an extra commit.
+  every PR and push to main. Uses Bun. Cancels in-progress runs on new push.
+  A fourth job, **Refresh lockfiles**, regenerates `package-lock.json` for
+  Dependabot — but only on a push to main, never on a pull request. That guard
+  is load-bearing and is explained in the job's own comment: it used to live
+  inside the first job and push to the branch under test, which meant the
+  checks reported on a commit that was no longer the head, and a bot commit on
+  a Dependabot branch made Dependabot disown the PR and stop rebasing it.
 - **`deploy.yml`** — see Deployment below.
 - **`codeql.yml`** — static analysis on PRs, pushes to main, and weekly.
 - **`release.yml`** — versioning and changelog on push to main.
-- **`sync-labels.yml`** — keeps `.github/labels.yml` applied.
+- **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
+  main that touches that file, so editing it is what deploys it. It runs
+  `delete-other-labels: true`: a label removed from the file is removed from
+  the repository.
 
 ### Deployment
 The site is hosted on **Cloudflare Workers**, not Lovable. `deploy.yml` runs on
