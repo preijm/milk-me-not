@@ -41,8 +41,11 @@ ALTER TABLE public.countries ENABLE ROW LEVEL SECURITY;
 -- form, the country setting — sits behind a login. The public map used to read
 -- it too and quietly got nothing; it now takes country names from the browser
 -- instead, so nothing anonymous depends on this.
-DROP POLICY IF EXISTS "Authenticated users can read countries" ON public.countries;
-CREATE POLICY "Authenticated users can read countries"
+-- Named as the deployed database names it. A new name here would not replace
+-- the existing policy, it would sit beside it, and countries would carry two
+-- identical read rules.
+DROP POLICY IF EXISTS "Allow read access to countries" ON public.countries;
+CREATE POLICY "Allow read access to countries"
 ON public.countries
 FOR SELECT
 TO authenticated
