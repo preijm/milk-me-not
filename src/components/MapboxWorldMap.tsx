@@ -43,6 +43,22 @@ const countryName = (code: string) => {
   }
 };
 
+/**
+ * The host a URL points at, or empty when it is not a URL at all.
+ *
+ * Mapbox hands error URLs through as strings, and a substring test on those is
+ * the sort of thing that looks fine until a host is spelled somewhere it does
+ * not belong.
+ */
+const hostOf = (url: string | undefined): string => {
+  if (!url) return '';
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return '';
+  }
+};
+
 /** Touch and stylus, as opposed to a mouse — what decides the gesture rules. */
 const isCoarsePointer = () =>
   typeof window !== 'undefined' &&
@@ -242,9 +258,37 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
       map.current.on('dataloading', armStallTimer);
       map.current.on('data', armStallTimer);
 
+      // Mapbox emits `error` for anything that went wrong, most of which the
+      // map survives. Treating all of it as fatal meant one blocked analytics
+      // request covered a working globe with an apology — and every reader
+      // running an ad blocker got that, because they all stop
+      // `events.mapbox.com`.
       map.current.on('error', (e) => {
-        console.error('Mapbox map error event:', e);
-        setMapError('Map failed to load. Check browser console for details.');
+        const err = (e as { error?: Error & { status?: number; url?: string } }).error;
+
+        // Telemetry. Blocked constantly, and the map does not depend on it.
+        // Compared as a host rather than with includes(), which would also
+        // match https://anything/?redirect=events.mapbox.com and swallow a
+        // real failure.
+        if (hostOf(err?.url) === 'events.mapbox.com') return;
+
+        console.error('Mapbox error:', err ?? e);
+
+        // A token that cannot fetch what it asked for will never recover, and
+        // the stall watchdog would blame the network twelve seconds later.
+        // Say which token problem it is instead: this exact 403 cost an
+        // evening once, with "check the browser console" as the only clue.
+        if (err?.status === 401 || err?.status === 403) {
+          stopStallTimer();
+          setMapError(
+            'The Mapbox token cannot load map tiles — it is missing the styles:tiles scope, or it is restricted to other domains.',
+          );
+          return;
+        }
+
+        // Anything else is a tile, a sprite, a font. If the map is already
+        // drawn, hiding it behind an error is worse than the missing piece;
+        // if it never draws, the stall watchdog is what says so.
       });
 
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
