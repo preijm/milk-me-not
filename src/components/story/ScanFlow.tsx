@@ -9,17 +9,31 @@ import type { ScannedProduct } from "@/lib/openFoodFacts";
 import { createProductFromScan } from "@/lib/createScannedProduct";
 import { rememberBarcode } from "@/lib/rememberBarcode";
 
+/**
+ * A row from `search_product_types`, badges and all.
+ *
+ * The flavour and property arrays were being dropped on the floor, and they
+ * are the only thing that answers the question this dialog asks. A scan of an
+ * Alpro carton returns 27 rows: six are called "Soya" and differ only by
+ * Banana, Red fruits, Light, Protein, Protein + Chocolate or nothing, and two
+ * are called "Oat, Soya" and differ only by Caramel or Vanilla. Without them
+ * the reader is asked which carton is in their hand and shown two identical
+ * answers.
+ */
 type BoardMatch = {
   id: string;
   product_name: string;
   brand_name: string;
   is_barista: boolean;
+  /** Raw keys, nullable — `humanizeLabels` inside ProductIdentity does the rest. */
+  property_names: string[] | null;
+  flavor_names: string[] | null;
 };
 
 type Stage =
   | { at: "scanning" }
   | { at: "searching" }
-  | { at: "matches"; scanned: ScannedProduct; matches: BoardMatch[] }
+  | { at: "matches"; scanned: ScannedProduct; matches: BoardMatch[]; total: number }
   | { at: "nothing"; scanned: ScannedProduct };
 
 /**
@@ -95,7 +109,9 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
       return;
     }
 
-    setStage({ at: "matches", scanned, matches: ranked.slice(0, 8) });
+    // Eight is as many as fits a dialog, and the count says so rather than
+    // leaving a reader scrolling for a carton that was never rendered.
+    setStage({ at: "matches", scanned, matches: ranked.slice(0, 8), total: ranked.length });
   }, [goToProduct]);
 
   if (stage.at === "scanning") {
@@ -123,6 +139,11 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
             </DialogTitle>
             <DialogDescription className="text-[0.875rem] text-story-muted">
               Pick the one in your hand — we will remember it next time.
+              {/* Whatever is picked here is written against the barcode for
+                  everyone after, so a reader whose carton was cut from the list
+                  needs to know that rather than settle for the nearest row. */}
+              {stage.total > stage.matches.length &&
+                ` Showing ${stage.matches.length} of ${stage.total} — if yours is not here, close this and search the board.`}
             </DialogDescription>
             <ul className="mt-1 space-y-2">
               {stage.matches.map((m) => (
@@ -141,6 +162,8 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
                     <ProductIdentity
                       brand={m.brand_name}
                       product={m.product_name}
+                      properties={m.property_names}
+                      flavors={m.flavor_names}
                       isBarista={m.is_barista}
                       size="sm"
                       className="flex-1"
