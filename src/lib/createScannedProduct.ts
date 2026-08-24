@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { resolveProductNameId } from "@/components/milk-test/hooks/product-registration/nameResolver";
 import { createNewProduct } from "@/components/milk-test/hooks/product-registration/productCreator";
+import { rememberBarcode } from "./rememberBarcode";
 import type { ScannedProduct } from "./openFoodFacts";
 
 /**
@@ -55,10 +56,7 @@ export const createProductFromScan = async (
 
     // Record the barcode against what we just made, so this carton is an
     // exact hit for everyone after this.
-    await supabase.rpc("remember_product_barcode", {
-      _barcode: scanned.barcode,
-      _product_id: productId,
-    });
+    await rememberBarcode(scanned.barcode, productId);
 
     return { productId };
   } catch (error) {
