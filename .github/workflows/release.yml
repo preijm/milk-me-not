@@ -1,5 +1,5 @@
-# Release workflow for automated versioning and changelog generation
-# Triggers on push to main branch with conventional commits
+# Release workflow for automated versioning and release notes.
+# Triggers on push to main branch with conventional commits.
 
 name: Release
 
@@ -25,7 +25,6 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   test:
@@ -48,7 +47,7 @@ jobs:
     name: Create Release
     needs: test
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -56,36 +55,64 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install
-
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      # The highest version tag there is, not the newest one reachable from
+      # HEAD.
+      #
+      # `git describe --tags` asks the second question, and asking it is why
+      # this job produced nothing at all for months. `v0.1.0` points at a
+      # `chore(release): v0.1.0` commit that never landed on main, so it is
+      # reachable from nothing: describe found no tag, fell back to
+      # package.json's 0.0.0, recomputed 0.1.0, found that tag already existed
+      # and skipped the release — on every push, reporting success each time.
+      #
+      # Taking the higher of the tag and package.json means neither a stale tag
+      # nor a stale manifest can drag the version backwards.
       - name: Get current version
         id: current_version
         run: |
-          # Prefer latest git tag over package.json
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -n "$LATEST_TAG" ]; then
-            VERSION="${LATEST_TAG#v}"
-          else
-            VERSION=$(node -p "require('./package.json').version")
-          fi
+          TAG_VERSION=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1)
+          TAG_VERSION="${TAG_VERSION#v}"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          VERSION=$(printf '%s\n%s\n' "${TAG_VERSION:-0.0.0}" "$PKG_VERSION" | sort -V | tail -n1)
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Current version: $VERSION"
+          echo "Highest tag: ${TAG_VERSION:-none}. package.json: $PKG_VERSION. Using: $VERSION"
+
+      # What counts as "since the last release".
+      #
+      # A tag outside this history cannot bound a range. That case reads the
+      # recent log instead of the whole of it: main carries 3,174 commits, and
+      # listing them all produced a 101KB release body against GitHub's 125KB
+      # limit — a note nobody can read, one good week away from failing the
+      # step outright. The cap is stated in the notes rather than applied
+      # quietly.
+      #
+      # It applies once. As soon as a tag lands on main this is the ordinary
+      # two-dot range, and the cap never comes up again.
+      - name: Find the range to describe
+        id: range
+        run: |
+          LAST_TAG=$(git tag --list 'v[0-9]*' --sort=-v:refname | head -n1)
+          if [ -n "$LAST_TAG" ] && git merge-base --is-ancestor "$LAST_TAG" HEAD 2>/dev/null; then
+            echo "range=$LAST_TAG..HEAD" >> $GITHUB_OUTPUT
+            echo "limit=" >> $GITHUB_OUTPUT
+            echo "Describing $LAST_TAG..HEAD"
+          else
+            echo "range=" >> $GITHUB_OUTPUT
+            echo "limit=--max-count=50" >> $GITHUB_OUTPUT
+            echo "No tag in this history - describing the last 50 commits"
+          fi
 
       - name: Determine version bump
         id: version_bump
         run: |
-          # Check commit messages for conventional commit prefixes
-          COMMITS=$(git log --pretty=format:"%s" $(git describe --tags --abbrev=0 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD 2>/dev/null || git log --pretty=format:"%s")
-          
+          COMMITS=$(git log ${{ steps.range.outputs.limit }} --pretty=format:"%s" ${{ steps.range.outputs.range }})
+
           if echo "$COMMITS" | grep -qE "^(feat|feature)(\(.+\))?!:|^BREAKING CHANGE:"; then
             echo "bump=major" >> $GITHUB_OUTPUT
           elif echo "$COMMITS" | grep -qE "^(feat|feature)(\(.+\))?:"; then
@@ -99,12 +126,12 @@ jobs:
         run: |
           CURRENT="${{ steps.current_version.outputs.version }}"
           BUMP="${{ github.event.inputs.release_type || steps.version_bump.outputs.bump }}"
-          
+
           IFS='.' read -ra VERSION_PARTS <<< "$CURRENT"
           MAJOR=${VERSION_PARTS[0]}
           MINOR=${VERSION_PARTS[1]}
           PATCH=${VERSION_PARTS[2]}
-          
+
           case $BUMP in
             major)
               MAJOR=$((MAJOR + 1))
@@ -119,93 +146,57 @@ jobs:
               PATCH=$((PATCH + 1))
               ;;
           esac
-          
+
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New version: $NEW_VERSION"
 
-      - name: Generate changelog entry
-        id: changelog
+      - name: Generate release notes
+        id: notes
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
           DATE=$(date +%Y-%m-%d)
-          
-          # Get commits since last tag
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          
-          if [ -z "$LAST_TAG" ]; then
-            COMMITS=$(git log --pretty=format:"- %s" --reverse)
-          else
-            COMMITS=$(git log --pretty=format:"- %s" --reverse $LAST_TAG..HEAD)
-          fi
-          
-          # Categorize commits
+
+          COMMITS=$(git log ${{ steps.range.outputs.limit }} --pretty=format:"- %s" --reverse ${{ steps.range.outputs.range }})
+
           FEATURES=$(echo "$COMMITS" | grep -E "^- (feat|feature)" | sed 's/^- feat\(.*\): /- /' | sed 's/^- feature\(.*\): /- /' || true)
           FIXES=$(echo "$COMMITS" | grep -E "^- fix" | sed 's/^- fix\(.*\): /- /' || true)
           DOCS=$(echo "$COMMITS" | grep -E "^- docs" | sed 's/^- docs\(.*\): /- /' || true)
           CHORES=$(echo "$COMMITS" | grep -E "^- (chore|build|ci)" | sed 's/^- chore\(.*\): /- /' | sed 's/^- build\(.*\): /- /' | sed 's/^- ci\(.*\): /- /' || true)
           OTHER=$(echo "$COMMITS" | grep -vE "^- (feat|feature|fix|docs|chore|build|ci)" || true)
-          
-          # Build changelog entry
+
           ENTRY="## [$NEW_VERSION] - $DATE"$'\n'
-          
+
           if [ -n "$FEATURES" ]; then
             ENTRY="$ENTRY"$'\n'"### Added"$'\n'"$FEATURES"$'\n'
           fi
-          
+
           if [ -n "$FIXES" ]; then
             ENTRY="$ENTRY"$'\n'"### Fixed"$'\n'"$FIXES"$'\n'
           fi
-          
+
           if [ -n "$DOCS" ]; then
             ENTRY="$ENTRY"$'\n'"### Documentation"$'\n'"$DOCS"$'\n'
           fi
-          
+
           if [ -n "$CHORES" ]; then
             ENTRY="$ENTRY"$'\n'"### Maintenance"$'\n'"$CHORES"$'\n'
           fi
-          
+
           if [ -n "$OTHER" ]; then
             ENTRY="$ENTRY"$'\n'"### Other"$'\n'"$OTHER"$'\n'
           fi
-          
-          echo "entry<<EOF" >> $GITHUB_OUTPUT
+
+          # Say what was left out, rather than letting a capped list read as a
+          # complete one.
+          if [ -n "${{ steps.range.outputs.limit }}" ]; then
+            NOTE="_No release tag exists in this branch's history, so this lists the 50 most recent commits rather than everything since the last release._"
+            ENTRY="$ENTRY"$'\n'"$NOTE"$'\n'
+          fi
+
+          echo "entry<<RELEASE_NOTES_EOF" >> $GITHUB_OUTPUT
           echo "$ENTRY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Update CHANGELOG.md
-        env:
-          CHANGELOG_ENTRY: ${{ steps.changelog.outputs.entry }}
-        run: |
-          NEW_VERSION="${{ steps.new_version.outputs.version }}"
-          
-          # Create temp file with new entry
-          echo "$CHANGELOG_ENTRY" > temp_changelog.md
-          echo "" >> temp_changelog.md
-          
-          # Insert after [Unreleased] section
-          if grep -q "## \[Unreleased\]" CHANGELOG.md; then
-            sed -i '/## \[Unreleased\]/r temp_changelog.md' CHANGELOG.md
-          else
-            # If no Unreleased section, add after header
-            sed -i '1,/^## /{ /^## /r temp_changelog.md
-            }' CHANGELOG.md
-          fi
-          
-          rm temp_changelog.md
-
-      - name: Update version in CHANGELOG links
-        run: |
-          NEW_VERSION="${{ steps.new_version.outputs.version }}"
-          OLD_VERSION="${{ steps.current_version.outputs.version }}"
-          
-          # Update the Unreleased comparison link
-          sed -i "s|compare/v$OLD_VERSION\.\.\.HEAD|compare/v$NEW_VERSION...HEAD|g" CHANGELOG.md
-          
-          # Add new version link if not exists
-          if ! grep -q "\[$NEW_VERSION\]:" CHANGELOG.md; then
-            echo "[$NEW_VERSION]: https://github.com/milkmenot/mondriaan-goose/releases/tag/v$NEW_VERSION" >> CHANGELOG.md
-          fi
+          echo "RELEASE_NOTES_EOF" >> $GITHUB_OUTPUT
 
       - name: Check if tag exists
         id: tag_check
@@ -213,21 +204,37 @@ jobs:
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
           if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Tag v$NEW_VERSION already exists, skipping release"
+            # Said out loud. A silent skip is what hid this job's failure for
+            # months: every run was green and every run did nothing.
+            echo "::warning::Tag v$NEW_VERSION already exists - no release created."
           else
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and tag
+      # Tag the commit that is already on main. Nothing is committed, and
+      # nothing is pushed to the branch.
+      #
+      # `main` is protected - checks must pass, no deletion or force-push -
+      # with a bypass for repository admins that `github-actions[bot]` does not
+      # have. The old job committed a CHANGELOG edit and ran
+      # `git push origin main`, which that ruleset would refuse; it had simply
+      # never got far enough to find out. Both rulesets target the branch, so
+      # pushing a tag ref is unaffected.
+      #
+      # Committing back to main would also make this job trigger itself: the
+      # push would start another release run, which would cut another version,
+      # and so on. And these notes quote commit subjects verbatim, several of
+      # which contain the CI skip marker - putting them in a commit message
+      # would make that commit skip its own workflows. The notes go to the
+      # GitHub Release instead, which is where anyone looks for them.
+      # CHANGELOG.md stays hand-written, which is what it already was - this
+      # workflow never once managed to touch it.
+      - name: Tag the release
         if: steps.tag_check.outputs.exists == 'false'
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.version }}"
-          
-          git add CHANGELOG.md
-          git commit -m "chore(release): v$NEW_VERSION" || echo "No changes to commit"
-          git pull --rebase origin main
           git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
-          git push origin main --follow-tags
+          git push origin "v$NEW_VERSION"
 
       - name: Create GitHub Release
         if: steps.tag_check.outputs.exists == 'false'
@@ -235,7 +242,7 @@ jobs:
         with:
           tag_name: v${{ steps.new_version.outputs.version }}
           name: Release v${{ steps.new_version.outputs.version }}
-          body: ${{ steps.changelog.outputs.entry }}
+          body: ${{ steps.notes.outputs.entry }}
           draft: false
           prerelease: false
         env:
