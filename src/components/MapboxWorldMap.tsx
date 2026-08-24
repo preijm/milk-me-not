@@ -43,6 +43,22 @@ const countryName = (code: string) => {
   }
 };
 
+/**
+ * The host a URL points at, or empty when it is not a URL at all.
+ *
+ * Mapbox hands error URLs through as strings, and a substring test on those is
+ * the sort of thing that looks fine until a host is spelled somewhere it does
+ * not belong.
+ */
+const hostOf = (url: string | undefined): string => {
+  if (!url) return '';
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return '';
+  }
+};
+
 /** Touch and stylus, as opposed to a mouse — what decides the gesture rules. */
 const isCoarsePointer = () =>
   typeof window !== 'undefined' &&
@@ -249,10 +265,12 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
       // `events.mapbox.com`.
       map.current.on('error', (e) => {
         const err = (e as { error?: Error & { status?: number; url?: string } }).error;
-        const url = err?.url ?? '';
 
         // Telemetry. Blocked constantly, and the map does not depend on it.
-        if (url.includes('events.mapbox.com')) return;
+        // Compared as a host rather than with includes(), which would also
+        // match https://anything/?redirect=events.mapbox.com and swallow a
+        // real failure.
+        if (hostOf(err?.url) === 'events.mapbox.com') return;
 
         console.error('Mapbox error:', err ?? e);
 
