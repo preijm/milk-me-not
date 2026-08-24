@@ -188,7 +188,15 @@ Five, not one:
   a Dependabot branch made Dependabot disown the PR and stop rebasing it.
 - **`deploy.yml`** — see Deployment below.
 - **`codeql.yml`** — static analysis on PRs, pushes to main, and weekly.
-- **`release.yml`** — versioning and changelog on push to main.
+- **`release.yml`** — cuts a version tag and a GitHub Release on push to main.
+  It reads the *highest* `v*` tag rather than the newest one `git describe` can
+  reach, because `v0.1.0` sits on a `chore(release)` commit that never landed
+  on main: describe found nothing, fell back to package.json, recomputed
+  `0.1.0`, saw that tag already existed and skipped — every push for months,
+  green every time. It tags the commit already on main and pushes only the tag;
+  it does not commit, because `main` is protected against the bot, because a
+  push to main would retrigger this job, and because the notes quote commit
+  subjects that contain the skip marker. `CHANGELOG.md` is hand-written.
 - **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
   main that touches that file, so editing it is what deploys it. It runs
   `delete-other-labels: true`: a label removed from the file is removed from
