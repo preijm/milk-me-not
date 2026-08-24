@@ -242,6 +242,35 @@ before wrangler ever ran. `bunx` uses the same toolchain as every other step.
 of the zone's ten records are mail, including three DKIM CNAMEs. Do not touch
 DNS records casually.
 
+### An open tab learns about a deploy from `version.json`, not from a table
+A loaded single-page app never asks for `index.html` again, so a tab left open
+keeps its bundle for as long as it stays open. Cache headers cannot help:
+`must-revalidate` is honoured on the next request and there is no next request.
+
+The build stamps a `BUILD_ID` — the commit sha in CI, a timestamp locally —
+into the bundle *and* into `dist/version.json`, from the one constant in
+`vite.config.ts`. `useVersionCheck` fetches that file at load, when the tab
+returns to the foreground (throttled to 5 minutes) and every 30 minutes, and
+shows `UpdateBanner` when it differs. Nothing has to be remembered at release
+time, which is the whole point.
+
+Two things that look redundant and are not:
+
+- **The fetch treats anything unexpected as "no answer".** The assets Worker
+  serves `index.html` with a 200 for any path it cannot find, so a deploy
+  missing this file answers with HTML rather than a 404. Reading that as a new
+  version would put the banner in front of every reader forever.
+- **`app_versions` and `APP_VERSION` still exist, and no longer decide this.**
+  That table carries release notes and the native APK rule. It held one row,
+  `1.0.0` from January, while the site deployed dozens of times — and because
+  `APP_VERSION` is also `1.0.0`, `isNewerVersion` was permanently false and the
+  banner could not fire at all. It is fine for that row to be stale now; the
+  banner only prints a version number when the row genuinely beats the running
+  one.
+
+On a native build this is a no-op by construction: Capacitor serves the bundled
+`version.json`, so it always matches and updates stay the APK's business.
+
 ### Analytics is Counterscale, and `ht=3` is not a stuck handshake
 Cookieless, self-hosted on `counterscale.peterreijm.workers.dev`, loaded by an
 inline script in `index.html` with `data-site-id: milkmenot.com`. It is gated on

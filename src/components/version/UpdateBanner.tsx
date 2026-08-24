@@ -8,14 +8,21 @@ export function UpdateBanner() {
     showUpdateNotice,
     latestVersion,
     currentVersion,
+    publishedIsNewer,
     isMajor,
     requiresApkUpdate,
     isNative,
     dismissUpdate,
   } = useVersion();
 
-  // Don't show for major updates (they get a modal) or if no update
-  if (!showUpdateNotice || !latestVersion || isMajor) {
+  // Major updates get a modal instead.
+  //
+  // `latestVersion` is deliberately not required. It comes from the
+  // `app_versions` table, which carries release notes and the native APK rule
+  // — not the answer to "is this tab behind". Requiring it meant that a
+  // freshly deployed bundle, correctly detected, still rendered nothing at all
+  // unless someone had remembered to add a row.
+  if (!showUpdateNotice || isMajor) {
     return null;
   }
 
@@ -40,12 +47,20 @@ export function UpdateBanner() {
             <Sparkles className="h-5 w-5 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
+                {/* A version number only where one was actually published
+                    and actually beats what is running. Printing the newest row
+                    in the table regardless read "Version 1.0.0 available
+                    (current: 1.0.0)" on a plain redeploy. */}
                 <span className="font-medium text-sm">
-                  Version {latestVersion.version} available
+                  {publishedIsNewer && latestVersion
+                    ? `Version ${latestVersion.version} available`
+                    : "A new version is available"}
                 </span>
-                <span className="text-xs opacity-75">
-                  (current: {currentVersion})
-                </span>
+                {publishedIsNewer && latestVersion && (
+                  <span className="text-xs opacity-75">
+                    (current: {currentVersion})
+                  </span>
+                )}
               </div>
 
               {isNative && requiresApkUpdate ? (
@@ -58,9 +73,11 @@ export function UpdateBanner() {
                 </p>
               )}
 
-              <div className="mt-2">
-                <ReleaseNotes notes={latestVersion.release_notes} />
-              </div>
+              {publishedIsNewer && latestVersion?.release_notes && (
+                <div className="mt-2">
+                  <ReleaseNotes notes={latestVersion.release_notes} />
+                </div>
+              )}
             </div>
           </div>
 
@@ -70,6 +87,7 @@ export function UpdateBanner() {
                 size="sm"
                 variant="secondary"
                 onClick={handleDownloadApk}
+                aria-label="Download the new app"
                 className="gap-1.5"
               >
                 <Download className="h-3.5 w-3.5" />
@@ -80,6 +98,7 @@ export function UpdateBanner() {
                 size="sm"
                 variant="secondary"
                 onClick={handleRefresh}
+                aria-label="Refresh to the new version"
                 className="gap-1.5"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -90,6 +109,7 @@ export function UpdateBanner() {
               size="icon"
               variant="ghost"
               onClick={handleDismiss}
+              aria-label="Dismiss until tomorrow"
               className="h-8 w-8 hover:bg-primary-foreground/20"
             >
               <X className="h-4 w-4" />

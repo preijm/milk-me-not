@@ -3,8 +3,50 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
+/**
+ * What build this is, decided once and written in two places.
+ *
+ * The version check used to ask Supabase's `app_versions` table what the
+ * latest release was, and compare it against a version string typed into
+ * `appVersion.ts` by hand. Both had to be remembered on every release, and
+ * neither was: the table held one row from January while the site deployed
+ * dozens of times, so `isNewerVersion` was permanently false and the update
+ * banner could not fire at all. A reader with the tab open kept whatever
+ * bundle they first loaded.
+ *
+ * The build knows what build it is, so nothing has to be remembered. The
+ * commit sha in CI, a timestamp locally — the only property that matters is
+ * that it differs when the deployed files differ.
+ */
+const BUILD_ID = (process.env.GITHUB_SHA ?? "").slice(0, 12) || `dev-${Date.now()}`;
+
+/**
+ * Emit the same id as a file the running app can fetch.
+ *
+ * Written from the bundle rather than kept in `public/` so the two can never
+ * drift: a copy in `public/` is whatever was committed, which is exactly the
+ * hand-maintained value this replaces.
+ */
+type Emitter = {
+  emitFile: (asset: { type: "asset"; fileName: string; source: string }) => void;
+};
+
+const emitBuildId = () => ({
+  name: "emit-build-id",
+  generateBundle(this: Emitter) {
+    this.emitFile({
+      type: "asset",
+      fileName: "version.json",
+      source: JSON.stringify({ buildId: BUILD_ID }),
+    });
+  },
+});
+
 // https://vitejs.dev/config/
 export default (defineConfig as any)(({ mode }: { mode: string }) => ({
+  define: {
+    __BUILD_ID__: JSON.stringify(BUILD_ID),
+  },
   server: {
     host: "::",
     port: Number(process.env.PORT) || 8080,
@@ -16,6 +58,7 @@ export default (defineConfig as any)(({ mode }: { mode: string }) => ({
   },
   plugins: [
     react(),
+    emitBuildId(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),

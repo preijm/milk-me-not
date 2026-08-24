@@ -1,4 +1,13 @@
-// App version - should match the version in package.json and app_versions table
+/**
+ * The published release this bundle belongs to.
+ *
+ * This is *not* how the web app knows it is out of date — `BUILD_ID` in
+ * `deployedBuild.ts` is, and it needs no one to remember anything. This string
+ * only meets the `app_versions` table, which exists for release notes and for
+ * telling a native build that its APK must be reinstalled. Both sides of that
+ * comparison are hand-maintained, which is precisely why neither is trusted
+ * with the question "is this tab behind".
+ */
 export const APP_VERSION = "1.0.0";
 
 // Storage keys
