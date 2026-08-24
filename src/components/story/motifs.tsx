@@ -95,6 +95,34 @@ export const DropGlyph = ({ className = "", size = 16 }: MotifProps) => (
 );
 
 /** A pour: milk falling from a lip into a crown splash. Used as a section hero. */
+/**
+ * A cup with steam, for the barista badge.
+ *
+ * Barista is not the same kind of fact as a flavour or a property. Those say
+ * what is in the carton; this says what it is engineered to do — steam, and
+ * hold foam. Sitting in a row of pills it was one tag among several, told
+ * apart only by colour. The glyph marks it as a different class at a glance.
+ *
+ * It keeps the word beside it. A cup on its own reads as "goes in coffee",
+ * which is true of every milk on the board, and a label is needed for screen
+ * readers regardless — so an icon alone would buy nothing.
+ */
+export const BaristaGlyph = ({ className = "", size = 12 }: MotifProps) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" className={className} {...hidden}>
+    {/* Two full S-waves, thin. A single out-and-back curve renders as a pair
+        of quote marks above the cup, and a heavier stroke blobs the two bends
+        together at the 11px this is actually drawn at. */}
+    <path
+      d="M8.6 1.4c1.3 1 1.3 2 0 3s-1.3 2 0 3M13.8 1.4c1.3 1 1.3 2 0 3s-1.3 2 0 3"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
+    <path d="M3.6 8.7h13.1v4.8A5.6 5.6 0 0 1 11.1 19.1h-1.9A5.6 5.6 0 0 1 3.6 13.5V8.7Z" fill="currentColor" />
+    <path d="M17.6 10.3h1a2.7 2.7 0 1 1 0 5.4h-.9" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+  </svg>
+);
+
 export const Pour = ({ className = "", size = 240 }: MotifProps) => (
   <svg viewBox="0 0 220 260" width={size} height={(size * 260) / 220} fill="none" className={className} {...hidden}>
     <path d="M40 26h96l-10 30a30 30 0 0 1-28 20H78a30 30 0 0 1-28-20L40 26Z" fill="currentColor" opacity="0.18" />

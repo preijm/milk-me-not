@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { humanizeLabels } from "@/lib/labels";
 import { BrandMark } from "./BrandMark";
+import { BaristaGlyph } from "./motifs";
 
 /**
  * How this project names a product, everywhere.
@@ -129,8 +130,8 @@ export const ProductIdentity = ({
 
   // Barista first, then flavour, then the rest: flavour is what separates two
   // rows of the same carton, so it should not be the badge that gets cut.
-  const badges = [
-    ...(isBarista ? [{ key: "barista", label: "Barista", tone: "bg-story-green text-white" }] : []),
+  const badges: { key: string; label: string; tone: string; icon?: boolean }[] = [
+    ...(isBarista ? [{ key: "barista", label: "Barista", tone: "bg-story-green text-white", icon: true }] : []),
     ...flavorLabels.map((label) => ({ key: `f:${label}`, label, tone: "bg-story-amber-light text-story-amber-dark" })),
     ...propertyLabels.map((label) => ({ key: `p:${label}`, label, tone: "bg-story-ink/6 text-story-muted" })),
   ];
@@ -147,8 +148,12 @@ export const ProductIdentity = ({
       )}
     >
       {shown.map((b) => (
-        <span key={b.key} className={cn("max-w-40 truncate rounded-full font-bold", s.pill, b.tone)}>
-          {b.label}
+        <span
+          key={b.key}
+          className={cn("flex max-w-40 items-center gap-1 rounded-full font-bold", s.pill, b.tone)}
+        >
+          {b.icon && <BaristaGlyph className="shrink-0" size={11} />}
+          <span className="truncate">{b.label}</span>
         </span>
       ))}
       {hidden > 0 && <span className={cn("shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>}
