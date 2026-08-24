@@ -34,6 +34,19 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
     addNewBrand
   } = useBrandData(inputValue, brandId, setBrandId);
 
+  /**
+   * Show a brand the scan read but the board does not have yet.
+   *
+   * It arrives after mount — the lookup that decides the board has no such
+   * brand is a round trip — so it cannot be an initial state value. Putting the
+   * text here rather than leaving the field empty means the suggestion list
+   * below is already offering to add it, which is one tap instead of retyping
+   * a name the reader can see on the carton in their hand.
+   */
+  useEffect(() => {
+    if (defaultBrand) setInputValue(defaultBrand);
+  }, [defaultBrand]);
+
   // Update the input value when brands or brandId changes
   useEffect(() => {
     if (brandId && brands) {
@@ -41,12 +54,15 @@ export const BrandSelect = forwardRef<HTMLInputElement, BrandSelectProps>(({
       if (selectedBrand) {
         setInputValue(selectedBrand.name);
       }
-    } else if (brandId === '' && inputValue !== '') {
+    } else if (brandId === '' && inputValue !== '' && !defaultBrand) {
+      // Not when a scanned brand is sitting there unmatched: this fires again
+      // when the brand list resolves, and it would wipe the very text the scan
+      // just put in front of the reader.
       setInputValue("");
     }
   // inputValue intentionally omitted — including it causes an infinite set loop
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [brandId, brands]);
+  }, [brandId, brands, defaultBrand]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);

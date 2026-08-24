@@ -34,10 +34,45 @@ export type ScannedProduct = {
   looksLikePlantMilk: boolean;
   /** OFF often tags barista editions explicitly. */
   isBarista: boolean;
+  /**
+   * Category and label tags, language prefix stripped.
+   *
+   * Kept rather than reduced to the two booleans below, because they are the
+   * only part of this answer that speaks the board's vocabulary: the board
+   * names a product by its milk base — "Oat", "Soya" — and OFF states that as
+   * `oat-based-drinks`, where `product_name` says "OAT-LY! iKAFFE BARISTA
+   * EDITION". See `scanSuggestions.ts`.
+   */
+  tags: string[];
 };
 
-const titleCase = (s: string) =>
-  s.replace(/\S+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
+/**
+ * Tidy a brand's casing, but only where OFF gave us none to keep.
+ *
+ * The board's brand list is full of deliberate casing — `dmBio`, `enerBiO`,
+ * `vly`, `vehappy`, `V-Love`, `BIO+` — and title-casing everything turned
+ * those into "Dmbio", "Enerbio", "Vly" and "V-love". Existing brands survived
+ * that only because the lookup is case-insensitive and the board's own
+ * spelling then wins; a brand the board has never seen would have been created
+ * under the invented one.
+ *
+ * So a string that carries casing information is left exactly as it came, and
+ * only one with none — all lower or all upper — is title-cased. "alpro"
+ * becomes "Alpro" and "RUDE HEALTH" becomes "Rude Health", which is what this
+ * was for.
+ */
+const titleCase = (s: string): string => {
+  const hasUpper = /\p{Lu}/u.test(s);
+  const hasLower = /\p{Ll}/u.test(s);
+  if (hasUpper && hasLower) return s;
+
+  // An all-lower-case brand with hyphens and no spaces is a slug rather than a
+  // name — OFF returns "fair-trade-original" for Fair Trade Original. A
+  // hyphenated name that carries casing never reaches here.
+  const words = hasUpper || !/-/.test(s) || /\s/.test(s) ? s : s.replace(/-+/g, " ");
+
+  return words.replace(/\S+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
+};
 
 export const lookUpBarcode = async (
   barcode: string,
@@ -82,6 +117,7 @@ export const lookUpBarcode = async (
     brand: brandRaw ? titleCase(brandRaw) : null,
     name,
     quantity: p.quantity?.trim() || null,
+    tags,
     looksLikePlantMilk: tags.some((t) => PLANT_MILK_HINTS.includes(t)),
     // Barista editions are usually only stated in the product name — Oatly's
     // "OAT-LY! iKAFFE BARISTA EDITION" carries no barista tag at all.

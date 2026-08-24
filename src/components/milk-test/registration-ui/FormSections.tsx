@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useProductRegistration } from "./ProductRegistrationContext";
 import { BrandSelect } from "../BrandSelect";
@@ -9,6 +10,7 @@ import { ProductOptions } from "../ProductOptions";
 import { NameSelect } from "../NameSelect";
 import { supabase } from "@/integrations/supabase/client";
 import type { ScannedProduct } from "@/lib/openFoodFacts";
+import { suggestFromScan, pickBoardName } from "@/lib/scanSuggestions";
 import { Trash2, Coffee, Tag, Droplet } from "lucide-react";
 
 interface ProductFormProps {
@@ -20,6 +22,7 @@ interface ProductFormProps {
 
 export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onSubmit, onCancel, onBrandInputReady, onDelete }, ref) => {
   const [scanNote, setScanNote] = useState<string | null>(null);
+  const [scannedBrand, setScannedBrand] = useState<string | undefined>(undefined);
   const location = useLocation();
   const appliedScan = useRef(false);
   const {
@@ -35,11 +38,33 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
     selectedFlavors,
     handleFlavorToggle,
     flavors = [],
+    flavorQuery,
     isSubmitting,
     refetchFlavors,
     isEditMode,
     isAdmin
   } = useProductRegistration();
+
+  // Same key NameSelect uses, so this shares its cache rather than fetching
+  // the list a second time.
+  const { data: boardNames } = useQuery({
+    queryKey: ['product_names'],
+    queryFn: async () => {
+      const { data } = await supabase.from('names').select('id, name').order('name');
+      return data || [];
+    },
+  });
+
+  const { data: boardProperties } = useQuery({
+    queryKey: ['properties'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('properties')
+        .select('*')
+        .order('ordering', { ascending: true });
+      return data || [];
+    },
+  });
 
   // Form validation logic
   const isFormValid = !!brandId && !!productName;
@@ -48,43 +73,117 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
    * Fill the form in from a carton scanned on the way here.
    *
    * The scan flow sends the reader here when the board has nothing for that
-   * barcode, so the details Open Food Facts knows arrive with them. There is no
-   * scan button on this form itself: you only reach it after searching and not
-   * finding the product, by which point you have already typed its name.
+   * barcode, so what Open Food Facts knows arrives with them and this form is
+   * a confirmation rather than a blank page. Filling a blank form while
+   * standing in a shop is the thing that stops people bothering.
    *
-   * Open Food Facts gives a brand as text and this form wants a brand id, so
-   * the name is matched against brands already on the board. An unknown brand
-   * is left for the reader to add rather than invented from a third-party
-   * database.
+   * Every field below is a suggestion sitting on a control the reader can see
+   * and change. Nothing here is invented: a name is only ever one the board
+   * already uses, and a property or flavour is only ever a key that exists.
+   *
+   * It waits for the board's own vocabulary before applying anything, because
+   * a suggestion checked against an empty list would silently be no suggestion
+   * at all.
    */
   useEffect(() => {
     const scanned = (location.state as { scanned?: ScannedProduct } | null)?.scanned;
     if (!scanned || isEditMode || appliedScan.current) return;
+    // Settled, not merely non-empty: a flavour list that came back empty or
+    // failed should cost the scan its flavour badge, not the whole prefill.
+    if (!boardNames || !boardProperties || !flavorQuery?.isFetched) return;
     appliedScan.current = true;
 
-    if (scanned.name) setProductName(scanned.name);
-    if (scanned.isBarista) setIsBarista(true);
+    const suggestion = suggestFromScan(scanned);
+    const filled: string[] = [];
+
+    // The board names a product by its milk base — "Oat", not "OAT-LY! iKAFFE
+    // BARISTA EDITION". Writing the carton's own name here used to add a row
+    // to `names` that nobody would ever pick again.
+    const name = pickBoardName(suggestion.bases, boardNames.map((n) => n.name));
+    if (name) {
+      const match = boardNames.find((n) => n.name === name);
+      setProductName(name);
+      if (match) setNameId(match.id);
+      filled.push("the milk");
+    }
+
+    if (scanned.isBarista) {
+      setIsBarista(true);
+      filled.push("barista");
+    }
+
+    const properties = suggestion.properties.filter((key) =>
+      boardProperties.some((p) => p.key === key),
+    );
+    if (properties.length > 0) {
+      setSelectedProductTypes(properties);
+      filled.push(properties.length === 1 ? "a property" : "some properties");
+    }
+
+    const flavorKeys = suggestion.flavors.filter((key) => flavors.some((f) => f.key === key));
+    flavorKeys.forEach(handleFlavorToggle);
+    if (flavorKeys.length > 0) filled.push("a flavour");
+
+    /**
+     * Say what was actually filled in.
+     *
+     * The old copy claimed "filled in from the barcode" even when the scan had
+     * found nothing at all, which left the reader hunting the form for a field
+     * that was never touched.
+     */
+    const announce = (unknownBrand: string | null) => {
+      const list =
+        filled.length === 0 ? null
+        : filled.length === 1 ? filled[0]
+        : `${filled.slice(0, -1).join(", ")} and ${filled[filled.length - 1]}`;
+
+      if (unknownBrand) {
+        setScanNote(
+          list
+            ? `Scanned ${unknownBrand}, which is not on the board yet — add it above. We filled in ${list} from the barcode; check it before saving.`
+            : `Scanned ${unknownBrand}, which is not on the board yet — add it above, then fill in the rest.`,
+        );
+      } else if (list) {
+        setScanNote(`Filled in ${list} from the barcode — check it before saving.`);
+      } else {
+        setScanNote("Scanned, but the barcode told us nothing about this carton. Over to you.");
+      }
+    };
 
     if (!scanned.brand) {
-      setScanNote("Filled in from the barcode. Pick a brand to finish.");
+      announce(null);
       return;
     }
 
+    /**
+     * Open Food Facts gives a brand as text and this form wants an id.
+     *
+     * `ilike` with no wildcards is an exact, case-insensitive match, and the
+     * first row is taken rather than `maybeSingle` — two brands differing only
+     * in case would make that error out and fill in nothing at all.
+     *
+     * An unmatched brand is not invented. It is typed into the field instead,
+     * where the form's own "add this brand" affordance is already waiting, so
+     * the reader confirms rather than retypes.
+     */
+    const brand = scanned.brand;
     void supabase
       .from("brands")
       .select("id")
-      .ilike("name", scanned.brand)
-      .maybeSingle()
+      .ilike("name", brand)
+      .limit(1)
       .then(({ data }) => {
-        if (data?.id) {
-          setBrandId(data.id);
-          setScanNote("Filled in from the barcode — check it before saving.");
+        const found = data?.[0];
+        if (found) {
+          setBrandId(found.id);
+          filled.unshift("the brand");
         } else {
-          setScanNote(`Scanned "${scanned.brand}", which is not on the board yet. Add it below.`);
+          setScannedBrand(brand);
         }
+        announce(found ? null : brand);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.state, isEditMode]);
+  }, [location.state, isEditMode, boardNames, boardProperties, flavorQuery?.isFetched]);
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
@@ -104,6 +203,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
               ref={ref}
               brandId={brandId}
               setBrandId={setBrandId}
+              defaultBrand={scannedBrand}
               onInputReady={onBrandInputReady}
               autoFocus={!isEditMode}
             />

@@ -7,6 +7,7 @@ import { ProductIdentity } from "./ProductIdentity";
 import { StoryButton, ArrowRight } from "./primitives";
 import type { ScannedProduct } from "@/lib/openFoodFacts";
 import { createProductFromScan } from "@/lib/createScannedProduct";
+import { suggestFromScan } from "@/lib/scanSuggestions";
 import { rememberBarcode } from "@/lib/rememberBarcode";
 
 /**
@@ -176,13 +177,28 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
           </>
         )}
 
-        {stage.at === "nothing" && (
+        {stage.at === "nothing" && (() => {
+          /**
+           * What the board would call this, which is not what the carton does.
+           *
+           * The card used to show Open Food Facts' own product name — "OAT-LY!
+           * iKAFFE BARISTA EDITION" — and then add something else entirely,
+           * because the board names a product by its milk base. Showing the
+           * base is showing what the button will actually do; the carton's own
+           * name stays underneath as the thing the reader can check against
+           * what is in their hand.
+           */
+          const suggestion = suggestFromScan(stage.scanned);
+          const base = suggestion.bases.join(", ");
+          const canAddInOneTap = Boolean(stage.scanned.brand) && suggestion.bases.length > 0;
+
+          return (
           <>
             <DialogTitle className="story-serif text-[1.15rem] font-bold text-story-ink">
-              {stage.scanned.brand && stage.scanned.name ? "Nobody has rated this yet" : "Not on the board yet"}
+              {canAddInOneTap ? "Nobody has rated this yet" : "Not on the board yet"}
             </DialogTitle>
 
-            {stage.scanned.brand && stage.scanned.name ? (
+            {canAddInOneTap ? (
               <>
                 {/* Open Food Facts already knows what this is, so the reader
                     confirms rather than types. Filling a blank form in a shop
@@ -194,13 +210,13 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
                   <span className="min-w-0 flex-1">
                     <ProductIdentity
                       brand={stage.scanned.brand}
-                      product={stage.scanned.name}
+                      product={base}
                       isBarista={stage.scanned.isBarista}
                       size="sm"
                     />
-                    {stage.scanned.quantity && (
+                    {(stage.scanned.name || stage.scanned.quantity) && (
                       <span className="mt-1 block pl-12.5 text-[0.75rem] text-story-muted-2">
-                        {stage.scanned.quantity}
+                        {[stage.scanned.name, stage.scanned.quantity].filter(Boolean).join(" · ")}
                       </span>
                     )}
                   </span>
@@ -241,7 +257,13 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
             ) : (
               <>
                 <DialogDescription className="text-[0.875rem] text-story-muted">
-                  Nothing on file for that barcode, so you will need to fill it in.
+                  {/* Not the same thing as knowing nothing. The barcode may
+                      well have named a brand, a flavour or a property, and all
+                      of those travel to the form — promising a blank page when
+                      one is not coming is its own small discouragement. */}
+                  {stage.scanned.brand
+                    ? `We could not tell what kind of milk this is, so that part is yours. The rest of what the barcode said is filled in.`
+                    : "Nothing on file for that barcode, so you will need to fill it in."}
                 </DialogDescription>
                 <StoryButton
                   className="mt-1 w-full"
@@ -256,7 +278,8 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
               </>
             )}
           </>
-        )}
+          );
+        })()}
 
         <StoryButton tone="outline" size="sm" className="mt-1 w-full" onClick={close}>
           Close
