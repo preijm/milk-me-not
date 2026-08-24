@@ -7,6 +7,7 @@ import { ProductIdentity } from "./ProductIdentity";
 import { StoryButton, ArrowRight } from "./primitives";
 import type { ScannedProduct } from "@/lib/openFoodFacts";
 import { createProductFromScan } from "@/lib/createScannedProduct";
+import { rememberBarcode } from "@/lib/rememberBarcode";
 
 type BoardMatch = {
   id: string;
@@ -89,10 +90,7 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
 
     // Only one carton it could be — asking would be a question with one answer.
     if (ranked.length === 1) {
-      void supabase.rpc("remember_product_barcode", {
-        _barcode: scanned.barcode,
-        _product_id: ranked[0].id,
-      });
+      await rememberBarcode(scanned.barcode, ranked[0].id);
       goToProduct(ranked[0].id);
       return;
     }
@@ -130,13 +128,12 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
               {stage.matches.map((m) => (
                 <li key={m.id}>
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       // Now we know which carton this barcode is. Record it so
-                      // the next person to scan it goes straight through.
-                      void supabase.rpc("remember_product_barcode", {
-                        _barcode: stage.scanned.barcode,
-                        _product_id: m.id,
-                      });
+                      // the next person to scan it goes straight through — and
+                      // wait for it, because navigating away first used to
+                      // leave the request unsent.
+                      await rememberBarcode(stage.scanned.barcode, m.id);
                       goToProduct(m.id);
                     }}
                     className="story-hairline flex w-full items-center gap-3 rounded-2xl bg-white p-3 text-left transition-colors hover:bg-story-cream-2"
