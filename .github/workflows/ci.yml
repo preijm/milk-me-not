@@ -51,14 +51,24 @@ jobs:
     # else and abandon it: no more rebases, no recreation, forever. Twelve
     # dependency PRs were frozen that way.
     #
-    # So it runs on main and nowhere near a pull request. `[skip ci]` stays,
-    # but only as the loop guard it was meant to be — a lockfile-only commit on
-    # main has nothing for CI or Deploy to say about it.
+    # So it runs on main and nowhere near a pull request.
+    #
+    # It used to commit straight to main with `[skip ci]`. That stopped working
+    # the moment the "checks must pass" ruleset was added, because the rule is
+    # evaluated when the push arrives: a brand-new commit has no checks, so the
+    # push is refused. `[skip ci]` guaranteed it never would have any. Dropping
+    # the marker would not have helped either — nothing can run checks on a
+    # commit that has not landed yet.
+    #
+    # So it opens a pull request instead, and the checks run there like anyone
+    # else's. The branch name is fixed and force-pushed, so repeated runs update
+    # one pull request rather than opening a pile of them.
     if: github.event_name == 'push'
     needs: lint-and-typecheck
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -74,16 +84,36 @@ jobs:
           rm -f package-lock.json
           npm install --package-lock-only --ignore-scripts
 
-      - name: Commit the lockfile if it moved
+      - name: Open a pull request if the lockfile moved
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
+
+          # bun.lockb is not in this repo; naming it here would fail the diff.
+          if git diff --quiet -- package-lock.json; then
+            echo "Lockfile is already current; nothing to do."
+            exit 0
+          fi
+
+          BRANCH=chore/lockfile-refresh
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # bun.lockb is not in this repo; naming it here would fail the add.
+          git checkout -b "$BRANCH"
           git add package-lock.json
-          if ! git diff --cached --quiet; then
-            git commit -m "chore: update lockfiles [skip ci]"
-            git push
+          git commit -m "chore: refresh package-lock.json"
+          git push --force origin "$BRANCH"
+
+          # An open pull request picks the force-push up on its own, so only
+          # open one when there is not already one waiting.
+          if [ "$(gh pr list --head "$BRANCH" --state open --json number --jq 'length')" = "0" ]; then
+            gh pr create --base main --head "$BRANCH" \
+              --title "chore: refresh package-lock.json" \
+              --body "Regenerated with Node 20 so Dependabot reads a current lockfile. Opened by CI; nothing here is hand-written."
           fi
+
+          # Merges itself once the same checks everyone else waits for pass.
+          gh pr merge "$BRANCH" --squash --auto --delete-branch
 
   test:
     name: Test
