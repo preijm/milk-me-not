@@ -442,6 +442,9 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
                   brand: null,
                   name: null,
                   quantity: null,
+                  // Open Food Facts had nothing, so there is nothing to
+                  // suggest from — the form arrives blank and says so.
+                  tags: [],
                   looksLikePlantMilk: true,
                   isBarista: false,
                 })

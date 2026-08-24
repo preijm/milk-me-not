@@ -34,6 +34,16 @@ export type ScannedProduct = {
   looksLikePlantMilk: boolean;
   /** OFF often tags barista editions explicitly. */
   isBarista: boolean;
+  /**
+   * Category and label tags, language prefix stripped.
+   *
+   * Kept rather than reduced to the two booleans below, because they are the
+   * only part of this answer that speaks the board's vocabulary: the board
+   * names a product by its milk base — "Oat", "Soya" — and OFF states that as
+   * `oat-based-drinks`, where `product_name` says "OAT-LY! iKAFFE BARISTA
+   * EDITION". See `scanSuggestions.ts`.
+   */
+  tags: string[];
 };
 
 const titleCase = (s: string) =>
@@ -82,6 +92,7 @@ export const lookUpBarcode = async (
     brand: brandRaw ? titleCase(brandRaw) : null,
     name,
     quantity: p.quantity?.trim() || null,
+    tags,
     looksLikePlantMilk: tags.some((t) => PLANT_MILK_HINTS.includes(t)),
     // Barista editions are usually only stated in the product name — Oatly's
     // "OAT-LY! iKAFFE BARISTA EDITION" carries no barista tag at all.
