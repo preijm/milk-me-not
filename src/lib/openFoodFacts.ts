@@ -46,8 +46,33 @@ export type ScannedProduct = {
   tags: string[];
 };
 
-const titleCase = (s: string) =>
-  s.replace(/\S+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
+/**
+ * Tidy a brand's casing, but only where OFF gave us none to keep.
+ *
+ * The board's brand list is full of deliberate casing — `dmBio`, `enerBiO`,
+ * `vly`, `vehappy`, `V-Love`, `BIO+` — and title-casing everything turned
+ * those into "Dmbio", "Enerbio", "Vly" and "V-love". Existing brands survived
+ * that only because the lookup is case-insensitive and the board's own
+ * spelling then wins; a brand the board has never seen would have been created
+ * under the invented one.
+ *
+ * So a string that carries casing information is left exactly as it came, and
+ * only one with none — all lower or all upper — is title-cased. "alpro"
+ * becomes "Alpro" and "RUDE HEALTH" becomes "Rude Health", which is what this
+ * was for.
+ */
+const titleCase = (s: string): string => {
+  const hasUpper = /\p{Lu}/u.test(s);
+  const hasLower = /\p{Ll}/u.test(s);
+  if (hasUpper && hasLower) return s;
+
+  // An all-lower-case brand with hyphens and no spaces is a slug rather than a
+  // name — OFF returns "fair-trade-original" for Fair Trade Original. A
+  // hyphenated name that carries casing never reaches here.
+  const words = hasUpper || !/-/.test(s) || /\s/.test(s) ? s : s.replace(/-+/g, " ");
+
+  return words.replace(/\S+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
+};
 
 export const lookUpBarcode = async (
   barcode: string,

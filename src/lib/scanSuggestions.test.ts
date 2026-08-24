@@ -150,4 +150,12 @@ describe("pickBoardName", () => {
   it("suggests nothing when nothing was found", () => {
     expect(pickBoardName([], BOARD_NAMES)).toBeNull();
   });
+
+  it("returns the board's own spelling, not this module's", () => {
+    // The board writes "Almond, cashew" with a lower-case c, and the names
+    // table is the authority on that — not the base list in this file, which
+    // spells them "Almond" and "Cashew". Returning anything but the board's
+    // exact string would create a second, differently-spelled row on save.
+    expect(pickBoardName(["Almond", "Cashew"], BOARD_NAMES)).toBe("Almond, cashew");
+  });
 });
