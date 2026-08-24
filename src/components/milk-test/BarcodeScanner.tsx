@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { StoryButton } from "@/components/story/primitives";
 import { lookUpBarcode, type ScannedProduct } from "@/lib/openFoodFacts";
 import { createNativeDetector } from "@/lib/barcodeDetector";
+import { classifyCameraError, cameraTroubleMessage, type CameraTrouble } from "@/lib/cameraError";
 
 /**
  * Ask for the back camera at as many pixels as it will give.
@@ -35,6 +36,16 @@ const CAMERA: MediaStreamConstraints = {
   },
 };
 
+/**
+ * What to ask for when the constraints above are refused outright.
+ *
+ * Everything in CAMERA is `ideal`, which should never throw — but a browser is
+ * free to disagree, and one that does would otherwise take the reader straight
+ * to "type it instead" while a perfectly good webcam sat there. Asking for any
+ * camera at all is worth one more round trip before giving up.
+ */
+const ANY_CAMERA: MediaStreamConstraints = { audio: false, video: true };
+
 /** The symbologies actually printed on grocery packaging. */
 const FORMATS = [
   BarcodeFormat.EAN_13,
@@ -55,7 +66,8 @@ type Phase =
   | { step: "scanning" }
   | { step: "looking-up"; code: string }
   | { step: "missing"; code: string }
-  | { step: "denied" }
+  | { step: "trouble"; trouble: CameraTrouble }
+  | { step: "waiting" }
   | { step: "blank" }
   | { step: "unsupported" };
 
@@ -149,9 +161,12 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
     stopRef.current = stop;
 
     // A camera that never answers leaves the reader staring at "Waking the
-    // camera…" with only Cancel, so give up rather than hang.
+    // camera…" with only Cancel. This says so rather than declaring a refusal:
+    // the prompt may still be sitting there unanswered, and calling that
+    // "denied" sent people off to fix a setting that was never wrong. The
+    // stream is still accepted if it arrives late.
     const timeout = window.setTimeout(() => {
-      if (!cancelled) setPhase((cur) => (cur.step === "starting" ? { step: "denied" } : cur));
+      if (!cancelled) setPhase((cur) => (cur.step === "starting" ? { step: "waiting" } : cur));
     }, 8000);
 
     const canvas = document.createElement("canvas");
@@ -209,8 +224,25 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
       return canvas;
     };
 
-    navigator.mediaDevices
-      .getUserMedia(CAMERA)
+    /**
+     * The rear camera at as many pixels as it will give, or failing that any
+     * camera at all.
+     *
+     * Only a refused *constraint* is worth a second ask. A refused permission,
+     * a missing camera or one another app is holding will answer the same way
+     * twice, and asking again would put a second prompt in front of someone
+     * who has already said no.
+     */
+    const openCamera = async (): Promise<MediaStream> => {
+      try {
+        return await navigator.mediaDevices.getUserMedia(CAMERA);
+      } catch (error) {
+        if (classifyCameraError(error) !== "constraints") throw error;
+        return await navigator.mediaDevices.getUserMedia(ANY_CAMERA);
+      }
+    };
+
+    openCamera()
       .then(async (granted) => {
         window.clearTimeout(timeout);
         if (cancelled) {
@@ -304,9 +336,13 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         };
         scan();
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         window.clearTimeout(timeout);
-        if (!cancelled) setPhase({ step: "denied" });
+        // The name is the only part of a getUserMedia rejection worth reading,
+        // and it is logged as well as shown: "it does not work in Arc" is not
+        // something anyone can act on, and NotReadableError is.
+        console.error("Could not open the camera:", error);
+        if (!cancelled) setPhase({ step: "trouble", trouble: classifyCameraError(error) });
       });
 
     return () => {
@@ -326,7 +362,8 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         : "Point it at the barcode. This browser has no built-in reader, so it may take a moment."
     : phase.step === "looking-up" ? "Looking it up…"
     : phase.step === "missing" ? "Nothing on file for that one — you can still add it by hand."
-    : phase.step === "denied" ? "No camera access. You can allow it in your browser, or type the details instead."
+    : phase.step === "waiting" ? "Still waiting for the camera. If your browser asked for permission, answer that — otherwise you can type the details instead."
+    : phase.step === "trouble" ? cameraTroubleMessage(phase.trouble)
     : phase.step === "blank" ? "The camera is on but sending nothing. Another app may be holding it — close that and try again, or type the details instead."
     : "This browser cannot open a camera. Type the details instead.";
 
@@ -386,7 +423,10 @@ export const BarcodeScanner = ({ open, onClose, onScan }: BarcodeScannerProps) =
         )}
 
         <div className="mt-1 flex gap-2">
-          {(phase.step === "denied" || phase.step === "unsupported" || phase.step === "blank") && (
+          {(phase.step === "trouble" ||
+            phase.step === "waiting" ||
+            phase.step === "unsupported" ||
+            phase.step === "blank") && (
             <StoryButton type="button" size="sm" className="flex-1" onClick={onClose}>
               Type it instead
             </StoryButton>
