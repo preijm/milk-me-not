@@ -108,6 +108,54 @@
         if (excluded) return;
         if (!/(^|\.)milkmenot\.com$/.test(location.hostname) || navigator.webdriver) return;
 
+        // Counterscale records a pageview synchronously inside its own pushState
+        // patch, and it reads <link rel="canonical"> in preference to location.
+        // React has not re-rendered by then, so react-helmet-async still has the
+        // *previous* page's canonical in the DOM and every client-side navigation
+        // was filed one page behind -- clicking /about recorded /. Patching history
+        // here, before the tracker is appended, puts these wrappers inside the
+        // tracker's own, so the canonical is already correct when it looks.
+        //
+        // The tracker patches pushState and popstate but not replaceState, so
+        // replace-mode navigations were never counted: the logged-in
+        // `<Navigate to="/feed" replace />` on the home page, the ProtectedRoute
+        // redirects, and the deep links. Those are reported here -- but only when
+        // the pathname actually changes. The Results filters rewrite the query
+        // string through replaceState on every keystroke, and counting those would
+        // bury the real numbers under /results.
+        (function () {
+          var nativePush = history.pushState;
+          var nativeReplace = history.replaceState;
+          var suppressPush = false;
+
+          // Same selector the tracker uses. Origin + pathname and no query, which
+          // is byte-identical to what <Seo> renders a moment later, so the tag is
+          // never briefly wrong for a crawler -- and the tracker drops the query
+          // from the recorded path regardless.
+          function syncCanonical() {
+            var link = document.querySelector('link[rel="canonical"][href]');
+            if (link) link.href = location.origin + location.pathname;
+          }
+
+          history.pushState = function () {
+            if (!suppressPush) nativePush.apply(this, arguments);
+            syncCanonical();
+          };
+
+          history.replaceState = function () {
+            var before = location.pathname;
+            nativeReplace.apply(this, arguments);
+            syncCanonical();
+            if (location.pathname === before) return;
+
+            // Hand the tracker a pageview without touching the history stack. By
+            // now history.pushState is the tracker's wrapper, so calling it runs
+            // its reporter, while suppressPush stops the real push underneath.
+            suppressPush = true;
+            try { history.pushState(history.state, ''); } finally { suppressPush = false; }
+          };
+        })();
+
         var csScript = document.createElement('script');
         csScript.id = 'counterscale-script';
         csScript.src = 'https://counterscale.peterreijm.workers.dev/tracker.js';
