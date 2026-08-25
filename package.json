@@ -96,7 +96,7 @@
     "@lovable.dev/vite-plugin-hmr-gate": "^1.8.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.19",
-    "@types/node": "^25.6.1",
+    "@types/node": "^26.2.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react-swc": "^4.3.0",
