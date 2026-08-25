@@ -3,9 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { QuickRateSheet } from "@/components/story/QuickRateSheet";
 import { humanizeLabels } from "@/lib/labels";
+import { cn } from "@/lib/utils";
+import { BrandMark } from "@/components/story/BrandMark";
 import {
   ArrowRight,
   Band,
+  BaristaGlyph,
   Display,
   Kicker,
   Lede,
@@ -135,12 +138,15 @@ const ProductDetails = () => {
         }
       : undefined;
 
-  // No Barista chip: the kicker two lines up already says "Barista blend", and
-  // this page was stating it twice from two places that did not know about each
-  // other — a chip reading BARISTA directly under a line reading BARISTA BLEND.
-  // Prose can afford the longer term; the chips elsewhere cannot, which is why
-  // badges say "Barista" and this says "Barista blend".
-  const chips = [...humanizeLabels(story.properties), ...humanizeLabels(story.flavors)];
+  // Barista is a chip again. It was folded into the kicker while the kicker was
+  // the brand line — "KARMA · Barista blend" — so that the page did not say it
+  // twice. The brand has its own row now, and prose that reads "Karma · Barista
+  // blend" beside a logo would be claiming the blend is part of the name.
+  const chips = [
+    ...(story.isBarista ? [{ key: "barista", label: "Barista", barista: true }] : []),
+    ...humanizeLabels(story.properties).map((label) => ({ key: `p:${label}`, label, barista: false })),
+    ...humanizeLabels(story.flavors).map((label) => ({ key: `f:${label}`, label, barista: false })),
+  ];
 
   return (
     <StoryLayout mobileCtaHint="90 seconds. No photo needed.">
@@ -162,10 +168,32 @@ const ProductDetails = () => {
 
         <div className="relative mt-6 grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-14">
           <div>
-            <Kicker>
-              {story.brandName}
-              {story.isBarista ? " · Barista blend" : ""}
-            </Kicker>
+            {/* The brand, said like a brand.
+
+                It used to be a Kicker: 11px, uppercase, letter-spaced, green,
+                with a 28px rule in front of it. That is this site's section
+                label — the thing that opens "The community verdict" and "What
+                changed" — so the maker's name was wearing the costume of a
+                heading, and "KARMA" read as the name of the section rather
+                than the name of whoever makes this carton.
+
+                A mark and a name instead, the same pairing the board, the feed
+                and every dialog use to say who made something. For the 25
+                brands we hold a logo for it is unmistakable; for the rest the
+                initials tile is still recognisably an avatar for a maker. */}
+            <div className="flex items-center gap-3">
+              <BrandMark
+                brand={story.brandName}
+                className="h-12 w-12 text-[0.8125rem]"
+                radius="rounded-xl"
+              />
+              <p
+                className="min-w-0 text-[0.9375rem] font-bold uppercase tracking-[0.08em] text-story-ink-2"
+                translate="no"
+              >
+                {story.brandName}
+              </p>
+            </div>
 
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               {story.productName}
@@ -175,10 +203,16 @@ const ProductDetails = () => {
               <ul className="mt-5 flex flex-wrap gap-2">
                 {chips.map((c) => (
                   <li
-                    key={c}
-                    className="rounded-full border-[1.5px] border-story-ink/12 px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em] text-story-ink-2"
+                    key={c.key}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em]",
+                      c.barista
+                        ? "bg-story-green text-white"
+                        : "border-[1.5px] border-story-ink/12 text-story-ink-2",
+                    )}
                   >
-                    {c}
+                    {c.barista && <BaristaGlyph size={13} />}
+                    {c.label}
                   </li>
                 ))}
               </ul>
