@@ -11,7 +11,13 @@
   --story-ink: 160 14% 12%;          /* #1b2421 */
   --story-ink-2: 167 9% 19%;         /* #2b3432 */
   --story-muted: 154 7% 39%;         /* #5d6b65 */
-  --story-muted-2: 150 4% 56%;       /* #8a948f */
+  /* Quiet, but still readable. At 56% this was 3.16:1 on white and 2.99:1 on
+     cream — and it is the token for kickers, timestamps and the "·" between
+     them, all of it 11-13px. That put the site's small print below AA
+     everywhere it appeared. 42% is 5.17:1 on white and 4.53:1 on cream-2.
+     It sits closer to --story-muted than it used to; that is the honest
+     consequence of wanting two greys when only one of them was legible. */
+  --story-muted-2: 150 4% 41%;       /* #646d69 */
 
   /* Grounds */
   --story-paper: 0 0% 100%;
@@ -41,7 +47,9 @@
 
   /* Accent amber */
   --story-amber: 37 99% 55%;         /* #fea619 */
-  --story-amber-dark: 35 83% 38%;    /* #b06d10 */
+  /* Text on the amber and clay tints, which is what this is for: at 38% it
+     was 3.26:1 on the clay tile and 3.68:1 on amber-light. */
+  --story-amber-dark: 35 83% 29%;    /* #87540d */
   --story-amber-light: 40 100% 92%;  /* #fff1d6 */
 
   /* Soft tile tints — the category tiles want eight distinct grounds, and the

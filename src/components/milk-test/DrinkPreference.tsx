@@ -110,7 +110,7 @@ export const DrinkPreference = ({ preference, setPreference }: DrinkPreferencePr
               // Solid fill is how a chosen value reads everywhere else on the
               // site; the wash is reserved for "this is the page you are on".
               active
-                ? "bg-story-green text-white"
+                ? "bg-story-green text-story-ink"
                 : "story-hairline bg-white text-story-muted hover:bg-story-cream-2",
             )}
           >

@@ -29,7 +29,7 @@ export type PublicProfile = {
   /** The plant base they rate most, with how many. */
   favouriteBase: { label: string; count: number } | null;
   /** Their scores bucketed into the five named tiers. */
-  spread: { key: string; name: string; color: string; count: number }[];
+  spread: { key: string; name: string; color: string; ink: string; count: number }[];
 };
 
 /**
@@ -101,12 +101,12 @@ export const usePublicProfile = (userId: string | undefined) =>
       });
       const favourite = [...baseCounts.entries()].sort((a, b) => b[1] - a[1])[0];
 
-      const spreadMap = new Map<string, { key: string; name: string; color: string; count: number }>();
+      const spreadMap = new Map<string, { key: string; name: string; color: string; ink: string; count: number }>();
       ratings.forEach((r) => {
         const tier = getTier(r.rating);
         const existing = spreadMap.get(tier.name);
         if (existing) existing.count += 1;
-        else spreadMap.set(tier.name, { key: tier.key, name: tier.name, color: tier.color, count: 1 });
+        else spreadMap.set(tier.name, { key: tier.key, name: tier.name, color: tier.color, ink: tier.ink, count: 1 });
       });
 
       return {

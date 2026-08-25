@@ -146,7 +146,7 @@ const BUTTON_SIZE = {
 } as const;
 
 const BUTTON_TONE = {
-  green: "bg-story-green text-white story-lift-green hover:brightness-[1.07]",
+  green: "bg-story-green text-story-ink story-lift-green hover:brightness-[1.07]",
   ink: "bg-story-ink text-story-cream hover:brightness-125",
   paper: "bg-white text-story-ink shadow-[0_10px_26px_-14px_rgba(27,36,33,0.5)] hover:bg-story-cream",
   outline: "border-[1.5px] border-story-ink/15 bg-transparent text-story-ink hover:bg-story-ink/5",
@@ -223,11 +223,11 @@ export const ScoreMark = ({
 
   return (
     <div className={cn("flex items-baseline gap-2.5", className)}>
-      <span className={cn("story-num leading-none", numClass)} style={{ color: tier.color }}>
+      <span className={cn("story-num leading-none", numClass)} style={{ color: tier.ink }}>
         {value}
       </span>
       {showTier && (
-        <span className={cn("font-sans font-bold uppercase", tierClass)} style={{ color: tier.color }}>
+        <span className={cn("font-sans font-bold uppercase", tierClass)} style={{ color: tier.ink }}>
           {tier.name}
         </span>
       )}
@@ -253,7 +253,7 @@ export const StatFigure = ({
         "story-num text-[clamp(2.1rem,6vw,3.25rem)] leading-none",
         tone === "ink" && "text-story-ink",
         tone === "light" && "text-white",
-        tone === "green" && "text-story-green",
+        tone === "green" && "text-story-green-dark",
       )}
     >
       {value}
@@ -319,14 +319,30 @@ export const DropList = ({
   className,
 }: {
   items: React.ReactNode[];
-  tone?: "ink" | "light";
+  /**
+   * `light` is for the forest band. `green` is for a card painted in the vivid
+   * brand green, where white is 2.05:1 and ink is 6.4:1 — the two dark grounds
+   * want opposite foregrounds and one tone cannot serve both.
+   */
+  tone?: "ink" | "light" | "green";
   className?: string;
 }) => (
   <ul className={cn("flex flex-col gap-3", className)}>
     {items.map((item, i) => (
       <li key={i} className="flex items-start gap-3">
-        <DropGlyph size={14} className={cn("mt-1 shrink-0", tone === "light" ? "text-story-green-light" : "text-story-green")} />
-        <span className={cn("text-[0.9375rem] leading-relaxed", tone === "light" ? "text-white/80" : "text-story-ink-2")}>
+        <DropGlyph
+          size={14}
+          className={cn(
+            "mt-1 shrink-0",
+            tone === "light" ? "text-story-green-light" : tone === "green" ? "text-story-ink/70" : "text-story-green-dark",
+          )}
+        />
+        <span
+          className={cn(
+            "text-[0.9375rem] leading-relaxed",
+            tone === "light" ? "text-white/80" : tone === "green" ? "text-story-ink" : "text-story-ink-2",
+          )}
+        >
           {item}
         </span>
       </li>

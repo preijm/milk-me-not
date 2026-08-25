@@ -175,7 +175,7 @@ const Results = () => {
             <Suspense
               fallback={
                 <div className="flex min-h-[60vh] items-center justify-center">
-                  <Loader className="h-8 w-8 animate-spin text-story-green" />
+                  <Loader className="h-8 w-8 animate-spin text-story-green-dark" />
                 </div>
               }
             >

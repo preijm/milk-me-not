@@ -129,7 +129,7 @@ const Home = () => {
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               Ditch the Moo.
               <br />
-              <span className="text-story-green">Find your new.</span>
+              <span className="text-story-green-dark">Find your new.</span>
             </Display>
 
             <Lede className="mt-6 max-w-136">
@@ -326,10 +326,10 @@ const Home = () => {
         <ol className="mt-10 grid gap-3 sm:grid-cols-5">
           {SCORE_TIERS.map((tier) => (
             <StoryCard as="li" key={tier.key} className="flex flex-col gap-2 p-5">
-              <span className="story-num text-[1.05rem]" style={{ color: tier.color }}>
+              <span className="story-num text-[1.05rem]" style={{ color: tier.ink }}>
                 {tier.min.toFixed(0)}–{tier.key === "gem" ? "10" : tier.max.toFixed(0)}
               </span>
-              <span className="story-serif text-[1.35rem] font-bold" style={{ color: tier.color }}>
+              <span className="story-serif text-[1.35rem] font-bold" style={{ color: tier.ink }}>
                 {tier.name}
               </span>
               <span className="text-[0.875rem] leading-snug text-story-muted">{tier.blurb}</span>
@@ -347,7 +347,7 @@ const Home = () => {
             <Display size="xl" className="mt-5">
               It started with
               <br />
-              <span className="text-story-green">soy sauce.</span>
+              <span className="text-story-green-dark">soy sauce.</span>
             </Display>
             <Lede className="mt-5">
               A colleague asked whether soy milk meant mixing soy sauce into milk. Someone tried it. What followed was a
@@ -405,10 +405,10 @@ const TopVerdictBar = ({
         </span>
       </span>
       <span className="flex flex-col items-end leading-none">
-        <span className="story-num text-[1.6rem]" style={{ color: tier.color }}>
+        <span className="story-num text-[1.6rem]" style={{ color: tier.ink }}>
           {entry ? entry.score.toFixed(1) : "—"}
         </span>
-        <span className="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.14em]" style={{ color: tier.color }}>
+        <span className="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.14em]" style={{ color: tier.ink }}>
           {tier.name}
         </span>
       </span>
@@ -446,7 +446,7 @@ const TopVerdictCard = ({
       <div className="relative mt-7 flex items-end justify-between border-t border-story-ink/8 pt-6">
         <ScoreMark score={entry?.score} size="lg" showTier={false} />
         <div className="text-right">
-          <p className="story-serif text-[1.25rem] font-bold italic" style={{ color: tier.color }}>
+          <p className="story-serif text-[1.25rem] font-bold italic" style={{ color: tier.ink }}>
             {tier.name}
           </p>
           <p className="mt-0.5 text-[0.8125rem] font-medium text-story-muted-2">

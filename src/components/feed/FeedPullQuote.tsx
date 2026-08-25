@@ -33,19 +33,19 @@ export const FeedPullQuote = ({ items, className }: FeedPullQuoteProps) => {
           {featured.notes ? `“${featured.notes}”` : `“${tier.blurb}”`}
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span className="story-num text-[2rem] leading-none" style={{ color: tier.color }}>
+          <span className="story-num text-[2rem] leading-none" style={{ color: tier.light }}>
             {featured.rating.toFixed(1)}
           </span>
-          <span className="text-sm font-bold uppercase tracking-widest" style={{ color: tier.color }}>
+          <span className="text-sm font-bold uppercase tracking-widest" style={{ color: tier.light }}>
             {tier.name}
           </span>
-          <span className="hidden text-white/40 sm:inline">·</span>
+          <span className="hidden text-white/60 sm:inline">·</span>
           <span className="text-[0.9375rem] font-medium text-white/70" translate="no">
             {featured.brand_name ?? "Unknown brand"} · {featured.product_name ?? "Unknown product"}
           </span>
           {featured.username && (
             <>
-              <span className="hidden text-white/40 sm:inline">·</span>
+              <span className="hidden text-white/60 sm:inline">·</span>
               <span className="text-[0.9375rem] font-medium text-white/70" translate="no">
                 {featured.username}
               </span>

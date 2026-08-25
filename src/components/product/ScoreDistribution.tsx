@@ -14,7 +14,7 @@ export const ScoreDistribution = ({ bins, max }: { bins: TierBin[]; max: number 
       const pct = Math.max(count > 0 ? 6 : 0, Math.round((count / max) * 100));
       return (
         <li key={tier.key} className="flex items-center gap-3 sm:gap-4">
-          <span className="story-serif w-19 shrink-0 text-[0.9375rem] font-bold sm:w-24 sm:text-base" style={{ color: tier.color }}>
+          <span className="story-serif w-19 shrink-0 text-[0.9375rem] font-bold sm:w-24 sm:text-base" style={{ color: tier.ink }}>
             {tier.name}
           </span>
           <span className="h-8 min-w-0 flex-1 overflow-hidden rounded-full bg-story-ink/6 sm:h-9">

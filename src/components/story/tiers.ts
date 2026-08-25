@@ -16,16 +16,30 @@ export type ScoreTier = {
   name: string;
   /** What the tier means, in the site's voice. */
   blurb: string;
+  /**
+   * The tier as a *graphic* — bars, the drop, the map, a meter segment.
+   * Large filled areas, where the vivid value is the point.
+   */
   color: string;
+  /**
+   * The tier as *text* — the score itself, the tier name, a chip label.
+   *
+   * These are the same hues taken down to where they can be read. Measured on
+   * white, `color` runs 2.26:1 (Fair) to 4.35:1 (Waste) and on its own `light`
+   * tint 2.02:1 to 3.69:1 — so the words naming a score failed AA everywhere,
+   * worst of all in the one place the whole site is about. `ink` clears 4.97:1
+   * against all three grounds it is used on.
+   */
+  ink: string;
   light: string;
 };
 
 export const SCORE_TIERS: ScoreTier[] = [
-  { key: "waste", min: 0, max: 2, name: "Waste", blurb: "Down the sink.", color: "#d8453a", light: "#fde8e5" },
-  { key: "poor", min: 2, max: 4, name: "Poor", blurb: "You'll finish it. Reluctantly.", color: "#e8843a", light: "#fdecdb" },
-  { key: "fair", min: 4, max: 6, name: "Fair", blurb: "Fine. Just fine.", color: "#dba32a", light: "#fbf2d3" },
-  { key: "good", min: 6, max: 8, name: "Good", blurb: "Worth the shelf space.", color: "#5bb14a", light: "#e6f4e1" },
-  { key: "gem", min: 8, max: 10.01, name: "Gem", blurb: "Buy two.", color: "#00a455", light: "#d4f3e1" },
+  { key: "waste", min: 0, max: 2, name: "Waste", blurb: "Down the sink.", color: "#d8453a", ink: "#b32c22", light: "#fde8e5" },
+  { key: "poor", min: 2, max: 4, name: "Poor", blurb: "You'll finish it. Reluctantly.", color: "#e8843a", ink: "#9c5310", light: "#fdecdb" },
+  { key: "fair", min: 4, max: 6, name: "Fair", blurb: "Fine. Just fine.", color: "#dba32a", ink: "#835e0f", light: "#fbf2d3" },
+  { key: "good", min: 6, max: 8, name: "Good", blurb: "Worth the shelf space.", color: "#5bb14a", ink: "#367029", light: "#e6f4e1" },
+  { key: "gem", min: 8, max: 10.01, name: "Gem", blurb: "Buy two.", color: "#00a455", ink: "#00713a", light: "#d4f3e1" },
 ];
 
 /**
@@ -41,6 +55,7 @@ export const NO_SCORE_TIER: ScoreTier = {
   name: "Unrated",
   blurb: "Nobody has scored this one yet.",
   color: "#8a948f",
+  ink: "#5b6560",
   light: "#eef2ef",
 };
 
@@ -52,16 +67,19 @@ export const getTier = (score: number | null | undefined): ScoreTier => {
 export type PriceQualityTier = {
   key: string;
   label: string;
+  /** Graphic fill. See ScoreTier for why text needs its own value. */
   color: string;
+  /** Text. */
+  ink: string;
   light: string;
 };
 
 export const PRICE_QUALITY_TIERS: PriceQualityTier[] = [
-  { key: "overpriced", label: "Overpriced", color: "#d8453a", light: "#fde8e5" },
-  { key: "pricey", label: "Pricey", color: "#e8843a", light: "#fdecdb" },
-  { key: "fairprice", label: "Fair price", color: "#dba32a", light: "#fbf2d3" },
-  { key: "goodvalue", label: "Good value", color: "#5bb14a", light: "#e6f4e1" },
-  { key: "greatvalue", label: "Great value", color: "#00a455", light: "#d4f3e1" },
+  { key: "overpriced", label: "Overpriced", color: "#d8453a", ink: "#b32c22", light: "#fde8e5" },
+  { key: "pricey", label: "Pricey", color: "#e8843a", ink: "#9c5310", light: "#fdecdb" },
+  { key: "fairprice", label: "Fair price", color: "#dba32a", ink: "#835e0f", light: "#fbf2d3" },
+  { key: "goodvalue", label: "Good value", color: "#5bb14a", ink: "#367029", light: "#e6f4e1" },
+  { key: "greatvalue", label: "Great value", color: "#00a455", ink: "#00713a", light: "#d4f3e1" },
 ];
 
 /**

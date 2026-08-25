@@ -333,7 +333,7 @@ const VerdictCard = ({ story, className }: { story: ProductStory; className?: st
       {story.topPriceQuality && (
         <span
           className="rounded-full px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.06em]"
-          style={{ backgroundColor: story.topPriceQuality.light, color: story.topPriceQuality.color }}
+          style={{ backgroundColor: story.topPriceQuality.light, color: story.topPriceQuality.ink }}
         >
           {story.topPriceQuality.label}
         </span>
@@ -349,7 +349,7 @@ const PriceQualityPanel = ({ bins, top }: { bins: PriceQualityBin[]; top: PriceQ
     <p className="story-kicker text-story-muted-2">Price vs. quality</p>
     {top ? (
       <>
-        <p className="story-serif mt-4 text-[1.5rem] font-bold" style={{ color: top.color }}>
+        <p className="story-serif mt-4 text-[1.5rem] font-bold" style={{ color: top.ink }}>
           {top.label}
         </p>
         <p className="mt-1 text-[0.875rem] text-story-muted">
@@ -358,7 +358,7 @@ const PriceQualityPanel = ({ bins, top }: { bins: PriceQualityBin[]; top: PriceQ
         <ul className="mt-6 flex flex-col gap-2.5">
           {bins.map((b) => (
             <li key={b.key} className="flex items-center justify-between gap-3 text-[0.875rem]">
-              <span className="font-medium" style={{ color: b.color }}>
+              <span className="font-medium" style={{ color: b.ink }}>
                 {b.label}
               </span>
               <span className="story-num text-story-muted-2">{b.count}</span>
