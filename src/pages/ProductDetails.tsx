@@ -138,7 +138,8 @@ const ProductDetails = () => {
         }
       : undefined;
 
-  // Barista is a chip again. It was folded into the kicker while the kicker was
+  // Barista is a chip again, in the same coffee the badge wears everywhere
+  // else. It was folded into the kicker while the kicker was
   // the brand line — "KARMA · Barista blend" — so that the page did not say it
   // twice. The brand has its own row now, and prose that reads "Karma · Barista
   // blend" beside a logo would be claiming the blend is part of the name.
@@ -207,7 +208,7 @@ const ProductDetails = () => {
                     className={cn(
                       "flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em]",
                       c.barista
-                        ? "bg-story-green text-white"
+                        ? "bg-story-coffee text-white"
                         : "border-[1.5px] border-story-ink/12 text-story-ink-2",
                     )}
                   >
