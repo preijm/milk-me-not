@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { ProductIdentity } from "@/components/story/ProductIdentity";
 
 interface FeedProductInfoProps {
@@ -6,6 +7,7 @@ interface FeedProductInfoProps {
   isBarista?: boolean;
   propertyNames?: string[];
   flavorNames?: string[];
+  className?: string;
 }
 
 /**
@@ -24,6 +26,7 @@ export const FeedProductInfo = ({
   isBarista,
   propertyNames,
   flavorNames,
+  className,
 }: FeedProductInfoProps) => (
   <ProductIdentity
     brand={brandName}
@@ -32,7 +35,7 @@ export const FeedProductInfo = ({
     flavors={flavorNames}
     isBarista={isBarista}
     size="md"
-    className="items-start"
+    className={cn("items-start", className)}
   />
 );
 

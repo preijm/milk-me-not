@@ -59,6 +59,14 @@ describe("ProductIdentity", () => {
     expect(below?.classList.contains("flex-col")).toBe(true);
   });
 
+  it("marks the product name so a link around it can underline it", () => {
+    // story.css hangs `.story-linked-product:hover .story-product-name` off
+    // this. Rename it here and the feed card's affordance goes quiet without
+    // anything failing to compile.
+    const { container } = render(<ProductIdentity brand="Oatly" product="Oat" />);
+    expect(container.querySelector(".story-product-name")?.textContent).toBe("Oat");
+  });
+
   it("shows both badges in full either way", () => {
     render(<ProductIdentity brand="Natrue" product="Oat" isBarista flavors={["pumpkin_spice"]} badgesBelow />);
     expect(screen.getByText("Barista")).toBeInTheDocument();

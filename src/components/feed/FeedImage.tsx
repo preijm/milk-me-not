@@ -19,9 +19,18 @@ interface FeedImageProps {
    * picture of the carton anybody took.
    */
   portrait?: boolean;
+  /** Rounding, mostly — the desktop card clips the photo with its own container. */
+  className?: string;
 }
 
-export const FeedImage = ({ picturePath, brandName, productName, compact = false, portrait = false }: FeedImageProps) => {
+export const FeedImage = ({
+  picturePath,
+  brandName,
+  productName,
+  compact = false,
+  portrait = false,
+  className,
+}: FeedImageProps) => {
   const [showEnlarged, setShowEnlarged] = useState(false);
 
   if (!picturePath) {
@@ -30,6 +39,7 @@ export const FeedImage = ({ picturePath, brandName, productName, compact = false
         className={cn(
           "relative flex items-center justify-center overflow-hidden rounded-xl bg-story-cream-2",
           portrait ? "aspect-[3/4] h-auto w-full" : compact ? "h-20" : "h-56 sm:h-64",
+          className,
         )}
       >
         <span className="text-story-ink/8" aria-hidden>
@@ -48,7 +58,11 @@ export const FeedImage = ({ picturePath, brandName, productName, compact = false
 
   return (
     <>
-      <button type="button" onClick={() => setShowEnlarged(true)} className="block w-full overflow-hidden rounded-xl">
+      <button
+        type="button"
+        onClick={() => setShowEnlarged(true)}
+        className={cn("block w-full overflow-hidden rounded-xl", className)}
+      >
         <img
           src={imageUrl}
           alt={`${brandName} ${productName}`}
