@@ -35,7 +35,7 @@ export const ResultsViewSwitcher = ({ view, onViewChange, available, className }
         onClick={() => onViewChange(v.key)}
         className={cn(
           "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[0.8125rem] font-bold transition-colors",
-          view === v.key ? "bg-story-green text-white" : "text-story-ink-2 hover:bg-story-cream-2",
+          view === v.key ? "bg-story-green text-story-ink" : "text-story-ink-2 hover:bg-story-cream-2",
         )}
       >
         <v.icon className="h-3.5 w-3.5" aria-hidden />

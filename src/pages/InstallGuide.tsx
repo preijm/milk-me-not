@@ -92,7 +92,7 @@ const InstallGuide = () => {
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               Five taps, and one
               <br />
-              <span className="text-story-green">warning you should expect.</span>
+              <span className="text-story-green-dark">warning you should expect.</span>
             </Display>
             <Lede className="mt-6 max-w-136">
               The whole thing takes about a minute. Here is every screen you will pass through, in order.
@@ -116,7 +116,7 @@ const InstallGuide = () => {
               <a
                 href={ANDROID_DOWNLOAD_URL}
                 download
-                className="story-lift-green inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-story-green px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] text-white no-underline transition-[filter] duration-150 hover:brightness-[1.07] active:scale-[0.985] sm:w-auto"
+                className="story-lift-green inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-story-green px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] text-story-ink no-underline transition-[filter] duration-150 hover:brightness-[1.07] active:scale-[0.985] sm:w-auto"
               >
                 <Download className="h-[18px] w-[18px]" strokeWidth={2.4} aria-hidden />
                 Download the APK
@@ -193,7 +193,7 @@ const InstallGuide = () => {
                         </p>
                         {/* Stock Android's wording. Samsung and other skins phrase
                             it differently, so we say so rather than overclaim. */}
-                        <p className="mt-2 text-[0.75rem] font-medium text-story-amber-dark/80">
+                        <p className="mt-2 text-[0.75rem] font-medium text-story-amber-dark">
                           Wording varies a little between phone makers.
                         </p>
                       </div>

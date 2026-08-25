@@ -60,16 +60,16 @@ const RatingRow = ({ rating }: { rating: PublicRating }) => {
             <span>{relativeDate(rating.createdAt)}</span>
             {rating.drinkPreference && <span>· {humanizeLabel(rating.drinkPreference)}</span>}
             {pq && (
-              <span style={{ color: pq.color }}>· {pq.label}</span>
+              <span style={{ color: pq.ink }}>· {pq.label}</span>
             )}
           </span>
         </span>
 
         <span className="flex shrink-0 flex-col items-end leading-none">
-          <span className="story-num text-[1.6rem]" style={{ color: tier.color }}>
+          <span className="story-num text-[1.6rem]" style={{ color: tier.ink }}>
             {rating.rating.toFixed(1)}
           </span>
-          <span className="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.14em]" style={{ color: tier.color }}>
+          <span className="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.14em]" style={{ color: tier.ink }}>
             {tier.name}
           </span>
         </span>
@@ -92,7 +92,7 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
     return (
       <StoryLayout>
         <div className="flex min-h-[60vh] items-center justify-center">
-          <Loader className="h-7 w-7 animate-spin text-story-green" aria-label="Loading" />
+          <Loader className="h-7 w-7 animate-spin text-story-green-dark" aria-label="Loading" />
         </div>
       </StoryLayout>
     );
@@ -186,7 +186,7 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
             <dt className="story-kicker mt-2 text-story-muted-2">Ratings</dt>
           </div>
           <div>
-            <dd className="story-num text-[clamp(1.9rem,6vw,2.75rem)] leading-none" style={{ color: avgTier.color }}>
+            <dd className="story-num text-[clamp(1.9rem,6vw,2.75rem)] leading-none" style={{ color: avgTier.ink }}>
               {data.average === null ? "—" : data.average.toFixed(1)}
             </dd>
             <dt className="story-kicker mt-2 text-story-muted-2">Average given</dt>
@@ -222,7 +222,7 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
               {data.best && (
                 <>
                   Best thing they've drunk:{" "}
-                  <span className="text-story-green">{data.best.product}</span>
+                  <span className="text-story-green-dark">{data.best.product}</span>
                 </>
               )}
             </Display>
@@ -236,12 +236,12 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
                     className="flex flex-1 items-center gap-3 rounded-xl px-4 py-3 sm:flex-col sm:items-start sm:gap-1.5"
                     style={{ backgroundColor: `${band.color}18` }}
                   >
-                    <span className="story-num text-[1.5rem] leading-none" style={{ color: band.color }}>
+                    <span className="story-num text-[1.5rem] leading-none" style={{ color: band.ink }}>
                       {band.count}
                     </span>
                     <span
                       className="text-[0.6875rem] font-bold uppercase tracking-[0.14em]"
-                      style={{ color: band.color }}
+                      style={{ color: band.ink }}
                     >
                       {band.name}
                     </span>

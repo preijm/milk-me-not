@@ -36,7 +36,7 @@ export const FAQSection = ({ title, items }: FAQSectionProps) => {
         <AccordionItem key={index} value={`item-${index + 1}`} className="border-story-ink/8">
             <AccordionTrigger className="story-serif gap-4 text-left text-[1.0625rem] font-bold text-story-ink hover:no-underline">
               <span className="flex items-center gap-3">
-                <DropGlyph size={13} className="shrink-0 text-story-green" />
+                <DropGlyph size={13} className="shrink-0 text-story-green-dark" />
                 {item.question}
               </span>
             </AccordionTrigger>

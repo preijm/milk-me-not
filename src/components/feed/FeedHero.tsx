@@ -77,7 +77,7 @@ export const FeedHero = ({ items, isLoading, isAuthenticated }: FeedHeroProps) =
         <Display as="h1" size="xl" className="mt-4 text-story-ink">
           Real people, real cartons,
           <br />
-          <span className="text-story-green">poured recently.</span>
+          <span className="text-story-green-dark">poured recently.</span>
         </Display>
         <Lede className="mt-5">
           {proof}

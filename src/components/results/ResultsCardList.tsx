@@ -45,7 +45,7 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
                 render as "Pumpkin spic…". */}
             <span className="flex shrink-0 flex-col items-end gap-0.5">
               <ScoreMark score={r.avg_rating} size="md" showTier={false} />
-              <span className="text-[0.625rem] font-bold uppercase tracking-widest" style={{ color: tier.color }}>
+              <span className="text-[0.625rem] font-bold uppercase tracking-widest" style={{ color: tier.ink }}>
                 {tier.name}
               </span>
               <span className="text-[0.6875rem] font-medium text-story-muted-2">

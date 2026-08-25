@@ -32,10 +32,10 @@ const ScoreLegend = ({ className }: { className?: string }) => (
         style={{ backgroundColor: tier.light }}
       >
         <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: tier.color }} />
-        <span className="text-[0.75rem] font-bold" style={{ color: tier.color }}>
+        <span className="text-[0.75rem] font-bold" style={{ color: tier.ink }}>
           {tier.name}
         </span>
-        <span className="text-[0.75rem] font-medium" style={{ color: tier.color, opacity: 0.6 }}>
+        <span className="text-[0.75rem] font-medium" style={{ color: tier.ink, opacity: 0.6 }}>
           {tier.min.toFixed(0)}–{tier.key === "gem" ? "10" : tier.max.toFixed(0)}
         </span>
       </div>

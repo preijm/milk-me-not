@@ -86,7 +86,7 @@ export const StoryAppLayout = ({ children, title, accent, kicker, lede, width = 
                   )}
                 >
                   {title}
-                  {accent && <span className="block text-story-green">{accent}</span>}
+                  {accent && <span className="block text-story-green-dark">{accent}</span>}
                 </h1>
                 {lede && <p className="mt-2.5 max-w-prose text-[0.9375rem] text-story-muted sm:text-[1rem]">{lede}</p>}
               </div>

@@ -66,7 +66,7 @@ const Contact = () => {
             <Display as="h1" size="hero" className="mt-5">
               Actual humans
               <br />
-              <span className="text-story-green">read this inbox.</span>
+              <span className="text-story-green-dark">read this inbox.</span>
             </Display>
             <Lede className="mt-6 max-w-136">
               Four ways to reach us are listed below. One of them works. See if you can guess which before you
@@ -117,7 +117,7 @@ const Contact = () => {
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
           <ContactCard
             icon={Mail}
-            iconColorClass="bg-story-green text-white"
+            iconColorClass="bg-story-green text-story-ink"
             title="Email"
             badgeText="Available"
             badgeVariant="available"
@@ -172,7 +172,7 @@ const Contact = () => {
             <Display size="xl" className="mt-5">
               Two people,
               <br />
-              <span className="text-story-green">no support script.</span>
+              <span className="text-story-green-dark">no support script.</span>
             </Display>
             <p className="mt-5 max-w-lg text-[1.0625rem] leading-relaxed text-story-muted">
               Milk Me Not is run by the same two people who started the spreadsheet that became this site. Email
@@ -186,13 +186,13 @@ const Contact = () => {
             <div aria-hidden className="pointer-events-none absolute -right-12 -top-16 text-story-green-light">
               <MilkDrop size={230} variant="solid" />
             </div>
-            <p className="story-kicker relative text-white/70">Who actually replies</p>
-            <p className="story-num relative mt-4 text-[3.75rem] leading-none text-white">2</p>
-            <p className="relative mt-2 text-[0.8125rem] font-bold uppercase tracking-widest text-white/80">
+            <p className="story-kicker relative text-story-ink">Who actually replies</p>
+            <p className="story-num relative mt-4 text-[3.75rem] leading-none text-story-ink">2</p>
+            <p className="relative mt-2 text-[0.8125rem] font-bold uppercase tracking-widest text-story-ink">
               People. Not a bot.
             </p>
             <DropList
-              tone="light"
+              tone="green"
               className="relative mt-8 border-t border-white/15 pt-7"
               items={[
                 "Spotted a wrong score or a data mistake — tell us which product.",

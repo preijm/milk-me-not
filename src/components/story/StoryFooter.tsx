@@ -132,7 +132,7 @@ export const StoryFooter = ({ variant = "full" }: { variant?: "full" | "member" 
 
           {COLUMNS.map((col) => (
             <nav key={col.title} aria-label={col.title}>
-              <p className="story-kicker text-white/45">{col.title}</p>
+              <p className="story-kicker text-white/60">{col.title}</p>
               <ul className="mt-4 flex flex-col gap-2.5">
                 {col.links.map((link) => (
                   <li key={link.to + link.label}>
@@ -149,7 +149,7 @@ export const StoryFooter = ({ variant = "full" }: { variant?: "full" | "member" 
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-white/12 pt-7 text-sm text-white/45 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-white/12 pt-7 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} Milk Me Not. Nobody pays us. Nobody ever has.</p>
           <p>Made by people who drink a worrying amount of oat milk.</p>
         </div>

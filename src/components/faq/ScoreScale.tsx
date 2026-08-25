@@ -39,10 +39,10 @@ export const ScoreScale = () => (
           <div
             key={tier.key}
             className="flex flex-1 flex-col items-center justify-center gap-1.5 py-9"
-            style={{ backgroundColor: tier.color }}
+            style={{ backgroundColor: tier.ink }}
           >
-            <span className="story-num text-[0.8125rem] text-story-ink/60">{rangeLabel(tier)}</span>
-            <span className="story-serif text-[1.55rem] font-bold leading-none text-story-ink">{tier.name}</span>
+            <span className="story-num text-[0.8125rem] text-white">{rangeLabel(tier)}</span>
+            <span className="story-serif text-[1.55rem] font-bold leading-none text-white">{tier.name}</span>
           </div>
         ))}
       </div>
@@ -62,12 +62,12 @@ export const ScoreScale = () => (
         <li
           key={tier.key}
           className="flex items-center gap-4 rounded-2xl px-5 py-4"
-          style={{ backgroundColor: tier.color }}
+          style={{ backgroundColor: tier.ink }}
         >
-          <span className="story-num w-12 shrink-0 text-[1rem] text-story-ink/60">{rangeLabel(tier)}</span>
+          <span className="story-num w-12 shrink-0 text-[1rem] text-white">{rangeLabel(tier)}</span>
           <div className="min-w-0">
-            <p className="story-serif text-[1.25rem] font-bold leading-none text-story-ink">{tier.name}</p>
-            <p className="mt-1.5 text-[0.8125rem] leading-snug text-story-ink/70">{tier.blurb}</p>
+            <p className="story-serif text-[1.25rem] font-bold leading-none text-white">{tier.name}</p>
+            <p className="mt-1.5 text-[0.8125rem] leading-snug text-white/85">{tier.blurb}</p>
           </div>
         </li>
       ))}

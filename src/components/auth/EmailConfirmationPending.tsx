@@ -12,7 +12,7 @@ interface EmailConfirmationPendingProps {
  */
 const EmailConfirmationPending = ({ email, onBackToLogin }: EmailConfirmationPendingProps) => (
   <div className="text-center">
-    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-story-green-wash text-story-green">
+    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-story-green-wash text-story-green-dark">
       <MilkDrop size={44} variant="solid" />
     </div>
 

@@ -115,7 +115,7 @@ const FAQ = () => {
           <Display as="h1" size="hero" className="mt-5">
             The score is
             <br />
-            <span className="text-story-green">not a vibe.</span>
+            <span className="text-story-green-dark">not a vibe.</span>
           </Display>
           <Lede className="mt-6 max-w-xl">
             Every number on this site came out of someone's actual mouth. Here is exactly how a carton gets from
@@ -160,7 +160,7 @@ const FAQ = () => {
             <Display size="xl" className="mt-5">
               One drink.
               <br />
-              <span className="text-story-green">One honest number.</span>
+              <span className="text-story-green-dark">One honest number.</span>
             </Display>
             <Lede className="mt-5">
               There is no editorial team scoring products behind closed doors. There is no algorithm guessing at
@@ -212,7 +212,7 @@ const FAQ = () => {
               {overpriced && (
                 <span
                   className="rounded-full px-3.5 py-1.5 text-[0.8125rem] font-bold"
-                  style={{ backgroundColor: overpriced.light, color: overpriced.color }}
+                  style={{ backgroundColor: overpriced.light, color: overpriced.ink }}
                 >
                   €4.20 · {overpriced.label}
                 </span>
@@ -230,7 +230,7 @@ const FAQ = () => {
               {bargain && (
                 <span
                   className="rounded-full px-3.5 py-1.5 text-[0.8125rem] font-bold"
-                  style={{ backgroundColor: bargain.light, color: bargain.color }}
+                  style={{ backgroundColor: bargain.light, color: bargain.ink }}
                 >
                   €1.49 · {bargain.label}
                 </span>

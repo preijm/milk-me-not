@@ -45,7 +45,7 @@ const RatingRow = ({ test, isAuthed }: { test: MilkTestResult; isAuthed: boolean
           )}
           {test.drink_preference && <span>{humanizeLabel(test.drink_preference)}</span>}
           {pq && (
-            <span className="rounded-full px-2 py-0.5 text-[0.6875rem] font-bold uppercase tracking-[0.06em]" style={{ backgroundColor: pq.light, color: pq.color }}>
+            <span className="rounded-full px-2 py-0.5 text-[0.6875rem] font-bold uppercase tracking-[0.06em]" style={{ backgroundColor: pq.light, color: pq.ink }}>
               {pq.label}
             </span>
           )}

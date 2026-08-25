@@ -65,7 +65,7 @@ const RateDeepLink = () => {
   if (isLoading || (user && resolved)) {
     return (
       <div className="story-surface flex min-h-dvh items-center justify-center">
-        <Loader className="h-7 w-7 animate-spin text-story-green" aria-label="Loading" />
+        <Loader className="h-7 w-7 animate-spin text-story-green-dark" aria-label="Loading" />
       </div>
     );
   }

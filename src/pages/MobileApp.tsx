@@ -76,7 +76,7 @@ const DownloadApkButton = ({
     download
     className={cn(
       "inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] no-underline transition-[transform,filter,background-color,color] duration-150 active:scale-[0.985] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-story-green",
-      tone === "green" && "bg-story-green text-white story-lift-green hover:brightness-[1.07]",
+      tone === "green" && "bg-story-green text-story-ink story-lift-green hover:brightness-[1.07]",
       tone === "paper" && "bg-white text-story-ink shadow-[0_10px_26px_-14px_rgba(27,36,33,0.5)] hover:bg-story-cream",
       className,
     )}
@@ -104,7 +104,7 @@ const MobileApp = () => {
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               Rate it before
               <br />
-              <span className="text-story-green">you leave the aisle.</span>
+              <span className="text-story-green-dark">you leave the aisle.</span>
             </Display>
 
             <Lede className="mt-6 max-w-136">
@@ -160,7 +160,7 @@ const MobileApp = () => {
             <li key={step.n} className="border-t border-white/15 pt-6">
               <span className="story-num block text-[2.5rem] leading-none text-story-green-light">{step.n}</span>
               <h3 className="story-serif mt-4 text-[1.35rem] font-bold text-white">{step.title}</h3>
-              <p className="mt-3 text-[0.9375rem] leading-relaxed text-white/70">{step.body}</p>
+              <p className="mt-3 text-[0.9375rem] leading-relaxed text-story-cream/80">{step.body}</p>
             </li>
           ))}
         </ol>
@@ -176,16 +176,16 @@ const MobileApp = () => {
         <div className="mt-10 grid gap-4 lg:grid-cols-2">
           {/* Android — the real, working tile. Full brand green, not a tint. */}
           <StoryCard className="story-lift relative overflow-hidden bg-story-green p-7 sm:p-8">
-            <div aria-hidden className="pointer-events-none absolute -right-10 -top-12 text-white/[0.14]">
+            <div aria-hidden className="pointer-events-none absolute -right-10 -top-12 text-story-ink/[0.12]">
               <MilkDrop size={210} variant="solid" />
             </div>
             <div className="relative flex items-start justify-between gap-4">
               <div>
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-white">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-story-ink/12 text-story-ink">
                   <FaAndroid className="h-7 w-7" />
                 </span>
-                <h3 className="story-serif mt-5 text-[1.5rem] font-bold text-white">Android</h3>
-                <p className="mt-2 max-w-xs text-[0.9375rem] leading-relaxed text-white/80">
+                <h3 className="story-serif mt-5 text-[1.5rem] font-bold text-story-ink">Android</h3>
+                <p className="mt-2 max-w-xs text-[0.9375rem] leading-relaxed text-story-ink">
                   Direct APK download. Works on any Android phone, no Play Store account needed.
                 </p>
               </div>
@@ -201,7 +201,7 @@ const MobileApp = () => {
               <DownloadApkButton tone="paper" className="w-full sm:w-auto">
                 Download APK
               </DownloadApkButton>
-              <span className="inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-white/40 px-6 py-4 text-[0.9375rem] font-bold text-white/80 sm:w-auto">
+              <span className="inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-story-ink/30 px-6 py-4 text-[0.9375rem] font-bold text-story-ink sm:w-auto">
                 <Clock className="h-[18px] w-[18px]" strokeWidth={2.4} aria-hidden />
                 Google Play — coming soon
               </span>
@@ -214,7 +214,7 @@ const MobileApp = () => {
               <FaApple className="h-7 w-7" />
             </span>
             <h3 className="story-serif mt-5 text-[1.5rem] font-bold text-white">iPhone</h3>
-            <p className="mt-2 max-w-xs text-[0.9375rem] leading-relaxed text-white/70">
+            <p className="mt-2 max-w-xs text-[0.9375rem] leading-relaxed text-story-cream/80">
               No iOS app yet. The website carries the whole rating flow on Safari — scanning included — so nothing
               is missing but the app icon.
             </p>
