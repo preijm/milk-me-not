@@ -1,5 +1,5 @@
 import { MilkTestResult } from "@/types/milk-test";
-import { ScoreMark, getTier } from "@/components/story";
+import { ScoreMark } from "@/components/story";
 import { useFeedItemState } from "./useFeedItemState";
 import { Link } from "react-router-dom";
 import { FeedHeader } from "./FeedHeader";
@@ -34,48 +34,62 @@ export const FeedItem = ({ item }: FeedItemProps) => {
     handleEdit,
   } = useFeedItemState(item);
 
-  const tier = getTier(item.rating);
-
   return (
-    <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-4 rounded-[1.25rem] bg-white p-5">
+    <article id={`test-${item.id}`} className="story-hairline flex w-full flex-col gap-5 rounded-[1.25rem] bg-white p-5">
       {/* Who, when and how they scored it, together. The byline used to sit at
           the foot of the card, so the score at the top belonged to nobody until
           you had scrolled past the photo and the note to find out whose opinion
-          it was. "Buy two." is the tier's verdict on the score and stays with
-          it. */}
+          it was.
+
+          The tier's blurb used to hang under the score, and it was the fourth
+          way this corner said one thing: 6.7, the word GOOD, the green they are
+          both printed in, and then "Worth the shelf space." Down a masonry
+          column it also repeated — every card above 8 read "Buy two." The blurb
+          still earns its place where a tier is being explained rather than
+          reported: the FAQ scale, the rating slider as you drag it, a product's
+          own page. Not once per card, five cards deep. */}
       <div className="flex items-start justify-between gap-4">
         <FeedHeader
           username={item.username ?? undefined}
           createdAt={item.created_at}
           className="min-w-0 flex-1"
         />
-        <div className="shrink-0 text-right">
-          <ScoreMark score={item.rating} size="lg" className="justify-end" />
-          <p className="mt-1 text-[0.8125rem] font-medium italic leading-snug text-story-muted-2">{tier.blurb}</p>
-        </div>
+        <ScoreMark score={item.rating} size="lg" className="shrink-0 justify-end" />
       </div>
 
-      {/* The product name is the link to the product. It is what someone
-          reaches for, and it replaces a bar-chart icon labelled "View All"
-          that went to the same place without saying so. */}
-      <Link
-        to={`/product/${item.product_id}`}
-        className="-m-2 rounded-xl p-2 no-underline transition-colors hover:bg-story-cream-2"
-      >
-        <FeedProductInfo
+      {/* The carton and the picture of the carton are one object, and the card
+          was not saying so. Name, photo and note sat in a single 16px rhythm
+          with everything else, so the identity read as one more strip rather
+          than as the caption to the photo under it. They share a clipped,
+          hairlined block now, and the gap around that block is wider than the
+          gap inside it — which is the whole trick.
+
+          Two hovers, because there are two destinations: the name goes to the
+          product, the photo opens itself. */}
+      <div className="story-hairline overflow-hidden rounded-xl">
+        {/* The product name is the link to the product. It is what someone
+            reaches for, and it replaces a bar-chart icon labelled "View All"
+            that went to the same place without saying so. */}
+        <Link
+          to={`/product/${item.product_id}`}
+          className="block px-4 py-3 no-underline transition-colors hover:bg-story-cream-2"
+        >
+          <FeedProductInfo
+            brandName={item.brand_name ?? "Unknown brand"}
+            productName={item.product_name ?? "Unknown product"}
+            isBarista={item.is_barista ?? undefined}
+            propertyNames={item.property_names ?? undefined}
+            flavorNames={item.flavor_names ?? undefined}
+          />
+        </Link>
+
+        <FeedImage
+          className="rounded-none"
+          picturePath={item.picture_path}
           brandName={item.brand_name ?? "Unknown brand"}
           productName={item.product_name ?? "Unknown product"}
-          isBarista={item.is_barista ?? undefined}
-          propertyNames={item.property_names ?? undefined}
-          flavorNames={item.flavor_names ?? undefined}
         />
-      </Link>
-
-      <FeedImage
-        picturePath={item.picture_path}
-        brandName={item.brand_name ?? "Unknown brand"}
-        productName={item.product_name ?? "Unknown product"}
-      />
+      </div>
 
       {item.notes && (
         <p className="story-serif rounded-xl bg-story-cream px-4 py-3 text-[0.9375rem] italic leading-relaxed text-story-ink-2">
