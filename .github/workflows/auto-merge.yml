@@ -63,15 +63,32 @@ jobs:
           app-id: ${{ vars.LOCKFILE_APP_ID }}
           private-key: ${{ secrets.LOCKFILE_APP_PRIVATE_KEY }}
 
+      # Retried, because `opened` arrives before GitHub has worked out whether
+      # the pull request can merge at all. Asked in that window it refuses, and
+      # a pull request that opens and goes straight to green may get no second
+      # event to try again on — so the first attempt is the only one that
+      # matters and it is the one most likely to be too early.
+      #
+      # Whatever it says is printed. The first version of this swallowed the
+      # error into a one-line notice, which turned "auto-merge is broken" into
+      # a green tick and a shrug.
       - name: Ask GitHub to merge it once the checks pass
         if: steps.app_config.outputs.ready == 'true'
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
           PR: ${{ github.event.pull_request.number }}
         run: |
-          set -euo pipefail
-          # Already enabled, already merged, or not mergeable yet — none of
-          # those are worth failing a run over. The pull request is unharmed
-          # either way, and the next event tries again.
-          gh pr merge "$PR" --squash --auto --delete-branch \
-            || echo "::notice::Could not enable auto-merge on #$PR right now; a later event will retry."
+          set -uo pipefail
+
+          for attempt in 1 2 3 4 5; do
+            if out=$(gh pr merge "$PR" --squash --auto --delete-branch 2>&1); then
+              echo "Auto-merge enabled on #$PR."
+              exit 0
+            fi
+            echo "Attempt $attempt did not take: $out"
+            sleep 10
+          done
+
+          # Not a failure. The pull request is unharmed and can be merged by
+          # hand; a red run here would only obscure a red run that matters.
+          echo "::warning::Could not enable auto-merge on #$PR after 5 attempts. Last response: $out"
