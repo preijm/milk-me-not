@@ -79,21 +79,31 @@ export const FeedImage = ({
         />
       </button>
 
+      {/* The enlarged photo, and nothing else.
+          `w-full max-w-7xl` on a black panel meant the dialog claimed 1280px
+          whatever the picture was, and every photo on this feed is portrait —
+          eight of eight measured, mostly 3000x4000 straight off a phone. So an
+          800px-wide box of black was painted either side of the carton, and
+          `object-contain` politely centred the picture inside it. The box is
+          the picture now: `w-auto` with the image's own max sizes, no ground,
+          no border, no shadow. The overlay behind it already dims the page,
+          which is what the black was there to do. */}
       <Dialog open={showEnlarged} onOpenChange={setShowEnlarged}>
-        <DialogContent className="w-full max-w-7xl overflow-hidden bg-black/95 p-0 [&>button]:hidden">
+        <DialogContent className="w-auto max-w-[96vw] border-0 bg-transparent p-0 shadow-none [&>button]:hidden">
           <div className="relative">
             <button
               onClick={() => setShowEnlarged(false)}
-              className="absolute right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:scale-110 hover:bg-white"
+              className="absolute right-3 top-3 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-lg transition-all hover:scale-110 hover:bg-white"
+              aria-label="Close the photo"
             >
-              <X className="h-5 w-5 text-black" />
+              <X className="h-5 w-5 text-story-ink" />
             </button>
             <img
               src={imageUrl}
               alt={`${brandName} ${productName}`}
               loading="eager"
               decoding="sync"
-              className="max-h-[90vh] w-full object-contain"
+              className="block max-h-[88vh] w-auto max-w-[96vw] rounded-2xl object-contain"
             />
           </div>
         </DialogContent>

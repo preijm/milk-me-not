@@ -36,6 +36,9 @@ import { BaristaGlyph } from "./motifs";
  * new one, and anything still over the count becomes `+N`.
  */
 
+/** Everything that is not barista. See the note in the component. */
+const NEUTRAL_PILL = "bg-story-ink/6 text-story-muted";
+
 const SIZES = {
   sm: {
     mark: "h-10 w-10 text-[0.625rem]",
@@ -45,8 +48,7 @@ const SIZES = {
     pill: "px-1.5 py-0.25 text-[0.625rem]",
     meta: "text-[0.6875rem]",
     gap: "gap-2.5",
-    indent: "pl-[3.125rem]",
-    badges: 2,
+    badges: 3,
   },
   md: {
     mark: "h-12 w-12 text-[0.75rem]",
@@ -56,8 +58,7 @@ const SIZES = {
     pill: "px-2 py-[0.09375rem] text-[0.6875rem]",
     meta: "text-[0.75rem]",
     gap: "gap-3",
-    indent: "pl-[3.75rem]",
-    badges: 2,
+    badges: 3,
   },
   lg: {
     mark: "h-14 w-14 text-[0.8125rem]",
@@ -67,8 +68,7 @@ const SIZES = {
     pill: "px-2 py-0.5 text-[0.6875rem]",
     meta: "text-[0.8125rem]",
     gap: "gap-3.5",
-    indent: "pl-[4.375rem]",
-    badges: 3,
+    badges: 4,
   },
 } as const;
 
@@ -83,25 +83,20 @@ type ProductIdentityProps = {
   size?: ProductIdentitySize;
   /** Drop the mark when the row already shows one, or shows a photo instead. */
   showMark?: boolean;
-  /** Override how many badges fit. Defaults to something sane for the size. */
+  /**
+   * Override how many badges fit. Defaults to something sane for the size.
+   *
+   * The defaults went up by one when the badges started wrapping. They were
+   * set by how much a single nowrap line could hold; now they are only a guard
+   * against a carton with an absurd number of labels turning a row into four
+   * lines. No row on the live board carries more than two.
+   */
   maxBadges?: number;
   /**
    * One short piece of context to sit at the end of the badge line — "12
    * ratings", a date. It shares the row so it does not cost a line of its own.
    */
   meta?: ReactNode;
-  /**
-   * Put the badges on their own full-width line under the mark instead of in
-   * the text column beside it.
-   *
-   * In a dense list row the text column is what is left after a rank, a mark
-   * and a score — about 142px on a phone. One badge and a count fit in that;
-   * two do not, and 6 of 29 board rows were rendering "Bari…" and "Hazel…",
-   * which say less than showing nothing. Below the mark the same line gets the
-   * whole card, roughly 300px, and costs no extra height. It is indented past
-   * the mark so it still lines up with the brand and product above it.
-   */
-  badgesBelow?: boolean;
   /**
    * Something to sit at the end of the product name — an arrow, when the
    * identity is a link and there is no hover to reveal that with.
@@ -120,7 +115,6 @@ export const ProductIdentity = ({
   showMark = true,
   maxBadges,
   meta,
-  badgesBelow = false,
   after,
   className,
 }: ProductIdentityProps) => {
@@ -130,47 +124,25 @@ export const ProductIdentity = ({
 
   // Barista first, then flavour, then the rest: flavour is what separates two
   // rows of the same carton, so it should not be the badge that gets cut.
+  //
+  // One colour, and it is barista's. Flavour was amber and properties were
+  // grey, which made the row a little traffic light of three palettes for
+  // facts of quite different weight — "Pumpkin spice" is a variant, "Barista"
+  // is what the carton is *for*. Everything except barista is the same neutral
+  // now, so the coloured pill in a row means one thing. It is coffee-coloured
+  // rather than brand green for the obvious reason, and for a less obvious
+  // one: white on --story-green is 2.48:1, and on --story-coffee it is 9.37:1.
   const badges: { key: string; label: string; tone: string; icon?: boolean }[] = [
-    ...(isBarista ? [{ key: "barista", label: "Barista", tone: "bg-story-green text-white", icon: true }] : []),
-    ...flavorLabels.map((label) => ({ key: `f:${label}`, label, tone: "bg-story-amber-light text-story-amber-dark" })),
-    ...propertyLabels.map((label) => ({ key: `p:${label}`, label, tone: "bg-story-ink/6 text-story-muted" })),
+    ...(isBarista ? [{ key: "barista", label: "Barista", tone: "bg-story-coffee text-white", icon: true }] : []),
+    ...flavorLabels.map((label) => ({ key: `f:${label}`, label, tone: NEUTRAL_PILL })),
+    ...propertyLabels.map((label) => ({ key: `p:${label}`, label, tone: NEUTRAL_PILL })),
   ];
   const shown = badges.slice(0, maxBadges ?? s.badges);
   const hidden = badges.length - shown.length;
 
-  const badgeLine = (shown.length > 0 || meta) && (
-    <span
-      className={cn(
-        "flex min-w-0 flex-nowrap items-center gap-1.5",
-        // Dropped below the row, the line has to clear the mark or it starts
-        // under the logo instead of under the name it belongs to.
-        badgesBelow ? cn("mt-2", showMark && s.indent) : "mt-1",
-      )}
-    >
-      {shown.map((b) => (
-        <span
-          key={b.key}
-          className={cn("flex max-w-40 items-center gap-1 rounded-full font-bold", s.pill, b.tone)}
-        >
-          {b.icon && <BaristaGlyph className="shrink-0" size={11} />}
-          <span className="truncate">{b.label}</span>
-        </span>
-      ))}
-      {hidden > 0 && <span className={cn("shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>}
-      {meta && (
-        <span className={cn("min-w-0 shrink truncate text-story-muted-2", s.meta)}>
-          {shown.length > 0 && <span className="mr-1.5" aria-hidden>·</span>}
-          {meta}
-        </span>
-      )}
-    </span>
-  );
-
-  const identity = (
-    <span className={cn("flex min-w-0 items-center", s.gap, badgesBelow ? "" : className)}>
-      {showMark && (
-        <BrandMark brand={brand} className={cn("shrink-0", s.mark)} radius={s.radius} />
-      )}
+  return (
+    <span className={cn("flex min-w-0 items-center", s.gap, className)}>
+      {showMark && <BrandMark brand={brand} className={cn("shrink-0", s.mark)} radius={s.radius} />}
 
       <span className="min-w-0 flex-1">
         {/* Kept even where a logo is showing: only 25 of 71 brands have one, so
@@ -183,34 +155,57 @@ export const ProductIdentity = ({
           {brand || "Unknown brand"}
         </span>
 
-        <span className="flex min-w-0 items-center gap-1">
-          {/* `story-product-name` carries no styles of its own. It is a hook,
-              so a caller that wraps this in a link can underline the words on
-              hover without reaching through the layout — see the feed card.
-              A class rather than a data attribute because Tailwind's arbitrary
-              variants will not parse the nested brackets that
-              `[&:hover_[data-product-name]]` needs: it emits no rule at all,
-              silently. */}
-          <span
-            className={cn("story-product-name min-w-0 truncate font-sans font-bold text-story-ink", s.product)}
-            translate="no"
-          >
-            {product || "Unknown product"}
+        {/* Name and badges share one wrapping line, and the browser decides
+            per row whether that is one line or two.
+
+            It used to be decided once, for every row at once: `badgesBelow`
+            dropped the badges onto their own line always, and the alternative
+            was a nowrap line that truncated them to "Bari…" and "Hazel…".
+            Measured across the 40 rows of the live board on a 375px phone —
+            29 of them carry badges — 22 of those 29 have room for *all* their
+            badges beside the name, and 28 of 29 have room for the first. One
+            row in twenty-nine genuinely needs the second line. Flex wrap gives
+            that row its second line and gives the other twenty-eight their
+            first line back, with no measuring on our side.
+
+            The name and whatever follows it are one flex item, so an arrow
+            never wraps away from the word it belongs to, and `max-w-full`
+            keeps a very long name ellipsised rather than overflowing. */}
+        <span className={cn("mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1",)}>
+          <span className="flex max-w-full shrink-0 items-center gap-1">
+            {/* `story-product-name` carries no styles of its own. It is a hook,
+                so a caller that wraps this in a link can underline the words on
+                hover without reaching through the layout — see the feed card.
+                A class rather than a data attribute because Tailwind's
+                arbitrary variants will not parse the nested brackets that
+                `[&:hover_[data-product-name]]` needs: it emits no rule at all,
+                silently. */}
+            <span
+              className={cn("story-product-name min-w-0 truncate font-sans font-bold text-story-ink", s.product)}
+              translate="no"
+            >
+              {product || "Unknown product"}
+            </span>
+            {after}
           </span>
-          {after}
+
+          {shown.map((b) => (
+            <span
+              key={b.key}
+              className={cn("flex max-w-full shrink-0 items-center gap-1 rounded-full font-bold", s.pill, b.tone)}
+            >
+              {b.icon && <BaristaGlyph className="shrink-0" size={11} />}
+              <span className="truncate">{b.label}</span>
+            </span>
+          ))}
+
+          {hidden > 0 && <span className={cn("shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>}
+
+          {meta && (
+            <span className={cn("min-w-0 shrink truncate text-story-muted-2", s.meta)}>{meta}</span>
+          )}
         </span>
-
-        {!badgesBelow && badgeLine}
       </span>
-    </span>
-  );
-
-  if (!badgesBelow) return identity;
-
-  return (
-    <span className={cn("flex min-w-0 flex-col", className)}>
-      {identity}
-      {badgeLine}
     </span>
   );
 };

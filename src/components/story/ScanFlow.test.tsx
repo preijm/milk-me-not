@@ -47,17 +47,25 @@ describe("scan match rows", () => {
   it("keeps the flavour when there is not room for every badge", () => {
     // Barista, flavour, then properties: the flavour is what separates two
     // rows, so it must not be the badge that gets cut.
+    //
+    // Three used to be one too many here and the third became "+1". Badges
+    // wrap now, so the cap went up and three all render; what is still being
+    // asserted is the order, which is what decides who gets cut when a carton
+    // really does carry more labels than the cap.
     render(
       asIdentity({
         brand_name: "Alpro",
         product_name: "Soya",
         is_barista: true,
-        property_names: ["protein"],
+        property_names: ["protein", "organic", "calcium"],
         flavor_names: ["chocolate"],
       }),
     );
     expect(screen.getByText("Chocolate")).toBeInTheDocument();
-    expect(screen.getByText("+1")).toBeInTheDocument();
+    expect(screen.getByText("Barista")).toBeInTheDocument();
+    // sm shows three; two properties fall off the end, never the flavour.
+    expect(screen.getByText("+2")).toBeInTheDocument();
+    expect(screen.queryByText("Organic")).toBeNull();
   });
 
   it("renders a row with no badges at all without inventing one", () => {
