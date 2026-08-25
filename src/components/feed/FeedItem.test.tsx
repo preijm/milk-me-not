@@ -83,6 +83,26 @@ describe("FeedItem", () => {
     expect(card?.contains(block!)).toBe(true);
   });
 
+  it("says the strip goes somewhere before you hover it", () => {
+    // A tint that appears under the cursor tells you a row is a link after you
+    // have already found it. The arrow is there at rest, which is the only
+    // state a reader deciding where to point is actually in.
+    const { container } = renderCard();
+    const link = container.querySelector('a[href="/product/p1"]');
+    expect(link?.querySelector("svg")).not.toBeNull();
+  });
+
+  it("keeps the two halves of the hover underline wired together", () => {
+    // The underline lives in story.css, because Tailwind emits no rule at all
+    // for `[&:hover_.story-product-name]:underline` — silently. So the class
+    // on the link and the class on the name are load-bearing, and neither one
+    // does anything alone.
+    const { container } = renderCard();
+    const link = container.querySelector('a[href="/product/p1"]');
+    expect(link?.classList.contains("story-linked-product")).toBe(true);
+    expect(link?.querySelector(".story-product-name")?.textContent).toBe("Oat");
+  });
+
   it("groups a card with no photo the same way", () => {
     // The placeholder is still the picture slot; it belongs in the block.
     const { container } = renderCard({ picture_path: null } as Partial<MilkTestResult>);

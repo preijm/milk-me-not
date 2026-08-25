@@ -1,5 +1,5 @@
 import { MilkTestResult } from "@/types/milk-test";
-import { ScoreMark } from "@/components/story";
+import { ArrowRight, ScoreMark } from "@/components/story";
 import { useFeedItemState } from "./useFeedItemState";
 import { Link } from "react-router-dom";
 import { FeedHeader } from "./FeedHeader";
@@ -69,18 +69,28 @@ export const FeedItem = ({ item }: FeedItemProps) => {
       <div className="story-hairline overflow-hidden rounded-xl">
         {/* The product name is the link to the product. It is what someone
             reaches for, and it replaces a bar-chart icon labelled "View All"
-            that went to the same place without saying so. */}
+            that went to the same place without saying so.
+
+            The arrow is what says so out loud. A tint that only appears under
+            the cursor tells you a row is a link *after* you have already found
+            it, which is no help to anyone deciding where to point — and none
+            at all on a touchscreen, which is why the mobile card has carried
+            one since it was built. Pinned to the right rather than tucked
+            after the name, because the whole strip is the target, not the
+            three words. */}
         <Link
           to={`/product/${item.product_id}`}
-          className="block px-4 py-3 no-underline transition-colors hover:bg-story-cream-2"
+          className="story-linked-product group flex items-center gap-3 px-4 py-3 no-underline transition-colors hover:bg-story-cream-2"
         >
           <FeedProductInfo
+            className="min-w-0 flex-1"
             brandName={item.brand_name ?? "Unknown brand"}
             productName={item.product_name ?? "Unknown product"}
             isBarista={item.is_barista ?? undefined}
             propertyNames={item.property_names ?? undefined}
             flavorNames={item.flavor_names ?? undefined}
           />
+          <ArrowRight className="shrink-0 text-story-muted transition-[transform,color] group-hover:translate-x-0.5 group-hover:text-story-green-dark" />
         </Link>
 
         <FeedImage

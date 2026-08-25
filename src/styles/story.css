@@ -97,6 +97,15 @@
     letter-spacing: -0.04em;
   }
 
+  /* A product name that is really a link says so under the cursor.
+     Tailwind will not do this from a utility: both
+     `[&:hover_[data-product-name]]:underline` and its class-hook form emit no
+     rule at all, silently, so the affordance looked applied and was not. */
+  .story-linked-product:hover .story-product-name {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   /* Edge-to-edge band inside a normal container flow. */
   .story-hairline {
     box-shadow: inset 0 0 0 1px hsl(var(--story-line));

@@ -184,7 +184,17 @@ export const ProductIdentity = ({
         </span>
 
         <span className="flex min-w-0 items-center gap-1">
-          <span className={cn("min-w-0 truncate font-sans font-bold text-story-ink", s.product)} translate="no">
+          {/* `story-product-name` carries no styles of its own. It is a hook,
+              so a caller that wraps this in a link can underline the words on
+              hover without reaching through the layout — see the feed card.
+              A class rather than a data attribute because Tailwind's arbitrary
+              variants will not parse the nested brackets that
+              `[&:hover_[data-product-name]]` needs: it emits no rule at all,
+              silently. */}
+          <span
+            className={cn("story-product-name min-w-0 truncate font-sans font-bold text-story-ink", s.product)}
+            translate="no"
+          >
             {product || "Unknown product"}
           </span>
           {after}
