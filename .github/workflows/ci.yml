@@ -135,7 +135,7 @@ jobs:
       - name: Mint a token that can trigger workflows
         id: app_token
         if: steps.app_config.outputs.ready == 'true'
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ vars.LOCKFILE_APP_ID }}
           private-key: ${{ secrets.LOCKFILE_APP_PRIVATE_KEY }}
