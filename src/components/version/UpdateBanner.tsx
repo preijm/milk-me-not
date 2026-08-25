@@ -1,8 +1,35 @@
-import { X, RefreshCw, Download, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { X, RefreshCw, Download } from "lucide-react";
+import { StoryButton } from "@/components/story";
 import { useVersion } from "@/contexts/VersionContext";
 import { ReleaseNotes } from "./ReleaseNotes";
 
+/**
+ * The minor-version notice — the strip a reader with an open tab actually sees.
+ *
+ * It was the last big surface still on the pre-redesign tokens: `bg-primary`,
+ * `text-primary-foreground`, a `container mx-auto` that does not line up with
+ * the `max-w-304` grid every other row uses, and shadcn `Button`s carrying
+ * Material-ish names like `bg-surface-container-lowest`. The green happened to
+ * land right — `--primary` and `--story-green` are the same 151 100% 37% — so
+ * it looked fine and was held together by a coincidence.
+ *
+ * Two things that were not fine:
+ *
+ * - **The dismiss × was invisible.** `variant="ghost"` resolves to
+ *   `text-primary`, which is story green, painted on a story green bar. It was
+ *   there, it was clickable, and nobody could see it.
+ * - **It sat on top of the site header.** Fixed at `top-0 z-50` against a
+ *   header that is sticky at `top-0 z-50`, with nothing offsetting the page, so
+ *   the wordmark and the banner headline were printed over each other in the
+ *   same 36px band. It is in normal flow now: the page starts below it and the
+ *   header sticks to the top once it has scrolled away. No magic height to
+ *   keep in sync, and no overlap at any width.
+ *
+ * The voice follows UpdateModal, which is the same notice one severity up and
+ * was rewritten already. Both open on "there's a fresher one of these" and both
+ * say plainly that nothing you have rated is at risk — the actual worry when
+ * something appears mid-session asking you to reload.
+ */
 export function UpdateBanner() {
   const {
     showUpdateNotice,
@@ -26,95 +53,62 @@ export function UpdateBanner() {
     return null;
   }
 
-  const handleRefresh = () => {
-    window.location.reload();
-  };
-
-  const handleDownloadApk = () => {
-    // Navigate to install guide for APK download
-    window.location.href = "/install-guide";
-  };
-
-  const handleDismiss = () => {
-    dismissUpdate(24); // Remind in 24 hours
-  };
+  const needsApk = isNative && requiresApkUpdate;
+  const named = publishedIsNewer && latestVersion;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-primary text-primary-foreground shadow-lg">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <Sparkles className="h-5 w-5 shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                {/* A version number only where one was actually published
-                    and actually beats what is running. Printing the newest row
-                    in the table regardless read "Version 1.0.0 available
-                    (current: 1.0.0)" on a plain redeploy. */}
-                <span className="font-medium text-sm">
-                  {publishedIsNewer && latestVersion
-                    ? `Version ${latestVersion.version} available`
-                    : "A new version is available"}
-                </span>
-                {publishedIsNewer && latestVersion && (
-                  <span className="text-xs opacity-75">
-                    (current: {currentVersion})
-                  </span>
-                )}
-              </div>
+    <div className="bg-story-green text-white">
+      <div className="mx-auto flex w-full max-w-304 items-start gap-3 px-5 py-3.5 sm:gap-4 sm:px-8 lg:px-10">
+        <div className="min-w-0 flex-1">
+          {/* The version number rides in the kicker rather than the headline.
+              The row it comes from is simply the most recent one there is, so
+              printing it regardless read "Version 1.0.0 available (current:
+              1.0.0)" on a plain redeploy — a number is only worth showing when
+              a published release genuinely beats what is running. */}
+          <p className="story-kicker text-white/70">
+            {named ? `Version ${latestVersion.version}` : "New version"}
+          </p>
 
-              {isNative && requiresApkUpdate ? (
-                <p className="text-xs opacity-90 mt-1">
-                  A new APK is available with important updates.
-                </p>
-              ) : (
-                <p className="text-xs opacity-90 mt-1">
-                  Refresh to get the latest features and improvements.
-                </p>
-              )}
+          <p className="mt-1 font-sans text-[0.9375rem] font-bold leading-snug">
+            There&rsquo;s a fresher one of these.
+          </p>
 
-              {publishedIsNewer && latestVersion?.release_notes && (
-                <div className="mt-2">
-                  <ReleaseNotes notes={latestVersion.release_notes} />
-                </div>
-              )}
+          <p className="mt-0.5 text-[0.8125rem] leading-snug text-white/80">
+            {needsApk
+              ? "This one ships as a new APK. Installing it keeps everything you have already rated."
+              : "A refresh is all it takes. Nothing you have rated is affected."}
+            {named && <span className="text-white/60"> You are on {currentVersion}.</span>}
+          </p>
+
+          {named && latestVersion.release_notes && (
+            <div className="mt-2">
+              <ReleaseNotes notes={latestVersion.release_notes} tone="light" />
             </div>
-          </div>
+          )}
+        </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            {isNative && requiresApkUpdate ? (
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={handleDownloadApk}
-                aria-label="Download the new app"
-                className="gap-1.5"
-              >
-                <Download className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Download</span>
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={handleRefresh}
-                aria-label="Refresh to the new version"
-                className="gap-1.5"
-              >
-                <RefreshCw className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Refresh</span>
-              </Button>
-            )}
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={handleDismiss}
-              aria-label="Dismiss until tomorrow"
-              className="h-8 w-8 hover:bg-primary-foreground/20"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+        <div className="flex shrink-0 items-center gap-1">
+          <StoryButton
+            tone="paper"
+            size="sm"
+            onClick={() => (needsApk ? (window.location.href = "/install-guide") : window.location.reload())}
+            aria-label={needsApk ? "Download the new app" : "Refresh to the new version"}
+            className="gap-1.5 px-3.5 sm:px-5"
+          >
+            {needsApk ? <Download className="h-4 w-4" /> : <RefreshCw className="h-4 w-4" />}
+            <span className="hidden sm:inline">{needsApk ? "Download" : "Refresh"}</span>
+          </StoryButton>
+
+          {/* White on green, not `ghost`. See the note above: the shadcn ghost
+              variant painted this the same colour as the bar behind it. */}
+          <button
+            type="button"
+            onClick={() => dismissUpdate(24)}
+            aria-label="Dismiss until tomorrow"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white/70"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </div>
