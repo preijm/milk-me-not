@@ -1,0 +1,77 @@
+# Turn on auto-merge for every pull request, so a green one lands on its own.
+#
+# This does not merge anything itself. It asks GitHub to merge the pull request
+# *if and when* the required checks pass, which leaves the "checks must pass"
+# ruleset as the only thing deciding: Lint & Type Check, Test, Build, CodeQL.
+# Nothing here can merge a red pull request, and nothing here bypasses a rule.
+#
+# Two ways to stop it:
+#
+#   - open the pull request as a draft, or
+#   - put the `hold` label on it (registered in labels.yml, which runs with
+#     delete-other-labels, so a label that is not in that file is deleted).
+#
+# Removing the label re-enables it, because `labeled`/`unlabeled` are triggers.
+
+name: Auto-merge
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  enable:
+    name: Enable auto-merge
+    if: >-
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.draft == false &&
+      !contains(github.event.pull_request.labels.*.name, 'hold')
+    runs-on: ubuntu-latest
+
+    steps:
+      # Same pair the lockfile job uses. A step `if:` cannot read secrets, so
+      # presence has to be established where the secret is visible.
+      - name: Is the merge app configured?
+        id: app_config
+        env:
+          PRIVATE_KEY: ${{ secrets.LOCKFILE_APP_PRIVATE_KEY }}
+        run: |
+          if [ -n "${{ vars.LOCKFILE_APP_ID }}" ] && [ -n "${PRIVATE_KEY:-}" ]; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "::warning::Auto-merge is not enabled: the lockfile app is not configured. See CLAUDE.md."
+          fi
+
+      # Deliberately the app rather than GITHUB_TOKEN.
+      #
+      # Whoever turns auto-merge on is who GitHub records as merging it later,
+      # and a push to main attributed to GITHUB_TOKEN does not start workflows.
+      # Enabled with the built-in token, a merge could therefore land on main
+      # without deploy.yml or release.yml ever running — the site would quietly
+      # stop updating while every pull request still went green. The app is not
+      # subject to that rule, and #178 and #179 both merged through it with CI,
+      # deploy and release all firing afterwards.
+      - name: Mint a token that can trigger workflows
+        id: app_token
+        if: steps.app_config.outputs.ready == 'true'
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.LOCKFILE_APP_ID }}
+          private-key: ${{ secrets.LOCKFILE_APP_PRIVATE_KEY }}
+
+      - name: Ask GitHub to merge it once the checks pass
+        if: steps.app_config.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          # Already enabled, already merged, or not mergeable yet — none of
+          # those are worth failing a run over. The pull request is unharmed
+          # either way, and the next event tries again.
+          gh pr merge "$PR" --squash --auto --delete-branch \
+            || echo "::notice::Could not enable auto-merge on #$PR right now; a later event will retry."

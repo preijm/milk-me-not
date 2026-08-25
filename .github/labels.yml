@@ -103,3 +103,8 @@
 - name: "github-actions"
   color: "2088ff"
   description: "A GitHub Actions workflow update"
+
+# Automation
+- name: "hold"
+  color: "e4b429"
+  description: "Do not merge automatically, even when every check is green"
