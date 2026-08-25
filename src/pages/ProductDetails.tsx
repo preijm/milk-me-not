@@ -135,8 +135,12 @@ const ProductDetails = () => {
         }
       : undefined;
 
+  // No Barista chip: the kicker two lines up already says "Barista blend", and
+  // this page was stating it twice from two places that did not know about each
+  // other — a chip reading BARISTA directly under a line reading BARISTA BLEND.
+  // Prose can afford the longer term; the chips elsewhere cannot, which is why
+  // badges say "Barista" and this says "Barista blend".
   const chips = [...humanizeLabels(story.properties), ...humanizeLabels(story.flavors)];
-  if (story.isBarista && !chips.includes("Barista")) chips.unshift("Barista");
 
   return (
     <StoryLayout mobileCtaHint="90 seconds. No photo needed.">

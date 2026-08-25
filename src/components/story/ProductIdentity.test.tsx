@@ -64,4 +64,25 @@ describe("ProductIdentity", () => {
     expect(screen.getByText("Barista")).toBeInTheDocument();
     expect(screen.getByText("Pumpkin spice")).toBeInTheDocument();
   });
+
+  // Barista is not the same kind of fact as a flavour: those say what is in
+  // the carton, this says what it is engineered to do. The glyph marks that
+  // apart; colour alone did not.
+  it("gives barista a glyph and the other badges none", () => {
+    const { container } = render(
+      <ProductIdentity brand="Oatly" product="Oat" isBarista flavors={["vanilla"]} />,
+    );
+    const pills = [...container.querySelectorAll("span.rounded-full")];
+    const barista = pills.find((p) => /Barista/.test(p.textContent ?? ""));
+    const flavour = pills.find((p) => /Vanilla/.test(p.textContent ?? ""));
+    expect(barista?.querySelector("svg")).toBeTruthy();
+    expect(flavour?.querySelector("svg")).toBeNull();
+  });
+
+  // A cup on its own reads as "goes in coffee", which is true of every milk
+  // here, and a label is needed for screen readers regardless.
+  it("keeps the word beside the glyph", () => {
+    render(<ProductIdentity brand="Oatly" product="Oat" isBarista />);
+    expect(screen.getByText("Barista")).toBeInTheDocument();
+  });
 });
