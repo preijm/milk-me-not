@@ -101,6 +101,7 @@
   --color-story-green-deep: hsl(var(--story-green-deep));
   --color-story-green-light: hsl(var(--story-green-light));
   --color-story-green-wash: hsl(var(--story-green-wash));
+  --color-story-coffee: hsl(var(--story-coffee));
   --color-story-blue: hsl(var(--story-blue));
   --color-story-blue-dark: hsl(var(--story-blue-dark));
   --color-story-blue-light: hsl(var(--story-blue-light));

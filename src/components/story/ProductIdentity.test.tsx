@@ -48,15 +48,30 @@ describe("ProductIdentity", () => {
     expect(screen.getByText("+2")).toBeInTheDocument();
   });
 
-  // In a dense list row the text column is only ~142px after a rank, a mark
-  // and a score, which truncated two badges to "Bari…" and "Hazel…".
-  it("can put the badges on their own line, clear of the narrow text column", () => {
-    const props = { brand: "Natrue", product: "Oat", isBarista: true, flavors: ["pumpkin_spice"] };
-    const inline = render(<ProductIdentity {...props} />).container.firstElementChild;
-    expect(inline?.className).toContain("items-center");
+  // The row used to choose once, for every row at once: badges below the name
+  // always, or a nowrap line that truncated them to "Bari…" and "Hazel…". On
+  // the live board 28 of the 29 rows carrying badges have room for the first
+  // one beside the name, and 22 have room for all of them, so wrapping lets
+  // the browser answer per row.
+  it("lets the name and the badges share a line, and wrap only if they must", () => {
+    const { container } = render(
+      <ProductIdentity brand="Natrue" product="Oat" isBarista flavors={["pumpkin_spice"]} />,
+    );
+    const line = container.querySelector(".story-product-name")?.closest(".flex-wrap");
+    expect(line).not.toBeNull();
+    expect(line?.textContent).toContain("Barista");
+    expect(line?.textContent).toContain("Pumpkin spice");
+  });
 
-    const below = render(<ProductIdentity {...props} badgesBelow />).container.firstElementChild;
-    expect(below?.classList.contains("flex-col")).toBe(true);
+  it("keeps the name and whatever trails it from being split apart", () => {
+    // The mobile card hangs an arrow off the name. Wrapped away from the word
+    // it belongs to, it would read as pointing at a badge.
+    const { container } = render(
+      <ProductIdentity brand="Natrue" product="Oat" isBarista after={<i data-testid="arrow" />} />,
+    );
+    const name = container.querySelector(".story-product-name");
+    expect(name?.parentElement?.querySelector('[data-testid="arrow"]')).not.toBeNull();
+    expect(name?.parentElement?.className).toContain("shrink-0");
   });
 
   it("marks the product name so a link around it can underline it", () => {
@@ -67,10 +82,17 @@ describe("ProductIdentity", () => {
     expect(container.querySelector(".story-product-name")?.textContent).toBe("Oat");
   });
 
-  it("shows both badges in full either way", () => {
-    render(<ProductIdentity brand="Natrue" product="Oat" isBarista flavors={["pumpkin_spice"]} badgesBelow />);
-    expect(screen.getByText("Barista")).toBeInTheDocument();
-    expect(screen.getByText("Pumpkin spice")).toBeInTheDocument();
+  it("colours barista and nothing else", () => {
+    // Flavour was amber and properties were grey, so a row was a little
+    // traffic light of three palettes for facts of quite different weight.
+    render(
+      <ProductIdentity brand="Natrue" product="Oat" isBarista flavors={["pumpkin_spice"]} properties={["organic"]} />,
+    );
+    const pill = (text: string) => screen.getByText(text).closest("span[class*='rounded-full']");
+    expect(pill("Barista")?.className).toContain("bg-story-coffee");
+    expect(pill("Pumpkin spice")?.className).toContain("bg-story-ink/6");
+    expect(pill("Organic")?.className).toContain("bg-story-ink/6");
+    expect(pill("Barista")?.className).not.toContain("bg-story-green");
   });
 
   // Barista is not the same kind of fact as a flavour: those say what is in

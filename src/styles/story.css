@@ -33,6 +33,12 @@
   --story-blue-wash: 228 100% 96%;
   --story-blue-deep: 231 62% 17%;
 
+  /* Barista. The one badge that is a claim about what the milk is *for*
+     rather than what is in it, so it is the one badge that gets a colour —
+     and the colour is the drink it is for. White on it is 9.37:1; white on
+     --story-green, which it used to wear, is 2.48:1. */
+  --story-coffee: 24 40% 27%;        /* #603f29 */
+
   /* Accent amber */
   --story-amber: 37 99% 55%;         /* #fea619 */
   --story-amber-dark: 35 83% 38%;    /* #b06d10 */

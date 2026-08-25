@@ -35,7 +35,6 @@ export const ResultsCardList = ({ results }: ResultsCardListProps) => (
                 flavors={r.flavor_names}
                 isBarista={r.is_barista}
                 size="md"
-                badgesBelow
               />
             </span>
 
