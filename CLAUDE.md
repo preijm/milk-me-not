@@ -176,7 +176,7 @@ interpolates between; change one and the other lies.
 - Tests colocated with source: `src/**/*.{test,spec}.{ts,tsx}`
 
 ### Workflows (`.github/workflows/`)
-Five, not one:
+Six, not one:
 
 - **`ci.yml`** — three sequential stages, **Lint + Type Check → Test → Build**, on
   every PR and push to main. Uses Bun. Cancels in-progress runs on new push.
@@ -197,6 +197,13 @@ Five, not one:
   it does not commit, because `main` is protected against the bot, because a
   push to main would retrigger this job, and because the notes quote commit
   subjects that contain the skip marker. `CHANGELOG.md` is hand-written.
+- **`auto-merge.yml`** — turns auto-merge on for every non-draft pull request
+  into main. It merges nothing itself; it asks GitHub to merge once the four
+  required checks pass, so a red pull request still cannot land. Stop it with a
+  draft, or with the `hold` label. It uses the app token rather than
+  `GITHUB_TOKEN` on purpose: whoever enables auto-merge is recorded as merging
+  it later, and a push to main from `GITHUB_TOKEN` starts no workflows — so the
+  built-in token could land a merge that never deploys.
 - **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
   main that touches that file, so editing it is what deploys it. It runs
   `delete-other-labels: true`: a label removed from the file is removed from
