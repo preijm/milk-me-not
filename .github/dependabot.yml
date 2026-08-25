@@ -44,6 +44,24 @@ updates:
         patterns:
           - "@tanstack/*"
 
+    ignore:
+      # TypeScript 7 has nothing that can lint it yet.
+      #
+      # PR #157 raised typescript to ^7.0.2 and CI died in `Run ESLint` with
+      # `TypeError: Cannot read properties of undefined (reading 'Cjs')` —
+      # typescript-eslint reaching for a compiler internal that TS 7 moved.
+      # There is no version to upgrade alongside it: every published
+      # typescript-eslint, including 8.68.0 and the canary, declares
+      # `peerDependencies.typescript` as `>=4.8.4 <6.1.0`. Bumping the linter
+      # is not an option that exists.
+      #
+      # So this holds at 6.x rather than leaving a permanently red pull request
+      # open. Drop this entry the moment typescript-eslint ships a release
+      # whose peer range admits 7 — the lint failure is the only thing standing
+      # in the way, and `bunx tsc --build` was never the problem.
+      - dependency-name: "typescript"
+        versions: [">=7.0.0"]
+
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
