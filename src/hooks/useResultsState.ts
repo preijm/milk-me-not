@@ -226,7 +226,17 @@ export function useResultsFiltering(
       }
 
       // Filter by Properties
-      if (filters.properties.length > 0) {
+      //
+      // `size > 0` because a filter nobody can evaluate is not a filter that
+      // excludes everything. Filters are parsed out of the URL on first mount,
+      // so a shared link like /results?properties=bio arrives with the filter
+      // already on and this lookup table not yet fetched. An empty map made
+      // every key translate to nothing, nothing matched, and all 220 products
+      // were hidden — the reader opened a shared link and saw an empty board.
+      //
+      // A key that is genuinely unknown once the table *has* loaded still
+      // excludes, which is right: that filter really does match nothing.
+      if (filters.properties.length > 0 && propertyKeyToName.size > 0) {
         const filterPropertyNames = filters.properties
           .map((key) => propertyKeyToName.get(key))
           .filter(Boolean);
@@ -238,8 +248,8 @@ export function useResultsFiltering(
         }
       }
 
-      // Filter by Flavors
-      if (filters.flavors.length > 0) {
+      // Filter by Flavors — same reasoning as the properties above.
+      if (filters.flavors.length > 0 && flavorKeyToName.size > 0) {
         const filterFlavorNames = filters.flavors
           .map((key) => flavorKeyToName.get(key))
           .filter(Boolean);
