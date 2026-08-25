@@ -107,9 +107,34 @@ jobs:
 
       # An app installation token, so the pull request is opened by something
       # other than GITHUB_TOKEN and the required checks actually start.
+      # Both halves, or neither.
+      #
+      # A step `if:` cannot read `secrets`, so the app id is a repository
+      # variable and the presence of the key has to be established in a shell
+      # step that can see it. Gating on the variable alone looked equivalent
+      # and is not: the variable is the easy half to add, so the likely
+      # in-between state is an id with no key, which sends
+      # create-github-app-token looking for a PEM that is not there and turns
+      # this job red on every push to main. Not a blocking failure — Refresh
+      # lockfiles is not one of the four required contexts — but a red main is
+      # a signal people stop reading.
+      #
+      # Nothing is printed but "yes" or "no". Echoing either value, even to
+      # prove it is empty, is how a key ends up in a public log.
+      - name: Is the lockfile app configured?
+        id: app_config
+        env:
+          PRIVATE_KEY: ${{ secrets.LOCKFILE_APP_PRIVATE_KEY }}
+        run: |
+          if [ -n "${{ vars.LOCKFILE_APP_ID }}" ] && [ -n "${PRIVATE_KEY:-}" ]; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Mint a token that can trigger workflows
         id: app_token
-        if: vars.LOCKFILE_APP_ID != ''
+        if: steps.app_config.outputs.ready == 'true'
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.LOCKFILE_APP_ID }}
@@ -131,7 +156,7 @@ jobs:
           # workflow ever looks at, waiting on four checks that cannot arrive.
           # Better to leave the lockfile stale and say so.
           if [ -z "${GH_TOKEN:-}" ]; then
-            echo "::warning::The lockfile has moved, but LOCKFILE_APP_ID / LOCKFILE_APP_PRIVATE_KEY are not set, so no pull request was opened. A pull request from GITHUB_TOKEN cannot start the checks it needs to merge. See CLAUDE.md."
+            echo "::warning::The lockfile has moved, but no pull request was opened: the LOCKFILE_APP_ID variable and the LOCKFILE_APP_PRIVATE_KEY secret are not both set. A pull request from GITHUB_TOKEN cannot start the checks it needs to merge. See CLAUDE.md."
             exit 0
           fi
 
