@@ -25,10 +25,14 @@ const TONE = {
     body: "text-story-muted",
   },
   light: {
-    trigger: "text-white/70 hover:text-white",
-    panel: "bg-white/12 border border-white/20",
+    trigger: "text-white/80 hover:text-white",
+    // Recessed, not raised. A white veil over the bar lightens the ground the
+    // notes then have to be read against — `bg-white/12` put the body text at
+    // 3.98:1, below AA, while the very same words sat at 4.95:1 on the bare
+    // bar. Darkening instead digs a well: 6.56:1.
+    panel: "bg-black/20 border border-white/15",
     heading: "text-white",
-    body: "text-white/80",
+    body: "text-white/85",
   },
 } as const;
 

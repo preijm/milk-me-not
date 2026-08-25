@@ -95,16 +95,25 @@ describe("UpdateBanner", () => {
     // green bar. The × was present, clickable and invisible.
     render(<UpdateBanner />);
     const dismiss = screen.getByLabelText("Dismiss until tomorrow");
-    expect(dismiss.className).toContain("text-white/70");
+    expect(dismiss.className).toContain("text-white/80");
     expect(dismiss.className).not.toContain("text-primary");
+  });
+
+  it("sits on a green the words can actually be read on", () => {
+    // --story-green is 151 100% 37%, luminance 0.371. Pure white on it is
+    // 2.49:1 — under the 4.5:1 AA wants for body text and under the 3:1 a
+    // control needs to be discernible at all, so painting the × white was not
+    // enough on its own. --story-green-dark carries the headline at 6.21:1.
+    const { container } = render(<UpdateBanner />);
+    const root = container.firstElementChild;
+    expect(root?.classList.contains("bg-story-green-dark")).toBe(true);
+    expect(root?.classList.contains("bg-story-green")).toBe(false);
   });
 
   it("takes its own space instead of covering the header", () => {
     // Fixed at top-0 z-50 against a header sticky at top-0 z-50, it printed
     // the wordmark and the headline over each other in the same 36px band.
     const { container } = render(<UpdateBanner />);
-    const root = container.firstElementChild;
-    expect(root?.classList.contains("fixed")).toBe(false);
-    expect(root?.classList.contains("bg-story-green")).toBe(true);
+    expect(container.firstElementChild?.classList.contains("fixed")).toBe(false);
   });
 });

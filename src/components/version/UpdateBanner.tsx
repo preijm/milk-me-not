@@ -18,6 +18,14 @@ import { ReleaseNotes } from "./ReleaseNotes";
  * - **The dismiss × was invisible.** `variant="ghost"` resolves to
  *   `text-primary`, which is story green, painted on a story green bar. It was
  *   there, it was clickable, and nobody could see it.
+ *
+ *   Painting it white was not enough, which is worth writing down: nothing is
+ *   legible on `--story-green`. At 151 100% 37% the bar has a relative
+ *   luminance of 0.371, so *pure white* on it is 2.49:1 — under the 4.5:1 AA
+ *   needs for body text and under the 3:1 a control needs to be discernible at
+ *   all. White at 70% was 1.86:1. The bar is `--story-green-dark` now, where
+ *   the headline runs 6.2:1, the sub-line 5.0:1, the kicker and the × 4.6:1. Same hue
+ *   family, same brand, one that can actually carry the words on it.
  * - **It sat on top of the site header.** Fixed at `top-0 z-50` against a
  *   header that is sticky at `top-0 z-50`, with nothing offsetting the page, so
  *   the wordmark and the banner headline were printed over each other in the
@@ -57,7 +65,7 @@ export function UpdateBanner() {
   const named = publishedIsNewer && latestVersion;
 
   return (
-    <div className="bg-story-green text-white">
+    <div className="bg-story-green-dark text-white">
       <div className="mx-auto flex w-full max-w-304 items-start gap-3 px-5 py-3.5 sm:gap-4 sm:px-8 lg:px-10">
         <div className="min-w-0 flex-1">
           {/* The version number rides in the kicker rather than the headline.
@@ -65,7 +73,7 @@ export function UpdateBanner() {
               printing it regardless read "Version 1.0.0 available (current:
               1.0.0)" on a plain redeploy — a number is only worth showing when
               a published release genuinely beats what is running. */}
-          <p className="story-kicker text-white/70">
+          <p className="story-kicker text-white/80">
             {named ? `Version ${latestVersion.version}` : "New version"}
           </p>
 
@@ -73,11 +81,11 @@ export function UpdateBanner() {
             There&rsquo;s a fresher one of these.
           </p>
 
-          <p className="mt-0.5 text-[0.8125rem] leading-snug text-white/80">
+          <p className="mt-0.5 text-[0.8125rem] leading-snug text-white/85">
             {needsApk
               ? "This one ships as a new APK. Installing it keeps everything you have already rated."
               : "A refresh is all it takes. Nothing you have rated is affected."}
-            {named && <span className="text-white/60"> You are on {currentVersion}.</span>}
+            {named && <span className="text-white/70"> You are on {currentVersion}.</span>}
           </p>
 
           {named && latestVersion.release_notes && (
@@ -105,7 +113,7 @@ export function UpdateBanner() {
             type="button"
             onClick={() => dismissUpdate(24)}
             aria-label="Dismiss until tomorrow"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white/70"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white/80"
           >
             <X className="h-4 w-4" />
           </button>
