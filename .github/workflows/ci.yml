@@ -60,9 +60,30 @@ jobs:
     # the marker would not have helped either — nothing can run checks on a
     # commit that has not landed yet.
     #
-    # So it opens a pull request instead, and the checks run there like anyone
-    # else's. The branch name is fixed and force-pushed, so repeated runs update
-    # one pull request rather than opening a pile of them.
+    # So it opens a pull request instead. The branch name is fixed and
+    # force-pushed, so repeated runs update one pull request rather than
+    # opening a pile of them.
+    #
+    # The checks do *not* run there like anyone else's, which is the part that
+    # was assumed and is not true. GitHub does not start a workflow for an
+    # event created with GITHUB_TOKEN — that is a deliberate loop guard — so a
+    # pull request opened here never triggers CI or CodeQL. #166 sat with
+    # literally zero checks reported, and "checks must pass" requires four, so
+    # the `--auto` merge below waited on results that could not arrive. Every
+    # push to main that moved the lockfile refreshed a pull request that could
+    # never merge.
+    #
+    # Nothing can be done about that from inside the job: the four required
+    # contexts include CodeQL, and reporting a synthetic pass for a security
+    # analysis that never ran is not a trade worth making. It needs an identity
+    # that is not GITHUB_TOKEN, which is what LOCKFILE_APP_ID and
+    # LOCKFILE_APP_PRIVATE_KEY are for — see "The lockfile pull request needs
+    # its own identity" in CLAUDE.md.
+    #
+    # Without those secrets the job stops before opening anything and says why.
+    # That is deliberately not a failure: main is fine, the lockfile is merely
+    # a little stale, and failing every push to main over a missing optional
+    # secret would be worse than the drift.
     if: github.event_name == 'push'
     needs: lint-and-typecheck
     runs-on: ubuntu-latest
@@ -84,9 +105,19 @@ jobs:
           rm -f package-lock.json
           npm install --package-lock-only --ignore-scripts
 
+      # An app installation token, so the pull request is opened by something
+      # other than GITHUB_TOKEN and the required checks actually start.
+      - name: Mint a token that can trigger workflows
+        id: app_token
+        if: vars.LOCKFILE_APP_ID != ''
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.LOCKFILE_APP_ID }}
+          private-key: ${{ secrets.LOCKFILE_APP_PRIVATE_KEY }}
+
       - name: Open a pull request if the lockfile moved
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
           set -euo pipefail
 
@@ -96,12 +127,27 @@ jobs:
             exit 0
           fi
 
+          # Opening one with GITHUB_TOKEN would produce a pull request no
+          # workflow ever looks at, waiting on four checks that cannot arrive.
+          # Better to leave the lockfile stale and say so.
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::warning::The lockfile has moved, but LOCKFILE_APP_ID / LOCKFILE_APP_PRIVATE_KEY are not set, so no pull request was opened. A pull request from GITHUB_TOKEN cannot start the checks it needs to merge. See CLAUDE.md."
+            exit 0
+          fi
+
           BRANCH=chore/lockfile-refresh
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git add package-lock.json
           git commit -m "chore: refresh package-lock.json"
+
+          # The push has to come from the app as well, not just the pull
+          # request. A later run force-pushes this branch, and a `synchronize`
+          # attributed to GITHUB_TOKEN would leave the updated head with no
+          # checks — the same dead end one step further along.
+          git remote set-url origin \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push --force origin "$BRANCH"
 
           # An open pull request picks the force-push up on its own, so only
