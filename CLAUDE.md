@@ -242,9 +242,14 @@ repository, then set:
 
 Both the force-push and the `gh pr create` go through that token; doing only
 the second leaves a later `synchronize` unchecked, which is the same dead end
-one step along. Without the variable the job opens nothing and logs a warning
-rather than failing — a stale lockfile is a smaller problem than a red build on
-every push to main.
+one step along.
+
+**Set both or neither.** The job checks for the variable *and* the key before
+minting anything, because the id is the easy half to add and an id with no key
+sends `create-github-app-token` after a PEM that is not there — turning this
+job red on every push to main. Red main is a signal people stop reading.
+Configured neither way, it opens nothing and logs a warning rather than
+failing: a stale lockfile is a smaller problem than a broken build.
 
 ### Never write the CI skip marker into a commit message
 GitHub scans the whole commit message, not just the subject. A commit that
