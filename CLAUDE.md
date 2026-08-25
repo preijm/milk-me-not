@@ -220,6 +220,32 @@ the same command, so committing your version starts a tug-of-war where each
 run reverts the other. The lockfile exists only for Dependabot; let the
 workflow own it.
 
+### The lockfile pull request needs its own identity
+GitHub will not start a workflow for an event created with `GITHUB_TOKEN` — a
+deliberate guard against a workflow triggering itself. So the pull request the
+lockfile job opens never triggered CI or CodeQL, and `main` requires four
+checks: #166 sat with **zero** reported, and the job's own `--auto` merge
+waited on results that could not arrive. Every push to main that moved the
+lockfile refreshed a pull request that could never merge.
+
+Nothing fixes this from inside the job. One of the four required contexts is
+CodeQL, and reporting a synthetic pass for a security analysis that never ran
+is not a trade worth making.
+
+So it wants a GitHub App installation token. Create an app with **Contents:
+read & write** and **Pull requests: read & write**, install it on this
+repository, then set:
+
+- `LOCKFILE_APP_ID` — a repository **variable**, not a secret, because a step
+  `if:` cannot read secrets.
+- `LOCKFILE_APP_PRIVATE_KEY` — a repository secret holding the app's PEM.
+
+Both the force-push and the `gh pr create` go through that token; doing only
+the second leaves a later `synchronize` unchecked, which is the same dead end
+one step along. Without the variable the job opens nothing and logs a warning
+rather than failing — a stale lockfile is a smaller problem than a red build on
+every push to main.
+
 ### Never write the CI skip marker into a commit message
 GitHub scans the whole commit message, not just the subject. A commit that
 merely *discusses* the marker skips its own workflows — which happened here to
