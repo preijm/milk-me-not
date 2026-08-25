@@ -63,15 +63,20 @@ jobs:
           app-id: ${{ vars.LOCKFILE_APP_ID }}
           private-key: ${{ secrets.LOCKFILE_APP_PRIVATE_KEY }}
 
-      # Retried, because `opened` arrives before GitHub has worked out whether
-      # the pull request can merge at all. Asked in that window it refuses, and
-      # a pull request that opens and goes straight to green may get no second
-      # event to try again on — so the first attempt is the only one that
-      # matters and it is the one most likely to be too early.
+      # `--repo` because there is no checkout in this job, and without it `gh`
+      # shells out to git to work out where it is and dies with "not a git
+      # repository". That was the actual reason the first two runs enabled
+      # nothing — not the mergeability race the retry below was written for.
+      # Checking out the whole repository to run one API call would be a much
+      # heavier way to tell gh something it can be told in a flag.
       #
-      # Whatever it says is printed. The first version of this swallowed the
-      # error into a one-line notice, which turned "auto-merge is broken" into
-      # a green tick and a shrug.
+      # Retried anyway, because `opened` really does arrive before GitHub has
+      # worked out whether a pull request can merge, and one that opens and
+      # goes straight to green may get no second event to try again on.
+      #
+      # Whatever it says is printed. The first version swallowed the error into
+      # a one-line notice, which turned "auto-merge is broken" into a green
+      # tick and a shrug — and hid this bug through two runs.
       - name: Ask GitHub to merge it once the checks pass
         if: steps.app_config.outputs.ready == 'true'
         env:
@@ -81,7 +86,7 @@ jobs:
           set -uo pipefail
 
           for attempt in 1 2 3 4 5; do
-            if out=$(gh pr merge "$PR" --squash --auto --delete-branch 2>&1); then
+            if out=$(gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --squash --auto --delete-branch 2>&1); then
               echo "Auto-merge enabled on #$PR."
               exit 0
             fi
