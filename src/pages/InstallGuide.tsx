@@ -92,7 +92,7 @@ const InstallGuide = () => {
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               Five taps, and one
               <br />
-              <span className="text-story-green-display">warning you should expect.</span>
+              <span className="text-story-green">warning you should expect.</span>
             </Display>
             <Lede className="mt-6 max-w-136">
               The whole thing takes about a minute. Here is every screen you will pass through, in order.

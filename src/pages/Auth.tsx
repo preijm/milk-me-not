@@ -137,7 +137,7 @@ const Auth = () => {
               <Display as="h1" size="xl" className="mt-4">
                 {heading.lead}
                 <br />
-                <span className="text-story-green-display">{heading.accent}</span>
+                <span className="text-story-green">{heading.accent}</span>
               </Display>
 
               {pending?.label && (

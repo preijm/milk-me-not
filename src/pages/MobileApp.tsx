@@ -104,7 +104,7 @@ const MobileApp = () => {
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               Rate it before
               <br />
-              <span className="text-story-green-display">you leave the aisle.</span>
+              <span className="text-story-green">you leave the aisle.</span>
             </Display>
 
             <Lede className="mt-6 max-w-136">

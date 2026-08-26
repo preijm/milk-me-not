@@ -222,7 +222,7 @@ export const PublicProfile = ({ userId }: { userId: string }) => {
               {data.best && (
                 <>
                   Best thing they've drunk:{" "}
-                  <span className="text-story-green-display">{data.best.product}</span>
+                  <span className="text-story-green">{data.best.product}</span>
                 </>
               )}
             </Display>

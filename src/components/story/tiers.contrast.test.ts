@@ -69,33 +69,39 @@ describe("tier colours", () => {
 });
 
 /**
- * The two greens the brand uses as *text*, and why there are two.
+ * The greens that carry words, and the one place the rule is deliberately not
+ * applied.
  *
- * --story-green is the fill and is 2.35:1 on cream, so it cannot be read at any
- * size. --story-green-dark clears AA but at 22% lightness stops looking like
- * this project's green, which is fair comment on a 78px headline. So display
- * type gets its own: the lightest, most vivid green in the same hue that still
- * clears the 3:1 large text is allowed.
+ * --story-green is 2.35:1 on cream, under the 3:1 WCAG asks of large text. Two
+ * attempts to move the hero accent off it were rejected as not being this
+ * project's green, so display type keeps the brand colour knowingly. What
+ * these tests protect is that the exception stays exactly that: display type
+ * only, with everything smaller on a green that does clear AA.
  */
 describe("the greens that carry words", () => {
   const CREAM = "#f5faf6";
+  const BRAND = "#00bd61";      // --story-green, the hero accent
+  const SMALL = "#007038";      // --story-green-dark, everything under 24px
   const AA_LARGE = 3;
   const AA_TEXT = 4.5;
 
-  it("keeps the display green vivid but over the line for large type", () => {
-    expect(contrast("#009e52", CREAM)).toBeGreaterThanOrEqual(AA_LARGE);
-    // …and honest about not being safe for body copy, which is the whole
-    // reason it is named for display rather than numbered.
-    expect(contrast("#009e52", CREAM)).toBeLessThan(AA_TEXT);
+  it("records the accent as a known shortfall rather than a passing one", () => {
+    // If this ever starts passing, --story-green moved, and the brand moved
+    // with it — which is a decision, not a tidy-up.
+    const measured = contrast(BRAND, CREAM);
+    expect(measured).toBeGreaterThan(2.3);
+    expect(measured).toBeLessThan(AA_LARGE);
   });
 
-  it("keeps it lighter than the one small text has to use", () => {
-    // If these ever converge, the accent word has gone dull again.
-    expect(luminance("#009e52")).toBeGreaterThan(luminance("#007038"));
+  it("keeps every smaller use on a green that does clear AA", () => {
+    // The shortfall is affordable at 78px and is not at 11px, so this is the
+    // half that must not drift.
+    expect(contrast(SMALL, CREAM)).toBeGreaterThanOrEqual(AA_TEXT);
+    expect(contrast(SMALL, "#ffffff")).toBeGreaterThanOrEqual(AA_TEXT);
   });
 
-  it("still refuses the fill green at any size", () => {
-    expect(contrast("#00bd61", CREAM)).toBeLessThan(AA_LARGE);
+  it("keeps the two greens far enough apart to be worth having both", () => {
+    expect(luminance(BRAND)).toBeGreaterThan(luminance(SMALL) * 2);
   });
 
   it("puts barista on a tint, not a solid pill", () => {
