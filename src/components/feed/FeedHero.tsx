@@ -57,15 +57,21 @@ export const FeedHero = ({ items, isLoading, isAuthenticated }: FeedHeroProps) =
       )}
 
     <Band ground="cream" size="md" className={cn("pt-6 sm:pt-10", isAuthenticated && "hidden lg:block")}>
-      {/* Deep forest, not the electric blue this used to be. Two reasons: at
-          15rem, fully-saturated `story-blue` fought the green headline beside
-          it and the forest band directly below; and Contact had already claimed
-          blue as the colour that makes it read as itself, which a main-nav page
-          wearing the same hue quietly overrode. The deep tone picks up that band
-          so the fold reads as one composition, and stays clear of the bright
-          green discs on Home and Discover. */}
+      {/* The same green disc Home and Discover wear, rather than the deep
+          forest it used to be.
+
+          Blue came off it first — Contact had already claimed blue as the
+          colour that makes it read as itself, and a main-nav page in the same
+          hue quietly overrode that. Deep forest was the replacement, chosen to
+          echo the band below and to stay clear of the bright discs on the other
+          two heroes. At 15rem it is a near-black anchor sitting a third of the
+          way down a cream page, and being the only hero of the three that goes
+          dark is not a distinction worth having: --story-green-deep is 0.02
+          relative luminance against --story-green's 0.37, so it read as an
+          order of magnitude heavier than its siblings, not as a variation on
+          them. Three heroes, one motif, one colour. */}
       <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 hidden lg:block">
-        <div className="relative h-60 w-60 overflow-hidden rounded-full bg-story-green-deep">
+        <div className="relative h-60 w-60 overflow-hidden rounded-full bg-story-green">
           <span className="absolute right-2 top-6 text-story-green-light">
             <MilkDrop size={140} variant="solid" />
           </span>
