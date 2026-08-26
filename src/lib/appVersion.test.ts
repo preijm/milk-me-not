@@ -144,3 +144,13 @@ describe("appVersion utilities", () => {
     });
   });
 });
+
+describe("isNewerVersion, given nonsense", () => {
+  // VersionProvider wraps the whole app and has no error boundary above it, so
+  // throwing here is a blank page for every reader rather than a broken banner.
+  it("says no rather than throwing", () => {
+    expect(isNewerVersion("1.0.0", undefined as unknown as string)).toBe(false);
+    expect(isNewerVersion(undefined as unknown as string, "1.0.0")).toBe(false);
+    expect(isNewerVersion("1.0.0", null as unknown as string)).toBe(false);
+  });
+});
