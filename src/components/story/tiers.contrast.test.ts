@@ -67,3 +67,44 @@ describe("tier colours", () => {
     for (const tier of SCORE_TIERS) expect(tier.color).not.toBe(tier.ink);
   });
 });
+
+/**
+ * The two greens the brand uses as *text*, and why there are two.
+ *
+ * --story-green is the fill and is 2.35:1 on cream, so it cannot be read at any
+ * size. --story-green-dark clears AA but at 22% lightness stops looking like
+ * this project's green, which is fair comment on a 78px headline. So display
+ * type gets its own: the lightest, most vivid green in the same hue that still
+ * clears the 3:1 large text is allowed.
+ */
+describe("the greens that carry words", () => {
+  const CREAM = "#f5faf6";
+  const AA_LARGE = 3;
+  const AA_TEXT = 4.5;
+
+  it("keeps the display green vivid but over the line for large type", () => {
+    expect(contrast("#009e52", CREAM)).toBeGreaterThanOrEqual(AA_LARGE);
+    // …and honest about not being safe for body copy, which is the whole
+    // reason it is named for display rather than numbered.
+    expect(contrast("#009e52", CREAM)).toBeLessThan(AA_TEXT);
+  });
+
+  it("keeps it lighter than the one small text has to use", () => {
+    // If these ever converge, the accent word has gone dull again.
+    expect(luminance("#009e52")).toBeGreaterThan(luminance("#007038"));
+  });
+
+  it("still refuses the fill green at any size", () => {
+    expect(contrast("#00bd61", CREAM)).toBeLessThan(AA_LARGE);
+  });
+
+  it("puts barista on a tint, not a solid pill", () => {
+    // Solid espresso was a 9.37:1 step from the white card it sits on and read
+    // as the loudest thing in the row; the tint is a hair over the neutral
+    // chip, and the text on it is far clear of AA.
+    const chip = "#ede0d4", ink = "#63391d", card = "#ffffff", neutralChip = "#f2f2f2";
+    expect(contrast(ink, chip)).toBeGreaterThanOrEqual(AA_TEXT);
+    expect(contrast(chip, card)).toBeLessThan(1.6);
+    expect(contrast(chip, card)).toBeGreaterThan(contrast(neutralChip, card));
+  });
+});

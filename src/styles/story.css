@@ -27,6 +27,15 @@
 
   /* Brand green */
   --story-green: 151 100% 37%;       /* #00bf63 */
+  /* Display type only, and the name says so.
+     The brand green is 2.35:1 on cream, which is under the 3:1 large text
+     needs, so the accent word in a hero headline could not wear it. Dropping
+     those to --story-green-dark cleared the bar and cost the brand: at 22%
+     lightness it stops reading as this project's green. This is the lightest,
+     most vivid green in the same hue that still clears 3:1 — 3.31:1 on cream,
+     with headroom. It is not safe below 24px, or below 18.66px bold, which is
+     why it is not simply --story-green-2. */
+  --story-green-display: 151 100% 31%; /* #009e52 */
   --story-green-dark: 150 100% 22%;  /* #006e37 */
   --story-green-deep: 153 71% 11%;   /* forest band ground */
   --story-green-light: 144 67% 88%;  /* #cdf5dd */
@@ -41,9 +50,16 @@
 
   /* Barista. The one badge that is a claim about what the milk is *for*
      rather than what is in it, so it is the one badge that gets a colour —
-     and the colour is the drink it is for. White on it is 9.37:1; white on
-     --story-green, which it used to wear, is 2.48:1. */
-  --story-coffee: 24 40% 27%;        /* #603f29 */
+     and the colour is the drink it is for.
+
+     A tint with dark text, not a solid espresso pill. Solid, it was a 9.37:1
+     step away from the white card it sits on, which is a bigger jump than
+     anything else in the row and read as the loudest thing on the board. The
+     tint is 1.30:1 from the card — a hair heavier than the neutral chip's
+     1.12:1 — so barista is still the only warm thing in a row of greys
+     without being the first thing you see. Text on it is 7.6:1. */
+  --story-coffee: 24 55% 25%;        /* #63391d — text */
+  --story-coffee-light: 28 40% 88%;  /* #ede0d4 — the chip it sits on */
 
   /* Accent amber */
   --story-amber: 37 99% 55%;         /* #fea619 */
