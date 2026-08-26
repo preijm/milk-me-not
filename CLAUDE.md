@@ -171,6 +171,39 @@ interpolates between; change one and the other lies.
 - Dark mode via class strategy
 - `useIsMobile` / `useIsMobileOrTablet` (`src/hooks/use-mobile.tsx`) for responsive logic
 
+### Browser tests are separate, and only chromium
+`e2e/` holds Playwright specs; `src/**` belongs to vitest, and neither runner
+looks at the other's files. They run against `vite preview` serving a real
+build, so what is tested is what deploys.
+
+The scanner is the reason they exist. It needs `getUserMedia`, a `<video>` that
+carries a stream and a decoder — jsdom has none of those, so no unit test can
+tell a working scanner from one reporting "No camera access". Chromium is
+started with `--use-fake-device-for-media-stream`, which is also why this works
+on a CI runner with no webcam.
+
+```bash
+npm run test:e2e        # headless
+npm run test:e2e:ui     # pick through them interactively
+```
+
+Two things the stub in `e2e/support/backend.ts` has to get right, both learned
+by getting them wrong:
+
+- **GoTrue returns bare objects**, not `{ data, error }`. A token response
+  without an `access_token` sends supabase-js to split a JWT it does not have,
+  and the app dies on boot.
+- **`.single()` is not a collection.** It asks for
+  `application/vnd.pgrst.object+json` and an empty result is a 406 with code
+  `PGRST116`, never `[]`. Answering it with an array gave `useVersionCheck` an
+  empty array as its version row, and since VersionProvider wraps everything,
+  the blank page was the whole site.
+
+**Browser tests are not one of the four required checks.** With auto-merge on,
+a required check that goes red on a slow runner stops every pull request in the
+queue, and browser tests are the flakiest thing in any suite. Add
+`Browser tests` to the ruleset once it has proved boring.
+
 ### Testing Setup
 - Vitest with jsdom; setup file at `src/test/setup.ts` mocks `matchMedia`, `ResizeObserver`, `IntersectionObserver`
 - Tests colocated with source: `src/**/*.{test,spec}.{ts,tsx}`

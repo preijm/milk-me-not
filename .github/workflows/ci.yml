@@ -221,3 +221,42 @@ jobs:
 
       - name: Build project
         run: bun run build
+
+  browser:
+    name: Browser tests
+    runs-on: ubuntu-latest
+    needs: [lint-and-typecheck, test]
+
+    # Deliberately not one of the four contexts the ruleset requires, and that
+    # is the point for now. Browser tests are the flakiest thing in any suite,
+    # and with auto-merge on, a required check that goes red on a slow runner
+    # stops every pull request in the queue. This runs, reports, and is read —
+    # once it has proved itself boring, add "Browser tests" to the ruleset and
+    # it starts blocking.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      # Only chromium. The scanner's two decoders are the platform's own
+      # BarcodeDetector and a JavaScript fallback, and neither is what these
+      # tests exercise — they cover getting a camera open at all, which is
+      # where the real failures have been.
+      - name: Install Chromium for Playwright
+        run: bunx playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: bunx playwright test
+
+      - name: Keep the traces from a failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

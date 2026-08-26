@@ -27,6 +27,16 @@ export interface DismissedVersions {
  * Returns true if latest is newer than current
  */
 export function isNewerVersion(current: string, latest: string): boolean {
+  // A version that is not a string is not a newer version.
+  //
+  // Not defensive programming for its own sake: this is called during render
+  // inside VersionProvider, which wraps the entire app and sits behind no
+  // error boundary. A single `app_versions` row without a version string
+  // therefore took the whole site to a blank page — observed exactly that way
+  // while building the browser tests, where a stubbed empty response reached
+  // here as undefined and `undefined.split` ended the render.
+  if (typeof current !== "string" || typeof latest !== "string") return false;
+
   const parseVersion = (v: string) => {
     const parts = v.split(".").map(Number);
     return {
