@@ -129,7 +129,7 @@ const Home = () => {
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               Ditch the Moo.
               <br />
-              <span className="text-story-green-dark">Find your new.</span>
+              <span className="text-story-green-display">Find your new.</span>
             </Display>
 
             <Lede className="mt-6 max-w-136">
@@ -347,7 +347,7 @@ const Home = () => {
             <Display size="xl" className="mt-5">
               It started with
               <br />
-              <span className="text-story-green-dark">soy sauce.</span>
+              <span className="text-story-green-display">soy sauce.</span>
             </Display>
             <Lede className="mt-5">
               A colleague asked whether soy milk meant mixing soy sauce into milk. Someone tried it. What followed was a

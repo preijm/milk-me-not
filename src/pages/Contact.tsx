@@ -66,7 +66,7 @@ const Contact = () => {
             <Display as="h1" size="hero" className="mt-5">
               Actual humans
               <br />
-              <span className="text-story-green-dark">read this inbox.</span>
+              <span className="text-story-green-display">read this inbox.</span>
             </Display>
             <Lede className="mt-6 max-w-136">
               Four ways to reach us are listed below. One of them works. See if you can guess which before you
@@ -172,7 +172,7 @@ const Contact = () => {
             <Display size="xl" className="mt-5">
               Two people,
               <br />
-              <span className="text-story-green-dark">no support script.</span>
+              <span className="text-story-green-display">no support script.</span>
             </Display>
             <p className="mt-5 max-w-lg text-[1.0625rem] leading-relaxed text-story-muted">
               Milk Me Not is run by the same two people who started the spreadsheet that became this site. Email

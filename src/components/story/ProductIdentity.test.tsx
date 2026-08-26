@@ -89,7 +89,7 @@ describe("ProductIdentity", () => {
       <ProductIdentity brand="Natrue" product="Oat" isBarista flavors={["pumpkin_spice"]} properties={["organic"]} />,
     );
     const pill = (text: string) => screen.getByText(text).closest("span[class*='rounded-full']");
-    expect(pill("Barista")?.className).toContain("bg-story-coffee");
+    expect(pill("Barista")?.className).toContain("bg-story-coffee-light");
     expect(pill("Pumpkin spice")?.className).toContain("bg-story-ink/6");
     expect(pill("Organic")?.className).toContain("bg-story-ink/6");
     expect(pill("Barista")?.className).not.toContain("bg-story-green");

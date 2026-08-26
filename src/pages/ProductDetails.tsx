@@ -208,7 +208,7 @@ const ProductDetails = () => {
                     className={cn(
                       "flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.75rem] font-bold uppercase tracking-[0.06em]",
                       c.barista
-                        ? "bg-story-coffee text-white"
+                        ? "bg-story-coffee-light text-story-coffee"
                         : "border-[1.5px] border-story-ink/12 text-story-ink-2",
                     )}
                   >

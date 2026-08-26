@@ -45,7 +45,7 @@ const About = () => {
             <Display as="h1" size="hero" className="mt-5">
               It started with
               <br />
-              <span className="text-story-green-dark">soy sauce.</span>
+              <span className="text-story-green-display">soy sauce.</span>
             </Display>
             <Lede className="mt-6 max-w-136">
               A colleague asked whether soy milk meant mixing soy sauce into milk. It was a joke. Someone tried it
@@ -102,7 +102,7 @@ const About = () => {
             <Display size="xl" className="mt-5">
               One of us is a
               <br />
-              <span className="text-story-green-dark">data scientist.</span>
+              <span className="text-story-green-display">data scientist.</span>
             </Display>
             <Lede className="mt-5">
               So the tasting did not stay a tasting. It became a column. Then a tab. Then a hundred-odd rows of brands,

@@ -98,7 +98,7 @@ const NotificationItem = ({
             <span className="text-[0.875rem] font-bold text-story-ink" translate="no">
               {productInfo}
             </span>
-            {isBarista && <span className={cn(PILL, "bg-story-coffee text-white")}>Barista</span>}
+            {isBarista && <span className={cn(PILL, "bg-story-coffee-light text-story-coffee")}>Barista</span>}
             {properties.map((p) => (
               <span key={p} className={cn(PILL, "bg-story-ink/6 text-story-muted")}>
                 {p.replace(/_/g, " ")}
