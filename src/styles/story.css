@@ -27,15 +27,20 @@
 
   /* Brand green */
   --story-green: 151 100% 37%;       /* #00bf63 */
-  /* Display type only, and the name says so.
-     The brand green is 2.35:1 on cream, which is under the 3:1 large text
-     needs, so the accent word in a hero headline could not wear it. Dropping
-     those to --story-green-dark cleared the bar and cost the brand: at 22%
-     lightness it stops reading as this project's green. This is the lightest,
-     most vivid green in the same hue that still clears 3:1 — 3.31:1 on cream,
-     with headroom. It is not safe below 24px, or below 18.66px bold, which is
-     why it is not simply --story-green-2. */
-  --story-green-display: 151 100% 31%; /* #009e52 */
+  /* A deliberate exception lives on this token, and it is worth knowing about
+     before "fixing" it.
+
+     --story-green is 2.35:1 on cream. That is under the 3:1 WCAG asks of large
+     text, so the accent word in every hero headline technically fails, and two
+     attempts to move it — to --story-green-dark at 5.89:1, then to a computed
+     --story-green-display at 3.37:1 — were both rejected on the grounds that
+     they are not this project's green. That is the owner's call on the brand,
+     made twice, and it is recorded here rather than quietly re-fixed.
+
+     It applies to display type only: 68px and 78px at weight 800, where the
+     shortfall costs far less than it would at 11px. Everything smaller uses
+     --story-green-dark and does clear AA. tiers.contrast.test.ts pins both
+     halves of that so the exception cannot spread. */
   --story-green-dark: 150 100% 22%;  /* #006e37 */
   --story-green-deep: 153 71% 11%;   /* forest band ground */
   --story-green-light: 144 67% 88%;  /* #cdf5dd */

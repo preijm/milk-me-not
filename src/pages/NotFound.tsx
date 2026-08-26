@@ -46,7 +46,7 @@ const NotFound = () => {
           <Display as="h1" size="hero" className="mt-5">
             This one's
             <br />
-            <span className="text-story-green-display">gone off.</span>
+            <span className="text-story-green">gone off.</span>
           </Display>
           <Lede className="mt-6 max-w-lg">
             There's nothing at that address. The rest of the shelf is fine, though — several hundred plant milks, all
