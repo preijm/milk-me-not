@@ -21,15 +21,16 @@ export const FeedHeader = ({ username, createdAt, blurred, className }: FeedHead
   const timeAgo = formatDistanceToNow(new Date(createdAt), { addSuffix: true }).replace("about ", "");
 
   return (
-    <div className={cn("flex items-center gap-3", className)}>
-      <div className="flex min-w-0 flex-1 items-center gap-2.5">
-        <UserMark name={username} className="h-9 w-9 text-sm" />
-        <div className="flex min-w-0 flex-col">
-          <span className={cn("truncate text-sm font-bold text-story-ink", blurred && "blur-xs")} translate="no">
-            {username}
-          </span>
-          <span className="text-[0.75rem] font-medium text-story-muted-2">{timeAgo}</span>
-        </div>
+    // One flex, not two. This used to be a `flex items-center gap-3` wrapping a
+    // `flex min-w-0 flex-1 items-center gap-2.5` — the same declaration twice,
+    // with only the inner gap doing anything.
+    <div className={cn("flex min-w-0 items-center gap-2.5", className)}>
+      <UserMark name={username} className="h-9 w-9 text-sm" />
+      <div className="flex min-w-0 flex-col">
+        <span className={cn("truncate text-sm font-bold text-story-ink", blurred && "blur-xs")} translate="no">
+          {username}
+        </span>
+        <span className="text-[0.75rem] font-medium text-story-muted-2">{timeAgo}</span>
       </div>
     </div>
   );

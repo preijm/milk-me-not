@@ -48,7 +48,13 @@ export const FeedItem = ({ item }: FeedItemProps) => {
           still earns its place where a tier is being explained rather than
           reported: the FAQ scale, the rating slider as you drag it, a product's
           own page. Not once per card, five cards deep. */}
-      <div className="flex items-start justify-between gap-4">
+      {/* items-center, not items-start. The byline is a 36px avatar with two
+          short lines beside it and the score is a 52px numeral: top-aligning
+          them put the byline's optical centre 19px from the top of the row and
+          the score's at 39px, with the tier word 10px lower again. Three
+          anchors in a 78px row, which is what "messy" looks like when you
+          measure it. Centred, the two clusters share one line. */}
+      <div className="flex items-center justify-between gap-4">
         <FeedHeader
           username={item.username ?? undefined}
           createdAt={item.created_at}
