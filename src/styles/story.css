@@ -26,7 +26,12 @@
   --story-cream-3: 140 15% 88%;
 
   /* Brand green */
-  --story-green: 151 100% 37%;       /* #00bf63 */
+  /* The logo's green, exactly. 37% renders #00bd61 — two units short on both
+     green and blue — while eleven hand-written literals in the world map and
+     the phone illustration carry the real #00bf63, so the site was running two
+     greens a hair apart. Invisible side by side, and exactly what you hit
+     sampling colours off a screenshot. */
+  --story-green: 151 100% 37.45%;    /* #00bf63 */
   /* A deliberate exception lives on this token, and it is worth knowing about
      before "fixing" it.
 

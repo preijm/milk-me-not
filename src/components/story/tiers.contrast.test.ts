@@ -80,7 +80,7 @@ describe("tier colours", () => {
  */
 describe("the greens that carry words", () => {
   const CREAM = "#f5faf6";
-  const BRAND = "#00bd61";      // --story-green, the hero accent
+  const BRAND = "#00bf63";      // --story-green, the logo green, the hero accent
   const SMALL = "#007038";      // --story-green-dark, everything under 24px
   const AA_LARGE = 3;
   const AA_TEXT = 4.5;

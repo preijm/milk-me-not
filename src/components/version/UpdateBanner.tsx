@@ -10,7 +10,7 @@ import { ReleaseNotes } from "./ReleaseNotes";
  * `text-primary-foreground`, a `container mx-auto` that does not line up with
  * the `max-w-304` grid every other row uses, and shadcn `Button`s carrying
  * Material-ish names like `bg-surface-container-lowest`. The green happened to
- * land right — `--primary` and `--story-green` are the same 151 100% 37% — so
+ * land right — `--primary` and `--story-green` are the same 151 100% 37.45% — so
  * it looked fine and was held together by a coincidence.
  *
  * Two things that were not fine:
@@ -20,8 +20,8 @@ import { ReleaseNotes } from "./ReleaseNotes";
  *   there, it was clickable, and nobody could see it.
  *
  *   Painting it white was not enough, which is worth writing down: nothing is
- *   legible on `--story-green`. At 151 100% 37% the bar has a relative
- *   luminance of 0.371, so *pure white* on it is 2.49:1 — under the 4.5:1 AA
+ *   legible on `--story-green`. At 151 100% 37.45% the bar has a relative
+ *   luminance of 0.382, so *pure white* on it is 2.43:1 — under the 4.5:1 AA
  *   needs for body text and under the 3:1 a control needs to be discernible at
  *   all. White at 70% was 1.86:1. The bar is `--story-green-dark` now, where
  *   the headline runs 6.2:1, the sub-line 5.0:1, the kicker and the × 4.6:1. Same hue

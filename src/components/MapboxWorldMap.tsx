@@ -136,7 +136,7 @@ const MapboxWorldMap = ({ visibleProductIds }: { visibleProductIds: Set<string> 
     // quietest paper rather than Tailwind's grey-200, which belonged to
     // nothing here.
     const grey = [222, 231, 224];  // #dee7e0 — hsl(140 15% 88%)
-    const green = [0, 191, 99];    // #00bf63 — hsl(151 100% 37%)
+    const green = [0, 191, 99];    // #00bf63 — hsl(151 100% 37.45%)
     
     const r = Math.round(grey[0] + clamped * (green[0] - grey[0]));
     const g = Math.round(grey[1] + clamped * (green[1] - grey[1]));
