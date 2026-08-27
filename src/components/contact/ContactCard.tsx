@@ -61,9 +61,23 @@ export const ContactCard = ({
   );
 
   return (
+    // A card that takes a click has to take a keypress too. Only the pigeon
+    // card passes `onClick`, and its own button is disabled on purpose — that
+    // is the joke — so the card itself was the single way to reach the easter
+    // egg, with a pointer cursor promising something no keyboard could get to.
     <div
       onClick={onClick}
-      className={`bg-card story-hairline relative flex flex-col rounded-[1.25rem] p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:shadow-md sm:p-7 ${onClick ? "cursor-pointer overflow-visible" : "overflow-hidden"}`}
+      {...(onClick && {
+        role: "button",
+        tabIndex: 0,
+        "aria-label": `${title}: ${buttonText}`,
+        onKeyDown: (event: React.KeyboardEvent) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          onClick();
+        },
+      })}
+      className={`bg-card story-hairline relative flex flex-col rounded-[1.25rem] p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:shadow-md focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-story-green focus-visible:ring-offset-2 sm:p-7 ${onClick ? "cursor-pointer overflow-visible" : "overflow-hidden"}`}
     >
       {/* An oversized, near-invisible echo of the channel's own icon — the
           illustrated touch that keeps a disabled card from reading as a

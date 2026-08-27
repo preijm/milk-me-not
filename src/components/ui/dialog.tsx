@@ -30,14 +30,21 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
   closeButton?: boolean
+  /**
+   * Style the scrim. DialogContent brings its own portal and overlay, so a
+   * caller that wants a different scrim must say so here rather than render a
+   * second DialogOverlay around it — that is how the lightbox ended up with
+   * two stacked 80% scrims animating in independently.
+   */
+  overlayClassName?: string
 }
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, closeButton = true, ...props }, ref) => (
+>(({ className, children, closeButton = true, overlayClassName, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay />
+    <DialogOverlay className={overlayClassName} />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
