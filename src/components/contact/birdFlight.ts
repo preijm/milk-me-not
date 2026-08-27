@@ -26,7 +26,7 @@ export const planFlight = (id: number, viewport: number) => {
   const reach = Math.min(viewport, 960) * (0.42 + r(2) * 0.4);
   const rise = 110 + r(3) * 190;
   const duration = 1.8 + r(4) * 1.0;
-  const scale = 0.7 + r(5) * 0.6;
+  const scale = 0.8 + r(5) * 0.55;
   const flap = 0.16 + r(6) * 0.1;
   const lost = r(7) < 0.2;
 
