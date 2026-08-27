@@ -56,7 +56,6 @@ export const planFlight = (id: number, viewport: number) => {
   const rise = reach * (0.3 + r(3) * 0.14);
   const duration = 1.8 + r(4) * 1.0;
   const scale = 0.8 + r(5) * 0.55;
-  const flap = 0.16 + r(6) * 0.1;
   const lost = r(7) < 0.2;
 
   // Out and up, then a long coast — or, one in five, out and up and then a
@@ -107,7 +106,7 @@ export const planFlight = (id: number, viewport: number) => {
   rotate.push(rotate[rotate.length - 1]);
   scaleX.push(scaleX[scaleX.length - 1]);
 
-  return { x, y, rotate, scaleX, opacity, duration, scale, flap };
+  return { x, y, rotate, scaleX, opacity, duration, scale };
 };
 
 export type Flight = ReturnType<typeof planFlight>;

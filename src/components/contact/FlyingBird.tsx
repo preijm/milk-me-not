@@ -1,3 +1,4 @@
+import { Bird } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { planFlight } from "./birdFlight";
 
@@ -17,30 +18,12 @@ interface FlyingBirdProps {
  * says these pigeons are "learning the difference between your address and a
  * bread crumb trail", so roughly one in five sets off confidently, thinks
  * better of it, and comes back the other way.
+ *
+ * The bird itself is lucide's outline, which is what it always was. It was
+ * briefly a drawn pigeon with a beating wing, and the wing was the only thing
+ * the drawing bought — at this size and this speed a thin silhouette reads
+ * better than a solid one, and it is the shape this page has always had.
  */
-
-/**
- * A pigeon, drawn rather than borrowed. The lucide glyph this replaces is a
- * single static outline, and a bird that does not beat its wings is a paper
- * aeroplane. The wing is a lighter shape over the body so it reads at 36px.
- */
-const Pigeon = ({ flap, still }: { flap: number; still: boolean }) => (
-  <svg viewBox="0 0 24 24" width="36" height="36" fill="none" aria-hidden>
-    <path d="M2.2 11.4 7.4 12.7 7.4 15.9Z" fill="currentColor" />
-    <ellipse cx="11.2" cy="13.2" rx="5.3" ry="3.7" fill="currentColor" />
-    <circle cx="16.6" cy="9.5" r="2.7" fill="currentColor" />
-    <path d="M18.9 8.9 21.9 9.8 18.9 10.7Z" fill="currentColor" />
-    <circle cx="17.5" cy="8.8" r="0.55" fill="#fff" opacity="0.8" />
-    <motion.path
-      d="M8.8 12.5C10.7 8.6 14.2 8.1 15.5 10.7 13.9 13 11.2 14 8.8 12.5Z"
-      fill="#fff"
-      opacity="0.45"
-      style={{ transformOrigin: "9.6px 12.5px" }}
-      animate={still ? undefined : { rotate: [-4, -42, -4], scaleY: [1, 0.7, 1] }}
-      transition={still ? undefined : { duration: flap, repeat: Infinity, ease: "easeInOut" }}
-    />
-  </svg>
-);
 
 export const FlyingBird = ({ birdIds }: FlyingBirdProps) => {
   const still = useReducedMotion() ?? false;
@@ -80,7 +63,7 @@ export const FlyingBird = ({ birdIds }: FlyingBirdProps) => {
               animate={still ? { scale: f.scale } : { scaleX: f.scaleX, scale: f.scale }}
               transition={{ duration: still ? 1.2 : f.duration, ease: "linear" }}
             >
-              <Pigeon flap={f.flap} still={still} />
+              <Bird className="h-9 w-9" aria-hidden />
             </motion.div>
           </motion.div>
         );

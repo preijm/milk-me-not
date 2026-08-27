@@ -127,11 +127,4 @@ describe("planFlight", () => {
     expect(planFlight(ids[0], 1200).x.length).toBeGreaterThanOrEqual(20);
   });
 
-  it("keeps the flap quick enough to read as a wingbeat", () => {
-    for (const id of ids.slice(0, 20)) {
-      const f = planFlight(id, 1200);
-      expect(f.flap).toBeGreaterThan(0.12);
-      expect(f.flap).toBeLessThan(0.3);
-    }
-  });
 });
