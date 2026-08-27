@@ -62,6 +62,26 @@ describe("FeedItem", () => {
     expect(screen.queryByText("Worth the shelf space.")).toBeNull();
   });
 
+  it("hangs the byline and the score off one centre line", () => {
+    // Top-aligned, a 36px avatar with two short lines beside it and a 52px
+    // numeral put their optical centres 19px and 39px from the top of a 78px
+    // row, with the tier word 10px lower again — three anchors in one row.
+    const { container } = renderCard();
+    const row = container.querySelector("article")?.firstElementChild;
+    expect(row?.classList.contains("items-center")).toBe(true);
+    expect(row?.classList.contains("items-start")).toBe(false);
+  });
+
+  it("gives the byline one flex, not two", () => {
+    // It was a `flex items-center gap-3` wrapping a `flex min-w-0 flex-1
+    // items-center gap-2.5`: the same declaration twice, with only the inner
+    // gap doing anything.
+    const { container } = renderCard();
+    const avatar = container.querySelector("span[aria-hidden]");
+    const row = container.querySelector("article")?.firstElementChild;
+    expect(avatar?.parentElement).toBe(row?.firstElementChild);
+  });
+
   it("puts the carton and the picture of it in one block", () => {
     // They used to sit in the card's single 16px rhythm alongside the byline,
     // the note and the engagement row, so the name read as one more strip
