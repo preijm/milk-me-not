@@ -23,10 +23,18 @@ const GoogleIcon = () => (
   </svg>
 );
 
-const GoogleSignInButton = ({ onClick, loading }: { onClick: () => void; loading: boolean }) => (
-  <StoryButton type="button" tone="outline" onClick={onClick} disabled={loading} className="w-full">
-    <GoogleIcon />
-    Continue with Google
+interface GoogleSignInButtonProps {
+  onClick: () => void;
+  /** True only while this button's own click is in flight — drives its label. */
+  loading: boolean;
+  /** Also disabled while a sibling auth action (email/password) is in flight. */
+  disabled?: boolean;
+}
+
+const GoogleSignInButton = ({ onClick, loading, disabled = loading }: GoogleSignInButtonProps) => (
+  <StoryButton type="button" tone="outline" onClick={onClick} disabled={disabled} className="w-full">
+    {!loading && <GoogleIcon />}
+    {loading ? "Redirecting…" : "Continue with Google"}
   </StoryButton>
 );
 

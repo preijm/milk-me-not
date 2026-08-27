@@ -32,7 +32,7 @@ const AuthForm = ({
   const [passwordError, setPasswordError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   
-  const { loading, signIn, signUp, signInWithGoogle } = useAuthOperations();
+  const { loading, googleLoading, signIn, signUp, signInWithGoogle } = useAuthOperations();
 
   const clearErrors = () => {
     setEmailError("");
@@ -110,7 +110,7 @@ const AuthForm = ({
         </div>
       )}
       <div className="flex flex-col gap-6">
-        <GoogleSignInButton onClick={signInWithGoogle} loading={loading} />
+        <GoogleSignInButton onClick={signInWithGoogle} loading={googleLoading} disabled={loading || googleLoading} />
 
         <div className="flex items-center gap-3" aria-hidden>
           <div className="h-px flex-1 bg-story-ink/10" />
@@ -145,6 +145,7 @@ const AuthForm = ({
         <AuthFormButtons
           isLogin={isLogin}
           loading={loading}
+          disabled={loading || googleLoading}
           onForgotPassword={onForgotPassword}
           onToggleMode={() => {
             onToggleMode();
