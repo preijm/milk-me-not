@@ -53,13 +53,24 @@ describe("tier colours", () => {
     expect(contrast(before.color, before.light)).toBeLessThan(AA_TEXT);
   });
 
-  it("keeps a white label legible on a bar filled with ink", () => {
-    // The FAQ scale paints its bars in `ink` precisely so the range and the
-    // tier name can sit on them. Neither ink nor white cleared 4.5:1 on the
-    // vivid `color`.
+  it("keeps the tier name readable on every ground the scale sits on", () => {
+    // The FAQ scale used to print its labels on the fill, which forced the
+    // fill dark enough to carry them — so the one graphic whose job is to show
+    // what a tier looks like showed the muted version. The labels sit beside
+    // the colour now, on the page's own ground, and the fill is vivid again.
+    // AMBER is that page's band.
+    const AMBER = "#fff1d6";
     for (const tier of SCORE_TIERS) {
-      expect(contrast(WHITE, tier.ink)).toBeGreaterThanOrEqual(AA_TEXT);
+      expect(contrast(tier.ink, AMBER)).toBeGreaterThanOrEqual(AA_TEXT);
     }
+  });
+
+  it("would not have let those labels sit on the fill", () => {
+    // Why the labels had to move at all: on the vivid waste red neither ink
+    // nor white cleared AA, so no choice of label colour was available.
+    const waste = SCORE_TIERS[0];
+    expect(contrast(WHITE, waste.color)).toBeLessThan(AA_TEXT);
+    expect(contrast("#1a2320", waste.color)).toBeLessThan(AA_TEXT);
   });
 
   it("still keeps the vivid value, because charts are not text", () => {
