@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeFileName } from "@/lib/fileValidation";
+import { thumbnailPath, toThumbnail } from "@/lib/imageCompression";
 import { useUserProfile } from "./useUserProfile";
 import { validateMilkTestInput, sanitizeInput, sanitizeForDatabase } from "@/lib/security";
 import { MilkTestResult } from "@/types/milk-test";
@@ -201,18 +202,39 @@ export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFor
 
       // Remove shop lookup since we're storing shop_name directly now
 
-      // Upload picture if available
+      // Upload picture if available.
+      //
+      // Two objects, not one: the photo itself and the thumbnail every feed
+      // card loads (`thumbnailPath` explains why the thumbnail lives beside
+      // its original under a prefixed name rather than in a folder).
+      //
+      // `picture` has already been resized to 1600px by `processAndSetFile`,
+      // so the thumbnail is a clean 2:1 reduction of that rather than another
+      // pass over the camera's original.
+      //
+      // Both are stored with a year of `cacheControl`. Storage defaults these
+      // objects to `no-cache`, which meant a phone revalidated all fifty feed
+      // images on every single visit — fifty round trips before a byte of
+      // photo. The paths carry a timestamp and are never written twice, so
+      // they are safe to treat as immutable.
       let picturePath = null;
       if (picture) {
         console.log("Uploading picture to Supabase storage...");
-        const fileExt = picture.name.split('.').pop();
         const sanitizedName = sanitizeFileName(picture.name.replace(/\.[^/.]+$/, ""));
-        const filePath = `${userData.user.id}/${Date.now()}_${sanitizedName}.${fileExt}`;
-        
+        // Read the type off the file rather than assuming jpeg. `picture` is
+        // normally the 1600px jpeg `processAndSetFile` made, but that step
+        // falls back to the untouched original when a canvas fails, and that
+        // original may well be a png.
+        const contentType = picture.type || 'image/jpeg';
+        const fileExt = contentType === 'image/png' ? 'png' : contentType === 'image/webp' ? 'webp' : 'jpg';
+        const fileName = `${Date.now()}_${sanitizedName}.${fileExt}`;
+        const filePath = `${userData.user.id}/${fileName}`;
+        const cacheControl = '31536000';
+
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('milk-pictures')
-          .upload(filePath, picture);
-          
+          .upload(filePath, picture, { cacheControl, contentType });
+
         if (uploadError) {
           console.error('Error uploading picture:', uploadError);
           toast({
@@ -223,6 +245,20 @@ export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFor
         } else {
           console.log("Picture uploaded successfully:", uploadData);
           picturePath = filePath;
+
+          // The thumbnail is an optimisation, so it does not get a veto over
+          // the post. `FeedImage` falls back to the full photo when it 404s,
+          // which is the old behaviour — slow, but never a missing picture.
+          try {
+            // Always a jpeg, whatever the original was.
+            const thumb = await toThumbnail(picture, `thumb_${fileName}`);
+            const { error: thumbError } = await supabase.storage
+              .from('milk-pictures')
+              .upload(thumbnailPath(filePath), thumb, { cacheControl, contentType: 'image/jpeg' });
+            if (thumbError) throw thumbError;
+          } catch (thumbError) {
+            console.warn('Could not store a thumbnail for this picture:', thumbError);
+          }
         }
       }
 
@@ -322,9 +358,12 @@ export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFor
     try {
       // Delete the picture from storage if it exists
       if (editTest?.picture_path) {
+        // The thumbnail too, or it is orphaned in the bucket forever. `remove`
+        // does not mind being handed a path that is not there, so this is also
+        // correct for the photos uploaded before thumbnails existed.
         await supabase.storage
           .from('milk-pictures')
-          .remove([editTest.picture_path]);
+          .remove([editTest.picture_path, thumbnailPath(editTest.picture_path)]);
       }
 
       // Verify user owns this test before deletion
