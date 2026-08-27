@@ -17,6 +17,12 @@
 # actually buys is the end of auto-merge on these paths: a change here stops and
 # waits to be merged on purpose, rather than landing at three in the morning
 # because the tests happened to pass.
+#
+# GitHub's own "require review from code owners" does not do that here. It is
+# inert unless a minimum approval count is set, and setting one would demand an
+# approval on every pull request in the repository. `owned-paths.yml` reads the
+# list below and asks for the `reviewed` label instead, which is a deliberate
+# act one person can actually perform. This file stays the single list.
 
 # Migrations, policies and edge functions. A bad migration runs once against
 # real data and cannot be taken back, and RLS is the only thing standing
