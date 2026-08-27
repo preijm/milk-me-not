@@ -99,7 +99,6 @@ export const StoryHeader = ({
   const { unreadCount } = useNotifications();
   const cta = useRateCta();
   const onAuthPage = location.pathname === "/auth";
-  const home = user ? "/feed" : "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -135,10 +134,12 @@ export const StoryHeader = ({
         )}
       >
         <div className="mx-auto flex h-16 w-full max-w-304 items-center gap-4 px-5 sm:px-8 lg:h-18 lg:px-10">
-          {/* For a member, home is the feed — `/` redirects there anyway, so
-              linking straight at it saves a render hop and keeps the Feed nav
-              item correctly marked as current. */}
-          <Wordmark tone="ink" to={home} />
+          {/* The wordmark goes home, for everybody. It used to point a member
+              at /feed, because `/` redirected there anyway and this saved the
+              hop — but that made the one link every site puts you back at the
+              start with the only one that could not. Home earns a member's
+              visit: the live totals, the board as it stands, the map. */}
+          <Wordmark tone="ink" />
 
           <nav className="ml-6 hidden items-center gap-1 lg:flex" aria-label="Main">
             {PUBLIC_LINKS.map((link) => {
@@ -221,7 +222,7 @@ export const StoryHeader = ({
           )}
         >
           <div className="flex h-16 items-center justify-between px-5">
-            <Wordmark tone="ink" to={home} />
+            <Wordmark tone="ink" />
             <button
               type="button"
               tabIndex={open ? 0 : -1}

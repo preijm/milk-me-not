@@ -4,13 +4,17 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Home from "./Home";
 
 /**
- * Signed in, "home" is the feed.
+ * A member can reach the homepage.
  *
- * AuthContext starts with no session on purpose, so `user` is null for the
- * first frame or two of a cold load and this page renders the pitch. That is
- * deliberate — the alternative is blocking the site's most important public
- * page on an auth round-trip. What must hold is that a session arriving late
- * still redirects, which is the last test here.
+ * This page used to bounce anyone signed in to /feed, on the grounds that it
+ * is the pitch and someone who already joined should not be sold twice. That
+ * held for the hero and nothing else — below it the page is the live board,
+ * the map and the week's new ratings, which is what somebody clicking the
+ * wordmark came to see.
+ *
+ * So the pitch is what hides, not the page, exactly as on the feed and the
+ * catalogue: whole for a visitor at every width and for everyone on a desktop,
+ * gone for a member on a phone.
  */
 
 const auth = vi.hoisted(() => ({ user: null as { id: string } | null }));
@@ -21,12 +25,6 @@ vi.mock("@/contexts/AuthContext", () => ({
 vi.mock("@/components/Seo", () => ({ Seo: () => null }));
 vi.mock("@/components/home/useStoryHome", () => ({
   useStoryHome: () => ({ data: null, isLoading: false }),
-}));
-vi.mock("@/components/story", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/components/story")>()),
-  StoryLayout: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="marketing-pitch">{children}</div>
-  ),
 }));
 
 const tree = () => (
@@ -40,36 +38,50 @@ const tree = () => (
 
 const renderAtRoot = () => render(tree());
 
+/** The hero band — the pitch, and the only part a member does not need. */
+const hero = (container: HTMLElement) =>
+  [...container.querySelectorAll("section")].find((s) => /Ditch the Moo/.test(s.textContent ?? ""));
+
 describe("Home", () => {
   beforeEach(() => {
     auth.user = null;
   });
 
-  it("sends a signed-in reader to the feed", () => {
+  it("no longer throws a member off its own homepage", () => {
+    // The wordmark is the one link every site puts you back at the start with,
+    // and this was the only one that could not.
     auth.user = { id: "u1" };
     renderAtRoot();
-    expect(screen.getByText("the feed")).toBeInTheDocument();
+    expect(screen.queryByText("the feed")).toBeNull();
   });
 
-  it("does not show the pitch to someone who already joined", () => {
+  it("still gives a member the board, the map and the week", () => {
     auth.user = { id: "u1" };
-    renderAtRoot();
-    expect(screen.queryByTestId("marketing-pitch")).not.toBeInTheDocument();
+    const { container } = renderAtRoot();
+    expect(container.textContent).toContain("The board right now");
   });
 
-  it("shows the pitch to a signed-out visitor", () => {
-    renderAtRoot();
-    expect(screen.getByTestId("marketing-pitch")).toBeInTheDocument();
-  });
-
-  it("redirects once a late-arriving session resolves", () => {
-    const { rerender } = renderAtRoot();
-    expect(screen.getByTestId("marketing-pitch")).toBeInTheDocument();
-
+  it("holds the pitch back from a member on a phone", () => {
     auth.user = { id: "u1" };
-    rerender(tree());
+    const { container } = renderAtRoot();
+    const band = hero(container);
+    expect(band).toBeDefined();
+    expect(band?.classList.contains("hidden")).toBe(true);
+    expect(band?.classList.contains("lg:block")).toBe(true);
+  });
 
-    expect(screen.getByText("the feed")).toBeInTheDocument();
-    expect(screen.queryByTestId("marketing-pitch")).not.toBeInTheDocument();
+  it("sells the project to a visitor at every width", () => {
+    const { container } = renderAtRoot();
+    const band = hero(container);
+    expect(band?.classList.contains("hidden")).toBe(false);
+  });
+
+  it("takes the hero's own divider with it", () => {
+    // Left behind, a member on a phone opens on a decorative crest attached to
+    // nothing above it.
+    auth.user = { id: "u1" };
+    const { container } = renderAtRoot();
+    const crest = container.querySelector(".text-story-paper");
+    expect(crest?.classList.contains("hidden")).toBe(true);
   });
 });
