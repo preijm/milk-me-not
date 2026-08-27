@@ -1,6 +1,7 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   Band,
@@ -92,21 +93,22 @@ const Home = () => {
   const leaderboard = data?.leaderboard ?? [];
 
   /**
-   * Signed in, "home" is the feed.
+   * A member can see this page now.
    *
-   * This page is the pitch — what the project is, why the scores mean
-   * anything. Serving it to someone who already joined asks them to be sold a
-   * second time, and it made the header wordmark the one link on the site that
-   * took a member somewhere less useful than where they already were.
+   * It used to bounce them to /feed, on the grounds that the homepage is the
+   * pitch and someone who already joined should not be sold a second time.
+   * That reasoning holds for the *hero* and nothing else: below it this page
+   * is the live board, the map and the week's new ratings, which is exactly
+   * what somebody who clicked the wordmark came to look at.
    *
-   * A member cold-loading `/` does see the pitch for the frame or two before
-   * getSession() resolves, because AuthContext starts with no session so this
-   * page never flashes a signed-in shell at a stranger. Blocking the site's
-   * most important public page on an auth round-trip to avoid that would be a
-   * bad trade. Arriving by the wordmark — the common path — costs nothing,
-   * since the session is long resolved by then.
+   * So the pitch goes rather than the page — the same treatment the feed and
+   * the catalogue already get. The hero stays whole for a visitor at every
+   * width, and for everyone on a desktop where the room exists; a member on a
+   * phone drops straight onto the board.
+   *
+   * Nothing about signing in changes: that navigates to /feed explicitly
+   * (`fromPath` in useAuthOperations), so it never depended on this redirect.
    */
-  if (user) return <Navigate to="/feed" replace />;
 
   return (
     <StoryLayout transparentHeader mobileCtaHint="90 seconds. No photo needed.">
@@ -117,7 +119,7 @@ const Home = () => {
       />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <Band ground="cream" size="hero" className="pt-6 sm:pt-10">
+      <Band ground="cream" size="hero" className={cn("pt-6 sm:pt-10", user && "hidden lg:block")}>
         <div aria-hidden className="pointer-events-none absolute -left-16 bottom-0 hidden text-story-green-dark opacity-[0.06] lg:block">
           <Sprig size={260} />
         </div>
@@ -178,7 +180,10 @@ const Home = () => {
         </div>
       </Band>
 
-      <div className="text-story-paper">
+      {/* The divider is the hero's own edge, so it goes with it. Left in, a
+          member on a phone would open on a decorative crest attached to
+          nothing above it. */}
+      <div className={cn("text-story-paper", user && "hidden lg:block")}>
         <CrestDivider className="block h-12 w-full sm:h-20" />
       </div>
 
