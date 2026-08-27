@@ -3,6 +3,7 @@ import React, { useState } from "react";
 
 import AuthFormInputs from "./AuthFormInputs";
 import AuthFormButtons from "./AuthFormButtons";
+import GoogleSignInButton from "./GoogleSignInButton";
 import { useAuthOperations } from "@/hooks/auth/useAuthOperations";
 import { sanitizeInput } from "@/lib/security";
 
@@ -31,7 +32,7 @@ const AuthForm = ({
   const [passwordError, setPasswordError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   
-  const { loading, signIn, signUp } = useAuthOperations();
+  const { loading, signIn, signUp, signInWithGoogle } = useAuthOperations();
 
   const clearErrors = () => {
     setEmailError("");
@@ -108,7 +109,17 @@ const AuthForm = ({
           </button>
         </div>
       )}
-      <form onSubmit={handleAuth} noValidate className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6">
+        <GoogleSignInButton onClick={signInWithGoogle} loading={loading} />
+
+        <div className="flex items-center gap-3" aria-hidden>
+          <div className="h-px flex-1 bg-story-ink/10" />
+          <span className="story-kicker text-story-muted-2">or</span>
+          <div className="h-px flex-1 bg-story-ink/10" />
+        </div>
+      </div>
+
+      <form onSubmit={handleAuth} noValidate className="mt-6 flex flex-col gap-6">
         <AuthFormInputs
           isLogin={isLogin}
           email={email}
