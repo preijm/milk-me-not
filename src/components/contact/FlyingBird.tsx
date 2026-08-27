@@ -22,10 +22,10 @@ interface FlyingBirdProps {
 /**
  * A pigeon, drawn rather than borrowed. The lucide glyph this replaces is a
  * single static outline, and a bird that does not beat its wings is a paper
- * aeroplane. The wing is a lighter shape over the body so it reads at 26px.
+ * aeroplane. The wing is a lighter shape over the body so it reads at 36px.
  */
 const Pigeon = ({ flap, still }: { flap: number; still: boolean }) => (
-  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden>
+  <svg viewBox="0 0 24 24" width="36" height="36" fill="none" aria-hidden>
     <path d="M2.2 11.4 7.4 12.7 7.4 15.9Z" fill="currentColor" />
     <ellipse cx="11.2" cy="13.2" rx="5.3" ry="3.7" fill="currentColor" />
     <circle cx="16.6" cy="9.5" r="2.7" fill="currentColor" />
