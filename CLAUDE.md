@@ -38,6 +38,38 @@ npx supabase start
 npx supabase stop
 ```
 
+## Work in a worktree
+
+**Start every session by calling `EnterWorktree`.** Not optional, and not only
+for big changes.
+
+More than one agent works in this repository at once, and they were sharing a
+single checkout. In one afternoon that went wrong three times: a branch was
+switched out from under a session mid-task, a `git add -A` swept another
+session's half-finished Google sign-in into an unrelated commit, and a third
+commit landed on somebody else's branch entirely. Each was recoverable, and each
+was only caught because someone read the diff before pushing. That is not a
+safeguard, that is luck.
+
+A worktree is its own directory and its own branch against the same repository,
+so none of that can happen. It costs a few seconds.
+
+```
+EnterWorktree             # branches from origin/main, switches the session in
+ExitWorktree keep         # leave it on disk to come back to
+ExitWorktree remove       # done with it
+```
+
+They live in `.claude/worktrees/`, which is gitignored, so they never show up in
+`git status` or in a commit. Two things to know: a fresh worktree has no
+`node_modules`, so run `bun install` before tests; and the branch is created
+from `origin/main` rather than from whatever the main checkout happens to have
+checked out, which is usually what you want and occasionally is not.
+
+The one exception is a task that is genuinely about the working copy itself —
+inspecting what another session has left uncommitted, say. Then stay put, and
+touch nothing you did not put there.
+
 ## Architecture
 
 **MilkMeNot** is a community platform for rating plant-based milk alternatives. React 19 + TypeScript SPA built with Vite, Supabase for backend, and Capacitor for mobile.
