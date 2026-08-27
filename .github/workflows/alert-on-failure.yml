@@ -1,0 +1,67 @@
+# Say something when a run on main fails.
+#
+# GitHub sends run notifications to whoever triggered the run, and since
+# auto-merge lands pull requests through the app, that is now
+# `milkmenot-lockfile[bot]`. A failed deploy therefore emails a bot. Auto-merge
+# made success silent, which was the point; it made failure silent too, which
+# was not.
+#
+# An issue is the fix rather than an email because it persists. It sits in the
+# repository until someone closes it, so a failure at midnight is still there in
+# the morning, and it notifies regardless of who — or what — triggered the run.
+#
+# Only `main`. A pull request that fails is already visible on the pull request,
+# and opening an issue for it would be noise about something nobody has merged.
+
+name: Alert on failure
+
+on:
+  workflow_run:
+    workflows: [CI, Deploy, CodeQL, Release]
+    types: [completed]
+
+permissions:
+  issues: write
+
+jobs:
+  open-an-issue:
+    name: Open an issue
+    if: >-
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      # One issue per workflow, reopened and commented rather than duplicated.
+      # Three failing deploys in a row is one problem, and three identical
+      # issues is the same noise this exists to remove.
+      - name: Open or update the issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          TITLE_TEXT: ${{ github.event.workflow_run.display_title }}
+        run: |
+          set -euo pipefail
+
+          TITLE="$WORKFLOW is failing on main"
+          BODY=$(printf '%s\n\n- commit: \`%s\`\n- what landed: %s\n- run: %s\n\nOpened automatically because a run on main failed, and GitHub sends run notifications to whoever triggered the run — which is the merge app, not a person.' \
+            "**$WORKFLOW** failed on \`main\`." "${SHA:0:8}" "$TITLE_TEXT" "$RUN_URL")
+
+          EXISTING=$(gh issue list --repo "$REPO" --state open --label ci-failure \
+            --search "$TITLE in:title" --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")] | .[0].number // empty")
+
+          if [ -n "$EXISTING" ]; then
+            echo "Commenting on #$EXISTING"
+            gh issue comment "$EXISTING" --repo "$REPO" --body "$BODY"
+          else
+            echo "Opening a new issue"
+            gh issue create --repo "$REPO" \
+              --title "$TITLE" \
+              --body "$BODY" \
+              --label ci-failure \
+              --assignee preijm
+          fi

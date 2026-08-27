@@ -1,0 +1,145 @@
+# Ask the live site whether it is alright, on a timer.
+#
+# Everything else in this repository checks the code before it lands. Nothing
+# checked what is actually being served afterwards, which is how the update
+# banner stayed broken from January to August: every check was green the entire
+# time, because the thing that was wrong was not in the code under test.
+#
+# Two questions, both cheap:
+#
+#   - does milkmenot.com still serve the app, or has it started serving an
+#     error, an empty page, or Cloudflare's own?
+#   - is the build it serves the one main is on? A deploy that fails leaves the
+#     site working and stale, which is the failure that looks like success.
+#
+# It also picks up runs stuck awaiting approval, because that is exactly how a
+# lockfile pull request sat untouched for a day with nobody told.
+
+name: Health check
+
+on:
+  schedule:
+    # Every six hours. Frequent enough that a bad deploy is caught the same
+    # day, rare enough that a flaky network does not become its own alert.
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  actions: read
+
+jobs:
+  check:
+    name: Is the site alright
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      # A merge starts a deploy, and a check landing in that minute would see a
+      # build id that is stale for a perfectly good reason. Asking first is
+      # cheaper than an issue that closes itself.
+      - name: Is a deploy in flight
+        id: deploying
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -uo pipefail
+          RUNNING=$(gh run list --repo "$REPO" --workflow deploy.yml --limit 5 --json status --jq '[.[] | select(.status != "completed")] | length')
+          echo "count=${RUNNING:-0}" >> $GITHUB_OUTPUT
+          echo "Deploys in flight: ${RUNNING:-0}"
+
+      - name: Ask the site
+        id: probe
+        env:
+          SITE: https://milkmenot.com
+          DEPLOY_IN_FLIGHT: ${{ steps.deploying.outputs.count }}
+        run: |
+          set -uo pipefail
+          PROBLEMS=""
+
+          note() {
+            PROBLEMS="${PROBLEMS}- $1"$'\n'
+            echo "PROBLEM: $1"
+          }
+
+          STATUS=$(curl -sS -o /tmp/index.html -w '%{http_code}' --max-time 30 "$SITE" || echo 000)
+          if [ "$STATUS" != "200" ]; then
+            note "\`$SITE\` answered **$STATUS**."
+          elif ! grep -qi '<div id="root"' /tmp/index.html; then
+            # A 200 is not the same as the app. Cloudflare error pages and the
+            # SPA fallback both answer 200 quite happily.
+            note "\`$SITE\` answered 200 but the page it served does not contain the app's root element."
+          fi
+
+          # What the edge says it is serving, against what main is on. These
+          # are the same value written twice by one build, so a mismatch means
+          # a deploy did not land — the site keeps working and quietly stops
+          # being current.
+          DEPLOYED=$(curl -sS --max-time 30 "$SITE/version.json" | sed -n 's/.*"buildId"[: ]*"\([^"]*\)".*/\1/p')
+          EXPECTED=$(git rev-parse HEAD | cut -c1-12)
+
+          if [ -z "$DEPLOYED" ]; then
+            note "\`$SITE/version.json\` did not return a build id."
+          elif [ "$DEPLOY_IN_FLIGHT" != "0" ]; then
+            echo "A deploy is running; not judging the build id this time."
+          elif [ "$DEPLOYED" != "$EXPECTED" ]; then
+            note "The site is serving build \`$DEPLOYED\` while main is on \`$EXPECTED\` — a deploy has not landed."
+          fi
+
+          {
+            echo "problems<<HEALTH_EOF"
+            printf '%s' "$PROBLEMS"
+            echo ""
+            echo "HEALTH_EOF"
+          } >> $GITHUB_OUTPUT
+
+      # A run parked on "waiting for approval" reports nothing anywhere, so
+      # nothing is what anyone hears. #193 sat like that for a day.
+      - name: Look for runs waiting on a person
+        id: stuck
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -uo pipefail
+          WAITING=$(gh run list --repo "$REPO" --limit 40 \
+            --json databaseId,status,conclusion,headBranch,workflowName \
+            --jq '[.[] | select(.conclusion == "action_required")] | length')
+          echo "count=${WAITING:-0}" >> $GITHUB_OUTPUT
+          echo "Runs awaiting approval: ${WAITING:-0}"
+
+      - name: Say something if it is not
+        if: steps.probe.outputs.problems != '' || steps.stuck.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PROBLEMS: ${{ steps.probe.outputs.problems }}
+          WAITING: ${{ steps.stuck.outputs.count }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          TITLE="The site health check found something"
+          BODY="$PROBLEMS"
+          if [ "$WAITING" != "0" ]; then
+            BODY="${BODY}- ${WAITING} workflow run(s) are waiting for approval and will never report a result on their own."$'\n'
+          fi
+          BODY="${BODY}"$'\n'"Checked by ${RUN_URL}. Close this once it is sorted; the next run will reopen it if the problem is still there."
+
+          EXISTING=$(gh issue list --repo "$REPO" --state open --label health \
+            --search "$TITLE in:title" --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")] | .[0].number // empty")
+
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$REPO" --body "$BODY"
+          else
+            gh issue create --repo "$REPO" \
+              --title "$TITLE" --body "$BODY" --label health --assignee preijm
+          fi
+
+          # Red as well as filed, so the run itself is not quietly green.
+          echo "::error::The health check found something. See the issue."
+          exit 1

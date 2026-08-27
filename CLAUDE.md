@@ -215,7 +215,7 @@ is served from a fixture, so there is no network to be slow.
 - Tests colocated with source: `src/**/*.{test,spec}.{ts,tsx}`
 
 ### Workflows (`.github/workflows/`)
-Six, not one:
+Eight, not one:
 
 - **`ci.yml`** — three sequential stages, **Lint + Type Check → Test → Build**, on
   every PR and push to main. Uses Bun. Cancels in-progress runs on new push.
@@ -249,6 +249,20 @@ Six, not one:
   `GITHUB_TOKEN` on purpose: whoever enables auto-merge is recorded as merging
   it later, and a push to main from `GITHUB_TOKEN` starts no workflows — so the
   built-in token could land a merge that never deploys.
+- **`alert-on-failure.yml`** — opens an issue when CI, Deploy, CodeQL or
+  Release fails **on main**. GitHub sends run notifications to whoever
+  triggered the run, and auto-merge lands pull requests through the app, so a
+  failed deploy emails `milkmenot-lockfile[bot]` and nobody else. An issue
+  notifies regardless and persists until closed. One issue per workflow,
+  commented rather than duplicated; main only, since a failing pull request is
+  already visible on the pull request.
+- **`health-check.yml`** — every six hours, asks the live site whether it is
+  alright: does it still serve the app, and is the build it serves the one main
+  is on. A deploy that fails leaves the site working and stale, which is the
+  failure that looks like success — and is how the update banner stayed broken
+  from January to August with every check green. It skips the build comparison
+  while a deploy is in flight, and also reports runs parked on "waiting for
+  approval", which report nothing anywhere on their own.
 - **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
   main that touches that file, so editing it is what deploys it. It runs
   `delete-other-labels: true`: a label removed from the file is removed from
