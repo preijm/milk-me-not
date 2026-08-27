@@ -23,6 +23,8 @@
 # approval on every pull request in the repository. `owned-paths.yml` reads the
 # list below and asks for the `reviewed` label instead, which is a deliberate
 # act one person can actually perform. This file stays the single list.
+#
+# See "Three paths do not auto-merge" in CLAUDE.md for the whole story.
 
 # Migrations, policies and edge functions. A bad migration runs once against
 # real data and cannot be taken back, and RLS is the only thing standing
