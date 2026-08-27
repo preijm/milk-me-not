@@ -54,8 +54,19 @@ const fakeSession = () => {
   };
 };
 
-export const stubBackend = async (page: Page) => {
+export type Fixtures = {
+  /** Keyed by RPC name, e.g. `search_product_types`. */
+  rpc?: Record<string, unknown>;
+  /** Keyed by table or view name, e.g. `countries`. */
+  tables?: Record<string, unknown>;
+};
+
+/** Every write the app attempted, in order. */
+export type Recorder = { writes: { method: string; path: string; body: unknown }[] };
+
+export const stubBackend = async (page: Page, fixtures: Fixtures = {}): Promise<Recorder> => {
   const session = fakeSession();
+  const recorder: Recorder = { writes: [] };
   const json = (body: unknown) => ({
     status: 200,
     contentType: "application/json",
@@ -80,18 +91,53 @@ export const stubBackend = async (page: Page) => {
   });
 
   /**
-   * PostgREST, including the part where `.single()` is not a collection.
+   * PostgREST, including the two things it does that a naive stub does not.
    *
-   * A `.single()` query asks for `application/vnd.pgrst.object+json` and an
-   * empty result comes back as a 406 with code PGRST116 — never as `[]`.
-   * Answering every read with an array meant `useVersionCheck` took an empty
-   * array as its version row, read `.version` off it as undefined, and split
-   * undefined. VersionProvider wraps the whole app, so that was a blank page
-   * and nothing to test. Faithful beats convenient.
+   * `.single()` asks for `application/vnd.pgrst.object+json`, and an empty
+   * result comes back as a 406 with code PGRST116 — never as `[]`. Answering
+   * every read with an array meant `useVersionCheck` took an empty array as
+   * its version row, read `.version` off it as undefined, and split undefined.
+   * VersionProvider wraps the whole app, so that was a blank page and nothing
+   * to test. Faithful beats convenient.
+   *
+   * Writes are recorded rather than answered blankly, because what the app
+   * tried to save is the whole point of a submission test — and they are
+   * echoed back with an id, since the form reads the created row.
    */
-  await page.route("**/rest/v1/**", (route) => {
-    const accept = route.request().headers()["accept"] ?? "";
-    if (accept.includes("vnd.pgrst.object+json")) {
+  await page.route("**/rest/v1/**", async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    const name = url.pathname.replace("/rest/v1/", "").replace(/^rpc\//, "");
+    const isRpc = url.pathname.includes("/rpc/");
+    const accept = request.headers()["accept"] ?? "";
+    const wantsObject = accept.includes("vnd.pgrst.object+json");
+
+    // HEAD is how postgrest asks for a count — `select(..., { head: true })`
+    // — so it is a read that happens not to be a GET. Recording it as a write
+    // made "did this post once or twice" unanswerable.
+    const isWrite = ["POST", "PATCH", "PUT", "DELETE"].includes(request.method());
+
+    if (isWrite && !isRpc) {
+      let body: unknown = null;
+      try {
+        body = request.postDataJSON();
+      } catch {
+        body = request.postData();
+      }
+      recorder.writes.push({ method: request.method(), path: name, body });
+
+      const row = { id: "created-row", ...(Array.isArray(body) ? body[0] : (body as object)) };
+      return route.fulfill(json(wantsObject ? row : [row]));
+    }
+
+    const fixture = isRpc ? fixtures.rpc?.[name] : fixtures.tables?.[name];
+    if (fixture !== undefined) {
+      const value =
+        wantsObject && Array.isArray(fixture) ? (fixture[0] ?? null) : fixture;
+      return route.fulfill(json(value));
+    }
+
+    if (wantsObject) {
       return route.fulfill({
         status: 406,
         contentType: "application/json",
@@ -103,7 +149,7 @@ export const stubBackend = async (page: Page) => {
         }),
       });
     }
-    return route.fulfill(json([]));
+    return route.fulfill(json(isRpc ? [] : []));
   });
 
   // Open Food Facts, so a scan never reaches a third party mid-test.
@@ -114,6 +160,8 @@ export const stubBackend = async (page: Page) => {
   await page.route("**/counterscale.peterreijm.workers.dev/**", (route) =>
     route.fulfill({ status: 204, body: "" }),
   );
+
+  return recorder;
 };
 
 /** Write the session where the Supabase client looks for it on boot. */
