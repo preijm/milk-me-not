@@ -100,8 +100,8 @@ describe("UpdateBanner", () => {
   });
 
   it("sits on a green the words can actually be read on", () => {
-    // --story-green is 151 100% 37%, luminance 0.371. Pure white on it is
-    // 2.49:1 — under the 4.5:1 AA wants for body text and under the 3:1 a
+    // --story-green is 151 100% 37.45%, luminance 0.382. Pure white on it is
+    // 2.43:1 — under the 4.5:1 AA wants for body text and under the 3:1 a
     // control needs to be discernible at all, so painting the × white was not
     // enough on its own. --story-green-dark carries the headline at 6.21:1.
     const { container } = render(<UpdateBanner />);

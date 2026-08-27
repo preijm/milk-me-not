@@ -323,7 +323,7 @@
     --card-foreground: 155 14% 13%;
     --popover: 0 0% 100%;
     --popover-foreground: 155 14% 13%;
-    --primary: 151 100% 37%;         /* #00bf63 - Botanical green */
+    --primary: 151 100% 37.45%;      /* #00bf63 - Botanical green */
     --primary-foreground: 0 0% 100%;
     --primary-container: 140 95% 70%;
     --on-primary-container: 151 100% 22%;
@@ -337,13 +337,13 @@
     --destructive-foreground: 0 0% 100%;
     --border: 145 10% 87%;           /* #e0e6e1 - Soft sage */
     --input: 145 10% 87%;
-    --ring: 151 100% 37%;
+    --ring: 151 100% 37.45%;
     --radius: 0.5rem;
 
     /* ========================================
        SEMANTIC SCORE COLORS
        ======================================== */
-    --score-excellent: 151 100% 37%;
+    --score-excellent: 151 100% 37.45%;
     --score-good: 231 100% 56%;
     --score-fair: 40 100% 45%;       /* Warmer amber */
     --score-poor: 358 78% 56%;       /* Calmer red */
@@ -351,7 +351,7 @@
     /* ========================================
        SEMANTIC STATUS COLORS
        ======================================== */
-    --success: 151 100% 37%;
+    --success: 151 100% 37.45%;
     --success-foreground: 0 0% 100%;
     --warning: 40 100% 45%;
     --warning-foreground: 0 0% 100%;
@@ -363,7 +363,7 @@
     /* ========================================
        BRAND COLORS (aliases for primary/secondary)
        ======================================== */
-    --brand-primary: 151 100% 37%;
+    --brand-primary: 151 100% 37.45%;
     --brand-primary-foreground: 0 0% 100%;
     --brand-secondary: 231 100% 56%;
     --brand-secondary-foreground: 0 0% 100%;
