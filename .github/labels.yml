@@ -108,3 +108,11 @@
 - name: "hold"
   color: "e4b429"
   description: "Do not merge automatically, even when every check is green"
+
+- name: "ci-failure"
+  color: "b60205"
+  description: "A workflow run on main failed; opened automatically"
+
+- name: "health"
+  color: "d93f0b"
+  description: "The live site or the pipeline needs a look; opened automatically"
