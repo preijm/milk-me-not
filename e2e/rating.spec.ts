@@ -105,9 +105,6 @@ test.describe("posting a rating", () => {
     await setScore(page, "7");
     await page.getByPlaceholder("Tasting notes...").fill("Creamy, barely oaty");
     await pickCountry(page);
-    // Typing alone does not set the shop — ShopSelect keeps a controlled
-    // vocabulary, the same way brands do, so the name has to be picked or
-    // added. Filling the box and submitting drops it silently.
     await page.getByPlaceholder("Search or add shop...").fill("Albert Heijn");
     await page.getByText(/Albert Heijn/).first().click();
 
@@ -116,6 +113,29 @@ test.describe("posting a rating", () => {
     await expect
       .poll(() => backend.writes.find((w) => w.path === "milk_tests")?.body, { timeout: 15_000 })
       .toMatchObject({ rating: 7, notes: "Creamy, barely oaty", shop_name: "Albert Heijn" });
+  });
+
+  test("keeps a shop the reader typed but never picked from the list", async ({ page }) => {
+    // Shop is optional, so nothing blocked a submit — the name sat in the box
+    // looking entered and the rating saved without it. Typing is choosing now.
+    const backend = await stubBackend(page, fixtures);
+    await signIn(page);
+
+    await page.goto("/add");
+    await pickProduct(page);
+    await setScore(page, "6");
+    await pickCountry(page);
+
+    await page.getByPlaceholder("Search or add shop...").fill("Jumbo");
+    // Deliberately no click on the suggestion, and focus moved away the way
+    // reaching for the button does.
+    await page.getByPlaceholder("Tasting notes...").click();
+
+    await page.getByRole("button", { name: "Post my rating" }).click();
+
+    await expect
+      .poll(() => backend.writes.find((w) => w.path === "milk_tests")?.body, { timeout: 15_000 })
+      .toMatchObject({ shop_name: "Jumbo" });
   });
 
   test("does not post twice when the button is pressed twice", async ({ page }) => {
