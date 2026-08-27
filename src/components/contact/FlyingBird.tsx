@@ -53,26 +53,35 @@ export const FlyingBird = ({ birdIds }: FlyingBirdProps) => {
         return (
           <motion.div
             key={birdId}
-            initial={{ x: 0, y: 0, opacity: 0, scale: f.scale * 0.6 }}
+            initial={{ x: 0, y: 0, opacity: 0 }}
             // Somebody who has asked for less motion still gets the bird —
             // they just get it sitting there rather than crossing the screen.
             animate={
               still
-                ? { opacity: [0, 1, 1, 0], scale: f.scale }
-                : {
-                    x: f.x,
-                    y: f.y,
-                    rotate: f.rotate,
-                    scaleX: f.scaleX,
-                    scale: f.scale,
-                    opacity: [0, 1, 1, 0.9, 0],
-                  }
+                ? { opacity: [0, 1, 1, 0] }
+                : { x: f.x, y: f.y, rotate: f.rotate, opacity: f.opacity }
             }
             exit={{ opacity: 0 }}
-            transition={{ duration: still ? 1.2 : f.duration, ease: "easeOut" }}
+            // Linear, deliberately. The curve and its easing are both in the
+            // sample positions; an easing here would be applied to every pair
+            // of them in turn, which is what made the old five-waypoint
+            // version stutter its way across the screen.
+            transition={{ duration: still ? 1.2 : f.duration, ease: "linear" }}
             className="pointer-events-none absolute left-6 top-8 z-50 text-score-fair"
           >
-            <Pigeon flap={f.flap} still={still} />
+            {/* Facing lives on its own element. scaleX and scale compose into
+                one transform, and a bird that turns round — the lost one in
+                five — animates scaleX from 1 to -1, which squashed it flat
+                through zero on the way past. Here it is only ever mirroring
+                a fixed-size child. */}
+            <motion.div
+              style={{ transformOrigin: "center" }}
+              initial={{ scaleX: f.scaleX[0], scale: f.scale }}
+              animate={still ? { scale: f.scale } : { scaleX: f.scaleX, scale: f.scale }}
+              transition={{ duration: still ? 1.2 : f.duration, ease: "linear" }}
+            >
+              <Pigeon flap={f.flap} still={still} />
+            </motion.div>
           </motion.div>
         );
       })}
