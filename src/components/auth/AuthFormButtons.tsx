@@ -2,7 +2,10 @@ import { ArrowRight, StoryButton } from "@/components/story";
 
 interface AuthFormButtonsProps {
   isLogin: boolean;
+  /** Drives the button's own label — set only while this form's own submit is in flight. */
   loading: boolean;
+  /** Also disabled while a sibling auth action (Google) is in flight, without stealing its label. */
+  disabled?: boolean;
   onForgotPassword: () => void;
   onToggleMode: () => void;
 }
@@ -12,7 +15,7 @@ interface AuthFormButtonsProps {
  * arrived here mid-intent from a "start rating" button; "Sign Up" loses the
  * thread, "Create account & rate" keeps it.
  */
-const AuthFormButtons = ({ isLogin, loading, onForgotPassword, onToggleMode }: AuthFormButtonsProps) => (
+const AuthFormButtons = ({ isLogin, loading, disabled = loading, onForgotPassword, onToggleMode }: AuthFormButtonsProps) => (
   <div className="flex flex-col gap-4">
     {isLogin && (
       <button
@@ -24,7 +27,7 @@ const AuthFormButtons = ({ isLogin, loading, onForgotPassword, onToggleMode }: A
       </button>
     )}
 
-    <StoryButton type="submit" disabled={loading} className="w-full">
+    <StoryButton type="submit" disabled={disabled} className="w-full">
       {loading ? "One moment…" : isLogin ? "Log in and keep rating" : "Create account & rate"}
       {!loading && <ArrowRight />}
     </StoryButton>

@@ -22,6 +22,7 @@ export interface AuthFormData {
 
 export const useAuthOperations = () => {
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const { toast } = useToast();
   const { refreshAuth } = useAuth();
 
@@ -230,7 +231,7 @@ export const useAuthOperations = () => {
   };
 
   const signInWithGoogle = async () => {
-    setLoading(true);
+    setGoogleLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -249,7 +250,7 @@ export const useAuthOperations = () => {
         description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
-      setLoading(false);
+      setGoogleLoading(false);
     }
   };
 
@@ -318,6 +319,7 @@ export const useAuthOperations = () => {
 
   return {
     loading,
+    googleLoading,
     signIn,
     signUp,
     signInWithGoogle,
