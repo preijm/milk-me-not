@@ -268,6 +268,31 @@ Eight, not one:
   `delete-other-labels: true`: a label removed from the file is removed from
   the repository.
 
+### Three paths do not auto-merge
+Everything else does. Tests, components, copy and styling land the moment the
+checks go green, because the checks are a better reviewer for those than a
+tired person at eleven at night, and anything they miss is a redeploy away.
+
+`/supabase/`, `/.github/` and `/public/_headers` are not that. A migration runs
+once against real data, `.github/` can quietly switch off everything that would
+have caught a change to `.github/`, and a loosened CSP fails nothing and tells
+nobody. Those wait for the **`reviewed`** label.
+
+**GitHub's own "require review from code owners" does not do this**, and it
+fails silently rather than loudly. It is inert unless
+`required_approving_review_count` is at least 1 — a probe pull request touching
+`.github/` merged itself with the rule active and the count at zero — and
+setting the count to 1 demands an approval on *every* pull request, which is
+auto-merge off for the whole repository. There is also no approving your own
+pull request, and this repository has one maintainer, so peer review was never
+the achievable thing.
+
+`owned-paths.yml` is what actually gates. It reads the patterns out of
+CODEOWNERS, so that file stays the single list and GitHub's own interface
+agrees with the check by construction. What it buys is not review: it is that a
+change to those three paths stops and waits to be merged on purpose, rather
+than landing at three in the morning because the tests happened to pass.
+
 ### `main` is protected
 Two rulesets apply to it, both with a repository-admin bypass:
 
