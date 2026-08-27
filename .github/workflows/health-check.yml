@@ -105,11 +105,35 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           set -uo pipefail
-          WAITING=$(gh run list --repo "$REPO" --limit 40 \
-            --json databaseId,status,conclusion,headBranch,workflowName \
-            --jq '[.[] | select(.conclusion == "action_required")] | length')
-          echo "count=${WAITING:-0}" >> $GITHUB_OUTPUT
-          echo "Runs awaiting approval: ${WAITING:-0}"
+
+          # Only runs belonging to a pull request that is still open.
+          #
+          # A branch is force-pushed several times before it merges, and every
+          # superseded run stays `action_required` for good — one lockfile
+          # branch left six behind. Counting those meant reporting the same six
+          # every six hours, forever, about a pull request that had already
+          # merged. That is the noise this whole thing exists to remove, so it
+          # is worth being exact: waiting matters only where someone can still
+          # act on it.
+          OPEN_BRANCHES=$(gh pr list --repo "$REPO" --state open --limit 50 \
+            --json headRefName --jq '.[].headRefName')
+
+          STUCK_BRANCHES=$(gh run list --repo "$REPO" --limit 60 \
+            --json conclusion,headBranch \
+            --jq '.[] | select(.conclusion == "action_required") | .headBranch')
+
+          # Counted in the shell rather than with jq's --argjson, so the whole
+          # thing can be run on a laptop before it is trusted on a schedule.
+          WAITING=0
+          while IFS= read -r branch; do
+            [ -n "$branch" ] || continue
+            if printf '%s\n' "$OPEN_BRANCHES" | grep -qxF -- "$branch"; then
+              WAITING=$((WAITING + 1))
+            fi
+          done <<< "$STUCK_BRANCHES"
+
+          echo "count=${WAITING}" >> $GITHUB_OUTPUT
+          echo "Runs awaiting approval on an open pull request: ${WAITING:-0}"
 
       - name: Say something if it is not
         if: steps.probe.outputs.problems != '' || steps.stuck.outputs.count != '0'
