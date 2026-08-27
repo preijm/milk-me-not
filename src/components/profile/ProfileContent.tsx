@@ -124,11 +124,11 @@ export const ProfileContent = ({
           </button>
           <button
             onClick={() => navigate("/add")}
-            className="group flex items-center justify-between rounded-2xl bg-story-green p-4 text-left text-story-ink story-lift-green transition-transform hover:brightness-[1.07]"
+            className="group flex items-center justify-between rounded-2xl bg-story-green p-4 text-left text-white story-lift-green transition-transform hover:brightness-[1.07]"
           >
             <span>
               <span className="block text-[0.9375rem] font-bold">Rate another milk</span>
-              <span className="block text-[0.8125rem] text-story-ink/75">Takes about a minute</span>
+              <span className="block text-[0.8125rem] text-white/85">Takes about a minute</span>
             </span>
             <ArrowRight className="shrink-0" />
           </button>

@@ -131,7 +131,7 @@ export const ProductIdentity = ({
   // is what the carton is *for*. Everything except barista is the same neutral
   // now, so the coloured pill in a row means one thing. It is coffee-coloured
   // rather than brand green for the obvious reason, and for a less obvious
-  // one: white on --story-green is 2.48:1, and on --story-coffee it is 9.37:1.
+  // one: white on --story-green is 2.43:1, and on --story-coffee it is 9.37:1.
   const badges: { key: string; label: string; tone: string; icon?: boolean }[] = [
     ...(isBarista ? [{ key: "barista", label: "Barista", tone: "bg-story-coffee-light text-story-coffee", icon: true }] : []),
     ...flavorLabels.map((label) => ({ key: `f:${label}`, label, tone: NEUTRAL_PILL })),

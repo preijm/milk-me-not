@@ -146,7 +146,7 @@ const BUTTON_SIZE = {
 } as const;
 
 const BUTTON_TONE = {
-  green: "bg-story-green text-story-ink story-lift-green hover:brightness-[1.07]",
+  green: "bg-story-green text-white story-lift-green hover:brightness-[1.07]",
   ink: "bg-story-ink text-story-cream hover:brightness-125",
   paper: "bg-white text-story-ink shadow-[0_10px_26px_-14px_rgba(27,36,33,0.5)] hover:bg-story-cream",
   outline: "border-[1.5px] border-story-ink/15 bg-transparent text-story-ink hover:bg-story-ink/5",

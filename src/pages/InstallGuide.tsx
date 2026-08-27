@@ -116,7 +116,7 @@ const InstallGuide = () => {
               <a
                 href={ANDROID_DOWNLOAD_URL}
                 download
-                className="story-lift-green inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-story-green px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] text-story-ink no-underline transition-[filter] duration-150 hover:brightness-[1.07] active:scale-[0.985] sm:w-auto"
+                className="story-lift-green inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-story-green px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] text-white no-underline transition-[filter] duration-150 hover:brightness-[1.07] active:scale-[0.985] sm:w-auto"
               >
                 <Download className="h-[18px] w-[18px]" strokeWidth={2.4} aria-hidden />
                 Download the APK

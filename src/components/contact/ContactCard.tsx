@@ -53,7 +53,7 @@ export const ContactCard = ({
     </Button>
   ) : (
     <Button
-      className="relative mt-5 w-full rounded-full bg-story-green font-bold text-story-ink hover:brightness-[1.07]"
+      className="relative mt-5 w-full rounded-full bg-story-green font-bold text-white hover:brightness-[1.07]"
       onClick={onClick}
     >
       {buttonText}
@@ -88,7 +88,7 @@ export const ContactCard = ({
         </div>
       </div>
       {buttonHref ? (
-        <Button asChild className="relative mt-5 w-full rounded-full bg-story-green font-bold text-story-ink hover:brightness-[1.07]">
+        <Button asChild className="relative mt-5 w-full rounded-full bg-story-green font-bold text-white hover:brightness-[1.07]">
           <a href={buttonHref}>{buttonText}</a>
         </Button>
       ) : (
