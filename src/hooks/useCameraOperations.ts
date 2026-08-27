@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { validateFile } from "@/lib/fileValidation";
-import { progressiveCompress, shouldCompress } from "@/lib/imageCompression";
+import { toFullSizeJpeg } from "@/lib/imageCompression";
 
 interface UseCameraOperationsProps {
   setPicture: (file: File | null) => void;
@@ -25,28 +25,36 @@ export const useCameraOperations = ({
   const [showDesktopCamera, setShowDesktopCamera] = useState(false);
   const { toast } = useToast();
 
+  /**
+   * Shrink the photo before it goes anywhere else.
+   *
+   * Every path into the form funnels through here — native camera, native
+   * gallery, the file picker and the desktop webcam — so this is the one place
+   * that can guarantee storage never sees a 3000x4000 original.
+   *
+   * It used to compress only above 5MB, which no phone photo reaches, so the
+   * branch was dead and the feed paid for it: see `imageCompression.ts`.
+   *
+   * A failure here keeps the original rather than blocking the post. That is
+   * the same fallback as before and it is the right one — a slow photo is
+   * better than a lost review — but it is now loud, because a silent version
+   * of exactly this is what hid the problem for a year.
+   */
   const processAndSetFile = async (file: File, previewUrl: string) => {
     try {
-      // Check if compression is needed (only for files larger than 5MB)
-      if (shouldCompress(file, 5 * 1024 * 1024)) {
-        const compressedFile = await progressiveCompress(file);
-        setPicture(compressedFile);
-        
-        // Update preview with compressed image if significantly smaller
-        if (compressedFile.size < file.size * 0.8) {
-          const compressedPreviewUrl = URL.createObjectURL(compressedFile);
-          setPicturePreview(compressedPreviewUrl);
-          URL.revokeObjectURL(previewUrl); // Clean up original preview
-        } else {
-          setPicturePreview(previewUrl);
-        }
-      } else {
-        setPicture(file);
-        setPicturePreview(previewUrl);
-      }
+      const resized = await toFullSizeJpeg(file, file.name.replace(/\.[^/.]+$/, "") + ".jpg");
+      setPicture(resized);
+      setPicturePreview(URL.createObjectURL(resized));
+      // The caller's preview is a blob URL for the original in every path but
+      // the Capacitor ones, which hand over a data URL. Revoking a data URL is
+      // a no-op, so this is safe either way.
+      URL.revokeObjectURL(previewUrl);
     } catch (error) {
-      console.error('Error processing file:', error);
-      // Fallback to original file if compression fails
+      console.error("Could not resize the photo; uploading it at full size:", error);
+      toast({
+        title: "Photo not resized",
+        description: "It will still upload, just more slowly.",
+      });
       setPicture(file);
       setPicturePreview(previewUrl);
     }

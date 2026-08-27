@@ -53,3 +53,7 @@ supabase/.branches/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Originals saved by scripts/backfill-image-thumbnails.ts before it overwrites
+# them. Other people's photos — they belong on the machine, not in the repo.
+/backup/

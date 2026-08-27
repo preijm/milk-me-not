@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { MilkDrop } from "@/components/story";
 import { cn } from "@/lib/utils";
+import { thumbnailPath } from "@/lib/imageCompression";
 
 interface FeedImageProps {
   picturePath?: string | null;
@@ -23,6 +24,9 @@ interface FeedImageProps {
   className?: string;
 }
 
+const publicUrl = (path: string) =>
+  `https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/milk-pictures/${encodeURIComponent(path)}`;
+
 export const FeedImage = ({
   picturePath,
   brandName,
@@ -32,6 +36,25 @@ export const FeedImage = ({
   className,
 }: FeedImageProps) => {
   const [showEnlarged, setShowEnlarged] = useState(false);
+
+  const imageUrl = picturePath ? publicUrl(picturePath) : null;
+  const thumbUrl = picturePath ? publicUrl(thumbnailPath(picturePath)) : null;
+
+  /* The card shows the thumbnail; the dialog shows the photo.
+     A thumbnail is ~70KB against ~3MB, and the card it fills is 104px wide on
+     a phone, so this is the whole reason the feed stopped being slow. Photos
+     posted before thumbnails existed have none until the backfill script has
+     run over them, and a bucket 404s rather than redirects — hence the
+     fallback below, which is simply what every card used to do.
+
+     Above the `picturePath` guard because a card can gain or lose its photo,
+     and hooks after an early return would change in number when it does. */
+  const [cardSrc, setCardSrc] = useState(thumbUrl);
+  const [srcFor, setSrcFor] = useState(picturePath);
+  if (srcFor !== picturePath) {
+    setSrcFor(picturePath);
+    setCardSrc(thumbUrl);
+  }
 
   if (!picturePath) {
     return (
@@ -54,8 +77,6 @@ export const FeedImage = ({
     );
   }
 
-  const imageUrl = `https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/milk-pictures/${encodeURIComponent(picturePath)}`;
-
   return (
     <>
       <button
@@ -64,15 +85,23 @@ export const FeedImage = ({
         className={cn("block w-full overflow-hidden rounded-xl", className)}
       >
         <img
-          src={imageUrl}
+          src={cardSrc ?? undefined}
           alt={`${brandName} ${productName}`}
-          loading="eager"
-          decoding="sync"
+          /* Nothing below the fold is worth fetching before it is scrolled to,
+             and `sync` decoding blocked the main thread once per card. The
+             containers below reserve the photo's box by aspect ratio or fixed
+             height, so deferring the fetch shifts no layout. */
+          loading="lazy"
+          decoding="async"
           className={cn(
             "w-full object-cover transition-transform duration-300 hover:scale-105",
             portrait ? "aspect-[3/4] h-auto" : compact ? "h-20" : "h-56 sm:h-64",
           )}
           onError={(e) => {
+            if (cardSrc !== imageUrl) {
+              setCardSrc(imageUrl);
+              return;
+            }
             const target = e.currentTarget as HTMLImageElement;
             target.style.display = "none";
           }}
@@ -99,10 +128,10 @@ export const FeedImage = ({
               <X className="h-5 w-5 text-story-ink" />
             </button>
             <img
-              src={imageUrl}
+              src={imageUrl ?? undefined}
               alt={`${brandName} ${productName}`}
               loading="eager"
-              decoding="sync"
+              decoding="async"
               className="block max-h-[88vh] w-auto max-w-[96vw] rounded-2xl object-contain"
             />
           </div>

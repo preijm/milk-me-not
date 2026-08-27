@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { Seo } from "@/components/Seo";
@@ -48,22 +47,11 @@ const Feed = () => {
     enabled: feedItems.length > 0,
   });
 
-  // Preload feed images so full-page screenshots (Edge) capture already-loaded assets.
-  useEffect(() => {
-    const picturePaths = feedItems
-      .map((i) => i.picture_path)
-      .filter((p): p is string => !!p);
-
-    // Dedupe to avoid unnecessary requests
-    const uniquePaths = Array.from(new Set(picturePaths));
-
-    uniquePaths.forEach((picturePath) => {
-      const url = `https://jtabjndnietpewvknjrm.supabase.co/storage/v1/object/public/milk-pictures/${encodeURIComponent(picturePath)}`;
-      const img = new Image();
-      img.decoding = "sync";
-      img.src = url;
-    });
-  }, [feedItems]);
+  // There was a preload here that fetched every photo in the feed at once, so
+  // that Edge's full-page screenshot would capture loaded images. It cost a
+  // signed-in phone the entire feed up front — fifty originals, about 150MB —
+  // to serve a screenshot tool. `FeedImage` loads thumbnails lazily now, which
+  // is the opposite trade and the right one.
 
   return (
     <StoryLayout mobileCtaHint="Add the one you tried today.">
