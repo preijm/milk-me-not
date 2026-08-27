@@ -1,38 +1,33 @@
-# CODEOWNERS - Automatically assign reviewers to pull requests
-# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# Which changes need a person, and which do not.
+#
+# This file used to name `@milkmenot` for every path in the repository. That
+# account does not exist, so it assigned nobody, required nothing and reviewed
+# less — and because it covered `*`, turning the rule on would have blocked
+# every pull request and undone auto-merge entirely.
+#
+# So it is deliberately short now. Almost everything here should merge itself
+# the moment the checks go green: tests, components, copy, styling. The checks
+# are a better reviewer for those than a tired person at eleven at night, and
+# anything they get wrong is a redeploy away from being fixed.
+#
+# What is listed below is what a redeploy does not fix.
+#
+# On a repository with one maintainer this is not peer review — nobody else can
+# approve, and GitHub does not let you approve your own pull request. What it
+# actually buys is the end of auto-merge on these paths: a change here stops and
+# waits to be merged on purpose, rather than landing at three in the morning
+# because the tests happened to pass.
 
-# Default owners for everything in the repo
-*                                   @milkmenot
+# Migrations, policies and edge functions. A bad migration runs once against
+# real data and cannot be taken back, and RLS is the only thing standing
+# between the tables and the internet.
+/supabase/                  @preijm
 
-# Frontend components
-/src/components/                    @milkmenot
-/src/pages/                         @milkmenot
+# The safety net itself: the checks, the alerting, the auto-merge, and this
+# file. A change here can quietly switch off everything else that would have
+# caught a change here.
+/.github/                   @preijm
 
-# Core application logic
-/src/hooks/                         @milkmenot
-/src/contexts/                      @milkmenot
-/src/lib/                           @milkmenot
-
-# Supabase & Backend
-/supabase/                          @milkmenot
-
-# Styling & Design System
-/src/index.css                      @milkmenot
-/src/styles/                        @milkmenot
-/tailwind.config.ts                 @milkmenot
-
-# Mobile (Capacitor)
-/capacitor.config.ts                @milkmenot
-/android/                           @milkmenot
-/ios/                               @milkmenot
-
-# Configuration & Build
-/vite.config.ts                     @milkmenot
-/tsconfig*.json                     @milkmenot
-
-# Documentation
-/*.md                               @milkmenot
-/email-templates/                   @milkmenot
-
-# GitHub workflows & templates
-/.github/                           @milkmenot
+# Content-Security-Policy, Permissions-Policy, frame-ancestors. Loosened by
+# accident, nothing fails and nothing tells you.
+/public/_headers            @preijm
