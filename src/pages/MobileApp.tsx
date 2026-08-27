@@ -76,7 +76,7 @@ const DownloadApkButton = ({
     download
     className={cn(
       "inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] no-underline transition-[transform,filter,background-color,color] duration-150 active:scale-[0.985] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-story-green",
-      tone === "green" && "bg-story-green text-story-ink story-lift-green hover:brightness-[1.07]",
+      tone === "green" && "bg-story-green text-white story-lift-green hover:brightness-[1.07]",
       tone === "paper" && "bg-white text-story-ink shadow-[0_10px_26px_-14px_rgba(27,36,33,0.5)] hover:bg-story-cream",
       className,
     )}

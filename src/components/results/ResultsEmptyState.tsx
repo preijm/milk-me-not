@@ -17,7 +17,7 @@ export const ResultsEmptyState = ({ onClear }: ResultsEmptyStateProps) => (
     <button
       type="button"
       onClick={onClear}
-      className="rounded-full bg-story-green px-5 py-2.5 text-[0.875rem] font-bold text-story-ink transition-[filter] hover:brightness-[1.07]"
+      className="rounded-full bg-story-green px-5 py-2.5 text-[0.875rem] font-bold text-white transition-[filter] hover:brightness-[1.07]"
     >
       Clear filters
     </button>

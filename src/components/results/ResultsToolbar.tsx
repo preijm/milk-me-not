@@ -116,7 +116,7 @@ export const ResultsToolbarDesktop = ({
               className={cn(
                 "flex h-11 shrink-0 items-center gap-2 rounded-full border-[1.5px] px-4 text-[0.8125rem] font-bold transition-colors",
                 filterCount > 0
-                  ? "border-story-green bg-story-green text-story-ink"
+                  ? "border-story-green bg-story-green text-white"
                   : "border-story-ink/12 bg-white text-story-ink-2 hover:bg-story-cream-2",
               )}
             >
@@ -213,7 +213,7 @@ export const ResultsToolbarMobile = ({
               type="button"
               className={cn(
                 "flex h-10 shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3.5 text-[0.8125rem] font-bold",
-                filterCount > 0 ? "border-story-green bg-story-green text-story-ink" : "border-story-ink/12 bg-white text-story-ink-2",
+                filterCount > 0 ? "border-story-green bg-story-green text-white" : "border-story-ink/12 bg-white text-story-ink-2",
               )}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />
@@ -231,7 +231,7 @@ export const ResultsToolbarMobile = ({
               <button
                 type="button"
                 onClick={() => setFilterOpen(false)}
-                className="w-full rounded-full bg-story-green py-3.5 text-[0.9375rem] font-bold text-story-ink"
+                className="w-full rounded-full bg-story-green py-3.5 text-[0.9375rem] font-bold text-white"
               >
                 Show {resultCount} {countNoun}
               </button>

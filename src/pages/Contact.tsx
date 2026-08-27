@@ -117,7 +117,7 @@ const Contact = () => {
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
           <ContactCard
             icon={Mail}
-            iconColorClass="bg-story-green text-story-ink"
+            iconColorClass="bg-story-green text-white"
             title="Email"
             badgeText="Available"
             badgeVariant="available"

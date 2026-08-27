@@ -45,7 +45,17 @@
      It applies to display type only: 68px and 78px at weight 800, where the
      shortfall costs far less than it would at 11px. Everything smaller uses
      --story-green-dark and does clear AA. tiers.contrast.test.ts pins both
-     halves of that so the exception cannot spread. */
+     halves of that so the exception cannot spread.
+
+     The same call was made a second time, for the label inside a green button.
+     White on this green is 2.43:1 and ink is 6.54:1, so the contrast pass put
+     ink on every green control — and a green button with a near-black label is
+     not what this brand looks like. Buttons are white again, deliberately.
+
+     It stops at controls. A button label is three or four bold words you read
+     once; the green *panels* on /contact and /mobile-app carry paragraphs, and
+     those keep ink, because a shortfall you can absorb in a button label is a
+     different thing from one spread over a paragraph. */
   --story-green-dark: 150 100% 22%;  /* #006e37 */
   --story-green-deep: 153 71% 11%;   /* forest band ground */
   --story-green-light: 144 67% 88%;  /* #cdf5dd */

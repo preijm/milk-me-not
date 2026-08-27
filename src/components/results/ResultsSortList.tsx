@@ -27,7 +27,7 @@ export const ResultsSortList = ({ sortConfig, onSelect }: ResultsSortListProps) 
                 onClick={() => onSelect(option.column, option.direction)}
                 className={cn(
                   "flex-1 rounded-full px-2.5 py-2 text-center text-[0.75rem] font-bold transition-colors",
-                  active ? "bg-story-green text-story-ink" : "bg-story-ink/5 text-story-ink-2 hover:bg-story-ink/8",
+                  active ? "bg-story-green text-white" : "bg-story-ink/5 text-story-ink-2 hover:bg-story-ink/8",
                 )}
               >
                 {option.label}
