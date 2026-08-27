@@ -72,6 +72,13 @@ export default (defineConfig as any)(({ mode }: { mode: string }) => ({
       output: {
         manualChunks(id: string) {
           if (!id.includes('node_modules')) return;
+          // Before the react rule, and that ordering is the whole point:
+          // `@sentry/react` contains the substring "react", so the generic rule
+          // swallowed the entire SDK into vendor-react — which is loaded
+          // eagerly. Setting a DSN took that chunk from 440KB to 904KB on the
+          // critical path, for something the dynamic import in
+          // errorReporting.ts is careful to fetch only when it is needed.
+          if (id.includes('@sentry')) return 'vendor-sentry';
           if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'vendor-react';
           if (id.includes('@supabase/supabase-js')) return 'vendor-supabase';
           if (id.includes('@tanstack/react-query')) return 'vendor-query';
