@@ -116,3 +116,7 @@
 - name: "health"
   color: "d93f0b"
   description: "The live site or the pipeline needs a look; opened automatically"
+
+- name: "reviewed"
+  color: "0e8a16"
+  description: "Owned paths in this PR have been read; it may merge"

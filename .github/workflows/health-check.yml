@@ -167,5 +167,3 @@ jobs:
           # Red as well as filed, so the run itself is not quietly green.
           echo "::error::The health check found something. See the issue."
           exit 1
-
-# Probe: confirming the code-owner gate engages on .github/ — closed immediately.

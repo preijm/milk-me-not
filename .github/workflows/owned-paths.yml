@@ -1,0 +1,85 @@
+# Stop auto-merge on the paths a redeploy cannot fix.
+#
+# The obvious way to do this is CODEOWNERS plus "require review from code
+# owners", and it does not work here. That rule is inert unless
+# `required_approving_review_count` is at least 1 — a probe pull request
+# touching `.github/` sailed straight through with the rule on and the count at
+# zero — and setting the count to 1 would demand an approval on *every* pull
+# request, which is auto-merge switched off for the whole repository.
+#
+# There is also no approving your own pull request, and this repository has one
+# maintainer. So "review" was never the achievable thing. What is achievable,
+# and what was actually wanted, is that a change to these paths stops and waits
+# to be merged on purpose rather than landing at three in the morning because
+# the tests happened to pass.
+#
+# So: touch an owned path and this check fails until the pull request carries
+# the `reviewed` label. Adding it is the deliberate act. Everything else — the
+# other 95% of changes — never sees this and keeps merging itself.
+#
+# The paths come from CODEOWNERS rather than being listed again here, so there
+# is one list and it is the one GitHub already shows in its own interface.
+
+name: Owned paths
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  gate:
+    name: Owned paths
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Does this need a deliberate merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          set -euo pipefail
+
+          # Every pattern CODEOWNERS claims, leading slash stripped.
+          PATTERNS=$(grep -vE '^\s*(#|$)' .github/CODEOWNERS | awk '{print $1}' | sed 's|^/||')
+          echo "Owned patterns:"; printf '  %s\n' $PATTERNS
+
+          CHANGED=$(gh pr diff "$PR" --repo "$REPO" --name-only)
+
+          TOUCHED=""
+          while IFS= read -r file; do
+            [ -n "$file" ] || continue
+            for pattern in $PATTERNS; do
+              case "$pattern" in
+                # A trailing slash is a directory: match anything beneath it.
+                */) case "$file" in "$pattern"*) TOUCHED="${TOUCHED}${file}"$'\n' ;; esac ;;
+                *)  [ "$file" = "$pattern" ] && TOUCHED="${TOUCHED}${file}"$'\n' ;;
+              esac
+            done
+          done <<< "$CHANGED"
+
+          if [ -z "$TOUCHED" ]; then
+            echo "Nothing owned here. Carry on."
+            exit 0
+          fi
+
+          echo "This pull request touches owned paths:"
+          printf '  %s\n' $TOUCHED
+
+          case ",${LABELS}," in
+            *,reviewed,*)
+              echo "Labelled \`reviewed\` — merging this was a decision, which is the whole ask."
+              exit 0
+              ;;
+          esac
+
+          echo "::error::This changes something a redeploy cannot fix (see above). Read the diff, then add the 'reviewed' label to let it merge."
+          exit 1
