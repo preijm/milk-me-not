@@ -17,6 +17,7 @@ import {
 } from "@/components/story";
 import { useStoryHome } from "@/components/home/useStoryHome";
 import { CARTONS, CULPRITS, SPREADSHEET, TASTING } from "@/components/about/aboutPhotos";
+import { PhotoRail } from "@/components/about/PhotoRail";
 
 /**
  * About is the page that makes the scores believable, so it is the one place
@@ -206,31 +207,7 @@ const About = () => {
         </div>
 
         {/* Full-bleed rail — the pictures run off the edge on purpose. */}
-        {/* The fade is the affordance — it says the rail keeps going. */}
-        <div className="relative mt-10">
-          <ul className="story-rail flex gap-4 px-5 pb-2 sm:px-8 lg:px-10">
-          {CARTONS.map((photo) => (
-            <li key={photo.src} className="shrink-0">
-              <button
-                type="button"
-                onClick={() => setZoomed(photo.src)}
-                className="story-lift block w-40 overflow-hidden rounded-2xl bg-white p-2 transition-transform duration-200 hover:-translate-y-1 sm:w-52"
-              >
-                <img
-                  src={photo.src}
-                  alt={photo.alt}
-                  loading="lazy"
-                  className="aspect-3/4 w-full rounded-xl object-cover"
-                />
-              </button>
-              </li>
-            ))}
-          </ul>
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-linear-to-l from-story-cream to-transparent sm:w-24"
-          />
-        </div>
+        <PhotoRail photos={CARTONS} onZoom={setZoomed} className="mt-10" />
       </Band>
 
       <ImageModal isOpen={!!zoomed} onClose={() => setZoomed(null)} imageUrl={zoomed || ""} />

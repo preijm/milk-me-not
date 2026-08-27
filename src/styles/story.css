@@ -186,6 +186,21 @@
   }
 
   /* Horizontal chip rails: hide the scrollbar, keep the affordance. */
+  /* Tailwind 4's Preflight sets `cursor: default` on buttons, where v3 set
+     `cursor: pointer`. Nothing in this project put it back, so every one of
+     the ~30 buttons on a page — the primary call to action included — stopped
+     showing a hand the moment the palette moved to v4, while every <a> kept
+     one. That is a silent regression from a dependency upgrade, and it looks
+     exactly like a broken button.
+
+     `:not(:disabled)` matters: index.css already paints disabled buttons with
+     `cursor-not-allowed`, and this must not fight it. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+
   .story-rail {
     overflow-x: auto;
     scrollbar-width: none;
