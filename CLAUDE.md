@@ -199,10 +199,16 @@ by getting them wrong:
   empty array as its version row, and since VersionProvider wraps everything,
   the blank page was the whole site.
 
-**Browser tests are not one of the four required checks.** With auto-merge on,
-a required check that goes red on a slow runner stops every pull request in the
-queue, and browser tests are the flakiest thing in any suite. Add
-`Browser tests` to the ruleset once it has proved boring.
+**`Browser tests` is a required check**, so a red one blocks the merge like any
+other. It was deliberately advisory first: with auto-merge on, a required check
+that goes red on a slow runner stops every pull request in the queue, and
+browser tests are the flakiest thing in any suite. It was promoted after
+running green on every pull request it saw.
+
+Two things keep it from becoming the flaky check that blocks everything. The
+suite retries once in CI and nowhere else, so a genuine failure still fails
+locally on the first run. And nothing in it waits on live data — every request
+is served from a fixture, so there is no network to be slow.
 
 ### Testing Setup
 - Vitest with jsdom; setup file at `src/test/setup.ts` mocks `matchMedia`, `ResizeObserver`, `IntersectionObserver`
@@ -245,8 +251,8 @@ Six, not one:
 ### `main` is protected
 Two rulesets apply to it, both with a repository-admin bypass:
 
-- **checks must pass** — `Lint & Type Check`, `Test` and `Build` must be green
-  before a pull request merges.
+- **checks must pass** — `Lint & Type Check`, `Test`, `Build`, `CodeQL` and
+  `Browser tests` must be green before a pull request merges.
 - **delforcepush** — no deletion, no force-push.
 
 Auto-merge is enabled, so `gh pr merge --auto` genuinely queues until the checks
