@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,16 +22,8 @@ export interface AuthFormData {
 
 export const useAuthOperations = () => {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
   const { refreshAuth } = useAuth();
-  
-  // Where a sign-in lands when nothing else claimed the visit. The feed is the
-  // community actually doing the thing; /results is a league table, which is a
-  // fine reference but a cold room to be dropped into. A pending rating or a
-  // protected route still wins through location.state.from.
-  const fromPath = location.state?.from || '/feed';
 
   const signIn = async (email: string, password: string) => {
     const sanitizedEmail = sanitizeInput(email).toLowerCase();
@@ -103,7 +94,6 @@ export const useAuthOperations = () => {
       }
 
       await refreshAuth();
-      navigate(fromPath);
       return { success: true };
     } catch (error: any) {
       toast({
@@ -239,6 +229,30 @@ export const useAuthOperations = () => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth`,
+        },
+      });
+
+      if (error) throw error;
+      // On success the browser navigates away to Google, so there is nothing
+      // left to do here — the redirect back is handled by Auth.tsx once
+      // `useAuth()` sees a session.
+    } catch (error: any) {
+      toast({
+        title: "Google sign-in failed",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+      setLoading(false);
+    }
+  };
+
   const resetPassword = async (email: string) => {
     const sanitizedEmail = sanitizeInput(email).toLowerCase();
     const rateLimitKey = `reset_${sanitizedEmail}`;
@@ -306,6 +320,7 @@ export const useAuthOperations = () => {
     loading,
     signIn,
     signUp,
+    signInWithGoogle,
     resetPassword
   };
 };

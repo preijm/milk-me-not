@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import AuthForm from "@/components/auth/AuthForm";
 import ResetPasswordDialog from "@/components/auth/ResetPasswordDialog";
 import EmailConfirmationPending from "@/components/auth/EmailConfirmationPending";
 import PasswordResetForm from "@/components/auth/PasswordResetForm";
 import { useAuthFlow } from "@/hooks/useAuthFlow";
+import { useAuth } from "@/contexts/AuthContext";
 import { useStoryHome, type HomeStory } from "@/components/home/useStoryHome";
 import { peekPendingRating } from "@/lib/pendingRating";
 import logoImg from "@/assets/logo-96.png";
@@ -48,6 +49,8 @@ const Stats = ({ data, className = "" }: { data: HomeStory; className?: string }
  */
 const Auth = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [emailPending, setEmailPending] = useState<string | null>(null);
   const [isLogin, setIsLogin] = useState(() => (location.state as { mode?: string } | null)?.mode !== "signup");
@@ -78,6 +81,24 @@ const Auth = () => {
     if (mode === "signup") setIsLogin(false);
     if (mode === "login") setIsLogin(true);
   }
+
+  // Where a successful sign-in lands, for password and Google alike — the
+  // feed is the community actually doing the thing; /results is a league
+  // table, fine as a reference but a cold room to be dropped into. A pending
+  // rating or a protected route still wins through location.state.from.
+  //
+  // Centralized here rather than in useAuthOperations because the Google
+  // button leaves the page and comes back as a fresh navigation: any
+  // location.state is long gone by the time the session shows up, so this
+  // effect firing on `user` becoming truthy is the only thing that catches
+  // the OAuth return trip. Recovery mode also carries a session, so it's
+  // excluded or a password-reset link would bounce someone past the form it
+  // exists to show.
+  useEffect(() => {
+    if (!user || isPasswordReset) return;
+    const from = (location.state as { from?: string } | null)?.from;
+    navigate(from || "/feed", { replace: true });
+  }, [user, isPasswordReset, location.state, navigate]);
 
   const shouldShowEmailPending = emailPending || isEmailPending;
   const pendingEmail = emailPending || userEmail;
