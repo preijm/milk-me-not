@@ -227,7 +227,13 @@ Six, not one:
   a Dependabot branch made Dependabot disown the PR and stop rebasing it.
 - **`deploy.yml`** — see Deployment below.
 - **`codeql.yml`** — static analysis on PRs, pushes to main, and weekly.
-- **`release.yml`** — cuts a version tag and a GitHub Release on push to main.
+- **`release.yml`** — cuts a version tag and a GitHub Release, **on request
+  only**: run it from the Actions tab. It fired on every push to main once, and
+  since every GitHub Release emails everyone watching, that was 34 releases and
+  34 emails in three days — with a version number that meant nothing, because
+  adding a test file got the same bump as a feature. Nothing is lost by waiting:
+  main deploys on every push regardless, so releasing marks a point rather than
+  shipping one.
   It reads the *highest* `v*` tag rather than the newest one `git describe` can
   reach, because `v0.1.0` sits on a `chore(release)` commit that never landed
   on main: describe found nothing, fell back to package.json, recomputed

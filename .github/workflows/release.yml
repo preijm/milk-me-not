@@ -1,12 +1,19 @@
-# Release workflow for automated versioning and release notes.
-# Triggers on push to main branch with conventional commits.
+# Versioning and release notes, on request.
+#
+# Deliberately not on every push to main. It used to be, and for months that
+# went unnoticed because the job was broken and cut nothing at all. Once it
+# started working it produced 34 releases in three days — a version per merged
+# pull request, each one an email to everyone watching, and a version number
+# that meant nothing because "add a test file" got the same bump as a feature.
+#
+# A release is a thing someone decides to make. Run this from the Actions tab
+# when there is something worth announcing, and the notes collect every commit
+# since the last tag. Nothing is lost by waiting: main still deploys on every
+# push, so releasing is about marking a point, not about shipping.
 
 name: Release
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       release_type:
