@@ -43,11 +43,16 @@ const Contact = () => {
   const [flyingBirds, setFlyingBirds] = useState<number[]>([]);
 
   const handlePigeonClick = () => {
-    const birdId = Date.now();
-    setFlyingBirds((prev) => [...prev, birdId]);
+    // Date.now() collides when two clicks land in the same millisecond, and
+    // two birds sharing a key share a flight plan — the identical-bird problem
+    // in miniature. The counter makes every id its own.
+    const birdId = Date.now() + Math.floor(performance.now() % 1000) + flyingBirds.length;
+    // A flock, not a swarm: leaning on the card used to spawn birds without
+    // limit. Twelve is plenty of joke.
+    setFlyingBirds((prev) => [...prev.slice(-11), birdId]);
     setTimeout(() => {
       setFlyingBirds((prev) => prev.filter((id) => id !== birdId));
-    }, 2000);
+    }, 3200); // the longest flight is 2.8s; this used to cut them off at 2.0
   };
 
   return (
@@ -183,7 +188,13 @@ const Contact = () => {
           {/* The page's own illustrated centrepiece: a solid colour panel
               carrying real weight, the way the FAQ page's score bar does. */}
           <div className="relative overflow-hidden rounded-[1.75rem] bg-story-green p-8 sm:p-10">
-            <div aria-hidden className="pointer-events-none absolute -right-12 -top-16 text-story-green-light">
+            {/* A watermark, at last. At full strength this pale mint on the
+                brand green was 2.05:1 — too faint to read as a graphic, too
+                strong to recede, and it left one block of text sitting on two
+                very different grounds: ink measured 6.61:1 off the droplet and
+                13.53:1 on it. Dimmed, the ground evens out and every line
+                improves, to 6.61 and 8.03. */}
+            <div aria-hidden className="pointer-events-none absolute -right-12 -top-16 text-story-green-light opacity-30">
               <MilkDrop size={230} variant="solid" />
             </div>
             <p className="story-kicker relative text-story-ink">Who actually replies</p>
