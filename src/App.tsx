@@ -33,6 +33,7 @@ const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 const InstallGuide = lazy(() => import("./pages/InstallGuide"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const RateDeepLink = lazy(() => import("./pages/RateDeepLink"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 
 const PageFallback = () => (
   <div className="min-h-screen flex items-center justify-center">
@@ -76,6 +77,7 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/faq" element={<FAQ />} />
+                <Route path="/privacy" element={<Privacy />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/mobile-app" element={<MobileApp />} />

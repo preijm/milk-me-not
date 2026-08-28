@@ -30,4 +30,5 @@ export const SECONDARY_LINKS = [
   { to: "/contact", label: "Contact" },
   { to: "/mobile-app", label: "Android app" },
   { to: "/install-guide", label: "Install guide" },
+  { to: "/privacy", label: "Privacy" },
 ];
