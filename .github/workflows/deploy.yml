@@ -79,12 +79,19 @@ jobs:
         run: bun install
 
       # Vite inlines VITE_* variables into the bundle at build time, so the
-      # Mapbox key has to be present in this step. Setting it on the Worker
-      # afterwards would be too late — the bundle is already written.
+      # Both keys have to be present in this step. Vite inlines `VITE_*` at
+      # build time, so setting either on the Worker afterwards would be too
+      # late — the bundle is already written.
+      #
+      # An absent VITE_SENTRY_DSN is not a failure and must not become one.
+      # Error reporting is inert without it, the boundary still catches crashes
+      # and shows a page, and the site is unaffected. A build that refused to
+      # run without it would take the whole deploy down over a nicety.
       - name: Build project
         run: bun run build
         env:
           VITE_MAPBOX_PUBLIC_KEY: ${{ secrets.VITE_MAPBOX_PUBLIC_KEY }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
 
       # Uploads ./dist per wrangler.toml. No build happens here; the step above
       # already produced the artifact this deploys.
