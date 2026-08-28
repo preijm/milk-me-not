@@ -464,6 +464,42 @@
 }
 
 
+/* Every pill, chip and badge on the site is `rounded-full`, and Tailwind v4
+   ships that as `border-radius: calc(infinity * 1px)`. It is a *static* value
+   inside the utility, not a theme lookup, so no `--radius-*` token can reach
+   it — this rule is the only way to change it.
+
+   That calc is not a figure of speech. The dev server hands Chrome the calc
+   and it computes 22,369,600px. The production bundle is worse: Lightning CSS
+   folds the calc at build time, and what deploys today reads
+
+       .rounded-full{border-radius:3.40282e38px}
+
+   which is exactly FLT_MAX, the largest single-precision float there is.
+
+   The browser then has to shrink that to fit the box, by the ratio the spec
+   gives it: for the 57.5px CTA pill that is 57.5 / (2 x 3.40282e38), about
+   8.45e-38 — a subnormal. Skia multiplies FLT_MAX by that subnormal in single
+   precision, once per corner. Those are close to the worst two operands a
+   float unit can be handed, and the four corners need not land on the same
+   answer, which is how a pill draws three corners and drops the fourth on a
+   phone while looking perfect on a desktop.
+
+   A finite radius larger than half the tallest pill here draws the identical
+   shape with none of that arithmetic: at 9999px every pill on the site still
+   clamps to exactly half its own height.
+
+   Two things keep it working. It has to stay in `@layer utilities` and below
+   the `@import 'tailwindcss'` at the top of this file — it carries the same
+   specificity as Tailwind's own rule, so source order is what wins it. And
+   nothing here pairs `rounded-full` with a per-corner override, so replacing
+   the whole shorthand takes nothing away. */
+@layer utilities {
+  .rounded-full {
+    border-radius: 9999px;
+  }
+}
+
 /* The country popup on the world map.
    Mapbox builds this chrome itself, outside React, so it is dressed here
    rather than with utilities. It is the story card: cream, hairline, the same
