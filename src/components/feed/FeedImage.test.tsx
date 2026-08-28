@@ -38,6 +38,21 @@ describe("FeedImage", () => {
     expect(src().style.display).toBe("none");
   });
 
+  it("opens the dialog on the thumbnail rather than on nothing", () => {
+    // Splitting card and dialog meant a tap started a cold fetch of the full
+    // photo, so the close button sat over an empty box for a second or two.
+    // The thumbnail is already decoded, so the picture is there immediately.
+    render(<FeedImage picturePath={PATH} brandName="Joya" productName="Oat" />);
+    fireEvent.click(screen.getByRole("button"));
+
+    // Two images share the alt text now, so reach for the dialog's own.
+    const enlarged = screen
+      .getByRole("dialog")
+      .querySelector("img") as HTMLImageElement;
+    expect(enlarged.src).toContain("thumb_");
+    expect(enlarged.className).toContain("blur-");
+  });
+
   it("still draws its placeholder when there is no photo", () => {
     render(<FeedImage picturePath={null} brandName="Joya" productName="Oat" />);
 
