@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { MilkDrop } from "@/components/story";
@@ -56,6 +56,41 @@ export const FeedImage = ({
     setCardSrc(thumbUrl);
   }
 
+  /* The dialog opens on the thumbnail the card already has, and swaps to the
+     photo once that has arrived.
+
+     Before this it opened on nothing: splitting card and dialog meant the tap
+     started a cold fetch of the full photo, so for a second or two the reader
+     got the close button floating over an empty box. The thumbnail is decoded
+     and in cache the moment it is asked for — the card is showing it — so the
+     picture is simply there, then gets sharper.
+
+     A `new Image()` rather than swapping `src` directly, because assigning a
+     new `src` blanks the element while the next one loads, which is the bug
+     this is fixing. */
+  const [enlargedSrc, setEnlargedSrc] = useState(thumbUrl);
+
+  useEffect(() => {
+    if (!showEnlarged || !imageUrl) return;
+
+    const full = new Image();
+    full.onload = () => setEnlargedSrc(imageUrl);
+    full.src = imageUrl;
+
+    return () => {
+      full.onload = null;
+    };
+  }, [showEnlarged, imageUrl]);
+
+  // Reset on the way in rather than inside the effect, which would be a
+  // setState the linter is right to object to. Reopening a photo whose full
+  // size is already cached still starts on the thumbnail, but only for the
+  // one frame it takes `onload` to fire off the disk cache.
+  const openEnlarged = () => {
+    setEnlargedSrc(thumbUrl);
+    setShowEnlarged(true);
+  };
+
   if (!picturePath) {
     return (
       <div
@@ -81,7 +116,7 @@ export const FeedImage = ({
     <>
       <button
         type="button"
-        onClick={() => setShowEnlarged(true)}
+        onClick={openEnlarged}
         className={cn("block w-full overflow-hidden rounded-xl", className)}
       >
         <img
@@ -128,11 +163,17 @@ export const FeedImage = ({
               <X className="h-5 w-5 text-story-ink" />
             </button>
             <img
-              src={imageUrl ?? undefined}
+              src={enlargedSrc ?? undefined}
               alt={`${brandName} ${productName}`}
               loading="eager"
               decoding="async"
-              className="block max-h-[88vh] w-auto max-w-[96vw] rounded-2xl object-contain"
+              /* The blur is the only thing saying the photo is still coming.
+                 Both sources share an aspect ratio, so the box does not move
+                 when the sharp one lands — it just resolves. */
+              className={cn(
+                "block max-h-[88vh] w-auto max-w-[96vw] rounded-2xl object-contain transition-[filter] duration-300",
+                enlargedSrc === thumbUrl && "blur-[3px]",
+              )}
             />
           </div>
         </DialogContent>
