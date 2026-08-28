@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { FeedImage } from "./FeedImage";
 
 const PATH = "85dba6c1/1787640806472_img.jpg";
@@ -46,11 +46,51 @@ describe("FeedImage", () => {
     fireEvent.click(screen.getByRole("button"));
 
     // Two images share the alt text now, so reach for the dialog's own.
-    const enlarged = screen
-      .getByRole("dialog")
-      .querySelector("img") as HTMLImageElement;
-    expect(enlarged.src).toContain("thumb_");
-    expect(enlarged.className).toContain("blur-");
+    // Two layers: the thumbnail is visible immediately, the photo sits over
+    // it at opacity 0 until it loads.
+    const layers = [...screen.getByRole("dialog").querySelectorAll("img")];
+    expect(layers).toHaveLength(2);
+    expect(layers[0].src).toContain("thumb_");
+    expect(layers[1].src).not.toContain("thumb_");
+    expect(layers[1].className).toContain("opacity-0");
+
+    // No blur: at 800px the thumbnail already out-resolves the box it fills,
+    // so blurring it invented a defect the fade then had to undo.
+    expect(layers.some((i) => i.className.includes("blur-"))).toBe(false);
+  });
+
+  it("fades the photo in once it has arrived", async () => {
+    // The fade is driven by a `new Image()` preloader rather than the visible
+    // element's onLoad, so that a cached photo cannot slip through between
+    // render and React attaching the handler. jsdom never fires load on its
+    // own, so stand in for it.
+    const loaders: HTMLImageElement[] = [];
+    const RealImage = globalThis.Image;
+    vi.stubGlobal(
+      "Image",
+      class extends RealImage {
+        constructor() {
+          super();
+          loaders.push(this as unknown as HTMLImageElement);
+        }
+      },
+    );
+
+    render(<FeedImage picturePath={PATH} brandName="Joya" productName="Oat" />);
+    fireEvent.click(screen.getByRole("button"));
+
+    const full = [...screen.getByRole("dialog").querySelectorAll("img")][1];
+    expect(full.className).toContain("opacity-0");
+
+    const loader = loaders.find((i) => i.src.includes("1787640806472_img.jpg"));
+    expect(loader).toBeTruthy();
+    await act(async () => {
+      loader!.onload?.(new Event("load"));
+    });
+
+    const after = [...screen.getByRole("dialog").querySelectorAll("img")][1];
+    expect(after.className).toContain("opacity-100");
+    vi.unstubAllGlobals();
   });
 
   it("still draws its placeholder when there is no photo", () => {
