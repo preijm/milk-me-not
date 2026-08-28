@@ -212,11 +212,13 @@ export const useMilkTestForm = (editTest?: MilkTestResult, options?: MilkTestFor
       // so the thumbnail is a clean 2:1 reduction of that rather than another
       // pass over the camera's original.
       //
-      // Both are stored with a year of `cacheControl`. Storage defaults these
-      // objects to `no-cache`, which meant a phone revalidated all fifty feed
-      // images on every single visit — fifty round trips before a byte of
-      // photo. The paths carry a timestamp and are never written twice, so
-      // they are safe to treat as immutable.
+      // Both are stored with a year of `cacheControl`, against supabase-js's
+      // default of "3600". These paths carry a timestamp and are never written
+      // twice, so an hour was never the right number — a reader coming back
+      // tomorrow revalidated the whole feed for nothing.
+      //
+      // Note that storage answers HEAD with `no-cache` regardless of what the
+      // object carries, so `curl -I` cannot confirm this. Use a GET.
       let picturePath = null;
       if (picture) {
         console.log("Uploading picture to Supabase storage...");

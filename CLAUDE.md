@@ -237,10 +237,18 @@ browser path asks `createImageBitmap` for `imageOrientation: "from-image"` and
 the backfill calls sharp's `rotate()` with no argument. Miss either and every
 carton is served on its side.
 
-**Uploads set `cacheControl` to a year.** Storage defaults these objects to
-`no-cache`, so a phone revalidated all fifty feed images on every visit — fifty
-round trips before a byte of photo, all of them 304s. The paths carry a
-timestamp and are never written twice.
+**Uploads set `cacheControl` to a year.** supabase-js defaults it to `"3600"`,
+so a photo went stale after an hour and a reader coming back the next day
+revalidated all fifty. The paths carry a timestamp and are never written twice,
+so an hour was never the right number. This is the smallest of the wins here —
+worth having, not worth confusing with the resize.
+
+**Storage answers every HEAD with `Cache-Control: no-cache`, whatever the
+object actually carries.** Only GET reports the stored value. `curl -sI` against
+this bucket therefore says `no-cache` for everything, which is how the line
+above once claimed the originals were uncached when they were on a one-hour
+max-age. Check it with `curl -s -o /dev/null -D -`, or read `metadata.cacheControl`
+from the list API.
 
 Two traps this replaced, both of which failed silently for about a year:
 
