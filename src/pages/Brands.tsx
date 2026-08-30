@@ -1,21 +1,40 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Seo } from "@/components/Seo";
-import { Band, BrandMark, Display, Kicker, Lede, StoryLayout } from "@/components/story";
-import { BrandStatusChip } from "@/components/brand/BrandStatusChip";
+import { Band, Display, Kicker, Lede, StoryLayout } from "@/components/story";
+import { BrandSortHeader, BrandTable } from "@/components/brand/BrandTable";
 import { brandSummaries } from "@/components/brand/brandSummary";
+import {
+  NO_FILTER,
+  filterBrands,
+  firstDirectionFor,
+  isFiltered,
+  sortBrands,
+  type BrandFilter,
+  type BrandSort,
+  type BrandSortKey,
+} from "@/components/brand/brandTableState";
 import { RATING_FACTS_KEY, fetchRatingFacts } from "@/hooks/useRatingFacts";
-import { brandFacts, brandState } from "@/lib/brandFacts";
-import { brandSlug } from "@/lib/brandLogo";
+import { brandState, type BrandOwnerKind } from "@/lib/brandFacts";
+import { cn } from "@/lib/utils";
+
+const KIND_FILTERS: { value: BrandOwnerKind | null; label: string }[] = [
+  { value: null, label: "All" },
+  { value: "own-label", label: "Own-label" },
+  { value: "group", label: "Group" },
+  { value: "independent", label: "Independent" },
+];
+
+const PILL =
+  "flex h-10 shrink-0 items-center rounded-full border-[1.5px] px-3.5 text-[0.8125rem] font-bold transition-colors";
 
 /**
  * Every maker on the board, and what we know about them.
  *
- * Ordered by ratings rather than by score. A brand with one enthusiastic
- * rating is not the best brand here, and putting it top would say it was — the
- * ranking by score already exists on Results and does that job honestly, with
- * a minimum sample.
+ * Sorted by ratings out of the box rather than by score. A brand with one
+ * enthusiastic rating is not the best brand here, and leading with it would say
+ * it was — Results already ranks by score, honestly, with a minimum sample.
  */
 const Brands = () => {
   const { data: facts = [], isLoading } = useQuery({
@@ -23,15 +42,29 @@ const Brands = () => {
     queryFn: fetchRatingFacts,
   });
 
-  const rows = useMemo(() => brandSummaries(facts), [facts]);
-  const gone = rows.filter((r) => brandState(r.brand) === "discontinued");
+  const [sort, setSort] = useState<BrandSort>({ key: "ratings", direction: "desc" });
+  const [filter, setFilter] = useState<BrandFilter>(NO_FILTER);
+
+  const all = useMemo(() => brandSummaries(facts), [facts]);
+  const rows = useMemo(() => sortBrands(filterBrands(all, filter), sort), [all, filter, sort]);
+
+  const gone = all.filter((r) => brandState(r.brand) === "discontinued");
   const goneRatings = gone.reduce((sum, r) => sum + r.n, 0);
+
+  // A second press on the same column reverses it; a new column starts the way
+  // that column is usually read.
+  const handleSort = (key: BrandSortKey) =>
+    setSort((s) =>
+      s.key === key
+        ? { key, direction: s.direction === "asc" ? "desc" : "asc" }
+        : { key, direction: firstDirectionFor(key) },
+    );
 
   return (
     <StoryLayout>
       <Seo
         title="Every brand on the board — Milk Me Not"
-        description="All the makers behind the plant milks people have rated: who owns them, how many ratings each has, and which ones you can no longer buy."
+        description="All the makers behind the plant milks people have rated: who owns them, whether they are a supermarket own-label, how many ratings each has, and which ones you can no longer buy."
         path="/brands"
       />
 
@@ -40,11 +73,11 @@ const Brands = () => {
             and this is the top of its own page, so it wants the h1. */}
         <Kicker>Who makes it</Kicker>
         <Display as="h1" size="lg" className="mt-4 max-w-2xl">
-          {rows.length ? `${rows.length} brands have been drunk and argued about` : "Every brand on the board"}
+          {all.length ? `${all.length} brands have been drunk and argued about` : "Every brand on the board"}
         </Display>
         <Lede className="mt-4 max-w-2xl">
-          Ordered by how much the board has to say about each one. Some are supermarket own-labels you can only buy in
-          one chain, some belong to companies you would recognise, and{" "}
+          Some are supermarket own-labels you can only buy in one chain, some belong to companies you would recognise,
+          and{" "}
           {gone.length > 0 ? (
             <>
               {gone.length === 1 ? "one" : gone.length} of them {gone.length === 1 ? "has" : "have"} stopped selling
@@ -55,66 +88,78 @@ const Brands = () => {
           )}
         </Lede>
 
+        <div className="mt-8 flex flex-wrap items-center gap-2">
+          {KIND_FILTERS.map((k) => {
+            const active = filter.kind === k.value;
+            return (
+              <button
+                key={k.label}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setFilter((f) => ({ ...f, kind: k.value }))}
+                className={cn(
+                  PILL,
+                  active
+                    ? "border-story-green bg-story-green text-white"
+                    : "border-story-ink/12 bg-white text-story-ink-2 hover:bg-story-cream-2",
+                )}
+              >
+                {k.label}
+              </button>
+            );
+          })}
+
+          <span className="mx-1 hidden h-6 w-px bg-story-ink/10 sm:block" aria-hidden />
+
+          <button
+            type="button"
+            aria-pressed={filter.goneOnly}
+            onClick={() => setFilter((f) => ({ ...f, goneOnly: !f.goneOnly }))}
+            className={cn(
+              PILL,
+              filter.goneOnly
+                ? "border-story-amber-dark bg-story-amber-light text-story-amber-dark"
+                : "border-story-ink/12 bg-white text-story-ink-2 hover:bg-story-cream-2",
+            )}
+          >
+            Discontinued only
+          </button>
+
+          {isFiltered(filter) && (
+            <button
+              type="button"
+              onClick={() => setFilter(NO_FILTER)}
+              className="px-2 text-[0.8125rem] font-bold text-story-muted underline-offset-2 hover:underline"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
         {isLoading ? (
-          <div className="story-hairline mt-10 h-96 animate-pulse rounded-3xl bg-white" aria-hidden />
+          <div className="story-hairline mt-8 h-96 animate-pulse rounded-3xl bg-white" aria-hidden />
         ) : (
-          <ul className="story-hairline mt-10 flex flex-col rounded-[1.25rem] bg-white px-4 sm:px-6">
-            {rows.map((row) => {
-              const owner = brandFacts(row.brand)?.owner;
-              const state = brandState(row.brand);
-              return (
-                <li key={row.brand} className="border-t border-story-ink/8 first:border-t-0">
-                  <Link
-                    to={`/brand/${brandSlug(row.brand)}`}
-                    className="story-linked-product flex items-center gap-3 py-4 no-underline sm:gap-4"
-                  >
-                    <BrandMark brand={row.brand} className="h-10 w-10 text-[0.6875rem]" radius="rounded-xl" />
-
-                    <span className="min-w-0 flex-1">
-                      <span className="story-product-name block truncate text-[0.9375rem] font-bold text-story-ink">
-                        {row.brand}
-                      </span>
-                      <span className="mt-0.5 block truncate text-[0.75rem] font-medium text-story-muted-2">
-                        {owner ? (
-                          <>
-                            {owner.kind === "own-label" && owner.chain
-                              ? `${owner.chain} own-label`
-                              : owner.kind === "independent"
-                                ? "Independent"
-                                : owner.name}
-                            {" · "}
-                          </>
-                        ) : null}
-                        {row.n} rating{row.n === 1 ? "" : "s"} · {row.products} product
-                        {row.products === 1 ? "" : "s"}
-                      </span>
-                    </span>
-
-                    {/* "Discontinued" is the one thing this page exists to
-                        say, so it survives the phone. "Still listed" is the
-                        quiet case and can wait for the room to show it. */}
-                    {state === "discontinued" ? (
-                      <BrandStatusChip state={state} />
-                    ) : state === "listed" ? (
-                      <BrandStatusChip state={state} className="hidden sm:inline-flex" />
-                    ) : null}
-
-                    <span
-                      className="story-num shrink-0 text-[1.125rem] leading-none text-story-green-dark"
-                      aria-label={`Average ${row.avg.toFixed(1)}`}
-                    >
-                      {row.avg.toFixed(1)}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="story-hairline mt-8 rounded-[1.25rem] bg-white px-4 pb-2 pt-4 sm:px-6">
+            <BrandSortHeader sort={sort} onSort={handleSort} />
+            {rows.length ? (
+              <BrandTable rows={rows} />
+            ) : (
+              <p className="py-12 text-center text-[0.9375rem] font-medium text-story-muted">
+                No brands match that. <button type="button" onClick={() => setFilter(NO_FILTER)} className="font-bold text-story-green-dark underline-offset-2 hover:underline">Clear the filters</button> to see all {all.length}.
+              </p>
+            )}
+          </div>
         )}
 
         <p className="mt-6 max-w-2xl text-[0.8125rem] font-medium text-story-muted-2">
-          A brand with no badge is one nobody has checked, not one we know is fine. Averages here include every rating,
-          however few — see{" "}
+          {isFiltered(filter) && (
+            <>
+              Showing {rows.length} of {all.length}.{" "}
+            </>
+          )}
+          A brand with no badge is one nobody has checked, not one we know is fine. “Last rated” is when the board last
+          heard about it, which is a sign of life rather than proof of one. Averages here include every rating, however
+          few — see{" "}
           <Link to="/results" className="font-bold text-story-green-dark">
             Discover
           </Link>{" "}

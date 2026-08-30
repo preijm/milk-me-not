@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, within, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { RatingFact } from "@/hooks/useRatingFacts";
@@ -29,12 +29,12 @@ const fact = (over: Partial<RatingFact>): RatingFact => ({
 });
 
 const FACTS: RatingFact[] = [
-  fact({ brand_name: "Alpro", product_name: "Oat", product_id: "a1", rating: 8 }),
-  fact({ brand_name: "Alpro", product_name: "Oat", product_id: "a1", rating: 6 }),
-  fact({ brand_name: "Alpro", product_name: "Soya", product_id: "a2", rating: 9 }),
-  fact({ brand_name: "Wunda", product_name: "Original", product_id: "w1", rating: 7 }),
-  fact({ brand_name: "Wunda", product_name: "Barista", product_id: "w2", rating: 6 }),
-  fact({ brand_name: "Harvest Moon", product_name: "Oat", product_id: "h1", rating: 9 }),
+  fact({ brand_name: "Alpro", product_name: "Oat", product_id: "a1", rating: 8, created_at: "2026-08-01T00:00:00Z" }),
+  fact({ brand_name: "Alpro", product_name: "Oat", product_id: "a1", rating: 6, created_at: "2026-07-01T00:00:00Z" }),
+  fact({ brand_name: "Alpro", product_name: "Soya", product_id: "a2", rating: 9, created_at: "2026-06-01T00:00:00Z" }),
+  fact({ brand_name: "Wunda", product_name: "Original", product_id: "w1", rating: 7, created_at: "2025-03-01T00:00:00Z" }),
+  fact({ brand_name: "Wunda", product_name: "Barista", product_id: "w2", rating: 6, created_at: "2025-02-01T00:00:00Z" }),
+  fact({ brand_name: "Harvest Moon", product_name: "Oat", product_id: "h1", rating: 9, created_at: "2026-05-01T00:00:00Z" }),
 ];
 
 vi.mock("@/hooks/useRatingFacts", async (importOriginal) => {
@@ -93,6 +93,62 @@ describe("the brand index", () => {
     draw("/brands");
     const row = (await screen.findByText("Wunda")).closest("a");
     expect(row).toHaveAttribute("href", "/brand/wunda");
+  });
+
+  it("names the kind of company, not just who owns it", async () => {
+    draw("/brands");
+    const alpro = (await screen.findByText("Alpro")).closest("a");
+    expect(within(alpro as HTMLElement).getByText("Group")).toBeInTheDocument();
+    expect(within(alpro as HTMLElement).getByText("Danone")).toBeInTheDocument();
+  });
+});
+
+const click = (el: HTMLElement) => fireEvent.click(el);
+
+const brandOrder = (container: HTMLElement) =>
+  [...container.querySelectorAll("a[href^='/brand/']")].map(
+    (a) => a.querySelector(".story-product-name")?.textContent,
+  );
+
+describe("sorting and filtering the index", () => {
+  it("reorders when a column is pressed, and reverses on a second press", async () => {
+    const { container } = draw("/brands");
+    await screen.findByText("Alpro");
+
+    click(screen.getByRole("button", { name: /sort by score/i }));
+    // Harvest Moon's single 9 is the best average and should now lead.
+    expect(brandOrder(container)[0]).toBe("Harvest Moon");
+
+    click(screen.getByRole("button", { name: /sort by score/i }));
+    expect(brandOrder(container)[0]).toBe("Wunda");
+  });
+
+  it("narrows to one kind of company", async () => {
+    const { container } = draw("/brands");
+    await screen.findByText("Alpro");
+
+    click(screen.getByRole("button", { name: "Group" }));
+    expect(brandOrder(container)).toEqual(["Alpro", "Wunda"]);
+  });
+
+  it("narrows to what you can no longer buy", async () => {
+    const { container } = draw("/brands");
+    await screen.findByText("Alpro");
+
+    click(screen.getByRole("button", { name: "Discontinued only" }));
+    expect(brandOrder(container)).toEqual(["Wunda"]);
+  });
+
+  it("offers a way back when a filter matches nothing", async () => {
+    const { container } = draw("/brands");
+    await screen.findByText("Alpro");
+
+    click(screen.getByRole("button", { name: "Own-label" }));
+    click(screen.getByRole("button", { name: "Discontinued only" }));
+    expect(brandOrder(container)).toEqual([]);
+
+    click(screen.getByRole("button", { name: /clear the filters/i }));
+    expect(brandOrder(container).length).toBeGreaterThan(0);
   });
 });
 

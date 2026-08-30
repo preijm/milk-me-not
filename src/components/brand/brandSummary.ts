@@ -19,6 +19,12 @@ export type BrandSummary = {
   avg: number;
   min: number;
   max: number;
+  /**
+   * The most recent rating, which is the closest thing the board has to a
+   * sign of life. A brand nobody has rated in two years is not proof of
+   * anything — but it is where you would look first.
+   */
+  latest: string | null;
 };
 
 export type BrandProduct = {
@@ -38,25 +44,31 @@ const mean = (values: number[]) => values.reduce((sum, v) => sum + v, 0) / value
  * renders — an index that reshuffles between visits is not an index.
  */
 export const brandSummaries = (facts: RatingFact[]): BrandSummary[] => {
-  const groups = new Map<string, { ratings: number[]; products: Set<string> }>();
+  const groups = new Map<string, { ratings: number[]; products: Set<string>; latest: string | null }>();
 
   for (const fact of facts) {
     const name = fact.brand_name?.trim();
     if (!name) continue;
     let bucket = groups.get(name);
-    if (!bucket) groups.set(name, (bucket = { ratings: [], products: new Set() }));
+    if (!bucket) groups.set(name, (bucket = { ratings: [], products: new Set(), latest: null }));
     bucket.ratings.push(fact.rating);
     if (fact.product_id) bucket.products.add(fact.product_id);
+    // String comparison is safe and cheap on ISO-8601, which is what the RPC
+    // returns; parsing 350 dates to find a maximum would not buy anything.
+    if (fact.created_at && (!bucket.latest || fact.created_at > bucket.latest)) {
+      bucket.latest = fact.created_at;
+    }
   }
 
   return [...groups]
-    .map(([brand, { ratings, products }]) => ({
+    .map(([brand, { ratings, products, latest }]) => ({
       brand,
       n: ratings.length,
       products: products.size,
       avg: mean(ratings),
       min: Math.min(...ratings),
       max: Math.max(...ratings),
+      latest,
     }))
     .sort((a, b) => b.n - a.n || b.avg - a.avg || a.brand.localeCompare(b.brand));
 };
