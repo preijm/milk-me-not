@@ -17,7 +17,7 @@ anything that isn't a letter or number turned into a hyphen:
 | Rude Health            | `rude-health.png`  |
 | Arla Jörd              | `arla-jord.png`    |
 | dmBio                  | `dmbio.png`        |
-| BIO+                   | `bio-plus.png`     |
+| BIO+                   | `bio-plus.svg`     |
 
 Accents and Nordic letters are folded (`ö` → `o`, `ø` → `o`, `æ` → `ae`),
 `+` becomes `plus`, `&` becomes `and`. If a brand is spelled two ways in the
@@ -123,16 +123,25 @@ but the top 11 cover 58% of them and the top 25 cover 78%. In rough order:
 13. Melkan · 14. Vemondo · 15. EDEKA Bio MY VEGGIE · 16. Campina ·
 17. Arla Jörd · 18. BioBio · 19. Just Plants · 20. Alnatura
 
-Nineteen of those twenty are covered; only Just Plants is not, and it does not
-appear to be a real company. Between them the files here carry **76% of all
-ratings from 25 files**, and the whole remaining tail is brands with four
-ratings or fewer.
+Nineteen of those twenty are covered; only Just Plants is not. It is a real
+product — Polish barcode prefix, sold in Bulgaria and Romania — but Open Food
+Facts lists no manufacturer and there is no company site or published mark
+anywhere, so there is nothing to put in the tile. The carton photographs on
+Open Food Facts are contributor CC BY-SA and are photographs, not a logo.
 
-Anything without a file falls back to a three-letter plant-base mark
-(`OAT`, `ALM`, `SOY`…), which is a deliberate design, not a broken state — so
-there is no need to chase all 71. Adding a file for a brand with two ratings
-costs a download on every build and buys almost nothing; check the brand's
-rating count before hunting for its logo.
+Between them the files here carry **77% of all ratings from 26 files**, and the
+whole remaining tail is brands with four ratings or fewer.
+
+Anything without a file falls back to the brand's initials, which is a
+deliberate design, not a broken state — so there is no need to chase all 71.
+Adding a file for a brand with two ratings costs a download on every build and
+buys almost nothing; check the brand's rating count before hunting for its logo.
+
+The board is the place to check that, not this list, which goes stale. The
+site's own `get_aggregated_milk_tests` RPC is readable with the anon key, so
+counting ratings per brand and running each name through `getBrandLogo` gives
+the real gap in a few seconds — and resolving through `getBrandLogo` rather
+than by eye is what catches the aliases.
 
 ## A note on rights
 
