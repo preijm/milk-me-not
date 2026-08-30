@@ -38,6 +38,25 @@ describe("brand state", () => {
     expect(brandState("Harvest Moon")).toBe("unchecked");
     expect(brandState(null)).toBe("unchecked");
   });
+
+  /**
+   * The case a boolean would have got wrong. Jörd was reported as
+   * discontinued, and it was — in the UK. It is still sold in the Netherlands,
+   * where most of this board shops, so calling it gone would mislead nearly
+   * every reader here.
+   */
+  it("does not call a brand gone because one country dropped it", () => {
+    expect(brandState("Arla Jörd")).toBe("listed");
+    expect(brandFacts("Arla Jörd")?.note).toMatch(/UK retail/);
+    expect(brandFacts("Arla Jörd")?.status?.source).toBeTruthy();
+  });
+
+  it("keeps a brand that outlived its owner separate from one that stopped", () => {
+    // Mighty Drinks went into administration; the name was bought out of it.
+    expect(brandFacts("Mighty Drinks")?.owner?.name).toBe("The Mighty Kitchen");
+    expect(brandState("Mighty Drinks")).toBe("unchecked");
+    expect(brandFacts("Mighty Drinks")?.note).toMatch(/administration/);
+  });
 });
 
 /**
