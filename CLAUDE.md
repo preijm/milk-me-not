@@ -484,6 +484,23 @@ Both the force-push and the `gh pr create` go through that token; doing only
 the second leaves a later `synchronize` unchecked, which is the same dead end
 one step along.
 
+**Rewriting the remote URL is not enough to make the push the app's**, and it
+fails in the way that is hardest to notice: it looks like it worked. `actions/
+checkout` persists its own `GITHUB_TOKEN` for github.com — an `http.extraheader`
+plus an `includeIf` credentials file — and that outranks credentials embedded in
+a remote URL, so `git remote set-url origin https://x-access-token:$APP@...`
+pushes as `github-actions[bot]` anyway. The checkout in that job therefore sets
+`persist-credentials: false`, which leaves the URL as the only credential in
+play.
+
+That was invisible for weeks because the pull request is merged and its branch
+deleted every round, so the event was always `opened` — attributed to whoever
+called `gh pr create`, which genuinely is the app. It surfaced on 2026-08-30
+(#256) when two pushes to main landed 90 seconds apart, the second run
+force-pushed onto a pull request that was still open, and that `synchronize`
+parked all four required checks on "waiting for approval" — which report nothing
+anywhere on their own, and are exactly what `health-check.yml` looks for.
+
 **Set both or neither.** The job checks for the variable *and* the key before
 minting anything, because the id is the easy half to add and an id with no key
 sends `create-github-app-token` after a PEM that is not there — turning this
