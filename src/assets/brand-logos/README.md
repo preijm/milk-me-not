@@ -151,21 +151,33 @@ whole remaining tail is brands with four ratings or fewer.
 Getting the last stretch to 80% took searching every uncovered brand, and what
 stopped most of them was not the rating count:
 
-| brand | why it is not here |
-| ----- | ------------------ |
-| Just Plants | real product, no company and no published mark anywhere |
-| Wunda | Nestlé answers 403 to a plain fetch of the asset |
-| Allos | only publishes a light yellow-green mark; 189 against white |
-| Elovena | publishes only a white-on-transparent logo |
-| Zonnatura | site builds its header from layered art, no logo file |
-| DUG | `dug.se` is parked; the other domain has a broken certificate |
-| Monoprix Bio | Monoprix is on Commons as PD, but the mark is 7:1 and faint |
-| enerBiO | Rossmann's, and every Rossmann mark on Commons is about 7:1 |
+| brand | ratings | why it is not here |
+| ----- | ------- | ------------------ |
+| **Wunda** | 4 | **brand discontinued** — Nestlé pulled it from the UK in early 2023 and the Netherlands by October 2024 |
+| **DUG** | 3 | **brand discontinued** — Veg of Lund's; `dug.se` is a parked for-sale page |
+| Just Plants | 4 | real product, no company and no published mark anywhere |
+| Allos | 4 | only publishes a light yellow-green mark; 189 against white |
+| Elovena | 3 | publishes only a white-on-transparent logo |
+| Zonnatura | 3 | site builds its header from layered art, no logo file |
+| Monoprix Bio | 2 | Monoprix is on Commons as PD, but the mark is 7:1 and faint |
+| enerBiO | 2 | Rossmann's, and every Rossmann mark on Commons is about 7:1 |
 
-Two of those are worth reading twice. A brand can be uncovered because its own
-logo is unusable here rather than because nobody has looked — and the ones that
-are unusable stay uncovered, because a mark nobody can read is worse than
-initials that at least say something.
+**The first two are the ones to read twice, and they set a ceiling.** Seven of
+352 ratings belong to brands that no longer trade, so no amount of looking will
+cover them — the board keeps the ratings, because someone drank the thing and
+said what they thought, but there is no company left to have a logo.
+
+They are also why this table says what it says. Both were first recorded here
+by their symptom: Nestlé answered 403 to a plain fetch, and DUG's domain was
+parked with the parent's certificate broken. Both read as network trouble and
+invite the next person to retry with a different user agent or a different
+domain, which is wasted effort against a brand that has been gone for two
+years. **Check whether the company still exists before assuming the fetch is
+the problem** — for these two the answer was a press article, not a redirect.
+
+The rest are uncovered because their own logo is unusable here rather than
+because nobody looked, and they stay that way: a mark nobody can read is worse
+than initials that at least say something.
 
 Wikimedia Commons is close to useless for this tier, and not in the harmless
 way: searching it by brand name returns *a* logo, just the wrong company's. The
