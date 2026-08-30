@@ -1,6 +1,23 @@
-<svg id="ALDI_Logo" data-name="ALDI Logo" xmlns="http://www.w3.org/2000/svg" width="157" height="164.26" viewBox="0 0 157 164.26">
+<!--
+  Framed square on purpose, like friesche-vlag.svg and edeka.svg — but sized
+  for a different reason than either. This panel's ground is white and its edge
+  is the red keyline, which ran flush to the artwork edge, so the tile's rounded
+  corners sliced the keyline's corners clean off and it read as a broken box.
+  Squaring 157x164.26 alone would not have fixed that; it is a 2% sliver and the
+  corners stay cut.
+
+  So the frame is 196 square, which is what it takes for the keyline to clear
+  the corner arc at every size it renders. A corner of radius r eats 0.293r into
+  the artwork along each axis, and the deepest of the three tiles is the 80px
+  hero card at radius 24 — 7.03px, or 8.8% — so the keyline needs a margin
+  above that, and 196 gives it 9.6%. Anything tighter nicks the corners again.
+
+  White_Border is that margin: it was the artwork-sized ground and now covers
+  the whole square, so nothing shows through behind the mark.
+-->
+<svg id="ALDI_Logo" data-name="ALDI Logo" xmlns="http://www.w3.org/2000/svg" width="196" height="196" viewBox="-19.5 -15.87 196 196">
   <g id="Background">
-    <rect id="White_Border" data-name="White Border" width="157" height="164.26" fill="#fff"/>
+    <rect id="White_Border" data-name="White Border" x="-19.5" y="-15.87" width="196" height="196" fill="#fff"/>
   </g>
   <g id="ALDI_Nord_Logo_2021" data-name="ALDI Nord Logo 2021">
     <g id="Logo">
