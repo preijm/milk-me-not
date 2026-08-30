@@ -123,14 +123,13 @@ but the top 11 cover 58% of them and the top 25 cover 78%. In rough order:
 13. Melkan · 14. Vemondo · 15. EDEKA Bio MY VEGGIE · 16. Campina ·
 17. Arla Jörd · 18. BioBio · 19. Just Plants · 20. Alnatura
 
-Eighteen of those twenty are covered. **Just Plants** is a real product —
-Polish barcode prefix, sold in Bulgaria and Romania — but Open Food Facts lists
-no manufacturer and there is no company site or published mark anywhere, so
+Nineteen of those twenty are covered; only Just Plants is not. It is a real
+product — Polish barcode prefix, sold in Bulgaria and Romania — but Open Food
+Facts lists no manufacturer and there is no company site or published mark, so
 there is nothing to put in the tile. The carton photographs on Open Food Facts
-are contributor CC BY-SA and are photographs, not a logo. **BioBio** had the
-Netto mark until its licence was looked at; see the rights note below.
+are contributor CC BY-SA and are photographs, not a logo.
 
-Between them the files here carry **75.9% of all ratings from 25 files**, and the
+Between them the files here carry **77% of all ratings from 26 files**, and the
 whole remaining tail is brands with four ratings or fewer.
 
 Anything without a file falls back to the brand's initials, which is a
@@ -160,13 +159,27 @@ Marken-Discount via Wikimedia Commons somewhere a reader could see. That credit
 was never written. It sat in the folder for months looking exactly like the
 other 25 files, because nothing about a file tells you its licence.
 
-It has been dropped rather than credited: it served one own-brand, BioBio, on
-four ratings, and a credit line for that is more page furniture than the logo
-was worth. BioBio takes its initials now.
+It was replaced rather than credited or dropped. Commons has the same brand
+under **PD-textlogo** — `Netto Marken-Discount 2018 logo.svg`, public domain,
+no attribution owed — so BioBio keeps its mark on the same terms as everything
+else here. The replacement is also the better tile: the old file crammed
+"Netto" and "Marken-Discount" into one yellow box and neither was legible at
+44px.
 
 **So check the licence before adding a file, and write it in the file.** Every
 logo added since carries a comment saying where it came from — that is the only
-thing that would have made this visible without going back to Commons. A
-PD-textlogo Netto mark does exist, `Netto Marken-Discount 2018 logo.svg`, if
-anyone wants the brand covered again; it needs no attribution, only the
-trademark rule above.
+thing that would have made this visible without going back to Commons. The
+Commons API answers it directly, which beats reading the page:
+
+```
+https://commons.wikimedia.org/w/api.php?action=query&format=json
+  &prop=imageinfo&iiprop=extmetadata&titles=File:<name>
+```
+
+**Put that comment inside the `<svg>` element, not above it.** Opened by path,
+a rasteriser stops looking for the `<svg` tag at byte 995 and calls the file an
+unsupported format — so a long enough header comment makes a perfectly valid
+file unreadable, with an error that sounds like a corrupt download. `aldi.svg`
+got to byte 976 before this was noticed. Opened as a Buffer there is no limit,
+so a quick check can pass while the thing that actually reads the file cannot
+open it. `brandLogo.panels.test.ts` asserts the limit for every SVG here.

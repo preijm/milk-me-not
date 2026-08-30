@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { isFullBleedLogo } from "./brandLogo";
@@ -48,12 +48,35 @@ const SIZES = [80, 56, 44] as const; // hero card, board row, mobile bar
 const FIELD_INSET = 2;
 const MAX_RIM = 25;
 
+/**
+ * How far into a file a rasteriser will look for the `<svg` signature before
+ * giving up and calling the file an unsupported format.
+ *
+ * Measured against libvips, by bisection: opened by path, byte 995 works and
+ * 996 does not. Opened as a Buffer there is no limit at all, which is why a
+ * quick check can say the file is fine while the thing that actually reads it
+ * cannot open it.
+ *
+ * This matters because every logo added here now carries a comment at the top
+ * saying where it came from and why it is framed the way it is, and comments
+ * push the tag down the file. `aldi.svg` reached byte 976 — nineteen bytes of
+ * room — and the failure it was heading for says "unsupported image format",
+ * which reads like a corrupt download rather than a long comment.
+ *
+ * The fix is to put the comment INSIDE the root element rather than above it.
+ * The limit is asserted anyway, because the next person will not know this.
+ */
+const SVG_TAG_LIMIT = 995;
+
 const slug = (file: string) => file.replace(/\.[^.]+$/, "");
 
-const panels = readdirSync(DIR)
+const files = readdirSync(DIR)
   .filter((f) => /\.(svg|png|jpe?g|webp|avif)$/i.test(f))
-  .filter((f) => isFullBleedLogo(slug(f)))
   .sort();
+
+const svgs = files.filter((f) => f.endsWith(".svg"));
+
+const panels = files.filter((f) => isFullBleedLogo(slug(f)));
 
 const luminance = ([r, g, b]: number[]) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
@@ -152,5 +175,21 @@ describe("full-bleed brand logos", () => {
       expect(coverage).toBeGreaterThan(0.99);
       expect(rim, `a 9% keyline read as a halo at ${size}px`).toBeLessThan(MAX_RIM);
     }
+  });
+});
+
+describe("every brand logo svg", () => {
+  it.each(svgs)("%s opens as an image, with its tag near the top", async (file) => {
+    const at = readFileSync(path.join(DIR, file), "utf8").indexOf("<svg");
+
+    expect(at, `${file} has no <svg tag`).toBeGreaterThanOrEqual(0);
+    expect(
+      at,
+      `${file} buries <svg at byte ${at}; a rasteriser opening it by path stops looking at ${SVG_TAG_LIMIT}. ` +
+        `Move the comment inside the root element, after the <svg ...> tag.`,
+    ).toBeLessThanOrEqual(SVG_TAG_LIMIT);
+
+    // and prove it, rather than trusting the number
+    await expect(sharp(path.join(DIR, file), { density: 300 }).metadata()).resolves.toBeTruthy();
   });
 });

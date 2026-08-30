@@ -80,10 +80,10 @@ const ALIASES: Record<string, string> = {
   // but the only logo that brand has ever had is Lidl's.
   "vemondo": "lidl",
   "my-vay": "aldi",
-  // BioBio is Netto Marken-Discount's own-brand and pointed at netto.svg, which
-  // is gone: it was the one file here under CC BY-SA rather than public domain,
-  // and the credit it required was never anywhere a reader could see it. The
-  // brand keeps its initials until a public-domain Netto mark replaces it.
+  // BioBio is Netto Marken-Discount's own-brand, so it carries the retailer's
+  // mark — the same reason Vemondo carries Lidl's.
+  "biobio": "netto",
+  "bio-bio": "netto",
 };
 
 /** The logo URL for a brand, or null when we do not have one. */

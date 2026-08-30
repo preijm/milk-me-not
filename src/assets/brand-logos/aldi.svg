@@ -1,3 +1,4 @@
+<svg id="ALDI_Logo" data-name="ALDI Logo" xmlns="http://www.w3.org/2000/svg" width="196" height="196" viewBox="-19.5 -15.87 196 196">
 <!--
   Framed square on purpose, like friesche-vlag.svg and edeka.svg — but sized
   for a different reason than either. This panel's ground is white and its edge
@@ -15,7 +16,6 @@
   White_Border is that margin: it was the artwork-sized ground and now covers
   the whole square, so nothing shows through behind the mark.
 -->
-<svg id="ALDI_Logo" data-name="ALDI Logo" xmlns="http://www.w3.org/2000/svg" width="196" height="196" viewBox="-19.5 -15.87 196 196">
   <g id="Background">
     <rect id="White_Border" data-name="White Border" x="-19.5" y="-15.87" width="196" height="196" fill="#fff"/>
   </g>
