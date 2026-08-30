@@ -60,6 +60,16 @@ ground to spare, pad when it does not. Either way the ground goes behind
 everything, so the frame can be chosen for how big the mark should read rather
 than for what happens to stay opaque.
 
+**A panel whose edge is a line, not a fill, needs real margin.** The tile is
+rounded, and a corner of radius `r` eats `0.293r` into the artwork along each
+axis. A coloured field does not care — that is just its corner being rounded,
+which is the point. A keyline does: it gets sliced and reads as a broken box.
+`aldi.svg` is white ground with a red keyline that ran flush to the artwork
+edge, so all four corners were cut. Squaring 157×164.26 would not have helped;
+the sliver was 2% and the corners stay cut either way. Its frame is 196 square,
+which puts the keyline 9.6% in — past the 8.8% the deepest tile costs, the
+80px hero card at radius 24. Anything tighter nicks the corners again.
+
 Frame the file, do not crop it in code. Covering the tile with `object-cover`
 was tried and is worse: Edeka's mark is taller than it is wide, so filling the
 square pushed its wordmark out of the bottom edge.
