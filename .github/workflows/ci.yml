@@ -92,8 +92,21 @@ jobs:
       pull-requests: write
 
     steps:
+      # persist-credentials: false is what makes the app identity below stick.
+      # checkout leaves a GITHUB_TOKEN credential configured for github.com —
+      # an Authorization header, plus an includeIf credentials file — and it
+      # outranks credentials written into a remote URL. So the `set-url` further
+      # down looked like it pushed as the app and did not: the force-push went
+      # out as github-actions[bot], and a `synchronize` from GITHUB_TOKEN starts
+      # nothing. That is #256. The `opened` event hid this for weeks, because
+      # `gh pr create` is an API call and really was the app; only when two runs
+      # overlapped and the second pushed onto an already-open pull request did
+      # the difference show. With nothing persisted, the URL is the only
+      # credential there is.
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js for lockfile generation
         uses: actions/setup-node@v7
@@ -171,6 +184,12 @@ jobs:
           # request. A later run force-pushes this branch, and a `synchronize`
           # attributed to GITHUB_TOKEN would leave the updated head with no
           # checks — the same dead end one step further along.
+          #
+          # This only works because the checkout above sets
+          # persist-credentials: false. With the default, checkout's own
+          # GITHUB_TOKEN header outranks the credentials in this URL and the
+          # push goes out as github-actions[bot] regardless — which is what
+          # happened in #256.
           git remote set-url origin \
             "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push --force origin "$BRANCH"
