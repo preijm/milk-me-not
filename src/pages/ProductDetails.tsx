@@ -5,6 +5,7 @@ import { QuickRateSheet } from "@/components/story/QuickRateSheet";
 import { humanizeLabels } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { BrandMark } from "@/components/story/BrandMark";
+import { brandSlug } from "@/lib/brandLogo";
 import {
   ArrowRight,
   Band,
@@ -182,19 +183,26 @@ const ProductDetails = () => {
                 and every dialog use to say who made something. For the 25
                 brands we hold a logo for it is unmistakable; for the rest the
                 initials tile is still recognisably an avatar for a maker. */}
-            <div className="flex items-center gap-3">
+            {/* A link, and one of the few places it can be: the brand line in
+                `ProductIdentity` is already inside the row's own <Link> on the
+                board and the feed, so linking it there would nest anchors. Here
+                the row belongs to nobody, so it can carry the brand page. */}
+            <Link
+              to={`/brand/${brandSlug(story.brandName)}`}
+              className="group inline-flex items-center gap-3 no-underline"
+            >
               <BrandMark
                 brand={story.brandName}
                 className="h-12 w-12 text-[0.8125rem]"
                 radius="rounded-xl"
               />
               <p
-                className="min-w-0 text-[0.9375rem] font-bold uppercase tracking-[0.08em] text-story-ink-2"
+                className="min-w-0 text-[0.9375rem] font-bold uppercase tracking-[0.08em] text-story-ink-2 group-hover:underline"
                 translate="no"
               >
                 {story.brandName}
               </p>
-            </div>
+            </Link>
 
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               {story.productName}

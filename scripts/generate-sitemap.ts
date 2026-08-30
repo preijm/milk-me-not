@@ -13,6 +13,10 @@ interface SitemapEntry {
 const entries: SitemapEntry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/results", changefreq: "daily", priority: "0.9" },
+  // The index only. Individual /brand/:slug pages are left out for the same
+  // reason /product/:id pages are: the list is data, and baking it in here
+  // would go stale the moment somebody rates a new brand.
+  { path: "/brands", changefreq: "weekly", priority: "0.7" },
   { path: "/feed", changefreq: "daily", priority: "0.9" },
   { path: "/about", changefreq: "monthly", priority: "0.6" },
   { path: "/contact", changefreq: "monthly", priority: "0.5" },

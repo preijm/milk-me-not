@@ -11,6 +11,8 @@
  * never disagree.
  */
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "@/components/story";
 import { ResultsPanel } from "./ResultsPanel";
 import { useRatingFacts } from "@/hooks/useRatingFacts";
 // The product page already draws a tier histogram exactly like this one, and it
@@ -61,6 +63,16 @@ export const ResultsCharts = ({ visibleProductIds }: { visibleProductIds: Set<st
         }
       >
         <BrandRangeChart rows={brands} minRatings={MIN_RATINGS_PER_BRAND} />
+        {/* This chart shows the brands with a real sample. The rest of them —
+            the two-thirds under the minimum — exist and are worth reaching,
+            so the way out is here rather than in the header nav. */}
+        <Link
+          to="/brands"
+          className="mt-6 inline-flex items-center gap-2 text-[0.875rem] font-bold text-story-green-dark no-underline hover:underline"
+        >
+          Every brand on the board
+          <ArrowRight />
+        </Link>
       </ResultsPanel>
 
       <ResultsPanel
