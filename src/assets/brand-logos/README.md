@@ -70,6 +70,18 @@ the sliver was 2% and the corners stay cut either way. Its frame is 196 square,
 which puts the keyline 9.6% in — past the 8.8% the deepest tile costs, the
 80px hero card at radius 24. Anything tighter nicks the corners again.
 
+**And a field has to actually reach the edge of the frame.** `lidl.svg` came
+with its blue inset by 0.522 and a white ring painted in the gap — the keyline
+you want when the logo goes on a white page. Inside a full-bleed tile that ring
+is a halo. It is half a pixel wide, so it is invisible on the cream card and
+plainly visible along the top and left of a dark row: `contain` centres a
+60-unit artwork in a 56 or 44px tile, and the fractional edge rounds up on
+those two sides and away on the other two. The ring is gone and the blue covers
+the whole viewBox.
+
+Check a panel on a dark row before calling it done. That is the only place a
+light edge shows, and it is not the ground you were looking at while framing it.
+
 Frame the file, do not crop it in code. Covering the tile with `object-cover`
 was tried and is worse: Edeka's mark is taller than it is wide, so filling the
 square pushed its wordmark out of the bottom edge.
