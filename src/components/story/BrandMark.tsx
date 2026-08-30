@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { getBrandLogo, isFullBleedLogo } from "@/lib/brandLogo";
 import { markFor } from "./userMarkTone";
+import { brandInitials } from "./brandInitials";
 
 type BrandMarkProps = {
   brand: string | null | undefined;
@@ -8,21 +9,6 @@ type BrandMarkProps = {
   className?: string;
   /** Rounding, so a dense row can differ from a card. */
   radius?: string;
-};
-
-/**
- * Initials for a brand with no logo. "Oddly Good" is OG, "Auchan" is AU.
- *
- * Capitalised words win, so "Take it Veggie" is TV rather than TI — the
- * connector is not part of how anyone says the name.
- */
-const brandInitials = (brand: string | null | undefined) => {
-  const words = (brand ?? "").trim().split(/\s+/).filter((w) => /[a-z]/i.test(w));
-  if (words.length === 0) return "?";
-  const named = words.filter((w) => w[0] === w[0].toUpperCase());
-  const pick = named.length >= 2 ? named : words;
-  if (pick.length >= 2) return (pick[0][0] + pick[1][0]).toUpperCase();
-  return pick[0].slice(0, 2).toUpperCase();
 };
 
 /**

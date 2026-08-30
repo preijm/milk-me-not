@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { BrandMark } from "./BrandMark";
+import { brandInitials as initials } from "./brandInitials";
 
 /**
  * With no logo, this used to show the plant base — three letters like OAT,
@@ -8,16 +9,12 @@ import { BrandMark } from "./BrandMark";
  * logo goes, on a row already reading "AUCHAN / Oat": it named the wrong thing
  * and repeated the product name doing it.
  *
- * These brands are all real ones from the board with no logo file.
+ * The rule is asserted directly rather than through the component. Going
+ * through `BrandMark` meant every fixture had to be a brand with no logo file,
+ * so adding one turned this file red for no reason connected to it — which
+ * happened with `dmBio`, and again with "Oddly Good" and "Take it Veggie".
  */
 describe("BrandMark initials", () => {
-  const initials = (brand: string) => {
-    const { container, unmount } = render(<BrandMark brand={brand} />);
-    const text = container.textContent?.trim();
-    unmount();
-    return text;
-  };
-
   it("takes the first letters of a two-word brand", () => {
     expect(initials("Oddly Good")).toBe("OG");
     expect(initials("Lazy Heroes")).toBe("LH");
@@ -34,9 +31,6 @@ describe("BrandMark initials", () => {
     expect(initials("Take it Veggie")).toBe("TV");
   });
 
-  // Every fixture here has to be a brand with no logo file, or the component
-  // renders the image and there are no initials to assert on — which is what
-  // "dmBio" did when it sat in this test.
   it("copes with punctuation and an all-lowercase name", () => {
     expect(initials("Plant Based!")).toBe("PB");
     expect(initials("eco mylk")).toBe("EM");
