@@ -49,9 +49,20 @@ slab across the middle with cream bands top and bottom and a curve receding out
 of the lower corners. Its viewBox is now cropped to a square around the crest,
 with a blue ground behind it covering whatever the crop leaves of the swoop.
 
+`edeka.svg` had the same fault the other way round — a 32×39 panel, so yellow
+slab with cream down both sides. Its viewBox is padded either side instead of
+cropped, and the yellow ground is drawn across the whole square. That costs the
+mark nothing: `contain` was already fitting a tall panel by its height, so the
+E renders at exactly the size it always did and only the slivers change.
+
+Which way round to go is just where the artwork is. Crop when the file has
+ground to spare, pad when it does not. Either way the ground goes behind
+everything, so the frame can be chosen for how big the mark should read rather
+than for what happens to stay opaque.
+
 Frame the file, do not crop it in code. Covering the tile with `object-cover`
-was tried and is worse: Edeka's roundel is taller than it is wide, so filling
-the square pushed its wordmark out of the bottom edge.
+was tried and is worse: Edeka's mark is taller than it is wide, so filling the
+square pushed its wordmark out of the bottom edge.
 
 To tell which kind a file is without guessing, draw it to a canvas and read
 the corner alpha — four opaque, non-white corners means a panel.

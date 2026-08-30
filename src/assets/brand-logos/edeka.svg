@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="43.022" height="52.23" version="1.2" viewBox="0 0 32.267 39.173" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!--
+  Framed square on purpose, like friesche-vlag.svg. EDEKA's panel is 32x39, so
+  in a square tile it was letterboxed: yellow slab with the tile's own ground
+  showing down both sides. The viewBox is padded by 3.453 either side to make
+  it square and the yellow ground is drawn across all of it, which costs the
+  mark nothing - contain already fitted this panel by height, so the E is
+  rendered at exactly the size it always was.
+
+  The hairline blue keyline the export carried is gone with it. It ran along
+  the panel edge, where the tile's rounded corners cut it, and at these sizes
+  it was half a pixel of noise.
+-->
+<svg width="52.23" height="52.23" version="1.2" viewBox="-3.453 0 39.173 39.173" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <rect x="-3.453" y="0" width="39.173" height="39.173" fill="#ffe300"/>
  <defs>
   <symbol id="glyph0-1" overflow="visible"></symbol>
  </defs>
@@ -7,8 +20,6 @@
   <use x="91.363197" y="69.167603" width="100%" height="100%" xlink:href="#glyph0-1"/>
  </g>
  <g transform="translate(-150.85 -52.855)">
-  <path d="m150.99 91.883h31.977v-38.879h-31.977z" fill="#ffe300"/>
-  <path d="m150.99 53h31.977v38.883h-31.977z" fill="none" stroke="#027abf" stroke-miterlimit="3.864" stroke-width=".29"/>
   <g fill="#027abf">
    <path d="m154.63 56.637h24.703v6.5352h-17.078v2.5508h17.078v6.5352h-17.078v2.5469h17.078v6.5352h-24.703z"/>
    <path d="m159.83 83.867h2.5938c1.2031 0.0039 2.1758 0.98437 2.1797 2.1836 4e-3 1.207-0.97266 2.1953-2.1797 2.1992h-2.5938z"/>
