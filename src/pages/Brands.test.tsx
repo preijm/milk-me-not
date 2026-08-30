@@ -180,6 +180,16 @@ describe("a brand page", () => {
     expect(await screen.findByText(/Part of a larger group/)).toBeInTheDocument();
   });
 
+  /**
+   * This said "Not checked" in a pill, which describes our filing rather than
+   * the drink — the owner of the site asked what it meant, which settles it.
+   */
+  it("answers the question a reader actually brought", async () => {
+    draw("/brand/alpro");
+    expect(await screen.findByText(/do not know whether this is still on sale/i)).toBeInTheDocument();
+    expect(screen.queryByText("Not checked")).not.toBeInTheDocument();
+  });
+
   it("tells a reader when nothing matches the address", async () => {
     draw("/brand/does-not-exist");
     expect(await screen.findByText(/No brand by that name/i)).toBeInTheDocument();
