@@ -39,8 +39,19 @@ them on a white tile with padding draws a white ring around a logo that
 already has its own edge, and it reads as a picture inside a picture.
 
 Panels are declared in `FULL_BLEED` in `src/lib/brandLogo.ts` — add the slug.
-Aspect ratio does not matter: nothing is cropped, so a wide panel keeps its
-wordmark and sits centred instead of filling the tile.
+
+**A panel file has to be square**, and it is the one kind where aspect ratio
+really matters. Nothing is ever cropped, so a panel that is not square gets
+letterboxed: the tile's own ground shows above and below the coloured block,
+and what should read as a tile reads as a logo cut in half. `friesche-vlag.svg`
+was 136×113 with the flag swoop along its bottom edge, so at 80px it was a blue
+slab across the middle with cream bands top and bottom and a curve receding out
+of the lower corners. Its viewBox is now cropped to a square around the crest,
+with a blue ground behind it covering whatever the crop leaves of the swoop.
+
+Frame the file, do not crop it in code. Covering the tile with `object-cover`
+was tried and is worse: Edeka's roundel is taller than it is wide, so filling
+the square pushed its wordmark out of the bottom edge.
 
 To tell which kind a file is without guessing, draw it to a canvas and read
 the corner alpha — four opaque, non-white corners means a panel.
