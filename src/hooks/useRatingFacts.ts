@@ -24,6 +24,24 @@ export type RatingFact = {
 /** Shared by every consumer, so React Query dedupes them onto one request. */
 export const RATING_FACTS_KEY = ["milk-tests-facts"] as const;
 
+/**
+ * The RPC says "I am not telling you when" with the epoch, not with null.
+ *
+ * 248 of the 352 ratings it returns carry `1970-01-01T00:00:00+00:00`, which
+ * is the anonymising function zeroing the timestamp rather than omitting it —
+ * a rating's time is one of the few things that could tie it back to a person.
+ * Read literally it means the board was busiest during the Apollo programme,
+ * and the brand index duly printed "Jan 1970" against half its rows.
+ *
+ * So it is normalised here rather than at each call site: it is a fact about
+ * this RPC, and every consumer already handles a missing date.
+ */
+const anonymisedDate = (value: string | null | undefined): string | null => {
+  if (!value) return null;
+  // Any year before the site existed is the sentinel, not a real rating.
+  return value < "2000" ? null : value;
+};
+
 export const fetchRatingFacts = async (): Promise<RatingFact[]> => {
   const { data, error } = await supabase.rpc("get_aggregated_milk_tests");
   if (error) throw error;
@@ -38,7 +56,7 @@ export const fetchRatingFacts = async (): Promise<RatingFact[]> => {
       price_quality_ratio: row.price_quality_ratio ?? null,
       property_names: row.property_names ?? null,
       flavor_names: row.flavor_names ?? null,
-      created_at: row.created_at ?? null,
+      created_at: anonymisedDate(row.created_at),
       country_code: row.country_code ?? null,
     }));
 };
