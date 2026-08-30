@@ -208,6 +208,28 @@ const BrandDetail = () => {
             )}
           </p>
         )}
+
+        {/* The half a state cannot hold: pulled from one country, or bought
+            out of its owner's administration. Without this the page would
+            round both of those to "still listed" and say nothing. */}
+        {info?.note && (
+          <p className="mt-3 max-w-2xl border-l-2 border-story-ink/12 pl-4 text-[0.875rem] font-medium leading-relaxed text-story-muted">
+            {info.note}
+            {status?.source && (
+              <>
+                {" "}
+                <a
+                  href={status.source}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-story-green-dark underline-offset-2 hover:underline"
+                >
+                  Source
+                </a>
+              </>
+            )}
+          </p>
+        )}
       </Band>
 
       <Band ground="paper" size="lg">

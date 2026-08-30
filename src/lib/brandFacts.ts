@@ -57,6 +57,12 @@ export type BrandStatus = {
 export type BrandFacts = {
   owner?: BrandOwner;
   status?: BrandStatus;
+  /**
+   * The thing neither field can hold. A brand is rarely just on or off — it
+   * gets pulled from one country, or its owner goes under and somebody buys
+   * the name. Flattening that into a state would lose the half that matters.
+   */
+  note?: string;
 };
 
 /**
@@ -85,6 +91,22 @@ const BRAND_FACTS: Record<string, BrandFacts> = {
     },
   },
 
+  // ── Checked, and still on a shelf near this board ────────────────────
+  // Worth recording precisely because the headline says otherwise. Jörd was
+  // dropped from UK retail in January 2025 and reported as discontinued, but
+  // it is still sold in Denmark, Sweden and the Netherlands — which is where
+  // most of this board shops. A boolean would have called it gone and been
+  // wrong for nearly every reader here.
+  "arla-jord": {
+    owner: { name: "Arla Foods", kind: "group" },
+    status: {
+      state: "listed",
+      checked: "2026-08-30",
+      source: "https://www.thegrocer.co.uk/news/arla-scraps-plant-based-j%C3%B6r-brand-from-uk-retail/700309.article",
+    },
+    note: "Dropped from UK retail in January 2025 and moved to foodservice there. Still sold in Denmark, Sweden and the Netherlands.",
+  },
+
   // ── Supermarket own-labels ───────────────────────────────────────────
   // The chain is the useful half here: it is the difference between "rated 8.1"
   // and "rated 8.1, and only Lidl sells it".
@@ -99,6 +121,10 @@ const BRAND_FACTS: Record<string, BrandFacts> = {
   "rewe-bio": { owner: { name: "REWE", kind: "own-label", chain: "REWE" } },
   "bio-plus": { owner: { name: "Superunie", kind: "own-label" } },
   dmbio: { owner: { name: "dm-drogerie markt", kind: "own-label", chain: "dm" } },
+  // Looked like a dead startup — vehappy.eu does not resolve — and is nothing
+  // of the sort: an EDEKA group line sold through Netto, so it never had a
+  // site of its own. A domain that does not answer is not evidence.
+  vehappy: { owner: { name: "EDEKA", kind: "own-label", chain: "Netto" } },
 
   // ── Brands inside a larger portfolio ─────────────────────────────────
   alpro: { owner: { name: "Danone", kind: "group" } },
@@ -119,7 +145,16 @@ const BRAND_FACTS: Record<string, BrandFacts> = {
   natumi: { owner: { name: "Natumi", kind: "independent" } },
   joya: { owner: { name: "Joya", kind: "independent" } },
   sproud: { owner: { name: "Sproud", kind: "independent" } },
-  mighty: { owner: { name: "Mighty Drinks", kind: "independent" } },
+  // The one that came closest to a third entry in the gone list, and is not
+  // one: the company went into administration in June 2025 and the brand
+  // itself was bought out of it. The name survived its owner.
+  // Keyed as the board spells it, not as the logo file is named. The logo
+  // aliases map "mighty-drinks" onto mighty.png; facts do not ride on those,
+  // so the key here has to be the catalogue's own spelling.
+  "mighty-drinks": {
+    owner: { name: "The Mighty Kitchen", kind: "independent" },
+    note: "Mighty Drinks went into administration in June 2025; the brand and its recipes were bought by The Mighty Kitchen. Whether it is back on a shelf here has not been checked.",
+  },
 };
 
 /**
