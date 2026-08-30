@@ -82,6 +82,12 @@ the whole viewBox.
 Check a panel on a dark row before calling it done. That is the only place a
 light edge shows, and it is not the ground you were looking at while framing it.
 
+Two of these three rules are now asserted — `src/lib/brandLogo.panels.test.ts`
+renders every `FULL_BLEED` file at 80, 56 and 44px and fails if it does not
+reach its frame or if its edge is lighter than its field. Run against the four
+files as they were, it catches all four. The keyline margin above is the one it
+cannot check, because a line and a fill are the same pixels.
+
 Frame the file, do not crop it in code. Covering the tile with `object-cover`
 was tried and is worse: Edeka's mark is taller than it is wide, so filling the
 square pushed its wordmark out of the bottom edge.
