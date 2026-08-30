@@ -111,7 +111,16 @@ Logos render inside a small square tile on a white ground, scaled to fit with
   that over the horizontal wordmark. Jumbo's tile comes from exactly that.
 - **Avoid white-on-transparent.** It disappears on the tile. Use the dark or
   full-colour variant — most brands publish both, usually with `-dark` or
-  `-black` in the filename.
+  `-black` in the filename, and often the header logo is the white one while
+  the footer carries the colour one. Sojasun's header SVG measured 242
+  luminance against white and was invisible; the footer version measures 91 and
+  is what is here. Elovena publishes only the white one, which is why it is
+  still uncovered rather than covered badly.
+- **Check the contrast, do not eyeball it.** Composite the file onto white and
+  look at how dark its darkest pixels actually get. Everything here lands
+  between 0 and 119 except `allos.png`, whose brand colour is a light
+  yellow-green: it reads on the 80px card and washes out at 44px. That is the
+  edge of acceptable, and it is where the bar sits.
 
 ## Which brands are worth it
 
@@ -129,8 +138,25 @@ Facts lists no manufacturer and there is no company site or published mark, so
 there is nothing to put in the tile. The carton photographs on Open Food Facts
 are contributor CC BY-SA and are photographs, not a logo.
 
-Between them the files here carry **77% of all ratings from 26 files**, and the
+Between them the files here carry **80% of all ratings from 29 files**, and the
 whole remaining tail is brands with four ratings or fewer.
+
+Getting the last stretch to 80% took searching every uncovered brand, and what
+stopped most of them was not the rating count:
+
+| brand | why it is not here |
+| ----- | ------------------ |
+| Just Plants | real product, no company and no published mark anywhere |
+| Wunda | Nestlé answers 403 to a plain fetch of the asset |
+| Elovena | publishes only a white-on-transparent logo |
+| Zonnatura | site builds its header from layered art, no logo file |
+| DUG | `dug.se` is parked; the other domain has a broken certificate |
+
+Wikimedia Commons is close to useless for this tier, and not in the harmless
+way: searching it by brand name returns *a* logo, just the wrong company's. The
+only "Allos" there is a Brazilian shopping-mall operator, "Sojasun" is a
+cycling team it once sponsored, and "Elovena" is a photograph of oats. Confirm
+the entity before the file lands.
 
 Anything without a file falls back to the brand's initials, which is a
 deliberate design, not a broken state — so there is no need to chase all 71.
@@ -183,3 +209,8 @@ file unreadable, with an error that sounds like a corrupt download. `aldi.svg`
 got to byte 976 before this was noticed. Opened as a Buffer there is no limit,
 so a quick check can pass while the thing that actually reads the file cannot
 open it. `brandLogo.panels.test.ts` asserts the limit for every SVG here.
+
+A PNG cannot carry a comment, so for those the source goes in the commit that
+adds the file — which is worth knowing before trusting "it is written in the
+file" as a rule. `allos.png` and `vly.png` came from the brands' own sites,
+`sojasun.svg` from Sojasun's footer.
