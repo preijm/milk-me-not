@@ -84,6 +84,8 @@ const ALIASES: Record<string, string> = {
   // mark — the same reason Vemondo carries Lidl's.
   "biobio": "netto",
   "bio-bio": "netto",
+  // "Take it Veggie" is Kaufland's; the cartons are branded K-take it veggie.
+  "take-it-veggie": "kaufland",
 };
 
 /** The logo URL for a brand, or null when we do not have one. */
@@ -102,7 +104,7 @@ export const getBrandLogo = (brandName: string | null | undefined): string | nul
  * Aspect ratio does not matter here: nothing is cropped, so a wide panel keeps
  * its wordmark and simply sits centred in the tile.
  */
-const FULL_BLEED = new Set(["friesche-vlag", "aldi", "edeka", "lidl", "picnic", "jumbo"]);
+const FULL_BLEED = new Set(["friesche-vlag", "aldi", "edeka", "lidl", "picnic", "jumbo", "kaufland"]);
 
 /** Does this brand's logo bring its own background? */
 export const isFullBleedLogo = (brandName: string | null | undefined): boolean => {

@@ -70,6 +70,13 @@ the sliver was 2% and the corners stay cut either way. Its frame is 196 square,
 which puts the keyline 9.6% in — past the 8.8% the deepest tile costs, the
 80px hero card at radius 24. Anything tighter nicks the corners again.
 
+`kaufland.svg` arrived with the same fault and got the same treatment: 520
+square against 420 of artwork, keyline 9.6% in. Expect this from any retailer
+mark — a keyline is how a logo is drawn to sit on a white page, and a rounded
+tile is the one place it does not work. **The test cannot catch it**, in either
+file: the ground is opaque so coverage passes, and the edge is *darker* than
+the field rather than lighter so the rim check passes too. Measure by hand.
+
 **And a field has to actually reach the edge of the frame.** `lidl.svg` came
 with its blue inset by 0.522 and a white ring painted in the gap — the keyline
 you want when the logo goes on a white page. Inside a full-bleed tile that ring
@@ -111,7 +118,16 @@ Logos render inside a small square tile on a white ground, scaled to fit with
   that over the horizontal wordmark. Jumbo's tile comes from exactly that.
 - **Avoid white-on-transparent.** It disappears on the tile. Use the dark or
   full-colour variant — most brands publish both, usually with `-dark` or
-  `-black` in the filename.
+  `-black` in the filename, and often the header logo is the white one while
+  the footer carries the colour one. Sojasun's header SVG measured 242
+  luminance against white and was invisible; the footer version measures 91 and
+  is what is here. Elovena publishes only the white one, which is why it is
+  still uncovered rather than covered badly.
+- **Check the contrast, do not eyeball it.** Composite the file onto white and
+  look at how dark its darkest pixels actually get. Everything here lands
+  between 0 and 119. Allos was added at 189 — its brand colour is a light
+  yellow-green — and taken out again: it read on the 80px card and washed out
+  at 44px, which is the size most people see. 119 is the bar, not a guideline.
 
 ## Which brands are worth it
 
@@ -129,8 +145,33 @@ Facts lists no manufacturer and there is no company site or published mark, so
 there is nothing to put in the tile. The carton photographs on Open Food Facts
 are contributor CC BY-SA and are photographs, not a logo.
 
-Between them the files here carry **77% of all ratings from 26 files**, and the
+Between them the files here carry **80% of all ratings from 30 files**, and the
 whole remaining tail is brands with four ratings or fewer.
+
+Getting the last stretch to 80% took searching every uncovered brand, and what
+stopped most of them was not the rating count:
+
+| brand | why it is not here |
+| ----- | ------------------ |
+| Just Plants | real product, no company and no published mark anywhere |
+| Wunda | Nestlé answers 403 to a plain fetch of the asset |
+| Allos | only publishes a light yellow-green mark; 189 against white |
+| Elovena | publishes only a white-on-transparent logo |
+| Zonnatura | site builds its header from layered art, no logo file |
+| DUG | `dug.se` is parked; the other domain has a broken certificate |
+| Monoprix Bio | Monoprix is on Commons as PD, but the mark is 7:1 and faint |
+| enerBiO | Rossmann's, and every Rossmann mark on Commons is about 7:1 |
+
+Two of those are worth reading twice. A brand can be uncovered because its own
+logo is unusable here rather than because nobody has looked — and the ones that
+are unusable stay uncovered, because a mark nobody can read is worse than
+initials that at least say something.
+
+Wikimedia Commons is close to useless for this tier, and not in the harmless
+way: searching it by brand name returns *a* logo, just the wrong company's. The
+only "Allos" there is a Brazilian shopping-mall operator, "Sojasun" is a
+cycling team it once sponsored, and "Elovena" is a photograph of oats. Confirm
+the entity before the file lands.
 
 Anything without a file falls back to the brand's initials, which is a
 deliberate design, not a broken state — so there is no need to chase all 71.
@@ -183,3 +224,7 @@ file unreadable, with an error that sounds like a corrupt download. `aldi.svg`
 got to byte 976 before this was noticed. Opened as a Buffer there is no limit,
 so a quick check can pass while the thing that actually reads the file cannot
 open it. `brandLogo.panels.test.ts` asserts the limit for every SVG here.
+
+A PNG cannot carry a comment, so for those the source goes in the commit that
+adds the file — which is worth knowing before trusting "it is written in the
+file" as a rule. `vly.png` came from the brand's own site.
