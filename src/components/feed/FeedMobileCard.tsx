@@ -69,9 +69,13 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
     <article id={`test-${item.id}`} className="story-hairline w-full rounded-2xl bg-white p-3">
       <div className="flex gap-3">
         {item.picture_path && (
-          <div className="w-26 shrink-0">
+          /* The photo follows the card's height instead of setting it — see
+             `fill`. `min-h-35` is the 3:4 box it would have claimed on its
+             own, and is the floor: shorter cards keep a portrait photo,
+             taller ones let it grow rather than stopping short. */
+          <div className="relative min-h-35 w-26 shrink-0 self-stretch">
             <FeedImage
-              portrait
+              fill
               picturePath={item.picture_path}
               brandName={item.brand_name ?? "Unknown brand"}
               productName={item.product_name ?? "Unknown product"}
@@ -98,6 +102,7 @@ export const FeedMobileCard = ({ item }: FeedMobileCardProps) => {
                 size="sm"
                 showMark={false}
                 maxBadges={2}
+                badgesBelow
                 after={<ArrowRight className="h-3.5 w-3.5 shrink-0 text-story-muted-2" />}
               />
             </Link>

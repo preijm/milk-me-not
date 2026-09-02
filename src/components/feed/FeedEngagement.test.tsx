@@ -62,6 +62,33 @@ describe("FeedEngagement", () => {
     expect(screen.queryByText(/view all/i)).not.toBeInTheDocument();
   });
 
+  // The mobile card gives this row whatever is left of a 195px column after
+  // the byline. Two zeros cost about 24px to say nothing, and on your own
+  // posts they pushed the edit button far enough right that the username was
+  // truncated to zero width and the heart landed on the timestamp.
+  it("drops a zero on the compact row, and keeps a real count", () => {
+    const quiet = render(<FeedEngagement {...defaultProps} bare />);
+    expect(quiet.queryAllByText("0").length).toBe(0);
+    quiet.unmount();
+
+    render(<FeedEngagement {...defaultProps} bare commentsCount={3} />);
+    expect(screen.getByText("3")).toBeInTheDocument();
+  });
+
+  it("keeps its zeros where there is room for them", () => {
+    render(<FeedEngagement {...defaultProps} />);
+    expect(screen.getAllByText("0").length).toBe(2);
+  });
+
+  // Hiding the count hides the popover's trigger with it, which is only ever
+  // the case at zero likes — where there is nobody to list.
+  it("still names its controls when the counts are gone", () => {
+    render(<FeedEngagement {...defaultProps} bare isOwnPost />);
+    expect(screen.getByRole("button", { name: /like/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /comment/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /edit/i })).toBeInTheDocument();
+  });
+
   it("renders like count with likes", () => {
     const likes = [
       { id: "1", user_id: "u1", username: "Alice" },
