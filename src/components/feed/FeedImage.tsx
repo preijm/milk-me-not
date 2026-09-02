@@ -20,6 +20,24 @@ interface FeedImageProps {
    * picture of the carton anybody took.
    */
   portrait?: boolean;
+  /**
+   * Fill the box the caller gives instead of claiming a height of its own.
+   * The caller's element must be positioned — this lays out absolutely.
+   *
+   * The mobile card is two columns of unequal height: the photo on the left,
+   * and however many lines of brand, name, badges and note on the right.
+   * Whichever was shorter left a band of white beside the other, in both
+   * directions. A three-line note out-ran a 3:4 photo, so the picture stopped
+   * two thirds of the way down the card and read as still loading; and a card
+   * with no note was out-run by the photo, because the feed's crops are not
+   * all 3:4 — the tallest is 451x800, which at 104px wide is 184px of picture
+   * against 113px of words, and that put 70px of nothing under the badges.
+   *
+   * Laying out absolutely takes the photo out of the height calculation
+   * entirely: it follows the card rather than setting it, and the caller's
+   * `min-h` is the floor that keeps it from ever going landscape.
+   */
+  fill?: boolean;
   /** Rounding, mostly — the desktop card clips the photo with its own container. */
   className?: string;
 }
@@ -33,6 +51,7 @@ export const FeedImage = ({
   productName,
   compact = false,
   portrait = false,
+  fill = false,
   className,
 }: FeedImageProps) => {
   const [showEnlarged, setShowEnlarged] = useState(false);
@@ -70,6 +89,9 @@ export const FeedImage = ({
      large display it quietly sharpens. */
   const [fullLoaded, setFullLoaded] = useState(false);
 
+  /** How tall the photo draws: the caller's box, its own shape, or a strip. */
+  const shape = fill ? "absolute inset-0 h-full w-full" : portrait ? "aspect-[3/4] h-auto w-full" : compact ? "h-20" : "h-56 sm:h-64";
+
   /* Loaded through a bare `new Image()` rather than the visible element's
      `onLoad`, because this one cannot miss. The handler is attached before
      `src` is set, so a photo already in cache still reports itself; React
@@ -102,7 +124,7 @@ export const FeedImage = ({
       <div
         className={cn(
           "relative flex items-center justify-center overflow-hidden rounded-xl bg-story-cream-2",
-          portrait ? "aspect-[3/4] h-auto w-full" : compact ? "h-20" : "h-56 sm:h-64",
+          shape,
           className,
         )}
       >
@@ -123,7 +145,7 @@ export const FeedImage = ({
       <button
         type="button"
         onClick={openEnlarged}
-        className={cn("block w-full overflow-hidden rounded-xl", className)}
+        className={cn("block w-full overflow-hidden rounded-xl", fill && "absolute inset-0 h-full", className)}
       >
         <img
           src={cardSrc ?? undefined}
@@ -136,7 +158,7 @@ export const FeedImage = ({
           decoding="async"
           className={cn(
             "w-full object-cover transition-transform duration-300 hover:scale-105",
-            portrait ? "aspect-[3/4] h-auto" : compact ? "h-20" : "h-56 sm:h-64",
+            fill ? "h-full" : shape,
           )}
           onError={(e) => {
             if (cardSrc !== imageUrl) {

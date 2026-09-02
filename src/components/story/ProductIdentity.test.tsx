@@ -115,4 +115,23 @@ describe("ProductIdentity", () => {
     render(<ProductIdentity brand="Oatly" product="Oat" isBarista />);
     expect(screen.getByText("Barista")).toBeInTheDocument();
   });
+
+  // The mobile feed card leaves the identity about 120px, which is narrower
+  // than "Oat →" plus one pill — so every card wrapped, and wrapped ragged.
+  // Below the name the badges get the card's full 195px, which fits both
+  // pills of every card on the live feed on one line.
+  it("gives the badges a row of their own when the caller asks", () => {
+    const { container } = render(
+      <ProductIdentity brand="Alnatura" product="Oat" flavors={["matcha"]} properties={["no_added_sugar"]} badgesBelow />,
+    );
+    const nameRow = container.querySelector(".story-product-name")?.closest(".flex-wrap");
+    expect(nameRow?.textContent).toBe("Oat");
+    expect(screen.getByText("Matcha").closest(".flex-wrap")).not.toBe(nameRow);
+    expect(screen.getByText("No added sugar").closest(".flex-wrap")).not.toBe(nameRow);
+  });
+
+  it("spends no row on badges a product does not have", () => {
+    const { container } = render(<ProductIdentity brand="Bayernglück" product="Oat" badgesBelow />);
+    expect(container.querySelectorAll(".flex-wrap").length).toBe(1);
+  });
 });

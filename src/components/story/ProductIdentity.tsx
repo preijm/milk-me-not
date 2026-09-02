@@ -93,6 +93,23 @@ type ProductIdentityProps = {
    */
   maxBadges?: number;
   /**
+   * Give the badges a row of their own instead of letting them share the
+   * name's and wrap.
+   *
+   * The wrapping line above is the right default because it costs a second
+   * line only on the rows that need one. That argument assumes the badges
+   * have most of the row to wrap into. The mobile feed card does not: its
+   * text column is 195px and the score sits in the same row, leaving the
+   * identity about 120px — narrower than "Oat →" plus one pill. So *every*
+   * card wrapped, and wrapped to a ragged left edge, with the orphaned pill
+   * starting under the middle of the product name.
+   *
+   * Below the name the badges get the full 195px back, which fits both pills
+   * of every card on the live feed on one line. Same two lines as before,
+   * aligned instead of ragged, and the same width buys more.
+   */
+  badgesBelow?: boolean;
+  /**
    * One short piece of context to sit at the end of the badge line — "12
    * ratings", a date. It shares the row so it does not cost a line of its own.
    */
@@ -114,6 +131,7 @@ export const ProductIdentity = ({
   size = "md",
   showMark = true,
   maxBadges,
+  badgesBelow = false,
   meta,
   after,
   className,
@@ -139,6 +157,24 @@ export const ProductIdentity = ({
   ];
   const shown = badges.slice(0, maxBadges ?? s.badges);
   const hidden = badges.length - shown.length;
+
+  const badgeNodes = (
+    <>
+      {shown.map((b) => (
+        <span
+          key={b.key}
+          className={cn("flex max-w-full shrink-0 items-center gap-1 rounded-full font-bold", s.pill, b.tone)}
+        >
+          {b.icon && <BaristaGlyph className="shrink-0" size={11} />}
+          <span className="truncate">{b.label}</span>
+        </span>
+      ))}
+
+      {hidden > 0 && <span className={cn("shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>}
+
+      {meta && <span className={cn("min-w-0 shrink truncate text-story-muted-2", s.meta)}>{meta}</span>}
+    </>
+  );
 
   return (
     <span className={cn("flex min-w-0 items-center", s.gap, className)}>
@@ -171,7 +207,7 @@ export const ProductIdentity = ({
             The name and whatever follows it are one flex item, so an arrow
             never wraps away from the word it belongs to, and `max-w-full`
             keeps a very long name ellipsised rather than overflowing. */}
-        <span className={cn("mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1",)}>
+        <span className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
           <span className="flex max-w-full shrink-0 items-center gap-1">
             {/* `story-product-name` carries no styles of its own. It is a hook,
                 so a caller that wraps this in a link can underline the words on
@@ -189,22 +225,12 @@ export const ProductIdentity = ({
             {after}
           </span>
 
-          {shown.map((b) => (
-            <span
-              key={b.key}
-              className={cn("flex max-w-full shrink-0 items-center gap-1 rounded-full font-bold", s.pill, b.tone)}
-            >
-              {b.icon && <BaristaGlyph className="shrink-0" size={11} />}
-              <span className="truncate">{b.label}</span>
-            </span>
-          ))}
-
-          {hidden > 0 && <span className={cn("shrink-0 font-bold text-story-muted-2", s.pill)}>+{hidden}</span>}
-
-          {meta && (
-            <span className={cn("min-w-0 shrink truncate text-story-muted-2", s.meta)}>{meta}</span>
-          )}
+          {!badgesBelow && badgeNodes}
         </span>
+
+        {badgesBelow && badges.length + (meta ? 1 : 0) > 0 && (
+          <span className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">{badgeNodes}</span>
+        )}
       </span>
     </span>
   );
