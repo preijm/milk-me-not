@@ -12,7 +12,6 @@ import {
   ScoreMark,
   StoryLayout,
 } from "@/components/story";
-import { BrandStatusChip } from "@/components/brand/BrandStatusChip";
 import { findBrandName, productsForBrand } from "@/components/brand/brandSummary";
 import { RATING_FACTS_KEY, fetchRatingFacts } from "@/hooks/useRatingFacts";
 import { brandFacts, brandState } from "@/lib/brandFacts";
@@ -195,8 +194,26 @@ const BrandDetail = () => {
             {ratings} rating{ratings === 1 ? "" : "s"} across {products.length} product
             {products.length === 1 ? "" : "s"}
           </div>
-          {!gone && <BrandStatusChip state={state} />}
         </div>
+
+        {/* Said in a sentence rather than a chip.
+            This was a "Not checked" pill, which describes our own filing
+            rather than the drink — a reader looking at it has no idea whether
+            that is a warning, a verdict or a fault. There is room here for the
+            actual answer, and the actual answer to "can I still buy this" has
+            three forms, one of which is that nobody knows. */}
+        {!gone && (
+          <p className="mt-5 max-w-2xl text-[0.9375rem] font-medium text-story-muted">
+            {state === "listed" ? (
+              <>
+                Still on sale, as far as we know
+                {status?.checked ? <> — checked {readableDay(status.checked)}</> : null}.
+              </>
+            ) : (
+              <>We do not know whether this is still on sale. Nobody has checked.</>
+            )}
+          </p>
+        )}
 
         {owner && (
           <p className="mt-6 max-w-2xl text-[0.875rem] font-medium text-story-muted">
