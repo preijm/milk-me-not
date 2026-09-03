@@ -80,7 +80,9 @@ test.describe("brand pages", () => {
 
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Harvest Moon");
     await expect(page.getByText(/cannot buy this any more/i)).toHaveCount(0);
-    await expect(page.getByText("Not checked")).toBeVisible();
+    // Said in a sentence rather than a "Not checked" pill, which described our
+    // filing rather than the drink and left a reader guessing at what it meant.
+    await expect(page.getByText(/do not know whether this is still on sale/i)).toBeVisible();
 
     expect(errors).toEqual([]);
   });
