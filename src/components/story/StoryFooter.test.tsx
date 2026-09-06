@@ -22,7 +22,7 @@ const renderFooter = (variant?: "full" | "member") =>
 describe("StoryFooter", () => {
   it("defaults to the full sitemap", () => {
     renderFooter();
-    expect(screen.getByRole("navigation", { name: /discover/i })).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: /scoreboard/i })).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: /get the app/i })).toBeInTheDocument();
   });
 
@@ -33,7 +33,7 @@ describe("StoryFooter", () => {
 
   it("drops the sitemap columns for members", () => {
     renderFooter("member");
-    expect(screen.queryByRole("navigation", { name: /discover/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: /scoreboard/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: /get the app/i })).not.toBeInTheDocument();
   });
 

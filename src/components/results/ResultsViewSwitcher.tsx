@@ -12,7 +12,7 @@ interface ResultsViewSwitcherProps {
 }
 
 const VIEWS: { key: ViewType; label: string; icon: LucideIcon }[] = [
-  { key: "table", label: "Ranking", icon: Table2 },
+  { key: "table", label: "Table", icon: Table2 },
   { key: "charts", label: "Charts", icon: ChartBar },
   { key: "map", label: "Map", icon: MapPin },
 ];

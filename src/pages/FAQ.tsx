@@ -128,7 +128,7 @@ const FAQ = () => {
               <ArrowRight />
             </StoryButton>
             <StoryLinkButton to="/results" tone="outline" className="w-full sm:w-auto">
-              See the leaderboard
+              See the scoreboard
             </StoryLinkButton>
           </div>
         </div>

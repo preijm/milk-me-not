@@ -7,9 +7,9 @@ import { SECONDARY_LINKS } from "./memberNav";
 
 const COLUMNS: { title: string; links: { to: string; label: string }[] }[] = [
   {
-    title: "Discover",
+    title: "Scoreboard",
     links: [
-      { to: "/results", label: "Discover" },
+      { to: "/results", label: "Full scoreboard" },
       { to: "/results?sort=rating", label: "Top rated" },
       { to: "/feed", label: "Latest ratings" },
     ],

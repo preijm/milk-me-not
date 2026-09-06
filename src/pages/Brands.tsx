@@ -161,7 +161,7 @@ const Brands = () => {
           heard about it, which is a sign of life rather than proof of one. Averages here include every rating, however
           few — see{" "}
           <Link to="/results" className="font-bold text-story-green-dark">
-            Discover
+            the scoreboard
           </Link>{" "}
           for the ranking that requires a real sample.
         </p>

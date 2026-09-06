@@ -10,7 +10,7 @@ type ResultsHeroProps = {
 };
 
 /**
- * Opens the discovery page as a real editorial band: what the catalogue is,
+ * Opens the scoreboard as a real editorial band: what the catalogue is,
  * how big it is, and what the score scale means, before a single row of
  * data appears.
  */
