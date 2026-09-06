@@ -9,7 +9,7 @@ import { StoryAccountMenu } from "./StoryAccountMenu";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const PUBLIC_LINKS = [
-  { to: "/results", label: "Discover" },
+  { to: "/results", label: "Scoreboard" },
   { to: "/feed", label: "Feed" },
   { to: "/about", label: "About" },
   { to: "/faq", label: "How it works" },

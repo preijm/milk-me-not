@@ -43,7 +43,7 @@ const Stats = ({ data, className = "" }: { data: HomeStory; className?: string }
  * reach it is noise.
  *
  * It carries no footer of its own either. The hand-rolled one here listed Home,
- * Discover, About and Contact — three of which the header already offers, and
+ * Scoreboard, About and Contact — three of which the header already offers, and
  * all four of which are exits from the single form this page exists to get
  * completed. ResetPassword, the sibling with this same layout, has none.
  */

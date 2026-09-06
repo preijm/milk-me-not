@@ -57,19 +57,47 @@ const PersonIcon = () => (
  * had none. Notifications keep their route for email links, the unread dot
  * moves to You, and the profile page leads with them when anything is unread.
  *
- * "Discover", not "Board". That destination answered to five different names —
- * Board here, Discover in the header, All ratings in the footer, The full
- * catalogue on the page, Results in the title — and "Board" was the only place
- * that word appeared at all.
+ * "Scoreboard", and it took four goes to get there.
  *
- * Not "Rankings" either, which was the first attempt: the page holds a view
- * switcher whose tabs are Ranking, Charts and Map, so naming the whole
- * destination after one of its three views invites the question of whether
- * they are the same thing.
+ * That destination once answered to five different names — Board here,
+ * Discover in the header, All ratings in the footer, The full catalogue on the
+ * page, Results in the title — so the first job was picking one and using it
+ * everywhere, which "Discover" did.
+ *
+ * What "Discover" never did was say where you were going. It named a mood, and
+ * readers said so. Three replacements were tried and rejected:
+ *
+ * "Rankings" collided with the page's own view switcher, whose first tab was
+ * called Ranking — naming a destination after one of its three views invites
+ * the question of whether they are the same thing. That tab is called Table
+ * now, which is what its key always was, and which leaves Table / Charts / Map
+ * as three formats rather than one semantic and two formats.
+ *
+ * "Ratings" is the plain word everyone reaches for first, and it points at the
+ * wrong page. This one lists a row per *product* with its ratings averaged;
+ * the page that is a list of ratings is the Feed. It would also have sat two
+ * lines above the footer's "Latest ratings", which goes somewhere else.
+ *
+ * "Milks" read clearly but invited two arguments nobody needs — EU labelling
+ * reserves "milk" for the animal kind, which is why the cartons in the photos
+ * say DRINK, and readers start the is-it-really-milk fight rather than
+ * clicking.
+ *
+ * "Scoreboard" is the family the copy had been using all along while the
+ * navigation went its own way. The board is everywhere in front of readers —
+ * "New to the board", "What the board has", "Every brand on the board", "The
+ * board right now", TOP OF THE BOARD on the home card — so this is the
+ * navigation catching up rather than a sixth name.
+ *
+ * Not "Board" alone, which could be a forum. Not "Leaderboard", which the two
+ * "See the ..." buttons used to say: it implies the top, and this page holds
+ * all 226 products, most of which lead nothing. Those two buttons say
+ * scoreboard now. The plain "the board" prose is left alone — it reads as
+ * shorthand for this page, not as a competing name for it.
  */
 const TABS = [
   { to: "/feed", label: "Feed", icon: FeedIcon, match: (p: string) => p.startsWith("/feed") },
-  { to: "/results", label: "Discover", icon: BoardIcon, match: (p: string) => p.startsWith("/results") },
+  { to: "/results", label: "Scoreboard", icon: BoardIcon, match: (p: string) => p.startsWith("/results") },
   {
     to: "/profile",
     label: "You",

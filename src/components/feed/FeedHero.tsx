@@ -57,7 +57,7 @@ export const FeedHero = ({ items, isLoading, isAuthenticated }: FeedHeroProps) =
       )}
 
     <Band ground="cream" size="md" className={cn("pt-6 sm:pt-10", isAuthenticated && "hidden lg:block")}>
-      {/* The same green disc Home and Discover wear, rather than the deep
+      {/* The same green disc Home and the Scoreboard wear, rather than the deep
           forest it used to be.
 
           Blue came off it first — Contact had already claimed blue as the
