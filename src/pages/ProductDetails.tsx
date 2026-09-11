@@ -91,6 +91,10 @@ const ProductDetails = () => {
     );
   }
 
+  // This skeleton serves two states. While loading it must not say noindex:
+  // Googlebot renders the page and can act on a noindex it sees mid-render,
+  // even one the loaded page removes a moment later. A fetch that failed ends
+  // here too, with no story and no notFound, and that one should stay out.
   if (isLoading || !story) {
     return (
       <StoryLayout mobileCtaHint="90 seconds. No photo needed.">
@@ -98,7 +102,7 @@ const ProductDetails = () => {
           title="Loading — Milk Me Not"
           description="Community reviews and ratings of plant-based milk products."
           path={`/product/${productId ?? ""}`}
-          noindex
+          noindex={!isLoading}
         />
         <Band ground="cream" size="hero" className="pt-6 sm:pt-10">
           <div className="animate-pulse">
