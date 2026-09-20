@@ -77,4 +77,4 @@ $info = Get-ScheduledTaskInfo -TaskName $TaskName
 "  next run:   $($info.NextRunTime)"
 "  runs as:    $($task.Principal.UserId) (only while signed in)"
 "  catches up: $($task.Settings.StartWhenAvailable)"
-"  on battery: $($task.Settings.AllowStartIfOnBatteries)"
+"  on battery: $(-not $task.Settings.DisallowStartIfOnBatteries)"
