@@ -70,6 +70,39 @@ The one exception is a task that is genuinely about the working copy itself —
 inspecting what another session has left uncommitted, say. Then stay put, and
 touch nothing you did not put there.
 
+## Tidying up branches
+
+Cleaning up merged branches here needs more care than it looks like, for two
+reasons that both bite silently.
+
+**`git branch --merged` is useless in this repository.** Pull requests are
+squash-merged, so the commit that lands on `main` is not the one on the branch
+and git reports almost every finished branch as unmerged. A sweep on 20 Sep
+2026 found 4 branches "merged" and 25 "not", when in truth 24 of the 25 were
+finished. Ask GitHub instead: compare the branch tip against the `headRefOid`
+of its merged PR (`gh pr list --state merged --json number,headRefName,headRefOid`).
+Where the tip has moved on since the merge, check whether the files it touches
+are already identical on `main` before assuming there is work to save — in the
+one case where they had, all but a README were byte-for-byte the same, and the
+README differed only because later PRs had edited it.
+
+**Three branches must survive any cleanup**, and none of them look special:
+
+| Branch | Why |
+|--------|-----|
+| `chore/lockfile-refresh` | CI pushes to it **by name** — see `BRANCH=chore/lockfile-refresh` in `.github/workflows/ci.yml`. It is often a commit ahead of `main` with a refresh that has not been opened as a PR yet. |
+| `lovable` | The Lovable integration's branch. It reads as pure clutter — fully contained in `main`, a hundred commits behind — but it is not ours to delete, and removing it may break that sync. |
+| `dependabot/*` | Anything with an open PR. |
+
+**A worktree branch may be holding the only copy of something.** The worktrees
+in `.claude/worktrees/` are gitignored, so uncommitted work in one is invisible
+from the main checkout and invisible to `git status`. On that same sweep, one
+held an untracked `scripts/prune-orphan-photos.ts` that existed nowhere else,
+and another held seven modified files plus a new test. `git worktree remove
+--force` would have taken all of it. Run `git -C .claude/worktrees/<name>
+status --porcelain` on each one first, and only remove the ones that come back
+empty.
+
 ## Architecture
 
 **MilkMeNot** is a community platform for rating plant-based milk alternatives. React 19 + TypeScript SPA built with Vite, Supabase for backend, and Capacitor for mobile.
