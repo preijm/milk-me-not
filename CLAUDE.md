@@ -743,6 +743,44 @@ them, and both fail in ways that look fine until they don't:
 If you ever regenerate the baseline, those two still have to be written by
 hand. A dump will not remind you.
 
+### A new table needs its own GRANT, from 30 October 2026
+Supabase stops automatically granting Data API access to new tables in `public`
+on that date. Nothing already here breaks, and that is not luck: the baseline
+dump writes the grants out per table — nineteen tables and four views, each to
+`anon`, `authenticated` and `service_role` — rather than leaning on the
+automatic one, so a rebuilt database still answers. They are easy to miss when
+looking, because pg_dump spells the privilege list out in full instead of
+writing `GRANT ALL`.
+
+The two migrations that create a table are both already fine, for different
+reasons. `countries` carries no grants of its own and needs none: the baseline
+created *and* granted it first, so that `CREATE TABLE IF NOT EXISTS` is a no-op
+on a rebuild. `product_barcodes` revokes them on purpose and is reached only
+through two `SECURITY DEFINER` functions, and function grants are not part of
+this change.
+
+What it costs is three lines in every migration from here that creates a table:
+
+```sql
+grant select on public.your_table to anon;
+grant select, insert, update, delete on public.your_table to authenticated;
+grant select, insert, update, delete on public.your_table to service_role;
+```
+
+Grant the verbs the table actually needs — a read-only reference table wants
+`select` and nothing else. The grant is not a second RLS: RLS still decides who
+sees which rows, while the grant only decides whether PostgREST will look at
+the table at all.
+
+**A local `db reset` will not catch a missing one.** The baseline ends with four
+`ALTER DEFAULT PRIVILEGES ... ON TABLES` statements, so a rebuilt database
+restores the automatic grant for everything created after it and the new table
+works. Production never re-runs the baseline, so the same migration lands there
+with no grant and the table answers `permission denied` — failing only in the
+one place nobody tested, which is exactly how barcode scanning shipped broken.
+Those four lines stay where they are: the baseline is generated, not
+hand-edited.
+
 ### The local database is real, and worth using
 `supabase start` builds the whole schema from the baseline and seeds it, which
 means policy and migration changes can be tried against a throwaway database
