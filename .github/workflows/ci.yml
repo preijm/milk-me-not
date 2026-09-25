@@ -118,10 +118,14 @@ jobs:
       # 'edgesOut')" — green everywhere else, since nothing else in CI runs on
       # Node 20 — and the lockfile went stale from 20 September until this was
       # noticed four days later. Moving the pin is routine; dropping it is not.
+      #
+      # 24 rather than 22 because 24 is the version the replacement was
+      # actually run on before this landed; 22 satisfies both engine ranges
+      # too, but was never tried.
       - name: Setup Node.js for lockfile generation
         uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Generate package-lock.json for Dependabot
         run: |

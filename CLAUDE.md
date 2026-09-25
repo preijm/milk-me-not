@@ -488,7 +488,7 @@ fell through to an instant merge, which is how a pull request once landed with
 its checks still running.
 
 ### Do not hand-regenerate `package-lock.json`
-CI writes it, currently with Node 22 — `ci.yml` holds that number, and it moves
+CI writes it, currently with Node 24 — `ci.yml` holds that number, and it moves
 when the dependencies stop supporting the old one. A different npm produces a
 *different* file from the same command, so committing your version starts a
 tug-of-war where each run reverts the other. The lockfile exists only for
