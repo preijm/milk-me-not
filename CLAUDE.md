@@ -70,6 +70,31 @@ The one exception is a task that is genuinely about the working copy itself —
 inspecting what another session has left uncommitted, say. Then stay put, and
 touch nothing you did not put there.
 
+### A broken worktree fails silently, not loudly
+`.claude/worktrees/` sits *inside* the repository, so a worktree that loses its
+`.git` file does not stop working. Git walks up, finds the main checkout's
+`.git`, and every command quietly operates on **that** instead. `git status`
+reports the main checkout's cleanliness, `git rev-parse --abbrev-ref HEAD`
+answers `main`, and nothing anywhere says the worktree is gone. On 25 Sep 2026
+a session read "working tree clean" off a worktree whose link had been deleted —
+the answer happened to be correct, and was measuring the wrong directory.
+
+Two checks tell them apart:
+
+```bash
+git rev-parse --git-dir   # .git/worktrees/<name> when live, the main .git when not
+git worktree list         # a dead one is marked `prunable`
+```
+
+`git worktree prune` clears the stale registration, and only ever removes
+entries whose gitdir is already missing, so it cannot touch a live worktree.
+
+Deleting a worktree directory that a session is still sitting in half-succeeds
+on Windows: the contents go, the folder does not, because it is a process's
+working directory. What is left is an empty folder and a session that can no
+longer read a single project file. Move out first, or delete it once the
+session has ended.
+
 ## Tidying up branches
 
 Cleaning up merged branches here needs more care than it looks like, for two
@@ -498,6 +523,15 @@ It was Node 20 until vitest 5 and jsdom 30 dropped that version from their
 engines, at which point npm's tree builder crashed on every push to main and
 the lockfile quietly stopped being refreshed. Nothing else in CI runs on Node,
 so every check that matters stayed green and it went unnoticed for four days.
+
+What a stale lockfile costs is more than drift, and it is worth knowing before
+deciding this job can wait. Dependabot keeps opening pull requests against the
+frozen file, so its proposals are measured from a base that no longer reflects
+what an install would resolve. When the refresh finally ran, `vitest` went
+5.0.0 → **5.0.2** in one step — past the 5.0.1 that an open Dependabot pull
+request was offering, which Dependabot then closed itself as "no longer
+updatable". So the first refresh after an outage is a real dependency change
+wearing a `chore:` subject, not a reformat. Read what moved in it.
 
 ### The lockfile pull request needs its own identity
 GitHub will not start a workflow for an event created with `GITHUB_TOKEN` — a
