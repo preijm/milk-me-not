@@ -108,10 +108,20 @@ jobs:
         with:
           persist-credentials: false
 
+      # Pinned, because the lockfile is meant to have exactly one producer: a
+      # different npm writes a different file from the same command. Which
+      # version it is matters less than that it is only ever one.
+      #
+      # It was 20 until vitest 5 and jsdom 30 landed, both of which drop Node
+      # 20 from their engines entirely. npm's tree builder then crashed on
+      # every push to main with "Cannot read properties of null (reading
+      # 'edgesOut')" — green everywhere else, since nothing else in CI runs on
+      # Node 20 — and the lockfile went stale from 20 September until this was
+      # noticed four days later. Moving the pin is routine; dropping it is not.
       - name: Setup Node.js for lockfile generation
         uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Generate package-lock.json for Dependabot
         run: |

@@ -488,10 +488,16 @@ fell through to an instant merge, which is how a pull request once landed with
 its checks still running.
 
 ### Do not hand-regenerate `package-lock.json`
-CI writes it with Node 20. A newer local npm produces a *different* file from
-the same command, so committing your version starts a tug-of-war where each
-run reverts the other. The lockfile exists only for Dependabot; let the
-workflow own it.
+CI writes it, currently with Node 22 — `ci.yml` holds that number, and it moves
+when the dependencies stop supporting the old one. A different npm produces a
+*different* file from the same command, so committing your version starts a
+tug-of-war where each run reverts the other. The lockfile exists only for
+Dependabot; let the workflow own it.
+
+It was Node 20 until vitest 5 and jsdom 30 dropped that version from their
+engines, at which point npm's tree builder crashed on every push to main and
+the lockfile quietly stopped being refreshed. Nothing else in CI runs on Node,
+so every check that matters stayed green and it went unnoticed for four days.
 
 ### The lockfile pull request needs its own identity
 GitHub will not start a workflow for an event created with `GITHUB_TOKEN` — a
