@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { VersionProvider } from "@/contexts/VersionContext";
 import { ProtectedRoute } from "@/components/common/ProtectedRoute";
+import { TwoFactorGate } from "@/components/auth/TwoFactorGate";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { VersionCheck } from "@/components/version/VersionCheck";
 import { isNativeApp } from "@/lib/platformDetection";
@@ -70,6 +71,7 @@ const App = () => {
               <BrowserRouter>
                 <ScrollToTop />
                 <VersionCheck />
+                <TwoFactorGate>
                 <main>
                 <Suspense fallback={<PageFallback />}>
                 <Routes>
@@ -104,6 +106,7 @@ const App = () => {
               </Routes>
               </Suspense>
                 </main>
+                </TwoFactorGate>
               <Toaster />
             </BrowserRouter>
           </TooltipProvider>
