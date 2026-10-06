@@ -4,6 +4,7 @@ import { StoryButton } from "@/components/story/primitives";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { generateRecoveryCodes, recoveryCodesRemaining } from "@/lib/recoveryCodes";
 
 type Enrolling = { factorId: string; qr: string; secret: string };
 
@@ -22,21 +23,34 @@ export const CodeInput = ({ value, onChange, disabled }: {
 /**
  * Optional authenticator-app sign-in, offered to admins only.
  *
- * Supabase has no backup codes, so a lost phone is recovered by the other
- * admin deleting the factor from the dashboard (Authentication → Users).
+ * Turning it on also hands out ten recovery codes, shown once. One of them,
+ * entered at the code prompt, removes the authenticator so a lost phone does
+ * not lock anyone out (see src/lib/recoveryCodes.ts).
  */
 export default function TwoFactorSettings() {
   const [factorId, setFactorId] = useState<string | null | undefined>(undefined);
   const [enrolling, setEnrolling] = useState<Enrolling | null>(null);
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
+  // Plain text, held only until the reader says they have saved them.
+  const [codes, setCodes] = useState<string[] | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
   const { toast } = useToast();
 
-  const load = () =>
-    supabase.auth.mfa.listFactors().then(({ data }) => setFactorId(data?.totp[0]?.id ?? null));
+  const load = async () => {
+    const { data } = await supabase.auth.mfa.listFactors();
+    const id = data?.totp[0]?.id ?? null;
+    setFactorId(id);
+    setRemaining(id ? await recoveryCodesRemaining() : null);
+  };
 
   useEffect(() => {
-    supabase.auth.mfa.listFactors().then(({ data }) => setFactorId(data?.totp[0]?.id ?? null));
+    // Inline rather than load(): the lint rule wants state set in a callback.
+    supabase.auth.mfa.listFactors().then(async ({ data }) => {
+      const id = data?.totp[0]?.id ?? null;
+      setFactorId(id);
+      setRemaining(id ? await recoveryCodesRemaining() : null);
+    });
   }, []);
 
   const fail = (error: unknown) =>
@@ -70,6 +84,10 @@ export default function TwoFactorSettings() {
       toast({ title: "Two-step sign-in is on", description: "You'll be asked for a code each time you sign in." });
       setEnrolling(null);
       setCode("");
+      // The session is aal2 now, which is what generating codes requires. A
+      // failure here must not undo the success above: the app is on, and
+      // codes can be made later from this section.
+      setCodes(await generateRecoveryCodes().catch((e) => (fail(e), null)));
       await load();
     } catch (error) {
       fail(error);
@@ -94,6 +112,22 @@ export default function TwoFactorSettings() {
     } finally {
       setBusy(false);
     }
+  };
+
+  const makeNewCodes = async () => {
+    setBusy(true);
+    try {
+      setCodes(await generateRecoveryCodes());
+    } catch (error) {
+      fail(error);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const doneWithCodes = async () => {
+    setCodes(null);
+    await load();
   };
 
   if (factorId === undefined) {
@@ -125,14 +159,51 @@ export default function TwoFactorSettings() {
     );
   }
 
+  if (codes) {
+    return (
+      <div className="space-y-4">
+        <p className="text-[0.875rem] text-story-ink-2">
+          <strong>Save these recovery codes</strong> somewhere other than your phone, such as a password
+          manager. If you lose the phone, one of them turns two-step sign-in off so you can get back in.
+          Each works once, and they won't be shown again.
+        </p>
+        <ul className="grid grid-cols-2 gap-x-6 gap-y-1.5 rounded-xl bg-story-cream p-4 font-mono text-[0.9375rem] text-story-ink">
+          {codes.map((c) => <li key={c}>{c}</li>)}
+        </ul>
+        <div className="flex flex-wrap gap-2">
+          <StoryButton
+            size="sm"
+            tone="outline"
+            onClick={() => navigator.clipboard.writeText(codes.join("\n")).then(() => toast({ title: "Copied" }))}
+          >
+            Copy
+          </StoryButton>
+          <StoryButton size="sm" onClick={doneWithCodes}>
+            I've saved them
+          </StoryButton>
+        </div>
+      </div>
+    );
+  }
+
   return factorId ? (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <p className="flex items-center gap-2 text-[0.9375rem] font-bold text-story-green-dark">
-        <ShieldCheck className="h-5 w-5" /> On, with an authenticator app
-      </p>
-      <StoryButton size="sm" tone="outline" onClick={turnOff} disabled={busy}>
-        Turn off
-      </StoryButton>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="flex items-center gap-2 text-[0.9375rem] font-bold text-story-green-dark">
+          <ShieldCheck className="h-5 w-5" /> On, with an authenticator app
+        </p>
+        <StoryButton size="sm" tone="outline" onClick={turnOff} disabled={busy}>
+          Turn off
+        </StoryButton>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-story-ink/7 pt-4">
+        <p className="text-[0.875rem] text-story-muted">
+          {remaining ? `${remaining} recovery code${remaining === 1 ? "" : "s"} left` : "No recovery codes yet"}
+        </p>
+        <StoryButton size="sm" tone="outline" onClick={makeNewCodes} disabled={busy}>
+          {remaining ? "Make new codes" : "Make recovery codes"}
+        </StoryButton>
+      </div>
     </div>
   ) : (
     <StoryButton size="sm" onClick={start} disabled={busy}>

@@ -1,8 +1,11 @@
 import { ReactNode, useEffect, useState } from "react";
 import { StoryButton } from "@/components/story/primitives";
 import { CodeInput } from "@/components/settings/TwoFactorSettings";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { redeemRecoveryCode } from "@/lib/recoveryCodes";
 
 /**
  * Asks for the authenticator code when a signed-in account has two-step
@@ -23,6 +26,8 @@ export const TwoFactorGate = ({ children }: { children: ReactNode }) => {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [recovering, setRecovering] = useState(false);
+  const { toast } = useToast();
 
   const token = session?.access_token;
   useEffect(() => {
@@ -39,6 +44,22 @@ export const TwoFactorGate = ({ children }: { children: ReactNode }) => {
     e.preventDefault();
     setBusy(true);
     setError("");
+    if (recovering) {
+      const ok = await redeemRecoveryCode(code);
+      setBusy(false);
+      if (!ok) {
+        setError("That recovery code didn't work, or has already been used.");
+        return;
+      }
+      toast({
+        title: "Two-step sign-in is off",
+        description: "Your recovery code removed the authenticator. Set it up again from your account.",
+      });
+      setCode("");
+      setRecovering(false);
+      await refreshAuth();
+      return;
+    }
     const { data } = await supabase.auth.mfa.listFactors();
     const factorId = data?.totp[0]?.id;
     const { error } = factorId
@@ -57,20 +78,50 @@ export const TwoFactorGate = ({ children }: { children: ReactNode }) => {
     <div className="flex min-h-screen items-center justify-center bg-story-cream px-4">
       <form onSubmit={verify} className="story-hairline w-full max-w-sm rounded-2xl bg-white p-6">
         <p className="story-kicker text-story-green-dark">Two-step sign-in</p>
-        <h1 className="story-serif mt-1 text-[1.5rem] font-bold text-story-ink">Enter your code</h1>
-        <p className="mt-1 text-[0.875rem] text-story-muted">The 6-digit code from your authenticator app.</p>
+        <h1 className="story-serif mt-1 text-[1.5rem] font-bold text-story-ink">
+          {recovering ? "Use a recovery code" : "Enter your code"}
+        </h1>
+        <p className="mt-1 text-[0.875rem] text-story-muted">
+          {recovering
+            ? "One of the codes you saved when you turned this on. It turns two-step sign-in off, so you can set it up on a new phone."
+            : "The 6-digit code from your authenticator app."}
+        </p>
         <div className="mt-5">
-          <CodeInput value={code} onChange={setCode} disabled={busy} />
+          {recovering ? (
+            <Input
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="xxxx-xxxx-xxxx"
+              aria-label="Recovery code"
+              autoComplete="off"
+              autoFocus
+              disabled={busy}
+              className="font-mono"
+            />
+          ) : (
+            <CodeInput value={code} onChange={setCode} disabled={busy} />
+          )}
         </div>
         {error && <p role="alert" className="mt-3 text-[0.8125rem] font-medium text-story-ink-2">{error}</p>}
         <div className="mt-6 flex flex-wrap gap-2">
-          <StoryButton type="submit" size="sm" disabled={busy || code.length !== 6}>
+          <StoryButton type="submit" size="sm" disabled={busy || (recovering ? !code.trim() : code.length !== 6)}>
             {busy ? "Checking…" : "Continue"}
           </StoryButton>
           <StoryButton type="button" size="sm" tone="outline" onClick={signOut} disabled={busy}>
             Sign out
           </StoryButton>
         </div>
+        <button
+          type="button"
+          onClick={() => {
+            setRecovering(!recovering);
+            setCode("");
+            setError("");
+          }}
+          className="mt-5 text-[0.8125rem] font-bold text-story-green-dark underline-offset-2 hover:underline"
+        >
+          {recovering ? "Use the code from my app instead" : "Lost your phone? Use a recovery code"}
+        </button>
       </form>
     </div>
   );
