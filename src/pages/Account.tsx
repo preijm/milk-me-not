@@ -8,6 +8,8 @@ import ProfileSettings from "@/components/settings/ProfileSettings";
 import CountrySettings from "@/components/settings/CountrySettings";
 import SecuritySettings from "@/components/settings/SecuritySettings";
 import NotificationSettings from "@/components/settings/NotificationSettings";
+import TwoFactorSettings from "@/components/settings/TwoFactorSettings";
+import { useAdminCheck } from "@/hooks/useAdminCheck";
 
 const Section = ({
   title,
@@ -41,6 +43,7 @@ const Section = ({
  */
 const Account = () => {
   const navigate = useNavigate();
+  const { data: isAdmin } = useAdminCheck();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -66,6 +69,14 @@ const Account = () => {
         <Section title="Password" hint="Change it whenever you like.">
           <SecuritySettings />
         </Section>
+
+        {/* Admins only, and optional. Supabase has no backup codes, so a lost
+            phone is a manual reset — fine for two admins, not for everyone. */}
+        {isAdmin && (
+          <Section title="Two-step sign-in" hint="Optional. A code from your phone on top of your password.">
+            <TwoFactorSettings />
+          </Section>
+        )}
 
         {/* Not "Email": nothing in this project sends any. These two toggles
             are honoured by database triggers that decide whether a row lands
