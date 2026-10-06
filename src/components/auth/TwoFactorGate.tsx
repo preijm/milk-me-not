@@ -12,9 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
  * check covers email, Google and a session restored from storage alike — the
  * Google path returns through a redirect the form never sees.
  *
- * ponytail: this gates the UI only. An aal1 session still has full access at
- * the API, because no RLS policy asks for aal2. Add `(auth.jwt()->>'aal') =
- * 'aal2'` to the admin write policies if that ever needs to be real.
+ * This only stops the website. What stops the API is is_admin(), which refuses
+ * an aal1 session for any admin with a verified factor
+ * (20261006210000_admin_two_step_sign_in.sql).
  */
 export const TwoFactorGate = ({ children }: { children: ReactNode }) => {
   const { session, signOut, refreshAuth } = useAuth();
