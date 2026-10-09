@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { TwoFactorGate } from "./TwoFactorGate";
 
 /**
@@ -26,8 +26,14 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
+const redeem = vi.hoisted(() => vi.fn(async (_code: string) => true));
+const refreshAuth = vi.hoisted(() => vi.fn(async () => {}));
+
+vi.mock("@/lib/recoveryCodes", () => ({ redeemRecoveryCode: redeem }));
+vi.mock("@/hooks/use-toast", () => ({ useToast: () => ({ toast: () => {} }) }));
+
 vi.mock("@/contexts/AuthContext", () => ({
-  useAuth: () => ({ session: state.session, signOut: async () => {}, refreshAuth: async () => {} }),
+  useAuth: () => ({ session: state.session, signOut: async () => {}, refreshAuth }),
 }));
 
 const renderGate = () => render(<TwoFactorGate><p>the app</p></TwoFactorGate>);
@@ -55,6 +61,16 @@ describe("TwoFactorGate", () => {
     state.aal = { currentLevel: "aal2", nextLevel: "aal2" };
     renderGate();
     expect(await screen.findByText("the app")).toBeInTheDocument();
+  });
+
+  it("takes a recovery code in place of the app's code", async () => {
+    state.aal = { currentLevel: "aal1", nextLevel: "aal2" };
+    renderGate();
+    fireEvent.click(await screen.findByRole("button", { name: /lost your phone/i }));
+    fireEvent.change(screen.getByLabelText(/recovery code/i), { target: { value: "a1b2-c3d4-e5f6" } });
+    fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+    await waitFor(() => expect(refreshAuth).toHaveBeenCalled());
+    expect(redeem).toHaveBeenCalledWith("a1b2-c3d4-e5f6");
   });
 
   it("lets through visitors who are not signed in", () => {
