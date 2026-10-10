@@ -26,6 +26,15 @@ export const recoveryCodesRemaining = async (): Promise<number> => {
 };
 
 /**
+ * Throws away any unused codes once two-step sign-in is off. Best effort: the
+ * database only acts when the authenticator is really gone, and the next
+ * setup replaces the set anyway, so a failure here is not worth an error.
+ */
+export const clearRecoveryCodes = async (): Promise<void> => {
+  await rpc("clear_mfa_recovery_codes");
+};
+
+/**
  * Uses a code to remove the authenticator from this account. On success the
  * reader is still signed in with their password, and two-step sign-in is off.
  */
