@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import { Band, Display, Kicker, Lede, StoryLayout } from "@/components/story";
 
 /** One question, its answer, styled like the rest of the document rather than an accordion — this is a reference, not a pitch. */
@@ -28,8 +29,7 @@ const LAST_UPDATED = "28 August 2026";
 const Privacy = () => (
   <StoryLayout mobileCtaHint="Rate a milk — it takes ninety seconds.">
     <Seo
-      title="Privacy — Milk Me Not"
-      description="What Milk Me Not collects, why, and who else ever sees it. Written in plain language, matched to what the code actually does."
+      {...STATIC_SEO["/privacy"]}
       path="/privacy"
     />
 

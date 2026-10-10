@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import { Band, Display, Kicker, Lede, StoryLayout } from "@/components/story";
 import { BrandSortHeader, BrandTable } from "@/components/brand/BrandTable";
 import { brandSummaries } from "@/components/brand/brandSummary";
@@ -63,8 +64,7 @@ const Brands = () => {
   return (
     <StoryLayout>
       <Seo
-        title="Every brand on the board — Milk Me Not"
-        description="All the makers behind the plant milks people have rated: who owns them, whether they are a supermarket own-label, how many ratings each has, and which ones you can no longer buy."
+        {...STATIC_SEO["/brands"]}
         path="/brands"
       />
 

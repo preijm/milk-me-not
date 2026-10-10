@@ -1,6 +1,7 @@
 import { useState, useMemo, lazy, Suspense } from "react";
 import { Loader } from "lucide-react";
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import { useAggregatedResults } from "@/hooks/useAggregatedResults";
 import { useResultsUrlState, useResultsFiltering } from "@/hooks/useResultsState";
 import { useAuth } from "@/contexts/AuthContext";
@@ -112,8 +113,7 @@ const Results = () => {
   return (
     <StoryLayout mobileCtaHint="Add the one you tried today.">
       <Seo
-        title="Results — Plant-milk ratings | Milk Me Not"
-        description="Browse aggregated ratings of plant-based milks from the Milk Me Not community. Filter by brand, base type and barista performance."
+        {...STATIC_SEO["/results"]}
         path="/results"
         jsonLd={{
           "@context": "https://schema.org",
