@@ -1,4 +1,5 @@
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import {
   ArrowRight,
   Band,
@@ -74,8 +75,7 @@ const InstallGuide = () => {
   return (
     <StoryLayout mobileCtaHint="Five steps. One expected warning.">
       <Seo
-        title="Install guide — Milk Me Not"
-        description="A step-by-step guide to installing the Milk Me Not Android APK, including the unknown-source warning Android shows and why it's expected."
+        {...STATIC_SEO["/install-guide"]}
         path="/install-guide"
       />
 
