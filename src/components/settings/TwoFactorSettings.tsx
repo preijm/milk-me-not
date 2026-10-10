@@ -4,7 +4,7 @@ import { StoryButton } from "@/components/story/primitives";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { generateRecoveryCodes, recoveryCodesRemaining } from "@/lib/recoveryCodes";
+import { clearRecoveryCodes, generateRecoveryCodes, recoveryCodesRemaining } from "@/lib/recoveryCodes";
 
 type Enrolling = { factorId: string; qr: string; secret: string };
 
@@ -105,6 +105,7 @@ export default function TwoFactorSettings() {
       if (error) throw error;
       // Drop the aal2 claim from the session so nothing keeps asking for it.
       await supabase.auth.refreshSession();
+      await clearRecoveryCodes();
       toast({ title: "Two-step sign-in is off" });
       await load();
     } catch (error) {
