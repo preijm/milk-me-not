@@ -54,7 +54,24 @@ const load = async () => {
           // requests to answer a question nobody is asking.
           tracesSampleRate: 0,
           // Nothing here needs a reader's typing or their session replayed.
-          sendDefaultPii: false,
+          // Spelled out because Sentry 11 turned every one of these on by
+          // default: v10's `sendDefaultPii: false` is gone, and leaving
+          // `dataCollection` unset now collects more, not less. Deleting this
+          // block type-checks and quietly breaks what /privacy promises.
+          dataCollection: {
+            userInfo: false,
+            cookies: false,
+            urlQueryParams: false,
+            httpBodies: [],
+            // In a browser the request headers are User-Agent and Referer,
+            // which is how a report says which phone it came from.
+            httpHeaders: { request: true, response: false },
+            stackFrameVariables: false,
+            graphQL: { document: false, variables: false },
+            genAI: { inputs: false, outputs: false },
+            databaseQueryData: false,
+            queues: false,
+          },
         });
         client = sentry;
         return sentry;
