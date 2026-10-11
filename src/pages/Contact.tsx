@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import { Phone, Mail, MessageSquare, Bird } from "lucide-react";
 import {
   ArrowRight,
@@ -58,8 +59,7 @@ const Contact = () => {
   return (
     <StoryLayout mobileCtaHint="One inbox. Two people. No script.">
       <Seo
-        title="Contact — Milk Me Not"
-        description="Get in touch with the Milk Me Not team. Bug reports, missing brands, data corrections and plain old feedback — read by the two people who started this."
+        {...STATIC_SEO["/contact"]}
         path="/contact"
       />
 

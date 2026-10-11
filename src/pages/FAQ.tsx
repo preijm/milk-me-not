@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import {
   ArrowRight,
   Band,
@@ -102,8 +103,7 @@ const FAQ = () => {
   return (
     <StoryLayout mobileCtaHint="90 seconds. No brand can buy this list.">
       <Seo
-        title="How ratings work — Milk Me Not"
-        description="Zero to ten, five named tiers, and a scale nobody can pay to move. How Milk Me Not's community scores are calculated, why price is tracked separately, and what happens if a brand ever pays us."
+        {...STATIC_SEO["/faq"]}
         path="/faq"
         jsonLd={faqJsonLd}
       />

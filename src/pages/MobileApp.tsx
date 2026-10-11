@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import {
   ArrowRight,
   Band,
@@ -90,8 +91,7 @@ const MobileApp = () => {
   return (
     <StoryLayout transparentHeader mobileCtaHint="Direct APK · installs in under a minute">
       <Seo
-        title="Android app — Milk Me Not"
-        description="Download the Milk Me Not Android app. Scan a barcode, see the community verdict, rate it in seconds — without typing a thing."
+        {...STATIC_SEO["/mobile-app"]}
         path="/mobile-app"
       />
 

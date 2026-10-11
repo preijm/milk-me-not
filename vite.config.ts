@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { readFileSync, writeFileSync } from "fs";
+import { STATIC_SEO, htmlForRoute } from "./src/lib/staticSeo";
 import { componentTagger } from "lovable-tagger";
 
 /**
@@ -42,6 +44,31 @@ const emitBuildId = () => ({
   },
 });
 
+/**
+ * Write `about.html`, `results.html` and the rest beside `index.html`, each
+ * with its own title, description and canonical already in the head.
+ *
+ * `.html` files rather than `about/index.html`: the Worker serves a file at
+ * the bare path and a folder index at the path with a trailing slash, and the
+ * canonical is the bare one. Routes with no file — /product/:id and the like —
+ * still fall through to `index.html`, which is untouched.
+ *
+ * Only the head. The body is still the empty root React fills in, because
+ * markup put there would be torn down and redrawn on every visit unless the
+ * app hydrated it, and that is a different project.
+ */
+const routeHeads = () => ({
+  name: "route-heads",
+  apply: "build" as const,
+  writeBundle(options: { dir?: string }) {
+    const dir = options.dir ?? "dist";
+    const shell = readFileSync(path.join(dir, "index.html"), "utf8");
+    for (const [route, seo] of Object.entries(STATIC_SEO)) {
+      writeFileSync(path.join(dir, `${route.slice(1)}.html`), htmlForRoute(shell, route, seo));
+    }
+  },
+});
+
 // https://vitejs.dev/config/
 export default (defineConfig as any)(({ mode }: { mode: string }) => ({
   define: {
@@ -59,6 +86,7 @@ export default (defineConfig as any)(({ mode }: { mode: string }) => ({
   plugins: [
     react(),
     emitBuildId(),
+    routeHeads(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),

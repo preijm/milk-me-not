@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobileOrTablet } from "@/hooks/use-mobile";
@@ -56,8 +57,7 @@ const Feed = () => {
   return (
     <StoryLayout mobileCtaHint="Add the one you tried today.">
       <Seo
-        title="Feed — Latest plant-milk reviews | Milk Me Not"
-        description="The latest community taste tests of plant-based milks — photos, ratings and notes from real reviewers."
+        {...STATIC_SEO["/feed"]}
         path="/feed"
       />
 

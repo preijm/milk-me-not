@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
+import { SITE_URL } from "@/lib/staticSeo";
 
-const SITE_URL = "https://milkmenot.com";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 interface SeoProps {

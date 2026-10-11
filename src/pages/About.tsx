@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Seo } from "@/components/Seo";
+import { STATIC_SEO } from "@/lib/staticSeo";
 import { ImageModal } from "@/components/milk-test/ImageModal";
 import {
   ArrowRight,
@@ -33,8 +34,7 @@ const About = () => {
   return (
     <StoryLayout mobileCtaHint="Free forever. No brand deals.">
       <Seo
-        title="It started with soy sauce — About Milk Me Not"
-        description="A joke between colleagues became a spreadsheet, then an obsession, then a public rating platform for every plant milk on the shelf. This is how Milk Me Not happened."
+        {...STATIC_SEO["/about"]}
         path="/about"
       />
 

@@ -611,6 +611,34 @@ before wrangler ever ran. `bunx` uses the same toolchain as every other step.
 of the zone's ten records are mail, including three DKIM CNAMEs. Do not touch
 DNS records casually.
 
+### Nine routes get their own HTML file, and only the head differs
+Every URL used to be served the same `index.html`: one title, one description,
+no canonical. The right ones arrived only after React ran. Google reads the raw
+file first, and in October 2026 Search Console had four of six known pages
+filed as duplicates or "crawled, not indexed".
+
+`routeHeads` in `vite.config.ts` now writes `about.html`, `results.html` and
+seven more beside `index.html`, each with its own title, description, canonical
+and `og:url`. The strings come from `STATIC_SEO` in `src/lib/staticSeo.ts`,
+which the pages' own `<Seo>` calls read too, so the file and the rendered page
+cannot disagree. A fixed public page added later wants an entry there.
+
+Three things that look like omissions and are not:
+
+- **`index.html` has no canonical and must not get one.** The Worker serves it
+  for every address with no file of its own — `/product/:id`, `/brand/:slug` —
+  so a canonical in it would tell Google all of those are the home page. That
+  is also why `/` is not in `STATIC_SEO`.
+- **The body is still empty.** Markup placed in `#root` is torn down and
+  redrawn by `createRoot` on every visit — content, spinner, content — unless
+  the app hydrates it, which means rendering the whole provider tree in Node.
+- **`main.tsx` deletes the canonical the build wrote.** `<Seo>` adds its own a
+  moment later. Left in, the build's would sit first in the head and go stale
+  on a Back press, and Counterscale reads the first canonical it finds.
+
+They are `about.html`, not `about/index.html`: the Worker serves a file at the
+bare path and a folder index at the path with a trailing slash.
+
 ### An open tab learns about a deploy from `version.json`, not from a table
 A loaded single-page app never asks for `index.html` again, so a tab left open
 keeps its bundle for as long as it stays open. Cache headers cannot help:
