@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { TwoFactorGate } from "./TwoFactorGate";
 
@@ -39,6 +39,13 @@ vi.mock("@/contexts/AuthContext", () => ({
 const renderGate = () => render(<TwoFactorGate><p>the app</p></TwoFactorGate>);
 
 describe("TwoFactorGate", () => {
+  // input-otp sets timers at 0, 10 and 50ms on mount that call setState, and
+  // never clears them. If the file finishes inside that window, jsdom is torn
+  // down first and the last one throws "window is not defined" — every test
+  // green, the run red, and a deploy lost to it. Waiting them out is cruder
+  // than fake timers, but those would also freeze findBy and waitFor.
+  afterAll(() => new Promise((resolve) => setTimeout(resolve, 60)));
+
   beforeEach(() => {
     state.session = { access_token: "t" };
   });
