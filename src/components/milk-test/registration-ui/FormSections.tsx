@@ -237,6 +237,7 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
           <ProductOptions
             selectedTypes={selectedProductTypes}
             setSelectedTypes={setSelectedProductTypes}
+            canAdd={isAdmin}
           />
         </div>
 
