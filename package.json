@@ -55,7 +55,7 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@sentry/react": "^11.4.0",
+    "@sentry/react": "^11.11.0",
     "@supabase/supabase-js": "^2.112.3",
     "@tanstack/react-query": "^5.90.16",
     "@testing-library/dom": "^10.4.1",
@@ -74,8 +74,8 @@
     "input-otp": "^1.4.2",
     "jsdom": "^30.0.1",
     "lint-staged": "^17.3.0",
-    "lucide-react": "^1.14.0",
-    "mapbox-gl": "^3.23.1",
+    "lucide-react": "^1.70.0",
+    "mapbox-gl": "^3.34.2",
     "next-themes": "^0.4.6",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.6",
@@ -90,15 +90,15 @@
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "vitest": "^5.0.0",
+    "vitest": "^5.1.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@lovable.dev/vite-plugin-dev-server-bridge": "^1.0.2",
     "@lovable.dev/vite-plugin-hmr-gate": "^1.8.0",
-    "@playwright/test": "^1.62.1",
-    "@tailwindcss/postcss": "^4.3.3",
+    "@playwright/test": "^1.65.0",
+    "@tailwindcss/postcss": "^4.3.4",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.14",
@@ -114,6 +114,6 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.11"
+    "vite": "^8.3.6"
   }
 }
