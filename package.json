@@ -72,7 +72,7 @@
     "framer-motion": "^13.1.1",
     "husky": "^9.1.7",
     "input-otp": "^1.4.2",
-    "jsdom": "^30.0.1",
+    "jsdom": "^31.0.0",
     "lint-staged": "^17.3.0",
     "lucide-react": "^1.14.0",
     "mapbox-gl": "^3.23.1",
