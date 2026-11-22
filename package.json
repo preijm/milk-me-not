@@ -14,7 +14,8 @@
     "predev": "bunx tsx scripts/generate-sitemap.ts",
     "prebuild": "bunx tsx scripts/generate-sitemap.ts",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "test:live": "playwright test -c playwright.live.config.ts"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

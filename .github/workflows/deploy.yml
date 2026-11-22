@@ -106,3 +106,62 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  # Open the live site in a real browser once the new build is being served.
+  #
+  # The steps above prove the code passed and the upload succeeded. Neither
+  # proves the deployed page runs: a bundle that loads and then throws is green
+  # everywhere up to here. A failure turns this run red, and a red Deploy on
+  # main is filed as an issue by alert-on-failure.yml.
+  smoke:
+    name: Smoke test the live site
+    needs: [deploy]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install Chromium for Playwright
+        run: bunx playwright install --with-deps chromium
+
+      # The edge takes a moment to start serving the upload. Testing before it
+      # does would test the previous build and report on the wrong thing, so
+      # wait for version.json to name this commit. Same 12 characters the
+      # health check compares.
+      - name: Wait for this build to be live
+        env:
+          SITE: https://milkmenot.com
+        run: |
+          set -uo pipefail
+          EXPECTED=$(git rev-parse HEAD | cut -c1-12)
+          for i in $(seq 1 36); do
+            LIVE=$(curl -sS --max-time 10 "$SITE/version.json?t=$(date +%s)" | sed -n 's/.*"buildId"[: ]*"\([^"]*\)".*/\1/p')
+            if [ "$LIVE" = "$EXPECTED" ]; then
+              echo "Serving $LIVE."
+              exit 0
+            fi
+            echo "Serving '${LIVE:-nothing}', waiting for $EXPECTED..."
+            sleep 5
+          done
+          echo "::error::After three minutes the site still is not serving $EXPECTED."
+          exit 1
+
+      - name: Run the smoke test
+        run: bunx playwright test -c playwright.live.config.ts
+
+      - name: Keep the traces from a failure
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: live-smoke-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
