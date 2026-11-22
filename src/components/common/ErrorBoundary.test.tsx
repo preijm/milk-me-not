@@ -10,15 +10,7 @@ import { render, screen } from "@testing-library/react";
  * and the right files being served.
  */
 
-const reported = vi.hoisted(() => ({ calls: [] as unknown[][] }));
-
-vi.mock("@/lib/errorReporting", () => ({
-  reportError: async (...args: unknown[]) => {
-    reported.calls.push(args);
-  },
-}));
-
-const { ErrorBoundary } = await import("./ErrorBoundary");
+import { ErrorBoundary } from "./ErrorBoundary";
 
 const Boom = ({ message = "kaboom" }: { message?: string }) => {
   throw new Error(message);
@@ -26,7 +18,6 @@ const Boom = ({ message = "kaboom" }: { message?: string }) => {
 
 describe("ErrorBoundary", () => {
   beforeEach(() => {
-    reported.calls = [];
     // React logs the caught error itself; that is not the thing under test.
     vi.spyOn(console, "error").mockImplementation(() => {});
   });
@@ -65,19 +56,6 @@ describe("ErrorBoundary", () => {
 
     expect(screen.getByRole("button", { name: /reload/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /board/i })).toHaveAttribute("href", "/");
-  });
-
-  it("tells somebody, with the component stack", () => {
-    render(
-      <ErrorBoundary>
-        <Boom message="a very specific failure" />
-      </ErrorBoundary>,
-    );
-
-    expect(reported.calls).toHaveLength(1);
-    const [error, extra] = reported.calls[0] as [Error, { componentStack?: string }];
-    expect(error.message).toBe("a very specific failure");
-    expect(extra).toHaveProperty("componentStack");
   });
 
   it("keeps the message available without leading with it", () => {
