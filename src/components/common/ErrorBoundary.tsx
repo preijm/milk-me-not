@@ -1,5 +1,4 @@
-import { Component, type ErrorInfo, type ReactNode } from "react";
-import { reportError } from "@/lib/errorReporting";
+import { Component, type ReactNode } from "react";
 
 /**
  * Something to look at when the app cannot render.
@@ -11,8 +10,9 @@ import { reportError } from "@/lib/errorReporting";
  * would have seen nothing at all.
  *
  * A blank page also tells the reader nothing and tells us nothing. This does
- * both: it says what happened in plain words, offers the one thing that usually
- * works, and reports the error on the way past.
+ * the first: it says what happened in plain words and offers the one thing
+ * that usually works. React logs the error to the console on its own, so there
+ * is no componentDidCatch to write.
  *
  * Deliberately built from raw markup and CSS classes rather than the story
  * components. A boundary that imports half the app can be brought down by the
@@ -27,10 +27,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     return { error };
-  }
-
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    void reportError(error, { componentStack: info.componentStack });
   }
 
   private reload = () => {
@@ -56,7 +52,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
           <p className="mt-2 text-[0.9375rem] text-story-muted">
             Not your doing, and nothing you typed has been lost from the board. Reloading
-            usually sorts it. We have been told it happened.
+            usually sorts it.
           </p>
 
           <div className="mt-5 flex flex-wrap gap-2">

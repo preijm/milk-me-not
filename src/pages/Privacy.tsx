@@ -13,7 +13,7 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
   </section>
 );
 
-const LAST_UPDATED = "28 August 2026";
+const LAST_UPDATED = "22 November 2026";
 
 /**
  * The one legal-ish page on the site, and deliberately plain next to the rest
@@ -23,7 +23,7 @@ const LAST_UPDATED = "28 August 2026";
  *
  * Written to be checked against the source, not just believed: every claim
  * here should still be true by reading `useAuthOperations.ts`,
- * `imageCompression.ts`, `errorReporting.ts` and the two backup scripts.
+ * `imageCompression.ts` and the two backup scripts.
  * If one of those changes, this page is what falls out of date first.
  */
 const Privacy = () => (
@@ -86,12 +86,6 @@ const Privacy = () => (
           <strong className="text-story-ink">Keeping accounts safe:</strong> repeated failed logins, signups or
           password-reset attempts are temporarily rate-limited by email address to slow down guessing. Those
           counters expire on their own and are never tied to an IP address.
-        </p>
-        <p>
-          <strong className="text-story-ink">When something breaks:</strong> if a page throws an error, a report
-          — the error and a stack trace, not your data — can be sent to our error-tracking tool, Sentry. It is
-          configured to skip anything that would otherwise default to a broader set: no IP address, no session
-          recording, nothing about who you are.
         </p>
         <p>
           <strong className="text-story-ink">Visit counts:</strong> we use Counterscale, a self-hosted, cookieless
