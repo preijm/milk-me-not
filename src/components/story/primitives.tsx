@@ -208,11 +208,18 @@ export const ScoreMark = ({
 }) => {
   const tier = getTier(score);
   const value = score === null || score === undefined || Number.isNaN(score) ? "—" : score.toFixed(1);
+  /* The line height rides on the size class, and has to.
+     It was a separate `leading-none` beside these, and tailwind-merge dropped
+     it every time: `text-[2rem]` and `leading-none` are one conflict group to
+     it, because `text-lg/7` sets both. The emitted class list was
+     `story-num text-[2rem]` with no leading at all, so a 32px number sat in a
+     48px line box — 16px of air the score carried everywhere it appeared, and
+     the reason the tier word looked adrift under it on the results card. */
   const numClass = {
-    sm: "text-[1.35rem]",
-    md: "text-[2rem]",
-    lg: "text-[3.25rem]",
-    xl: "text-[clamp(3.5rem,13vw,5.5rem)]",
+    sm: "text-[1.35rem]/none",
+    md: "text-[2rem]/none",
+    lg: "text-[3.25rem]/none",
+    xl: "text-[clamp(3.5rem,13vw,5.5rem)]/none",
   }[size];
   const tierClass = {
     sm: "text-[0.625rem] tracking-[0.14em]",
@@ -223,7 +230,7 @@ export const ScoreMark = ({
 
   return (
     <div className={cn("flex items-baseline gap-2.5", className)}>
-      <span className={cn("story-num leading-none", numClass)} style={{ color: tier.ink }}>
+      <span className={cn("story-num", numClass)} style={{ color: tier.ink }}>
         {value}
       </span>
       {showTier && (
