@@ -142,8 +142,20 @@ export const ResultsToolbarDesktop = ({
   );
 };
 
-/** Same three capabilities, composed as a phone would want them: full-width
- *  search up top, a chip row that opens bottom sheets rather than popovers. */
+/**
+ * Same three capabilities, composed as a phone would want them — two rows
+ * rather than three, and each control next to what it acts on.
+ *
+ * Search and filter share the top row because they do the same job: they
+ * decide which products are in the list. Sort does not — it decides what order
+ * the ones that survived come in — so it sits on the second row beside the
+ * count, which is the number it is reordering. That also gets the phone from
+ * three stacked rows of chrome to two.
+ *
+ * The sheets stay sheets. A popover anchored to a chip near the top of a phone
+ * opens downward over the results it is filtering; a bottom sheet comes up
+ * under the thumb.
+ */
 export const ResultsToolbarMobile = ({
   searchTerm,
   setSearchTerm,
@@ -164,16 +176,57 @@ export const ResultsToolbarMobile = ({
 
   return (
     <div className="flex flex-col gap-3">
-      <SearchField searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      {/* What is in the list. */}
+      <div className="flex items-center gap-2">
+        <SearchField searchTerm={searchTerm} setSearchTerm={setSearchTerm} className="min-w-0 flex-1" />
 
-      <div className="story-rail flex items-center gap-2">
+        <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
+          <SheetTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                "flex h-11 shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3.5 text-[0.8125rem] font-bold",
+                filterCount > 0 ? "border-story-green bg-story-green text-white" : "border-story-ink/12 bg-white text-story-ink-2",
+              )}
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />
+              Filter{filterCount > 0 ? ` · ${filterCount}` : ""}
+            </button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="flex max-h-[85vh] flex-col overflow-y-auto rounded-t-3xl border-story-ink/10 bg-story-cream">
+            <SheetHeader className="text-left">
+              <SheetTitle className="story-serif text-[1.25rem] font-bold text-story-ink">Filter</SheetTitle>
+            </SheetHeader>
+            <div className="mt-4 flex-1 pb-4">
+              <ResultsFilterPanel filters={filters} onFiltersChange={onFiltersChange} showMyResults={showMyResults} />
+            </div>
+            <SheetFooter>
+              <button
+                type="button"
+                onClick={() => setFilterOpen(false)}
+                className="w-full rounded-full bg-story-green py-3.5 text-[0.9375rem] font-bold text-white"
+              >
+                Show {resultCount} {countNoun}
+              </button>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* How many survived, and in what order. `justify-between` leaves the
+          count alone on the left in the chart view, where sort is hidden. */}
+      <div className="flex items-center justify-between gap-3">
+        <p className="min-w-0 text-[0.75rem] font-medium text-story-muted-2">
+          {resultCount} of {totalCount} {countNoun}
+        </p>
+
         <Sheet open={sortOpen && showSort} onOpenChange={setSortOpen}>
           <SheetTrigger asChild>
             <button
               type="button"
               hidden={!showSort}
               className={cn(
-                "h-10 shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-story-ink/12 bg-white px-3.5 text-[0.8125rem] font-bold text-story-ink-2",
+                "h-9 shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-story-ink/12 bg-white px-3 text-[0.8125rem] font-bold text-story-ink-2",
                 showSort ? "flex" : "hidden",
               )}
             >
@@ -206,43 +259,7 @@ export const ResultsToolbarMobile = ({
             </button>
           </SheetContent>
         </Sheet>
-
-        <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
-          <SheetTrigger asChild>
-            <button
-              type="button"
-              className={cn(
-                "flex h-10 shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3.5 text-[0.8125rem] font-bold",
-                filterCount > 0 ? "border-story-green bg-story-green text-white" : "border-story-ink/12 bg-white text-story-ink-2",
-              )}
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />
-              Filter{filterCount > 0 ? ` · ${filterCount}` : ""}
-            </button>
-          </SheetTrigger>
-          <SheetContent side="bottom" className="flex max-h-[85vh] flex-col overflow-y-auto rounded-t-3xl border-story-ink/10 bg-story-cream">
-            <SheetHeader className="text-left">
-              <SheetTitle className="story-serif text-[1.25rem] font-bold text-story-ink">Filter</SheetTitle>
-            </SheetHeader>
-            <div className="mt-4 flex-1 pb-4">
-              <ResultsFilterPanel filters={filters} onFiltersChange={onFiltersChange} showMyResults={showMyResults} />
-            </div>
-            <SheetFooter>
-              <button
-                type="button"
-                onClick={() => setFilterOpen(false)}
-                className="w-full rounded-full bg-story-green py-3.5 text-[0.9375rem] font-bold text-white"
-              >
-                Show {resultCount} {countNoun}
-              </button>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
       </div>
-
-      <p className="text-[0.75rem] font-medium text-story-muted-2">
-        {resultCount} of {totalCount} {countNoun}
-      </p>
     </div>
   );
 };

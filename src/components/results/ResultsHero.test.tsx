@@ -54,14 +54,25 @@ describe("ResultsHero", () => {
     expect(screen.queryByRole("heading", { name: "Every plant milk" })).not.toBeInTheDocument();
   });
 
-  // The legend is the key to the word on every row below, so it is reference
-  // rather than pitch and has to survive the cut on a phone.
-  it("keeps a visible score key for a member on a phone", () => {
+  // The legend used to survive the cut on a phone, as the key to the word on
+  // every row below. It cost two rows of pills between the heading and the
+  // first product on the page a member opens to look something up, and a
+  // member has seen the scale before.
+  it("spends no room on the score key for a member on a phone", () => {
     auth.user = { id: "u1" };
     const { container } = renderHero();
     const keys = [...container.querySelectorAll("div")].filter(
       (d) => /Gem/.test(d.textContent ?? "") && !d.closest("section"),
     );
-    expect(keys.length).toBeGreaterThan(0);
+    expect(keys.length).toBe(0);
+  });
+
+  // A first-time visitor has not seen the scale, and their phone shows the
+  // full hero rather than the compact head — so the key is still there.
+  it("still keys the scale for a visitor, at every width", () => {
+    const { container } = renderHero();
+    const hero = container.querySelector("section");
+    expect(hero?.classList.contains("hidden")).toBe(false);
+    expect(hero?.textContent).toMatch(/Gem/);
   });
 });

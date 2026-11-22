@@ -144,9 +144,11 @@ const Results = () => {
         )}
 
         {/* On a phone the switcher gets its own full-width row — beside the
-            heading it would either wrap or squeeze the title. */}
+            heading it would either wrap or squeeze the title — and `fill`
+            spreads the three tabs across it rather than leaving white after
+            "Map". */}
         {isMobile && (
-          <ResultsViewSwitcher view={view} onViewChange={setView} className={cn("flex w-full", !user && "mt-6")} />
+          <ResultsViewSwitcher view={view} onViewChange={setView} fill className={cn(!user && "mt-6")} />
         )}
 
         <div className="mt-7">
@@ -160,7 +162,12 @@ const Results = () => {
             filteredResults.length === 0 ? (
               <ResultsEmptyState onClear={clearAllFilters} />
             ) : isMobile ? (
-              <ResultsCardList results={visibleResults} />
+              /* A position number is only true when the sort is a ranking —
+                 see the note in ResultsCardList. */
+              <ResultsCardList
+                results={visibleResults}
+                ranked={sortConfig.column === "avg_rating" && sortConfig.direction === "desc"}
+              />
             ) : (
               <ResultsRankedList
                 results={visibleResults}

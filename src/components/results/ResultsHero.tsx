@@ -53,8 +53,15 @@ export const ResultsHero = ({ stats, isLoading }: ResultsHeroProps) => {
 
   return (
     <>
-      {/* The score legend stays with the compact head: it is the key to the
-          word on every row below, so it is reference rather than pitch. */}
+      {/* A member on a phone gets the page name and nothing else.
+          The legend used to come with it, on the argument that it is the key
+          to the word on every row below and therefore reference rather than
+          pitch. On a phone it was two rows of pills — about 90px of chrome
+          between the heading and the first product, on the page a member opens
+          to look things up. The tiers run Waste to Gem in one direction, each
+          row shows its number beside its word, and a member has seen the scale
+          before. A first-time visitor still gets it: their phone shows the
+          full hero below, legend included. */}
       {user && (
         <MemberPageHead
           kicker="The full catalogue"
@@ -62,11 +69,6 @@ export const ResultsHero = ({ stats, isLoading }: ResultsHeroProps) => {
           meta={isLoading ? "Loading the shelf…" : `${formatCount(stats.products)} products, ${formatCount(stats.ratings)} ratings`}
           className="lg:hidden"
         />
-      )}
-      {user && (
-        <div className="mx-auto w-full max-w-304 px-5 pb-4 sm:px-8 lg:hidden">
-          <ScoreLegend />
-        </div>
       )}
 
     <Band ground="cream" size="md" className={cn("pt-6 sm:pt-10", user && "hidden lg:block")}>
