@@ -66,3 +66,66 @@ export const filterBrands = (rows: BrandSummary[], filter: BrandFilter): BrandSu
     if (filter.kind && brandFacts(row.brand)?.owner?.kind !== filter.kind) return false;
     return true;
   });
+
+export const DEFAULT_SORT: BrandSort = { key: "ratings", direction: "desc" };
+
+const SORT_KEYS: readonly string[] = ["ratings", "score", "recent", "name"];
+const OWNER_KINDS: readonly string[] = ["own-label", "group", "independent"];
+
+const isSortKey = (value: string | null): value is BrandSortKey => value !== null && SORT_KEYS.includes(value);
+
+const isOwnerKind = (value: string | null): value is BrandOwnerKind =>
+  value !== null && OWNER_KINDS.includes(value);
+
+/**
+ * Reads the table's state out of the query string, which is where it lives.
+ *
+ * Anything missing or unrecognised falls back to the default rather than
+ * rendering an empty table. This string is public: it gets hand-edited,
+ * truncated by chat clients and pasted half-copied, and none of that should be
+ * able to produce a page that looks broken.
+ */
+export const readBrandTableState = (params: URLSearchParams): { filter: BrandFilter; sort: BrandSort } => {
+  const column = params.get("sortColumn");
+  const direction = params.get("sortDir");
+  const kind = params.get("kind");
+
+  return {
+    filter: {
+      kind: isOwnerKind(kind) ? kind : null,
+      goneOnly: params.get("gone") === "true",
+    },
+    // A direction on its own has no column to apply to, so it is the column
+    // that decides whether there is a sort here at all. A column with no
+    // direction is read the way that column is usually read, so a hand-typed
+    // `?sortColumn=name` gives A–Z.
+    sort: isSortKey(column)
+      ? {
+          key: column,
+          direction: direction === "asc" || direction === "desc" ? direction : firstDirectionFor(column),
+        }
+      : DEFAULT_SORT,
+  };
+};
+
+/**
+ * What a given state should be written as.
+ *
+ * Defaults are omitted, so an untouched page keeps a clean `/brands` and only
+ * a deliberate choice shows up in the address bar.
+ */
+export const brandTableQuery = (filter: BrandFilter, sort: BrandSort): Record<string, string> => {
+  const query: Record<string, string> = {};
+
+  if (filter.kind) query.kind = filter.kind;
+  if (filter.goneOnly) query.gone = "true";
+
+  if (sort.key !== DEFAULT_SORT.key || sort.direction !== DEFAULT_SORT.direction) {
+    // Both or neither. A lone direction has no column to apply to, and a lone
+    // column would quietly take its natural direction on the way back in.
+    query.sortColumn = sort.key;
+    query.sortDir = sort.direction;
+  }
+
+  return query;
+};

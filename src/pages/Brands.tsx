@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Seo } from "@/components/Seo";
 import { STATIC_SEO } from "@/lib/staticSeo";
@@ -8,9 +8,11 @@ import { BrandSortHeader, BrandTable } from "@/components/brand/BrandTable";
 import { brandSummaries } from "@/components/brand/brandSummary";
 import {
   NO_FILTER,
+  brandTableQuery,
   filterBrands,
   firstDirectionFor,
   isFiltered,
+  readBrandTableState,
   sortBrands,
   type BrandFilter,
   type BrandSort,
@@ -43,8 +45,17 @@ const Brands = () => {
     queryFn: fetchRatingFacts,
   });
 
-  const [sort, setSort] = useState<BrandSort>({ key: "ratings", direction: "desc" });
-  const [filter, setFilter] = useState<BrandFilter>(NO_FILTER);
+  // The query string is the state, not a copy of it. A filtered view is then a
+  // link you can send, and pressing Back out of a brand page returns to the
+  // table you were reading rather than to all of them.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { filter, sort } = useMemo(() => readBrandTableState(searchParams), [searchParams]);
+
+  // `replace`, because a pill press is not a place you came from — thirty of
+  // them should not be thirty presses of Back. The scroll position survives it
+  // because ScrollToTop keys on the pathname, which this never changes.
+  const write = (next: { filter?: BrandFilter; sort?: BrandSort }) =>
+    setSearchParams(brandTableQuery(next.filter ?? filter, next.sort ?? sort), { replace: true });
 
   const all = useMemo(() => brandSummaries(facts), [facts]);
   const rows = useMemo(() => sortBrands(filterBrands(all, filter), sort), [all, filter, sort]);
@@ -55,11 +66,12 @@ const Brands = () => {
   // A second press on the same column reverses it; a new column starts the way
   // that column is usually read.
   const handleSort = (key: BrandSortKey) =>
-    setSort((s) =>
-      s.key === key
-        ? { key, direction: s.direction === "asc" ? "desc" : "asc" }
-        : { key, direction: firstDirectionFor(key) },
-    );
+    write({
+      sort:
+        sort.key === key
+          ? { key, direction: sort.direction === "asc" ? "desc" : "asc" }
+          : { key, direction: firstDirectionFor(key) },
+    });
 
   return (
     <StoryLayout>
@@ -96,7 +108,7 @@ const Brands = () => {
                 key={k.label}
                 type="button"
                 aria-pressed={active}
-                onClick={() => setFilter((f) => ({ ...f, kind: k.value }))}
+                onClick={() => write({ filter: { ...filter, kind: k.value } })}
                 className={cn(
                   PILL,
                   active
@@ -114,7 +126,7 @@ const Brands = () => {
           <button
             type="button"
             aria-pressed={filter.goneOnly}
-            onClick={() => setFilter((f) => ({ ...f, goneOnly: !f.goneOnly }))}
+            onClick={() => write({ filter: { ...filter, goneOnly: !filter.goneOnly } })}
             className={cn(
               PILL,
               filter.goneOnly
@@ -128,7 +140,7 @@ const Brands = () => {
           {isFiltered(filter) && (
             <button
               type="button"
-              onClick={() => setFilter(NO_FILTER)}
+              onClick={() => write({ filter: NO_FILTER })}
               className="px-2 text-[0.8125rem] font-bold text-story-muted underline-offset-2 hover:underline"
             >
               Clear
@@ -145,7 +157,7 @@ const Brands = () => {
               <BrandTable rows={rows} />
             ) : (
               <p className="py-12 text-center text-[0.9375rem] font-medium text-story-muted">
-                No brands match that. <button type="button" onClick={() => setFilter(NO_FILTER)} className="font-bold text-story-green-dark underline-offset-2 hover:underline">Clear the filters</button> to see all {all.length}.
+                No brands match that. <button type="button" onClick={() => write({ filter: NO_FILTER })} className="font-bold text-story-green-dark underline-offset-2 hover:underline">Clear the filters</button> to see all {all.length}.
               </p>
             )}
           </div>
