@@ -110,13 +110,14 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
     // rows fit, and the right carton has to be among them.
     const ranked = rankScanMatches(scanned, rows);
 
-    // Only one carton it could be — asking would be a question with one answer.
-    if (ranked.length === 1) {
-      await rememberBarcode(scanned.barcode, ranked[0].id);
-      goToProduct(ranked[0].id);
-      return;
-    }
-
+    // A single match is still asked about, never assumed. It used to go
+    // straight through and record the barcode, on the reasoning that a
+    // question with one answer is not worth asking — but there are always two
+    // answers, that one and "none of these". A brand with only its Oat on the
+    // board would take the barcode of its Almond carton, and the first write
+    // wins: every later scan of that Almond went to Oat, and nothing a reader
+    // could do would move it. One tap is cheap against that.
+    //
     // Eight is as many as fits a dialog, and the count says so rather than
     // leaving a reader scrolling for a carton that was never rendered.
     setStage({ at: "matches", scanned, matches: ranked.slice(0, 8), total: ranked.length });
@@ -146,7 +147,9 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
               {stage.scanned.brand ?? "Found it"} on the board
             </DialogTitle>
             <DialogDescription className="text-[0.875rem] text-story-muted">
-              Pick the one in your hand — we will remember it next time.
+              {stage.matches.length === 1
+                ? "Is this the one in your hand? We will remember it next time."
+                : "Pick the one in your hand — we will remember it next time."}
               {/* Whatever is picked here is written against the barcode for
                   everyone after, so a reader whose carton was cut from the list
                   needs to know that rather than settle for the nearest row. */}
