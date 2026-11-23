@@ -201,6 +201,14 @@ jobs:
       # Every open issue with this title, not only the first: a hand-made
       # duplicate should not outlive the thing it describes.
       #
+      # Listed by label rather than searched. `--search` goes through the
+      # search API, which is indexed a moment behind the issue itself, so a
+      # dispatch straight after one is filed finds nothing and closes nothing.
+      # Six hours between scheduled runs hides that completely; the throwaway
+      # issue this was tested with did not, and failed on the first attempt.
+      # The label plus an exact title match in jq is what the search was doing
+      # anyway, off an endpoint that answers from the table.
+      #
       # The trade is flapping. A site that breaks and recovers across two
       # checks now gets a close and then a fresh issue, where before it was one
       # issue collecting comments. Worth it at six-hourly: real flapping is
@@ -218,7 +226,7 @@ jobs:
           TITLE="The site health check found something"
 
           OPEN=$(gh issue list --repo "$REPO" --state open --label health \
-            --search "$TITLE in:title" --json number,title \
+            --limit 50 --json number,title \
             --jq "[.[] | select(.title == \"$TITLE\")] | .[].number")
 
           if [ -z "$OPEN" ]; then
