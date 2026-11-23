@@ -1,5 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { sortBrands, filterBrands, firstDirectionFor, isFiltered, NO_FILTER } from "./brandTableState";
+import {
+  sortBrands,
+  filterBrands,
+  firstDirectionFor,
+  isFiltered,
+  brandTableQuery,
+  readBrandTableState,
+  DEFAULT_SORT,
+  NO_FILTER,
+  type BrandFilter,
+  type BrandSort,
+} from "./brandTableState";
 import type { BrandSummary } from "./brandSummary";
 
 const row = (over: Partial<BrandSummary> & { brand: string }): BrandSummary => ({
@@ -87,5 +98,81 @@ describe("filtering the brand table", () => {
   it("combines the two", () => {
     expect(filterBrands(ROWS, { kind: "own-label", goneOnly: true })).toHaveLength(0);
     expect(isFiltered({ kind: "own-label", goneOnly: true })).toBe(true);
+  });
+});
+
+describe("the brand table's state in the query string", () => {
+  const read = (query: string) => readBrandTableState(new URLSearchParams(query));
+
+  it("writes nothing at all for the default view", () => {
+    expect(brandTableQuery(NO_FILTER, DEFAULT_SORT)).toEqual({});
+  });
+
+  it("reads the default view out of an empty query", () => {
+    expect(read("")).toEqual({ filter: NO_FILTER, sort: DEFAULT_SORT });
+  });
+
+  it("survives a round trip through the query string", () => {
+    const filters: BrandFilter[] = [
+      NO_FILTER,
+      { kind: "own-label", goneOnly: false },
+      { kind: "group", goneOnly: true },
+      { kind: "independent", goneOnly: false },
+      { kind: null, goneOnly: true },
+    ];
+    const sorts: BrandSort[] = (["ratings", "score", "recent", "name"] as const).flatMap((key) => [
+      { key, direction: "asc" as const },
+      { key, direction: "desc" as const },
+    ]);
+
+    for (const filter of filters) {
+      for (const sort of sorts) {
+        const query = new URLSearchParams(brandTableQuery(filter, sort));
+        expect(readBrandTableState(query), query.toString() || "(empty)").toEqual({ filter, sort });
+      }
+    }
+  });
+
+  it("writes a filtered, sorted view as the params we promised", () => {
+    expect(brandTableQuery({ kind: "own-label", goneOnly: true }, { key: "name", direction: "asc" })).toEqual({
+      kind: "own-label",
+      gone: "true",
+      sortColumn: "name",
+      sortDir: "asc",
+    });
+  });
+
+  // Everything below is a URL nothing here writes: hand-edited, half-pasted or
+  // truncated by a chat client. None of them may produce an empty table.
+  it("ignores a kind it does not recognise", () => {
+    expect(read("kind=conglomerate").filter).toEqual(NO_FILTER);
+  });
+
+  it("treats anything but gone=true as not filtering", () => {
+    expect(read("gone=1").filter.goneOnly).toBe(false);
+    expect(read("gone=yes").filter.goneOnly).toBe(false);
+    expect(read("gone=true").filter.goneOnly).toBe(true);
+  });
+
+  it("falls back to the default sort for a column it does not recognise", () => {
+    expect(read("sortColumn=price&sortDir=asc").sort).toEqual(DEFAULT_SORT);
+  });
+
+  it("gives a column named without a direction the direction it is usually read in", () => {
+    expect(read("sortColumn=name").sort).toEqual({ key: "name", direction: "asc" });
+    expect(read("sortColumn=score").sort).toEqual({ key: "score", direction: "desc" });
+  });
+
+  it("ignores a direction with no column to apply it to", () => {
+    expect(read("sortDir=asc").sort).toEqual(DEFAULT_SORT);
+  });
+
+  it("ignores a direction that is not a direction", () => {
+    expect(read("sortColumn=name&sortDir=sideways").sort).toEqual({ key: "name", direction: "asc" });
+  });
+
+  it("keeps the sort when the filters are cleared", () => {
+    const sort: BrandSort = { key: "recent", direction: "desc" };
+    expect(brandTableQuery(NO_FILTER, sort)).toEqual({ sortColumn: "recent", sortDir: "desc" });
   });
 });

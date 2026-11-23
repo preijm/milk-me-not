@@ -87,6 +87,48 @@ test.describe("brand pages", () => {
     expect(errors).toEqual([]);
   });
 
+  /**
+   * The filters live in the query string, which is a thing only a real browser
+   * can prove: jsdom has no Back button and no address bar.
+   */
+  test("a filter survives a trip into a brand page and back", async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await stubBackend(page, fixtures);
+
+    await page.goto("/brands");
+    await expect(page.locator("a[href='/brand/harvest-moon']")).toBeVisible();
+
+    await page.getByRole("button", { name: "Group" }).click();
+    await expect(page).toHaveURL(/\?kind=group$/);
+    // Harvest Moon is owned by nobody we have filed, so a kind filter drops it.
+    await expect(page.locator("a[href='/brand/harvest-moon']")).toHaveCount(0);
+
+    await page.locator("a[href='/brand/alpro']").click();
+    await expect(page).toHaveURL(/\/brand\/alpro$/);
+
+    await page.goBack();
+
+    // The whole point: the table you were reading, not all of them again.
+    await expect(page).toHaveURL(/\/brands\?kind=group$/);
+    await expect(page.locator("a[href='/brand/harvest-moon']")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Group" })).toHaveAttribute("aria-pressed", "true");
+
+    expect(errors).toEqual([]);
+  });
+
+  test("a sorted view can be arrived at by link", async ({ page }) => {
+    const errors = collectPageErrors(page);
+    await stubBackend(page, fixtures);
+
+    await page.goto("/brands?sortColumn=name&sortDir=desc");
+
+    // Alpro has the most ratings, so it leads the default order — which is how
+    // this tells a URL that was read from one that was ignored.
+    await expect(page.locator("a[href^='/brand/']").first()).toContainText("Wunda");
+
+    expect(errors).toEqual([]);
+  });
+
   test("an address matching no brand says so rather than rendering empty", async ({ page }) => {
     await stubBackend(page, fixtures);
     await page.goto("/brand/nothing-here");
