@@ -138,7 +138,14 @@ empty.
 - **UI:** shadcn/ui (Radix UI primitives) + Tailwind CSS **v4**. There is no
   `tailwind.config.ts`; v4 is configured in CSS, so the theme lives in an
   `@theme` block in `src/index.css`.
-- **Forms:** React Hook Form + Zod validation
+- **Forms:** hand-rolled. `useMilkTestForm` is `useState` plus
+  `validateMilkTestInput` from `src/lib/security.ts`; Zod is used elsewhere, but
+  no form goes through it. `react-hook-form` survives only inside
+  `src/components/ui/form.tsx`, which nothing imports — there is no `useForm(`
+  call anywhere in `src/`. `@hookform/resolvers` was removed in November 2026,
+  one commit after #327 bumped it two majors for nothing. Delete
+  `ui/form.tsx` too if you want `react-hook-form` gone: `tsc --build` checks
+  every file under `src/`, imported or not.
 - **Maps:** Mapbox GL JS (lazy-loaded due to 200KB+ size)
 - **Backend:** Supabase (PostgreSQL, Auth, Edge Functions, Storage)
 - **Mobile:** Capacitor with camera plugin for photo capture
