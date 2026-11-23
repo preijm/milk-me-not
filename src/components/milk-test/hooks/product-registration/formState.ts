@@ -85,7 +85,9 @@ export const handleProductSubmit = async ({
       
       if (duplicateProductId) {
         console.log('Duplicate product found, ID:', duplicateProductId);
-        return { productId: duplicateProductId, isDuplicate: true };
+        // The brand comes back too: a caller that wants to take the reader to
+        // the product that already exists needs both, and AddProduct does.
+        return { productId: duplicateProductId, brandId, isDuplicate: true };
       }
       
       // Create a new product entry

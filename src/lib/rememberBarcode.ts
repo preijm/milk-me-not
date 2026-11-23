@@ -23,3 +23,20 @@ export const rememberBarcode = async (barcode: string, productId: string): Promi
     console.error("Could not remember the scanned barcode:", error);
   }
 };
+
+/**
+ * The barcode a scan brought along in router state, or nothing.
+ *
+ * The scan flow hands the registration form a whole `ScannedProduct` through
+ * `navigate(..., { state: { scanned } })`. Router state is whatever the last
+ * navigation put there, so this checks the shape rather than trusting a cast —
+ * and the barcode's own shape too, because `remember_product_barcode` silently
+ * ignores anything that is not 8 to 14 digits.
+ */
+export const scannedBarcodeFrom = (state: unknown): string | null => {
+  if (!state || typeof state !== "object") return null;
+  const scanned = (state as { scanned?: unknown }).scanned;
+  if (!scanned || typeof scanned !== "object") return null;
+  const barcode = (scanned as { barcode?: unknown }).barcode;
+  return typeof barcode === "string" && /^[0-9]{8,14}$/.test(barcode) ? barcode : null;
+};
