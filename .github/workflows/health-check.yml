@@ -39,7 +39,12 @@ jobs:
 
       # A merge starts a deploy, and a check landing in that minute would see a
       # build id that is stale for a perfectly good reason. Asking first is
-      # cheaper than an issue that closes itself.
+      # cheaper than filing an issue about a deploy that is still arriving.
+      #
+      # It gates the close step too, where it matters more. An empty problem
+      # list is not the same as "the site was fully checked": the build
+      # comparison is skipped while this is non-zero, so closing on the back of
+      # it could retire a stale-build issue without re-asking the question.
       - name: Is a deploy in flight
         id: deploying
         env:
@@ -159,8 +164,32 @@ jobs:
             echo "failed=true" >> $GITHUB_OUTPUT
           fi
 
+      # Filing and closing are the same question answered opposite ways, so
+      # they read one answer rather than each carrying its own copy of the
+      # list.
+      #
+      # The browser check above is the first one that had to be wired in here,
+      # and it is the reason this step exists at all: left on the filing step's
+      # own condition, a passing curl six hours later would close the issue the
+      # smoke test had just opened, and keep doing it. So a new check goes
+      # here. Nowhere else.
+      - name: Did anything turn up
+        id: found
+        env:
+          PROBLEMS: ${{ steps.probe.outputs.problems }}
+          WAITING: ${{ steps.stuck.outputs.count }}
+          SMOKE_FAILED: ${{ steps.smoke.outputs.failed }}
+        run: |
+          set -uo pipefail
+          if [ -n "$PROBLEMS" ] || [ "$WAITING" != "0" ] \
+            || [ "$SMOKE_FAILED" = "true" ]; then
+            echo "any=true" >> $GITHUB_OUTPUT
+          else
+            echo "any=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Say something if it is not
-        if: steps.probe.outputs.problems != '' || steps.stuck.outputs.count != '0' || steps.smoke.outputs.failed == 'true'
+        if: steps.found.outputs.any == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
@@ -179,7 +208,7 @@ jobs:
           if [ "$SMOKE_FAILED" = "true" ]; then
             BODY="${BODY}- The site is served but breaks in a browser: the live smoke test failed. The run log names the page and the error."$'\n'
           fi
-          BODY="${BODY}"$'\n'"Checked by ${RUN_URL}. Close this once it is sorted; the next run will reopen it if the problem is still there."
+          BODY="${BODY}"$'\n'"Checked by ${RUN_URL}. This closes itself once a run finds nothing; a new issue opens if it comes back."
 
           EXISTING=$(gh issue list --repo "$REPO" --state open --label health \
             --search "$TITLE in:title" --json number,title \
@@ -195,3 +224,56 @@ jobs:
           # Red as well as filed, so the run itself is not quietly green.
           echo "::error::The health check found something. See the issue."
           exit 1
+
+      # The other half of the loop, and the reason #287 stayed open for six
+      # weeks: the only way to close one of these was somebody remembering to.
+      # A fixed problem then reads exactly like a live one, which is worse than
+      # never having filed it, because an alert nobody can trust gets filed
+      # under noise and the next real one goes with it.
+      #
+      # Every open issue with this title, not only the first: a hand-made
+      # duplicate should not outlive the thing it describes.
+      #
+      # Listed by label rather than searched. `--search` goes through the
+      # search API, which is indexed a moment behind the issue itself, so a
+      # dispatch straight after one is filed finds nothing and closes nothing.
+      # Six hours between scheduled runs hides that completely; the throwaway
+      # issue this was tested with did not, and failed on the first attempt.
+      # The label plus an exact title match in jq is what the search was doing
+      # anyway, off an endpoint that answers from the table.
+      #
+      # The trade is flapping. A site that breaks and recovers across two
+      # checks now gets a close and then a fresh issue, where before it was one
+      # issue collecting comments. Worth it at six-hourly: real flapping is
+      # rare, and a run of issues is itself the signal that something is
+      # unstable rather than broken.
+      - name: Close it once the site is better
+        if: steps.found.outputs.any == 'false' && steps.deploying.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          TITLE="The site health check found something"
+
+          OPEN=$(gh issue list --repo "$REPO" --state open --label health \
+            --limit 50 --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")] | .[].number")
+
+          if [ -z "$OPEN" ]; then
+            echo "Nothing open to close."
+            exit 0
+          fi
+
+          BODY=$(printf '%s\n\n%s' \
+            "Better now: the site serves the app, the build it serves is the one main is on, and nothing is waiting for approval." \
+            "Closed by ${RUN_URL}. A new issue opens if it comes back.")
+
+          while IFS= read -r NUMBER; do
+            [ -n "$NUMBER" ] || continue
+            echo "Closing #${NUMBER}"
+            gh issue close "$NUMBER" --repo "$REPO" \
+              --reason completed --comment "$BODY"
+          done <<< "$OPEN"

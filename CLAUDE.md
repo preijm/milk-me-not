@@ -465,6 +465,33 @@ Eight, not one:
   from January to August with every check green. It skips the build comparison
   while a deploy is in flight, and also reports runs parked on "waiting for
   approval", which report nothing anywhere on their own.
+
+  **It closes its own issue once a run finds nothing.** It used only to open
+  and comment, so a fixed problem sat there looking exactly like a live one —
+  #287 stayed open for six weeks after the deploy it described had landed, and
+  #256 before it. An alert that cannot tell those apart gets read as noise, and
+  then the next real one does too.
+
+  Two things that keep that honest. The close is gated on no deploy being in
+  flight as well as on no problems, because an empty problem list is not the
+  same as a full check: the build comparison is the part that gets skipped.
+  And **a new check belongs in the `Did anything turn up` step and nowhere
+  else** — filing and closing read that one answer rather than each carrying a
+  copy of the list, so a check wired into the filing side alone would file an
+  issue that the closing side retired six hours later, for ever.
+
+  That is not hypothetical. The browser check arrived from another branch
+  within the hour, wired into the filing step's own condition, and the two
+  landed as a merge conflict on exactly that line. Resolved the obvious way —
+  keeping the incoming condition — a passing `curl` would have closed every
+  issue the smoke test opened.
+
+  **Finding the issue is a list by label, not a search.** `--search` goes
+  through GitHub's search API, which is indexed a moment behind the issue
+  itself, so a dispatch straight after one is filed closes nothing. Six hours
+  between scheduled runs hides it; the throwaway issue it was tested with did
+  not. The same lag made a `gh issue list` immediately after a close report the
+  issue as still open, so do not trust either to be fresh.
 - **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
   main that touches that file, so editing it is what deploys it. It runs
   `delete-other-labels: true`: a label removed from the file is removed from
