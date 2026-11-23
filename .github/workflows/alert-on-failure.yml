@@ -12,16 +12,24 @@
 #
 # Only `main`. A pull request that fails is already visible on the pull request,
 # and opening an issue for it would be noise about something nobody has merged.
+#
+# `Health check` is the awkward one. It goes red on purpose when it finds
+# something, and files its own issue while doing it — so alerting on that would
+# mean two issues for one problem, which is the noise this exists to remove.
+# What nobody heard about was the check *breaking*: it installs dependencies
+# and downloads Chromium for the browser test, and a failure there left it red
+# with nothing watching. The step below tells those apart.
 
 name: Alert on failure
 
 on:
   workflow_run:
-    workflows: [CI, Deploy, CodeQL, Release]
+    workflows: [CI, Deploy, CodeQL, Release, Health check]
     types: [completed]
 
 permissions:
   issues: write
+  actions: read
 
 jobs:
   open-an-issue:
@@ -32,10 +40,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Did the workflow already tell somebody itself?
+      #
+      # Only `Health check` can answer yes. Its deliberate exit lives in
+      # `Say something if it is not`, which has filed a `health` issue by the
+      # time it runs, so a run whose only failed step is that one is already
+      # reported and must not be reported twice. Any other failed step — the
+      # checkout, `bun install`, the Chromium download — is the check itself
+      # falling over, which is exactly what nothing was watching.
+      #
+      # Matched on the step name rather than the exit code, because a workflow
+      # has no way to say "I failed on purpose" that survives to here.
+      - name: Has it already told someone
+        id: reported
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -uo pipefail
+
+          if [ "$WORKFLOW" != "Health check" ]; then
+            echo "already=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          FAILED=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs" \
+            --jq '[.jobs[].steps[] | select(.conclusion == "failure") | .name]
+                  | unique | join(", ")')
+
+          echo "Failed steps: ${FAILED:-(none named)}"
+
+          # Exactly that step and nothing else. A run with no named failure at
+          # all — a timeout, a runner dying — is not something it chose, so it
+          # falls through and gets reported.
+          if [ "$FAILED" = "Say something if it is not" ]; then
+            echo "It filed its own issue; leaving this one alone."
+            echo "already=true" >> $GITHUB_OUTPUT
+          else
+            echo "already=false" >> $GITHUB_OUTPUT
+          fi
+
       # One issue per workflow, reopened and commented rather than duplicated.
       # Three failing deploys in a row is one problem, and three identical
       # issues is the same noise this exists to remove.
       - name: Open or update the issue
+        if: steps.reported.outputs.already != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
@@ -49,6 +100,10 @@ jobs:
           TITLE="$WORKFLOW is failing on main"
           BODY=$(printf '%s\n\n- commit: \`%s\`\n- what landed: %s\n- run: %s\n\nOpened automatically because a run on main failed, and GitHub sends run notifications to whoever triggered the run — which is the merge app, not a person.' \
             "**$WORKFLOW** failed on \`main\`." "${SHA:0:8}" "$TITLE_TEXT" "$RUN_URL")
+
+          if [ "$WORKFLOW" = "Health check" ]; then
+            BODY="${BODY}"$'\n\n'"This is the check breaking, not the site failing it. Anything the health check *finds* opens its own issue labelled \`health\`; this one means the run never got far enough to look — most likely the dependency install or the Chromium download the browser test needs."
+          fi
 
           EXISTING=$(gh issue list --repo "$REPO" --state open --label ci-failure \
             --search "$TITLE in:title" --json number,title \

@@ -451,13 +451,33 @@ Eight, not one:
   `GITHUB_TOKEN` on purpose: whoever enables auto-merge is recorded as merging
   it later, and a push to main from `GITHUB_TOKEN` starts no workflows — so the
   built-in token could land a merge that never deploys.
-- **`alert-on-failure.yml`** — opens an issue when CI, Deploy, CodeQL or
-  Release fails **on main**. GitHub sends run notifications to whoever
-  triggered the run, and auto-merge lands pull requests through the app, so a
+- **`alert-on-failure.yml`** — opens an issue when CI, Deploy, CodeQL,
+  Release or Health check fails **on main**. GitHub sends run notifications
+  to whoever triggered the run, and auto-merge lands pull requests through
+  the app, so a
   failed deploy emails `milkmenot-lockfile[bot]` and nobody else. An issue
   notifies regardless and persists until closed. One issue per workflow,
   commented rather than duplicated; main only, since a failing pull request is
   already visible on the pull request.
+
+  **`Health check` needed care to add, because it goes red on purpose.** It
+  exits 1 when it finds something, having already filed its own `health` issue
+  on the way out, so watching it naively meant two issues for one problem —
+  the exact noise both workflows exist to remove. What nobody was hearing
+  about was the check *breaking*: since the browser test arrived it runs
+  `bun install` and downloads Chromium, and a failure there left it red with
+  nothing watching.
+
+  The two are told apart by **which step failed**. The deliberate exit lives
+  in `Say something if it is not`, so a run whose only failed step is that one
+  is already reported; anything else is the check falling over. There is no
+  cleaner signal — a workflow has no way to say "I failed on purpose" that
+  survives into `workflow_run`. A run with no named failed step at all, a
+  timeout or a dead runner, deliberately falls through and gets reported.
+
+  That read needs **`actions: read`** in the permissions block. The block is
+  explicit, so the token gets only what is listed, and without it the API
+  call for the run's steps fails.
 - **`health-check.yml`** — every six hours, asks the live site whether it is
   alright: does it still serve the app, and is the build it serves the one main
   is on. A deploy that fails leaves the site working and stale, which is the
