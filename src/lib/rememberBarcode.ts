@@ -38,5 +38,15 @@ export const scannedBarcodeFrom = (state: unknown): string | null => {
   const scanned = (state as { scanned?: unknown }).scanned;
   if (!scanned || typeof scanned !== "object") return null;
   const barcode = (scanned as { barcode?: unknown }).barcode;
-  return typeof barcode === "string" && /^[0-9]{8,14}$/.test(barcode) ? barcode : null;
+  return isBarcode(barcode) ? barcode : null;
 };
+
+/**
+ * Whether something is a barcode the database will store: 8 to 14 digits.
+ *
+ * The same pattern `remember_product_barcode` and `admin_set_product_barcode`
+ * check, so the app can refuse it before a round trip — and, for the scan,
+ * before the database silently ignores it.
+ */
+export const isBarcode = (value: unknown): value is string =>
+  typeof value === "string" && /^[0-9]{8,14}$/.test(value);

@@ -11,6 +11,7 @@ import { NameSelect } from "../NameSelect";
 import { supabase } from "@/integrations/supabase/client";
 import type { ScannedProduct } from "@/lib/openFoodFacts";
 import { suggestFromScan, pickBoardName } from "@/lib/scanSuggestions";
+import { ProductBarcodes } from "./ProductBarcodes";
 import { Trash2, Coffee, Tag, Droplet } from "lucide-react";
 
 interface ProductFormProps {
@@ -42,7 +43,8 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
     isSubmitting,
     refetchFlavors,
     isEditMode,
-    isAdmin
+    isAdmin,
+    editProductId
   } = useProductRegistration();
 
   // Same key NameSelect uses, so this shares its cache rather than fetching
@@ -253,6 +255,10 @@ export const ProductForm = forwardRef<HTMLInputElement, ProductFormProps>(({ onS
             refetchFlavors={refetchFlavors}
           />
         </div>
+
+        {/* Only where a wrong mapping can be undone: an existing product, an
+            admin. The functions behind it refuse anyone else regardless. */}
+        {isEditMode && isAdmin && editProductId && <ProductBarcodes productId={editProductId} />}
       </div>
 
       <div className="flex justify-between items-center gap-2 pt-4">
