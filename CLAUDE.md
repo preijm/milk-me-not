@@ -386,6 +386,32 @@ suite retries once in CI and nowhere else, so a genuine failure still fails
 locally on the first run. And nothing in it waits on live data — every request
 is served from a fixture, so there is no network to be slow.
 
+### The live site is smoke-tested in a browser, after every deploy
+`e2e-live/` is a second Playwright suite with its own config,
+`playwright.live.config.ts`, and it points at **milkmenot.com itself**: no
+stubs, no local build. It opens `/`, `/results`, `/brands`, `/about` and one
+product page found by clicking through, and fails on an uncaught error, the
+`ErrorBoundary` page, an empty `#root`, or a `.js`/`.css` file that 404s.
+
+```bash
+npm run test:live    # against production; SITE_URL=... to point elsewhere
+```
+
+It exists because there is no error reporting service (see above), and the
+health check only `curl`s the HTML, so a bundle that loads and then throws
+looked healthy to everything. Two places run it:
+
+- **`deploy.yml`**, as a last job. It first waits for `version.json` to name
+  the commit being deployed, so it never tests the previous build by accident.
+  A red Deploy on main becomes an issue through `alert-on-failure.yml`.
+- **`health-check.yml`**, every six hours, folded into that workflow's own
+  issue rather than failing on its own step.
+
+It is read-only on purpose: no sign-in, no forms, nothing written. And it sets
+the Counterscale opt-out (`pco-notrack`) in an init script before any page
+runs, so a test visit every deploy and every six hours never shows up as a
+visitor. Keep both if you add pages to it.
+
 ### Testing Setup
 - Vitest with jsdom; setup file at `src/test/setup.ts` mocks `matchMedia`, `ResizeObserver`, `IntersectionObserver`
 - Tests colocated with source: `src/**/*.{test,spec}.{ts,tsx}`
@@ -453,6 +479,19 @@ Eight, not one:
   else** — filing and closing read that one answer rather than each carrying a
   copy of the list, so a check wired into the filing side alone would file an
   issue that the closing side retired six hours later, for ever.
+
+  That is not hypothetical. The browser check arrived from another branch
+  within the hour, wired into the filing step's own condition, and the two
+  landed as a merge conflict on exactly that line. Resolved the obvious way —
+  keeping the incoming condition — a passing `curl` would have closed every
+  issue the smoke test opened.
+
+  **Finding the issue is a list by label, not a search.** `--search` goes
+  through GitHub's search API, which is indexed a moment behind the issue
+  itself, so a dispatch straight after one is filed closes nothing. Six hours
+  between scheduled runs hides it; the throwaway issue it was tested with did
+  not. The same lag made a `gh issue list` immediately after a close report the
+  issue as still open, so do not trust either to be fresh.
 - **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
   main that touches that file, so editing it is what deploys it. It runs
   `delete-other-labels: true`: a label removed from the file is removed from
