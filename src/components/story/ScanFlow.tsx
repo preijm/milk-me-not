@@ -8,6 +8,7 @@ import { StoryButton, ArrowRight } from "./primitives";
 import type { ScannedProduct } from "@/lib/openFoodFacts";
 import { createProductFromScan } from "@/lib/createScannedProduct";
 import { suggestFromScan } from "@/lib/scanSuggestions";
+import { rankScanMatches } from "@/lib/rankScanMatches";
 import { rememberBarcode } from "@/lib/rememberBarcode";
 
 /**
@@ -40,13 +41,20 @@ type Stage =
 /**
  * Scan a carton in a shop to see what the board already thinks of it.
  *
- * This cannot pinpoint a product, and it is worth being plain about why: there
- * is no barcode column, so the scanned number is resolved through Open Food
- * Facts and then matched on brand. Retail names and board names do not line up
- * — Open Food Facts calls one carton "OAT-LY! iKAFFE BARISTA EDITION" and the
- * board calls it "Oat" by "Oatly!", and searching the board for "ikaffe"
- * returns nothing at all. Brand narrows 220 products to a handful; the last
- * step is a tap. Storing barcodes would make it exact.
+ * A barcode the board has seen before is exact: `product_barcodes` maps it
+ * straight to a product and the reader never sees this dialog. A barcode it
+ * has not seen is the fuzzy case. The number is resolved through Open Food
+ * Facts and matched on brand, because retail names and board names do not
+ * line up — Open Food Facts calls one carton "OAT-LY! iKAFFE BARISTA EDITION"
+ * and the board calls it "Oat" by "Oatly!", and searching the board for
+ * "ikaffe" returns nothing at all. Brand narrows the board to a handful,
+ * `rankScanMatches` puts the likeliest first, and the reader's tap is what
+ * teaches the board the barcode for everyone after.
+ *
+ * So every way out of this dialog that ends on a product should record the
+ * barcode — picking a row here, the one-tap add, and the full form too (see
+ * `AddProduct.tsx`). A path that does not is a scan the board learns nothing
+ * from.
  */
 export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const navigate = useNavigate();
@@ -98,10 +106,9 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
       return;
     }
 
-    // A barista scan almost certainly means the barista carton.
-    const ranked = scanned.isBarista
-      ? [...rows].sort((a, b) => Number(b.is_barista) - Number(a.is_barista))
-      : rows;
+    // Base, barista, flavours and properties, not barista alone: only eight
+    // rows fit, and the right carton has to be among them.
+    const ranked = rankScanMatches(scanned, rows);
 
     // Only one carton it could be — asking would be a question with one answer.
     if (ranked.length === 1) {
@@ -144,7 +151,7 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
                   everyone after, so a reader whose carton was cut from the list
                   needs to know that rather than settle for the nearest row. */}
               {stage.total > stage.matches.length &&
-                ` Showing ${stage.matches.length} of ${stage.total} — if yours is not here, close this and search the board.`}
+                ` Showing the closest ${stage.matches.length} of ${stage.total}.`}
             </DialogDescription>
             <ul className="mt-1 space-y-2">
               {stage.matches.map((m) => (
@@ -174,6 +181,24 @@ export const ScanFlow = ({ open, onClose }: { open: boolean; onClose: () => void
                 </li>
               ))}
             </ul>
+
+            {/* The way out for a carton that is not in the list. This used to
+                say "close this and search the board", which drops the scan on
+                the floor: the reader retypes what the barcode already said and
+                the board never learns the barcode. The form arrives filled in,
+                records the barcode on save, and if the carton turns out to be
+                on the board after all, its duplicate check finds it. */}
+            <StoryButton
+              tone="outline"
+              className="mt-1 w-full"
+              onClick={() => {
+                close();
+                navigate("/add-product", { state: { scanned: stage.scanned } });
+              }}
+            >
+              Not here? Add it to the board
+              <ArrowRight />
+            </StoryButton>
           </>
         )}
 

@@ -20,7 +20,31 @@ vi.mock("@/integrations/supabase/client", () => ({
   supabase: { rpc: (...args: [string, unknown]) => rpc(...args) },
 }));
 
-const { rememberBarcode } = await import("./rememberBarcode");
+const { rememberBarcode, scannedBarcodeFrom } = await import("./rememberBarcode");
+
+describe("scannedBarcodeFrom", () => {
+  it("reads the barcode a scan put in router state", () => {
+    expect(scannedBarcodeFrom({ scanned: { barcode: "5411188127697", brand: "Alpro" } })).toBe(
+      "5411188127697",
+    );
+  });
+
+  it("finds nothing when the form was reached without a scan", () => {
+    expect(scannedBarcodeFrom(null)).toBeNull();
+    expect(scannedBarcodeFrom(undefined)).toBeNull();
+    expect(scannedBarcodeFrom({})).toBeNull();
+    // Another page's state, which is what router state is after most navigations.
+    expect(scannedBarcodeFrom({ selectedProductId: "p1" })).toBeNull();
+  });
+
+  it("refuses anything the database would silently ignore", () => {
+    expect(scannedBarcodeFrom({ scanned: { barcode: "" } })).toBeNull();
+    expect(scannedBarcodeFrom({ scanned: { barcode: "1234567" } })).toBeNull();
+    expect(scannedBarcodeFrom({ scanned: { barcode: "541118812769x" } })).toBeNull();
+    expect(scannedBarcodeFrom({ scanned: { barcode: 5411188127697 } })).toBeNull();
+    expect(scannedBarcodeFrom({ scanned: "5411188127697" })).toBeNull();
+  });
+});
 
 describe("rememberBarcode", () => {
   beforeEach(() => {
