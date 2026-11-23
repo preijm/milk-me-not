@@ -36,8 +36,16 @@ export const ProductBarcodes = ({ productId }: { productId: string }) => {
   const [busy, setBusy] = useState(false);
   const [conflict, setConflict] = useState<Conflict | null>(null);
 
-  const { data: barcodes = [], isLoading } = useQuery({
+  const {
+    data: barcodes = [],
+    isLoading,
+    isError,
+    error: loadError,
+  } = useQuery({
     queryKey: productBarcodesKey(productId),
+    // A refusal or a function that does not exist yet will not fix itself on
+    // a second try, and three retries are seconds of "Loading…" first.
+    retry: false,
     queryFn: async () => {
       const { data, error } = await supabase.rpc("admin_list_product_barcodes", {
         _product_id: productId,
@@ -129,8 +137,17 @@ export const ProductBarcodes = ({ productId }: { productId: string }) => {
         Scanning one of these comes straight here. Changes save at once.
       </p>
 
+      {/* A failed load must not read as an empty list. "No barcode leads
+          here" is a claim about the data, and between this deploying and the
+          migration reaching production it would be false for every product
+          that has one — the same soft failure scanning once shipped with. */}
       {isLoading ? (
         <p className="text-[0.8125rem] text-story-muted">Loading…</p>
+      ) : isError ? (
+        <p role="alert" className="text-[0.8125rem] text-story-ink">
+          {/* PostgrestError is a plain object, not an Error, so read its message. */}
+          Could not load barcodes: {(loadError as { message?: string } | null)?.message ?? "unknown error"}
+        </p>
       ) : barcodes.length === 0 ? (
         <p className="text-[0.8125rem] text-story-muted">No barcode leads here yet.</p>
       ) : (

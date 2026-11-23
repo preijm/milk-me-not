@@ -10,11 +10,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 let table: Map<string, string>;
 const calls: string[] = [];
+/** When set, the list call fails the way PostgREST does: a plain object. */
+let listFailsWith: { message: string; code: string } | null = null;
 
 const rpc = vi.fn(async (fn: string, args: Record<string, string>) => {
   calls.push(fn);
   switch (fn) {
     case "admin_list_product_barcodes":
+      if (listFailsWith) return { data: null, error: listFailsWith };
       return {
         data: [...table.entries()]
           .filter(([, product]) => product === args._product_id)
@@ -72,6 +75,7 @@ const typeBarcode = (value: string) =>
 describe("ProductBarcodes", () => {
   beforeEach(() => {
     table = new Map([["5411188127697", "oat"]]);
+    listFailsWith = null;
     calls.length = 0;
     rpc.mockClear();
     toast.mockClear();
@@ -85,6 +89,24 @@ describe("ProductBarcodes", () => {
   it("says so when none do", async () => {
     renderFor("almond");
     expect(await screen.findByText(/No barcode leads here yet/)).toBeInTheDocument();
+  });
+
+  it("shows a failed load as a failure, never as an empty list", async () => {
+    // What production answers between this deploying and `db push`: the
+    // function does not exist yet. Oat has a barcode; saying "none" would lie.
+    listFailsWith = {
+      code: "PGRST202",
+      message: "Could not find the function public.admin_list_product_barcodes(_product_id) in the schema cache",
+    };
+    renderFor("oat");
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("Could not load barcodes");
+    expect(alert.textContent).toContain("Could not find the function");
+    expect(alert.textContent).not.toContain("[object Object]");
+    expect(screen.queryByText(/No barcode leads here yet/)).toBeNull();
+    // Asked once, not retried into seconds of "Loading…".
+    expect(calls.filter((c) => c === "admin_list_product_barcodes")).toHaveLength(1);
   });
 
   it("removes a barcode, so the next scan asks again", async () => {
