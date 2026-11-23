@@ -122,6 +122,26 @@ describe("the scan match list", () => {
     expect(remembered).toHaveBeenCalledWith("5411188080213", "soya");
   });
 
+  it("asks about a single match rather than recording it unseen", async () => {
+    // A brand with only its Oat on the board, and an Almond carton scanned.
+    // Going straight through would write the Almond barcode against Oat, and
+    // first write wins.
+    boardRows = [row("oat", "Oat")];
+    scanned = { ...ALPRO_SOYA, name: "Almond Original", tags: ["almond-based-drinks"] };
+
+    const list = await decodeAndWaitForMatches();
+    expect(list.getAllByRole("listitem")).toHaveLength(1);
+    expect(screen.getByText(/Is this the one in your hand\?/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Not here\? Add it to the board/ })).toBeInTheDocument();
+    expect(screen.queryByTestId("landed")).toBeNull();
+    expect(remembered).not.toHaveBeenCalled();
+
+    // And confirming it is what records it.
+    fireEvent.click(list.getByRole("button"));
+    await waitFor(() => expect(screen.getByTestId("landed").textContent).toContain("/product/oat"));
+    expect(remembered).toHaveBeenCalledWith("5411188080213", "oat");
+  });
+
   it("offers a way to add the carton that is not in the list, carrying the scan", async () => {
     await decodeAndWaitForMatches();
     fireEvent.click(screen.getByRole("button", { name: /Not here\? Add it to the board/ }));
