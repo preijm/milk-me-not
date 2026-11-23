@@ -135,13 +135,38 @@ jobs:
           echo "count=${WAITING}" >> $GITHUB_OUTPUT
           echo "Runs awaiting approval on an open pull request: ${WAITING:-0}"
 
+      # The probe above reads the HTML; this runs it. A page that loads and
+      # then throws passes every curl here, and that is the failure a visitor
+      # actually sees. Same spec the deploy runs once its build is live.
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install Chromium for Playwright
+        run: bunx playwright install --with-deps chromium
+
+      # Recorded rather than failed here, so the step below files one issue
+      # covering everything this run found.
+      - name: Open the site in a browser
+        id: smoke
+        run: |
+          set -uo pipefail
+          if bunx playwright test -c playwright.live.config.ts; then
+            echo "failed=false" >> $GITHUB_OUTPUT
+          else
+            echo "failed=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Say something if it is not
-        if: steps.probe.outputs.problems != '' || steps.stuck.outputs.count != '0'
+        if: steps.probe.outputs.problems != '' || steps.stuck.outputs.count != '0' || steps.smoke.outputs.failed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           PROBLEMS: ${{ steps.probe.outputs.problems }}
           WAITING: ${{ steps.stuck.outputs.count }}
+          SMOKE_FAILED: ${{ steps.smoke.outputs.failed }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
@@ -150,6 +175,9 @@ jobs:
           BODY="$PROBLEMS"
           if [ "$WAITING" != "0" ]; then
             BODY="${BODY}- ${WAITING} workflow run(s) are waiting for approval and will never report a result on their own."$'\n'
+          fi
+          if [ "$SMOKE_FAILED" = "true" ]; then
+            BODY="${BODY}- The site is served but breaks in a browser: the live smoke test failed. The run log names the page and the error."$'\n'
           fi
           BODY="${BODY}"$'\n'"Checked by ${RUN_URL}. Close this once it is sorted; the next run will reopen it if the problem is still there."
 
