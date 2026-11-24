@@ -1,6 +1,11 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+MilkMeNot: a community site for rating plant-based milks. React 19 + TypeScript
+SPA (Vite), Supabase backend, Capacitor for mobile, hosted on Cloudflare Workers.
+
+This file holds only what the code cannot tell you: commands, traps and rules.
+The background and incident history live in `docs/` — see the table at the end,
+and read the matching file before changing that area.
 
 ## Commands
 
@@ -28,1060 +33,123 @@ bunx tsc --build
 # Tests
 bunx vitest run      # Run once
 bunx vitest          # Watch mode
+bunx vitest run src/lib/security.test.ts   # one file
+npm run test:e2e     # Playwright, chromium, stubbed backend
+npm run test:live    # Playwright against milkmenot.com (read-only)
 
-# Run a single test file
-bunx vitest run src/lib/security.test.ts
-
-# Local database. Needs Docker Desktop running. See the Supabase notes below —
-# `db reset` is local, `db reset --linked` destroys production.
+# Local database. Needs Docker Desktop running.
 npx supabase start
+npx supabase db reset  # LOCAL rebuild from migrations + seed.sql
 npx supabase stop
+npx supabase migration list --linked   # what is genuinely pending
+
+# DB types (needs `supabase login`; on Windows use npx.cmd or bunx)
+npm run types:gen
 ```
 
-## Work in a worktree
-
-**Start every session by calling `EnterWorktree`.** Not optional, and not only
-for big changes.
-
-More than one agent works in this repository at once, and they were sharing a
-single checkout. In one afternoon that went wrong three times: a branch was
-switched out from under a session mid-task, a `git add -A` swept another
-session's half-finished Google sign-in into an unrelated commit, and a third
-commit landed on somebody else's branch entirely. Each was recoverable, and each
-was only caught because someone read the diff before pushing. That is not a
-safeguard, that is luck.
-
-A worktree is its own directory and its own branch against the same repository,
-so none of that can happen. It costs a few seconds.
-
-```
-EnterWorktree             # branches from origin/main, switches the session in
-ExitWorktree keep         # leave it on disk to come back to
-ExitWorktree remove       # done with it
-```
-
-They live in `.claude/worktrees/`, which is gitignored, so they never show up in
-`git status` or in a commit. Two things to know: a fresh worktree has no
-`node_modules`, so run `bun install` before tests; and the branch is created
-from `origin/main` rather than from whatever the main checkout happens to have
-checked out, which is usually what you want and occasionally is not.
-
-The one exception is a task that is genuinely about the working copy itself —
-inspecting what another session has left uncommitted, say. Then stay put, and
-touch nothing you did not put there.
-
-### A broken worktree fails silently, not loudly
-`.claude/worktrees/` sits *inside* the repository, so a worktree that loses its
-`.git` file does not stop working. Git walks up, finds the main checkout's
-`.git`, and every command quietly operates on **that** instead. `git status`
-reports the main checkout's cleanliness, `git rev-parse --abbrev-ref HEAD`
-answers `main`, and nothing anywhere says the worktree is gone. On 25 Sep 2026
-a session read "working tree clean" off a worktree whose link had been deleted —
-the answer happened to be correct, and was measuring the wrong directory.
-
-Two checks tell them apart:
-
-```bash
-git rev-parse --git-dir   # .git/worktrees/<name> when live, the main .git when not
-git worktree list         # a dead one is marked `prunable`
-```
-
-`git worktree prune` clears the stale registration, and only ever removes
-entries whose gitdir is already missing, so it cannot touch a live worktree.
-
-Deleting a worktree directory that a session is still sitting in half-succeeds
-on Windows: the contents go, the folder does not, because it is a process's
-working directory. What is left is an empty folder and a session that can no
-longer read a single project file. Move out first, or delete it once the
-session has ended.
-
-## Tidying up branches
-
-Cleaning up merged branches here needs more care than it looks like, for two
-reasons that both bite silently.
-
-**`git branch --merged` is useless in this repository.** Pull requests are
-squash-merged, so the commit that lands on `main` is not the one on the branch
-and git reports almost every finished branch as unmerged. A sweep on 20 Sep
-2026 found 4 branches "merged" and 25 "not", when in truth 24 of the 25 were
-finished. Ask GitHub instead: compare the branch tip against the `headRefOid`
-of its merged PR (`gh pr list --state merged --json number,headRefName,headRefOid`).
-Where the tip has moved on since the merge, check whether the files it touches
-are already identical on `main` before assuming there is work to save — in the
-one case where they had, all but a README were byte-for-byte the same, and the
-README differed only because later PRs had edited it.
-
-**Three branches must survive any cleanup**, and none of them look special:
-
-| Branch | Why |
-|--------|-----|
-| `chore/lockfile-refresh` | CI pushes to it **by name** — see `BRANCH=chore/lockfile-refresh` in `.github/workflows/ci.yml`. It is often a commit ahead of `main` with a refresh that has not been opened as a PR yet. |
-| `lovable` | The Lovable integration's branch. It reads as pure clutter — fully contained in `main`, a hundred commits behind — but it is not ours to delete, and removing it may break that sync. |
-| `dependabot/*` | Anything with an open PR. |
-
-**A worktree branch may be holding the only copy of something.** The worktrees
-in `.claude/worktrees/` are gitignored, so uncommitted work in one is invisible
-from the main checkout and invisible to `git status`. On that same sweep, one
-held an untracked `scripts/prune-orphan-photos.ts` that existed nowhere else,
-and another held seven modified files plus a new test. `git worktree remove
---force` would have taken all of it. Run `git -C .claude/worktrees/<name>
-status --porcelain` on each one first, and only remove the ones that come back
-empty.
-
-## Architecture
-
-**MilkMeNot** is a community platform for rating plant-based milk alternatives. React 19 + TypeScript SPA built with Vite, Supabase for backend, and Capacitor for mobile.
-
-### Key Libraries
-- **Routing:** React Router 7, every page route lazy-loaded (`src/App.tsx`)
-- **Server state:** TanStack React Query (5-min stale time)
-- **UI:** shadcn/ui (Radix UI primitives) + Tailwind CSS **v4**. There is no
-  `tailwind.config.ts`; v4 is configured in CSS, so the theme lives in an
-  `@theme` block in `src/index.css`.
-- **Forms:** hand-rolled, and there is no form library here at all.
-  `useMilkTestForm` is `useState` plus `validateMilkTestInput` from
-  `src/lib/security.ts`; Zod is used elsewhere, but no form goes through it.
-  The shadcn form stack was removed in November 2026 — `@hookform/resolvers`
-  first (#338), which nothing imported at all, then `react-hook-form` and the
-  `src/components/ui/form.tsx` that was its only importer, which in turn had no
-  importers of its own and no `useForm(` caller anywhere. They had to go in that
-  order: `tsc --build` checks every file under `src/` whether or not anything
-  imports it, so the package could not leave before the file did. If a real form
-  ever wants a library, add it back deliberately rather than reaching for
-  `ui/form.tsx` in git history — nothing in the app was ever built against it.
-- **Maps:** Mapbox GL JS (lazy-loaded due to 200KB+ size)
-- **Backend:** Supabase (PostgreSQL, Auth, Edge Functions, Storage)
-- **Mobile:** Capacitor with camera plugin for photo capture
-
-### Barcode scanning decodes two different ways
-Scanning is live. `ScanFlow.tsx` opens `milk-test/BarcodeScanner.tsx`, which
-reads EAN-13, EAN-8, UPC-A and UPC-E through whichever decoder the platform
-offers:
-
-- **`BarcodeDetector`**, the browser's own, via `src/lib/barcodeDetector.ts`.
-  Android Chromium backs it with the same ML Kit detector native apps use. It
-  reads the video element directly and handles orientation, so it is faster and
-  far more tolerant of angle, blur and glare.
-- **`@zxing/browser` + `@zxing/library`**, decoding in JavaScript, everywhere
-  the native API is missing — all of iOS Safari, and desktop Chrome on Windows.
-
-So neither `@zxing` package is removable: dropping them takes scanning away
-from every iPhone. They look unused at a glance because only `BarcodeScanner`
-imports them.
-
-`@zxing/browser` must stay at 0.2.1 or later. 0.2.0 declares a peer of
-`@zxing/library@^0.22.0` against the pinned ^0.23.0, which npm refuses to
-resolve — that is what broke the first Cloudflare deploy.
-
-There is still no `barcode` column on `products`, so a scanned number cannot
-pinpoint a row. It is resolved through Open Food Facts
-(`src/lib/openFoodFacts.ts`) and then matched on brand, which is fuzzy by
-nature — retail names and board names rarely line up. `ScanFlow.tsx` documents
-that limitation where it bites.
-
-### Source Layout
-```
-src/
-├── pages/          # Route-level components (lazy-loaded)
-├── components/     # Feature components
-│   └── ui/        # shadcn/ui base components
-├── hooks/          # Custom hooks (20+ hooks extracting complex logic)
-├── contexts/       # AuthContext, NotificationContext, VersionContext
-├── lib/            # Utility functions and helpers
-├── integrations/
-│   └── supabase/  # Client + auto-generated DB types
-└── types/          # TypeScript interfaces
-```
-
-### Data Flow
-- **`useAggregatedResults`** — fetches aggregated milk test ratings from Supabase
-- **`useResultsUrlState`** / **`useResultsFiltering`** — Results page filter/sort/search.
-  Both live in `src/hooks/useResultsState.ts`; there is no hook named after that file.
-- **`useMilkTestForm`** — form validation for test submissions
-- **`useAuthFlow`** — Supabase auth with email/password + recovery
-
-### Path Aliases
-Use `@/*` to resolve to `src/*` in imports (configured in `tsconfig.app.json`).
-
-### Every dialog is the same object
-`StoryDialog` (`src/components/story/StoryDialog.tsx`) is the shell for overlays:
-kicker, display title, lede, story buttons. Reach for it rather than
-`DialogContent` directly, or the overlay arrives in whichever palette it happens
-to import — that is how a `#2144ff` Save button ended up under a green avatar.
-
-Two things it encodes that are easy to undo by accident:
-
-- `bg-story-cream` on the surface is load-bearing. `DialogContent` carries
-  `bg-background`, a *utility*, while `story-surface` paints in the *base*
-  layer, so the utility wins and the card follows the app's token to near-black
-  in dark mode. Naming a background gives tailwind-merge a conflict it resolves
-  our way.
-- Destructive confirmations stay Radix `AlertDialog` — a stray click outside
-  must not answer "are you sure". They cannot host a `StoryButton` without
-  losing close-on-select, so they borrow `STORY_DIALOG_SURFACE` and
-  `STORY_ALERT_ACTION_CLASS` instead.
-
-The palette has no red on purpose. Destructive actions use amber.
-
-### The world map has four things that look wrong and are not
-`src/components/MapboxWorldMap.tsx`. Each of these was arrived at the hard way,
-so change them knowing what they cost.
-
-**Mapbox does not render in the Claude Code in-app browser.** Tiles never
-arrive: the style and iconset load, then nothing, and the component reports
-"Map load timeout". Mapbox's *own* documentation example fails in it
-identically, so this is the browser, not the map. Do not spend an afternoon
-debugging a working map — confirm with a screenshot from a real one.
-
-**The zoom is computed, not chosen.** In globe projection the sphere is
-`512 * 2^zoom / π` pixels across, so any fixed zoom crops the globe in some
-window sizes: 2 gave a 652px globe in a card 416px tall on a phone.
-`fitZoomForHeight` solves that for the card's own height instead. It runs once,
-at construction, so a resize across the `sm` breakpoint will not re-fit —
-deliberate, because re-fitting would override a zoom the reader had set.
-
-**The atmosphere is two dials, and they fail in opposite directions.**
-`horizon-blend` is width: past ~0.05 it stops being a rim and becomes a haze
-that fills the card and dithers into visible rings. `high-color` is brightness:
-at full `--story-green` the edge outshone every country except Germany, which
-is backwards on a map about which countries have ratings. The settled pair is
-`0.03` and `hsl(151, 70%, 55%)`. Space is `--story-cream`, the page's own
-ground, so the globe sits on the page rather than punching a dark hole in it;
-stars are off because there is no night to see them against.
-
-**The popup must not use `properties.name`.** That is each country's name in
-its own language, so it renders "Deutschland" on an English page. Use the
-module-level `countryName(code)` helper, which goes through
-`Intl.DisplayNames(['en'])` like the rest of the page. A local
-`const countryName = properties?.name` once shadowed that helper and is exactly
-how the bug got in.
-
-Two smaller ones: the load watchdog times *silence* rather than elapsed time —
-`dataloading` and `data` reset it, so a slow map is not declared broken — and
-its listeners are detached on load, because `data` keeps firing per tile while
-panning and would otherwise put an error over a working map. The legend
-gradient under the heading hardcodes the same two stops the choropleth
-interpolates between; change one and the other lies.
-
-### Every feed photo is stored twice, and the thumbnail is found by name
-A phone camera writes about 3MB. The mobile feed card shows that photo in a
-column 104px wide, and a signed-in feed asks for 50 items — so the feed was
-roughly 150MB of image to paint one page, over whatever signal a phone has in
-a supermarket. Every upload now stores two objects:
-
-- **the photo**, 1600px on its long edge, which the enlarge dialog opens
-- **the thumbnail**, 800px, which every card loads
-
-Measured on the real bucket: 2990KB becomes 30KB, about 110x.
-
-**The thumbnail is `thumb_` in front of the filename, not a `thumbs/` folder**,
-and that is forced rather than chosen. The insert policy on `milk-pictures`
-ends with `array_length(storage.foldername(name), 1) = 1` — exactly one folder
-level, and it has to be the uploader's own id — so both `thumbs/<uid>/x.jpg`
-and `<uid>/thumbs/x.jpg` are rejected. Changing that means a migration, and
-`/supabase/` waits for the `reviewed` label by design. Three places derive the
-name independently (the upload, `FeedImage`, the backfill script); they are
-pinned together by `thumbnailPath` and its tests.
-
-**`FeedImage` falls back to the full photo when a thumbnail 404s.** That is
-what makes the backfill optional rather than a flag day — a photo with no
-thumbnail is slow, never missing. A missing object answers **400** here, not
-404, but `onError` does not care which.
-
-Two things that look like omissions and are not:
-
-- **There is no `srcset`.** One thumbnail at 800px serves a card that needs
-  ~312px on a phone and ~880px on a retina desktop. Both are wrong by a factor
-  too small to see, and a second derivative would double the work a phone does
-  before its upload finishes.
-- **JPEG, not WebP.** WebP would save perhaps 30% on a file already down to
-  30KB, at the cost of the extension no longer matching — and the upload, the
-  fallback and the backfill each have to agree about which file exists.
-
-**Resizing must apply EXIF orientation explicitly.** Phone photos are stored
-landscape with a tag saying which way is up: the bucket's are 4000x3000 with
-`orientation: 6`. `<img>` applies it and a bare `drawImage` does not, so the
-browser path asks `createImageBitmap` for `imageOrientation: "from-image"` and
-the backfill calls sharp's `rotate()` with no argument. Miss either and every
-carton is served on its side.
-
-**Uploads set `cacheControl` to a year.** supabase-js defaults it to `"3600"`,
-so a photo went stale after an hour and a reader coming back the next day
-revalidated all fifty. The paths carry a timestamp and are never written twice,
-so an hour was never the right number. This is the smallest of the wins here —
-worth having, not worth confusing with the resize.
-
-**Storage answers every HEAD with `Cache-Control: no-cache`, whatever the
-object actually carries.** Only GET reports the stored value. `curl -sI` against
-this bucket therefore says `no-cache` for everything, which is how the line
-above once claimed the originals were uncached when they were on a one-hour
-max-age. Check it with `curl -s -o /dev/null -D -`, or read `metadata.cacheControl`
-from the list API.
-
-Two traps this replaced, both of which failed silently for about a year:
-
-- `useCameraOperations` did compress, behind `shouldCompress(file, 5MB)`. No
-  phone photo reaches 5MB, so the branch was dead and every original went to
-  storage untouched. There is no threshold now.
-- `Feed.tsx` preloaded every photo in the feed at once with `decoding: "sync"`,
-  so that Edge's full-page screenshot would capture loaded images. It cost real
-  phones the entire feed up front to serve a screenshot tool.
-
-### Backfilling the photos that predate all that
-`scripts/backfill-image-thumbnails.ts`, run once:
-
-```bash
-SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/backfill-image-thumbnails.ts
-```
-
-It needs the service role key because it writes into every user's folder and
-the policies only let a user write into their own. Pass it for the one run;
-it does not belong in `.env` or `.env.example`, and nothing else here wants it.
-
-It reads paths from `milk_tests` rather than listing the bucket, because a
-listing also returns the thumbnails it just wrote and the second run would
-build thumbnails of thumbnails. It skips photos that already have one, so it is
-safe to re-run.
-
-`--replace-originals` is the destructive half and is off by default: it
-overwrites photos in place and the resolution it drops is gone. It writes each
-original under `backup/` (gitignored — other people's photos) before touching
-it. The feed needs nothing from that flag; it only reclaims storage and speeds
-up the enlarge dialog. `--dry-run` and `--limit=N` are there to look first.
-
-### Styling Conventions
-- Semantic HSL colour tokens (score, brand, heatmap) in `src/index.css`, now
-  inside the `@theme` block rather than a JS config. Tailwind emits them as
-  `oklab`/`oklch`, so a computed value read back in the browser will not
-  match the `hsl()` you wrote — it is the same colour, stated differently.
-- Dark mode via class strategy
-- `useIsMobile` / `useIsMobileOrTablet` (`src/hooks/use-mobile.tsx`) for responsive logic
-
-### Browser tests are separate, and only chromium
-`e2e/` holds Playwright specs; `src/**` belongs to vitest, and neither runner
-looks at the other's files. They run against `vite preview` serving a real
-build, so what is tested is what deploys.
-
-The scanner is the reason they exist. It needs `getUserMedia`, a `<video>` that
-carries a stream and a decoder — jsdom has none of those, so no unit test can
-tell a working scanner from one reporting "No camera access". Chromium is
-started with `--use-fake-device-for-media-stream`, which is also why this works
-on a CI runner with no webcam.
-
-```bash
-npm run test:e2e        # headless
-npm run test:e2e:ui     # pick through them interactively
-```
-
-Two things the stub in `e2e/support/backend.ts` has to get right, both learned
-by getting them wrong:
-
-- **GoTrue returns bare objects**, not `{ data, error }`. A token response
-  without an `access_token` sends supabase-js to split a JWT it does not have,
-  and the app dies on boot.
-- **`.single()` is not a collection.** It asks for
-  `application/vnd.pgrst.object+json` and an empty result is a 406 with code
-  `PGRST116`, never `[]`. Answering it with an array gave `useVersionCheck` an
-  empty array as its version row, and since VersionProvider wraps everything,
-  the blank page was the whole site.
-
-**`Browser tests` is a required check**, so a red one blocks the merge like any
-other. It was deliberately advisory first: with auto-merge on, a required check
-that goes red on a slow runner stops every pull request in the queue, and
-browser tests are the flakiest thing in any suite. It was promoted after
-running green on every pull request it saw.
-
-Two things keep it from becoming the flaky check that blocks everything. The
-suite retries once in CI and nowhere else, so a genuine failure still fails
-locally on the first run. And nothing in it waits on live data — every request
-is served from a fixture, so there is no network to be slow.
-
-### The live site is smoke-tested in a browser, after every deploy
-`e2e-live/` is a second Playwright suite with its own config,
-`playwright.live.config.ts`, and it points at **milkmenot.com itself**: no
-stubs, no local build. It opens `/`, `/results`, `/brands`, `/about` and one
-product page found by clicking through, and fails on an uncaught error, the
-`ErrorBoundary` page, an empty `#root`, or a `.js`/`.css` file that 404s.
-
-```bash
-npm run test:live    # against production; SITE_URL=... to point elsewhere
-```
-
-It exists because there is no error reporting service (see above), and the
-health check only `curl`s the HTML, so a bundle that loads and then throws
-looked healthy to everything. Two places run it:
-
-- **`deploy.yml`**, as a last job. It first waits for `version.json` to name
-  the commit being deployed, so it never tests the previous build by accident.
-  A red Deploy on main becomes an issue through `alert-on-failure.yml`.
-- **`health-check.yml`**, every six hours, folded into that workflow's own
-  issue rather than failing on its own step.
-
-It is read-only on purpose: no sign-in, no forms, nothing written. And it sets
-the Counterscale opt-out (`pco-notrack`) in an init script before any page
-runs, so a test visit every deploy and every six hours never shows up as a
-visitor. Keep both if you add pages to it.
-
-### Testing Setup
-- Vitest with jsdom; setup file at `src/test/setup.ts` mocks `matchMedia`, `ResizeObserver`, `IntersectionObserver`
-- Tests colocated with source: `src/**/*.{test,spec}.{ts,tsx}`
-
-### Workflows (`.github/workflows/`)
-Eight, not one:
-
-- **`ci.yml`** — three sequential stages, **Lint + Type Check → Test → Build**, on
-  every PR and push to main. Uses Bun. Cancels in-progress runs on new push.
-  A fourth job, **Refresh lockfiles**, regenerates `package-lock.json` for
-  Dependabot — but only on a push to main, never on a pull request. That guard
-  is load-bearing and is explained in the job's own comment: it used to live
-  inside the first job and push to the branch under test, which meant the
-  checks reported on a commit that was no longer the head, and a bot commit on
-  a Dependabot branch made Dependabot disown the PR and stop rebasing it.
-- **`deploy.yml`** — see Deployment below.
-- **`codeql.yml`** — static analysis on PRs, pushes to main, and weekly.
-- **`release.yml`** — cuts a version tag and a GitHub Release, **on request
-  only**: run it from the Actions tab. It fired on every push to main once, and
-  since every GitHub Release emails everyone watching, that was 34 releases and
-  34 emails in three days — with a version number that meant nothing, because
-  adding a test file got the same bump as a feature. Nothing is lost by waiting:
-  main deploys on every push regardless, so releasing marks a point rather than
-  shipping one.
-  It reads the *highest* `v*` tag rather than the newest one `git describe` can
-  reach, because `v0.1.0` sits on a `chore(release)` commit that never landed
-  on main: describe found nothing, fell back to package.json, recomputed
-  `0.1.0`, saw that tag already existed and skipped — every push for months,
-  green every time. It tags the commit already on main and pushes only the tag;
-  it does not commit, because `main` is protected against the bot, because a
-  push to main would retrigger this job, and because the notes quote commit
-  subjects that contain the skip marker. `CHANGELOG.md` is hand-written.
-- **`auto-merge.yml`** — turns auto-merge on for every non-draft pull request
-  into main. It merges nothing itself; it asks GitHub to merge once the four
-  required checks pass, so a red pull request still cannot land. Stop it with a
-  draft, or with the `hold` label. It uses the app token rather than
-  `GITHUB_TOKEN` on purpose: whoever enables auto-merge is recorded as merging
-  it later, and a push to main from `GITHUB_TOKEN` starts no workflows — so the
-  built-in token could land a merge that never deploys.
-- **`alert-on-failure.yml`** — opens an issue when CI, Deploy, CodeQL,
-  Release or Health check fails **on main**. GitHub sends run notifications
-  to whoever triggered the run, and auto-merge lands pull requests through
-  the app, so a
-  failed deploy emails `milkmenot-lockfile[bot]` and nobody else. An issue
-  notifies regardless and persists until closed. One issue per workflow,
-  commented rather than duplicated; main only, since a failing pull request is
-  already visible on the pull request.
-
-  **`Health check` needed care to add, because it goes red on purpose.** It
-  exits 1 when it finds something, having already filed its own `health` issue
-  on the way out, so watching it naively meant two issues for one problem —
-  the exact noise both workflows exist to remove. What nobody was hearing
-  about was the check *breaking*: since the browser test arrived it runs
-  `bun install` and downloads Chromium, and a failure there left it red with
-  nothing watching.
-
-  The two are told apart by **which step failed**. The deliberate exit lives
-  in `Say something if it is not`, so a run whose only failed step is that one
-  is already reported; anything else is the check falling over. There is no
-  cleaner signal — a workflow has no way to say "I failed on purpose" that
-  survives into `workflow_run`. A run with no named failed step at all, a
-  timeout or a dead runner, deliberately falls through and gets reported.
-
-  That read needs **`actions: read`** in the permissions block. The block is
-  explicit, so the token gets only what is listed, and without it the API
-  call for the run's steps fails.
-- **`health-check.yml`** — every six hours, asks the live site whether it is
-  alright: does it still serve the app, and is the build it serves the one main
-  is on. A deploy that fails leaves the site working and stale, which is the
-  failure that looks like success — and is how the update banner stayed broken
-  from January to August with every check green. It skips the build comparison
-  while a deploy is in flight, and also reports runs parked on "waiting for
-  approval", which report nothing anywhere on their own.
-
-  **It closes its own issue once a run finds nothing.** It used only to open
-  and comment, so a fixed problem sat there looking exactly like a live one —
-  #287 stayed open for six weeks after the deploy it described had landed, and
-  #256 before it. An alert that cannot tell those apart gets read as noise, and
-  then the next real one does too.
-
-  Two things that keep that honest. The close is gated on no deploy being in
-  flight as well as on no problems, because an empty problem list is not the
-  same as a full check: the build comparison is the part that gets skipped.
-  And **a new check belongs in the `Did anything turn up` step and nowhere
-  else** — filing and closing read that one answer rather than each carrying a
-  copy of the list, so a check wired into the filing side alone would file an
-  issue that the closing side retired six hours later, for ever.
-
-  That is not hypothetical. The browser check arrived from another branch
-  within the hour, wired into the filing step's own condition, and the two
-  landed as a merge conflict on exactly that line. Resolved the obvious way —
-  keeping the incoming condition — a passing `curl` would have closed every
-  issue the smoke test opened.
-
-  **Finding the issue is a list by label, not a search.** `--search` goes
-  through GitHub's search API, which is indexed a moment behind the issue
-  itself, so a dispatch straight after one is filed closes nothing. Six hours
-  between scheduled runs hides it; the throwaway issue it was tested with did
-  not. The same lag made a `gh issue list` immediately after a close report the
-  issue as still open, so do not trust either to be fresh.
-- **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
-  main that touches that file, so editing it is what deploys it. It runs
-  `delete-other-labels: true`: a label removed from the file is removed from
-  the repository.
-
-### Errors in a visitor's browser
-Everything else watches code before it lands or the site after it deploys.
-Neither can see a component throwing on a phone in a shop — which is not
-hypothetical: a version string arriving as `undefined` got split, the throw went
-through every provider, and the page rendered nothing with all checks green.
-
-**`ErrorBoundary`** wraps everything in `main.tsx`, *outside* the providers,
-because the crash it exists for came from inside one. It shows a real page with
-a reload button instead of white. Built from raw markup rather than the story
-components — a boundary that imports half the app can be brought down by the
-module it is meant to catch.
-
-There is no error reporting service. Sentry was wired in but never given a DSN,
-so it never sent a report; it was removed in November 2026 rather than kept as
-a dependency to upgrade for nothing. If it comes back, git history has the
-setup, and three things in it are easy to get wrong: `@sentry/react` contains
-the substring "react", so its `manualChunks` rule must sit *above* the react
-one or the SDK lands in the eager `vendor-react`; the DSN is a build-step
-secret like the Mapbox key; and its ingest host belongs in `connect-src`, not
-`script-src`. Sentry 11 also collects more by default than 10 did, so
-`dataCollection` has to be spelled out to keep `/privacy` true.
-
-### Three paths do not auto-merge
-Everything else does. Tests, components, copy and styling land the moment the
-checks go green, because the checks are a better reviewer for those than a
-tired person at eleven at night, and anything they miss is a redeploy away.
-
-`/supabase/`, `/.github/` and `/public/_headers` are not that. A migration runs
-once against real data, `.github/` can quietly switch off everything that would
-have caught a change to `.github/`, and a loosened CSP fails nothing and tells
-nobody. Those wait for the **`reviewed`** label.
-
-**GitHub's own "require review from code owners" does not do this**, and it
-fails silently rather than loudly. It is inert unless
-`required_approving_review_count` is at least 1 — a probe pull request touching
-`.github/` merged itself with the rule active and the count at zero — and
-setting the count to 1 demands an approval on *every* pull request, which is
-auto-merge off for the whole repository. There is also no approving your own
-pull request, and this repository has one maintainer, so peer review was never
-the achievable thing.
-
-`owned-paths.yml` is what actually gates. It reads the patterns out of
-CODEOWNERS, so that file stays the single list and GitHub's own interface
-agrees with the check by construction. What it buys is not review: it is that a
-change to those three paths stops and waits to be merged on purpose, rather
-than landing at three in the morning because the tests happened to pass.
-
-### `main` is protected
-Two rulesets apply to it, both with a repository-admin bypass:
-
-- **checks must pass** — `Lint & Type Check`, `Test`, `Build`, `CodeQL` and
-  `Browser tests` must be green before a pull request merges.
-- **delforcepush** — no deletion, no force-push.
-
-Auto-merge is enabled, so `gh pr merge --auto` genuinely queues until the checks
-pass rather than merging immediately. Before it was enabled, `--auto` silently
-fell through to an instant merge, which is how a pull request once landed with
-its checks still running.
-
-### Do not hand-regenerate `package-lock.json`
-CI writes it, currently with Node 24 — `ci.yml` holds that number, and it moves
-when the dependencies stop supporting the old one. A different npm produces a
-*different* file from the same command, so committing your version starts a
-tug-of-war where each run reverts the other. The lockfile exists only for
-Dependabot; let the workflow own it.
-
-It was Node 20 until vitest 5 and jsdom 30 dropped that version from their
-engines, at which point npm's tree builder crashed on every push to main and
-the lockfile quietly stopped being refreshed. Nothing else in CI runs on Node,
-so every check that matters stayed green and it went unnoticed for four days.
-
-What a stale lockfile costs is more than drift, and it is worth knowing before
-deciding this job can wait. Dependabot keeps opening pull requests against the
-frozen file, so its proposals are measured from a base that no longer reflects
-what an install would resolve. When the refresh finally ran, `vitest` went
-5.0.0 → **5.0.2** in one step — past the 5.0.1 that an open Dependabot pull
-request was offering, which Dependabot then closed itself as "no longer
-updatable". So the first refresh after an outage is a real dependency change
-wearing a `chore:` subject, not a reformat. Read what moved in it.
-
-### The lockfile pull request needs its own identity
-GitHub will not start a workflow for an event created with `GITHUB_TOKEN` — a
-deliberate guard against a workflow triggering itself. So the pull request the
-lockfile job opens never triggered CI or CodeQL, and `main` requires four
-checks: #166 sat with **zero** reported, and the job's own `--auto` merge
-waited on results that could not arrive. Every push to main that moved the
-lockfile refreshed a pull request that could never merge.
-
-Nothing fixes this from inside the job. One of the four required contexts is
-CodeQL, and reporting a synthetic pass for a security analysis that never ran
-is not a trade worth making.
-
-So it wants a GitHub App installation token. Create an app with **Contents:
-read & write** and **Pull requests: read & write**, install it on this
-repository, then set:
-
-- `LOCKFILE_APP_ID` — a repository **variable**, not a secret, because a step
-  `if:` cannot read secrets.
-- `LOCKFILE_APP_PRIVATE_KEY` — a repository secret holding the app's PEM.
-
-Both the force-push and the `gh pr create` go through that token; doing only
-the second leaves a later `synchronize` unchecked, which is the same dead end
-one step along.
-
-**Rewriting the remote URL is not enough to make the push the app's**, and it
-fails in the way that is hardest to notice: it looks like it worked. `actions/
-checkout` persists its own `GITHUB_TOKEN` for github.com — an `http.extraheader`
-plus an `includeIf` credentials file — and that outranks credentials embedded in
-a remote URL, so `git remote set-url origin https://x-access-token:$APP@...`
-pushes as `github-actions[bot]` anyway. The checkout in that job therefore sets
-`persist-credentials: false`, which leaves the URL as the only credential in
-play.
-
-That was invisible for weeks because the pull request is merged and its branch
-deleted every round, so the event was always `opened` — attributed to whoever
-called `gh pr create`, which genuinely is the app. It surfaced on 2026-08-30
-(#256) when two pushes to main landed 90 seconds apart, the second run
-force-pushed onto a pull request that was still open, and that `synchronize`
-parked all four required checks on "waiting for approval" — which report nothing
-anywhere on their own, and are exactly what `health-check.yml` looks for.
-
-**Set both or neither.** The job checks for the variable *and* the key before
-minting anything, because the id is the easy half to add and an id with no key
-sends `create-github-app-token` after a PEM that is not there — turning this
-job red on every push to main. Red main is a signal people stop reading.
-Configured neither way, it opens nothing and logs a warning rather than
-failing: a stale lockfile is a smaller problem than a broken build.
-
-### Never write the CI skip marker into a commit message
-GitHub scans the whole commit message, not just the subject. A commit that
-merely *discusses* the marker skips its own workflows — which happened here to
-the very commit that fixed the job it was describing. Write "skip-ci marker"
-in prose, and remember a squash-merge turns a PR body into a commit message
-too.
-
-### Deployment
-The site is hosted on **Cloudflare Workers**, not Lovable. `deploy.yml` runs on
-every push to `main`: test, build, then `bunx wrangler@4 deploy`. No manual
-publish step anywhere.
-
-`wrangler.toml` declares an assets-only Worker — there is no `main` script, so
-requests are served from the edge without invoking Worker code, which keeps them
-free and unmetered. `not_found_handling = "single-page-application"` is what
-makes deep links like `/product/:productId` resolve instead of 404ing.
-
-Three repo secrets are required: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
-and `VITE_MAPBOX_PUBLIC_KEY`. The Mapbox key is set on the *build* step, because
-Vite inlines `VITE_*` at build time — setting it on the Worker afterwards is too
-late.
-
-Deploy does not use `cloudflare/wrangler-action`. That action installs wrangler
-with npm, and npm resolution here has been fragile enough to kill a deploy
-before wrangler ever ran. `bunx` uses the same toolchain as every other step.
-
-`milkmenot.com` is on Cloudflare DNS, but mail still runs through IONOS — nine
-of the zone's ten records are mail, including three DKIM CNAMEs. Do not touch
-DNS records casually.
-
-### Nine routes get their own HTML file, and only the head differs
-Every URL used to be served the same `index.html`: one title, one description,
-no canonical. The right ones arrived only after React ran. Google reads the raw
-file first, and in October 2026 Search Console had four of six known pages
-filed as duplicates or "crawled, not indexed".
-
-`routeHeads` in `vite.config.ts` now writes `about.html`, `results.html` and
-seven more beside `index.html`, each with its own title, description, canonical
-and `og:url`. The strings come from `STATIC_SEO` in `src/lib/staticSeo.ts`,
-which the pages' own `<Seo>` calls read too, so the file and the rendered page
-cannot disagree. A fixed public page added later wants an entry there.
-
-Three things that look like omissions and are not:
-
-- **`index.html` has no canonical and must not get one.** The Worker serves it
-  for every address with no file of its own — `/product/:id`, `/brand/:slug` —
-  so a canonical in it would tell Google all of those are the home page. That
-  is also why `/` is not in `STATIC_SEO`.
-- **The body is still empty.** Markup placed in `#root` is torn down and
-  redrawn by `createRoot` on every visit — content, spinner, content — unless
-  the app hydrates it, which means rendering the whole provider tree in Node.
-- **`main.tsx` deletes the canonical the build wrote.** `<Seo>` adds its own a
-  moment later. Left in, the build's would sit first in the head and go stale
-  on a Back press, and Counterscale reads the first canonical it finds.
-
-They are `about.html`, not `about/index.html`: the Worker serves a file at the
-bare path and a folder index at the path with a trailing slash.
-
-### The sitemap reads the database, and is not committed
-`public/sitemap.xml` was nine hand-written routes. Google still found product
-pages — but slowly, and on the wrong host: of the four URLs under "crawled —
-currently not indexed" in November 2026, two were `www` product pages. Those
-are the pages carrying `aggregateRating` JSON-LD, so they are the ones worth
-naming.
-
-`scripts/generate-sitemap.ts` now reads every rating from
-`get_aggregated_milk_tests` — the same RPC `useRatingFacts` calls — and writes
-one entry per product that has been rated at least once, 233 of 234, each with
-`lastmod` set to its newest rating. The builder itself is
-`src/lib/sitemap.ts`, not beside the script, because vitest only collects
-`src/**` and this wanted tests.
-
-**The file is gitignored, and that is forced rather than tidy.** With a
-`lastmod` per product, every `npm run dev` in every worktree rewrites it, and a
-tracked file that rewrites itself sits in the working tree waiting for a
-`git add -A` — which is the first incident in the worktree section above. The
-` M public/sitemap.xml` that sat in two worktrees for weeks was this already,
-in its mildest form.
-
-That only works because **`bun run build` does fire `prebuild`.** Confirmed in a
-deploy run log rather than assumed — `bunx tsx scripts/generate-sitemap.ts`
-followed by `sitemap.xml written`. If that ever stops being true the site ships
-no sitemap at all, and nothing else would say so.
-
-Three things that look like omissions and are not:
-
-- **A failed fetch writes the nine fixed routes and warns, never fails.** A
-  short sitemap is a smaller problem than a deploy that does not happen — and a
-  *missing* file is worse than both, because the assets Worker answers any
-  unknown path with `index.html` and a 200, so `/sitemap.xml` would serve HTML
-  and Google would read markup as a sitemap. Proven by pointing the client at
-  an unreachable host: 9 entries, exit 0.
-- **Unrated products are left out.** That page has no `aggregateRating` and
-  little else, which is exactly what lands in "crawled — currently not
-  indexed". Today that is one product of 234.
-- **Brand pages are still out**, but for a narrower reason than before: a
-  `/brand/:slug` page is thinner than a product's — an owner and a trading
-  status — not because the list would go stale. That was the old reason and it
-  no longer holds for either.
-
-Two traps. Each `<loc>` must match the canonical `Seo.tsx` emits exactly —
-`${SITE_URL}${path}`, no trailing slash — or the sitemap invents a second
-address for a page. And PostgREST caps a response at 1000 rows by default: 363
-today, and past that this truncates silently, with `/results` reading the same
-call and thinning out first.
-
-### An open tab learns about a deploy from `version.json`, not from a table
-A loaded single-page app never asks for `index.html` again, so a tab left open
-keeps its bundle for as long as it stays open. Cache headers cannot help:
-`must-revalidate` is honoured on the next request and there is no next request.
-
-The build stamps a `BUILD_ID` — the commit sha in CI, a timestamp locally —
-into the bundle *and* into `dist/version.json`, from the one constant in
-`vite.config.ts`. `useVersionCheck` fetches that file at load, when the tab
-returns to the foreground (throttled to 5 minutes) and every 30 minutes, and
-shows `UpdateBanner` when it differs. Nothing has to be remembered at release
-time, which is the whole point.
-
-Two things that look redundant and are not:
-
-- **The fetch treats anything unexpected as "no answer".** The assets Worker
-  serves `index.html` with a 200 for any path it cannot find, so a deploy
-  missing this file answers with HTML rather than a 404. Reading that as a new
-  version would put the banner in front of every reader forever.
-- **`app_versions` and `APP_VERSION` still exist, and no longer decide this.**
-  That table carries release notes and the native APK rule. It held one row,
-  `1.0.0` from January, while the site deployed dozens of times — and because
-  `APP_VERSION` is also `1.0.0`, `isNewerVersion` was permanently false and the
-  banner could not fire at all. It is fine for that row to be stale now; the
-  banner only prints a version number when the row genuinely beats the running
-  one.
-
-On a native build this is a no-op by construction: Capacitor serves the bundled
-`version.json`, so it always matches and updates stay the APK's business.
-
-### Analytics is Counterscale, and `ht=3` is not a stuck handshake
-Cookieless, self-hosted on `counterscale.peterreijm.workers.dev`, loaded by an
-inline script in `index.html` with `data-site-id: milkmenot.com`. It is gated on
-the live hostname, so `bun dev`, preview deploys and the workers.dev URL never
-write into the production dataset, and on a per-browser opt-out remembered in
-`localStorage`: `?notrack=1` stops counting this browser, `?notrack=0` starts
-again.
-
-**Set `?notrack=1` before debugging the tracker.** Every page loaded while
-poking at it is a real pageview in the real dataset, geolocated to wherever you
-are. Ten went in this way on 2026-08-24.
-
-Unique visitors are counted without a cookie by riding the HTTP cache. The
-tracker calls `/cache?sid=...` first, and the server encodes the hit count in
-the *seconds* field of `Last-Modified`: no `If-Modified-Since` returns
-`{"ht":1}` with `00:00:01`, sending that back returns `{"ht":2}` with
-`00:00:02`, and so on. The number is then passed to `/collect?...&ht=N`. The
-state lives entirely in the browser's cache; the Worker keeps nothing.
-
-`ht` reaches 3 and stays there for the rest of the day. That is the design, not
-a handshake that failed to complete — Counterscale caps it deliberately, "to
-avoid exposing exact hit counts publicly":
-
-- **1** — first visit, and the only value that sets `newVisitor`
-- **2** — anti-bounce; the visitor came back for a second page
-- **3** — a regular page view, meaning three or more hits
-
-So a browser reporting `ht=3` on every navigation is a healthy session, and
-`/cache` answering 200 rather than 304 every time is equally correct. There is
-no caching bug there. An afternoon has already been spent looking for one.
-
-### The history patch in `index.html` is load-bearing
-Counterscale reads `<link rel="canonical">` in preference to `location`, and it
-records a pageview *synchronously* inside its own `pushState` patch. React has
-not re-rendered by then, so `react-helmet-async` still has the previous page's
-canonical in the DOM from `Seo.tsx` — which filed every client-side navigation
-one page behind. Clicking through to `/about` recorded `/`. Cold loads escaped
-it only because React has not rendered any canonical yet when the tracker fires
-at roughly 334ms, so it falls back to `location`.
-
-The patch wraps `history` *before* the tracker script is appended, so those
-wrappers sit inside the tracker's own and the canonical is already correct when
-it looks. Two things it encodes that are easy to undo by accident:
-
-- **Order is the whole trick.** Move the patch below the
-  `document.head.appendChild` and it wraps nothing — the tracker's wrapper has
-  to be the outer one.
-- **The `replaceState` pathname guard is not optional.** The tracker patches
-  `pushState` and `popstate` but never `replaceState`, so the logged-in
-  `<Navigate to="/feed" replace />`, the `ProtectedRoute` redirects and the rate
-  deep links went uncounted. They are reported now, but *only* when the pathname
-  changes: `useResultsState` rewrites the query string through `replaceState` on
-  every filter keystroke, and counting those would bury the real numbers under
-  `/results`. The pageview is handed over by calling the tracker's own
-  `pushState` wrapper with the real push suppressed underneath, so nothing is
-  added to the history stack.
-
-Data recorded before 2026-08-24 still carries the off-by-one, so `/` is inflated
-by roughly a hit per session and the exit page of each visit is missing. A trend
-line crossing that date changes shape from the fix alone.
-
-### Lovable edits go to the `lovable` branch, never to `main`
-Lovable is no longer the host, but its GitHub sync is still connected — kept for
-its security scan. That sync commits straight to whichever branch the project
-points at, with no pull request, appearing in the history as
-`gpt-engineer-app[bot]` ("Visual edit in Lovable", "Lovable update").
-
-While it pointed at `main`, that was a direct write path to production. The
-project is now pinned to a long-lived `lovable` branch instead
-(Lovable → Project settings → Git → GitHub → branch picker), so edits collect
-there and reach `main` only through a reviewed pull request.
-
-**Do not delete the `lovable` branch, and do not point Lovable back at `main`.**
-
-After a Lovable pull request merges, the branch is behind and Lovable would keep
-editing a stale base. Fast-forward it:
-
-```bash
-git fetch origin; git push origin origin/main:refs/heads/lovable
-```
-
-If that push is refused, the branch has commits that never made it into `main` —
-usually an edit someone forgot to raise a pull request for. Look before forcing
-it.
-
-Two things to know about the picker: Lovable syncs exactly one branch at a time,
-and a branch created from within Lovable forks from whatever branch is currently
-active rather than from `main`.
-
-### Pre-commit Hooks
-Husky + lint-staged run ESLint on staged files before each commit.
-
-### Supabase
-- DB types are auto-generated at `src/integrations/supabase/types.ts` — do not edit
-  manually. Regenerate with `npm run types:gen`, which needs `supabase login`
-  first. On Windows PowerShell, `npx` may be blocked by the execution policy;
-  `npx.cmd` or `bunx` get around it without changing any machine settings.
-- Edge Functions live under `supabase/functions/` (e.g., `check-rate-limit`)
-- Migrations in `supabase/migrations/`
-
-### The Supabase anon key is public on purpose
-`src/integrations/supabase/client.ts` has the project URL and anon key written
-into it, and they ship in the bundle to every visitor. The same key sits in
-older commits of `.env`, which looks alarming and is not: it is the same value
-the website already serves, and it carries `"role":"anon"`.
-
-Rotating it would sign every user out and buy nothing. What actually protects
-the data is RLS — every table has it enabled, and every write policy carries a
-real condition (`auth.uid() = user_id`, `is_admin()`, or `TO service_role`).
-Treat RLS as the control, and check it whenever a table is added.
-
-A `service_role` key would be a different matter entirely. None has ever been
-committed; keep it that way.
-
-`.env` is gitignored and untracked. `.env.example` carries the names. The only
-variable the app actually reads is `VITE_MAPBOX_PUBLIC_KEY` — without it the
-map renders its "not configured" state and everything else works.
-
-### The migrations start from a baseline, and three of them are load-bearing
-`supabase/migrations/` was 94 files that could not rebuild anything: ten tables
-the app reads were never created by any of them, 24 were skipped outright by
-the CLI for not matching its `<timestamp>_name.sql` filename format, and 55
-more duplicated changes the Lovable dashboard had already applied a second
-earlier under a different version. It is now a schema dump of the deployed
-database plus what came after.
-
-`00000000000000_baseline.sql` is generated, not written. Do not hand-edit it;
-regenerate it if it ever needs to change.
-
-The two files beside it exist because a `--schema public` dump cannot carry
-them, and both fail in ways that look fine until they don't:
-
-- **`00000000000001_auth_user_triggers.sql`** — `on_auth_user_created` and
-  `on_auth_user_created_assign_role` live on `auth.users`, outside the dumped
-  schema. Without them a rebuilt database is healthy until someone signs up
-  and gets an account with no profile row and no role.
-- **`00000000000002_storage_buckets_and_policies.sql`** — the buckets and
-  their eight policies live in `storage`, and buckets are *rows*, so not even
-  a `storage` dump would carry them. The app runs until the first upload.
-
-If you ever regenerate the baseline, those two still have to be written by
-hand. A dump will not remind you.
-
-### A new table needs its own GRANT, from 30 October 2026
-Supabase stops automatically granting Data API access to new tables in `public`
-on that date. Nothing already here breaks, and that is not luck: the baseline
-dump writes the grants out per table — nineteen tables and four views, each to
-`anon`, `authenticated` and `service_role` — rather than leaning on the
-automatic one, so a rebuilt database still answers. They are easy to miss when
-looking, because pg_dump spells the privilege list out in full instead of
-writing `GRANT ALL`.
-
-The two migrations that create a table are both already fine, for different
-reasons. `countries` carries no grants of its own and needs none: the baseline
-created *and* granted it first, so that `CREATE TABLE IF NOT EXISTS` is a no-op
-on a rebuild. `product_barcodes` revokes them on purpose and is reached only
-through two `SECURITY DEFINER` functions, and function grants are not part of
-this change.
-
-What it costs is three lines in every migration from here that creates a table:
-
-```sql
-grant select on public.your_table to anon;
-grant select, insert, update, delete on public.your_table to authenticated;
-grant select, insert, update, delete on public.your_table to service_role;
-```
-
-Grant the verbs the table actually needs — a read-only reference table wants
-`select` and nothing else. The grant is not a second RLS: RLS still decides who
-sees which rows, while the grant only decides whether PostgREST will look at
-the table at all.
-
-**A local `db reset` will not catch a missing one.** The baseline ends with four
-`ALTER DEFAULT PRIVILEGES ... ON TABLES` statements, so a rebuilt database
-restores the automatic grant for everything created after it and the new table
-works. Production never re-runs the baseline, so the same migration lands there
-with no grant and the table answers `permission denied` — failing only in the
-one place nobody tested, which is exactly how barcode scanning shipped broken.
-Those four lines stay where they are: the baseline is generated, not
-hand-edited.
-
-### The local database is real, and worth using
-`supabase start` builds the whole schema from the baseline and seeds it, which
-means policy and migration changes can be tried against a throwaway database
-before they reach production. It needs Docker Desktop running.
-
-```bash
-npx supabase start     # first run pulls images, several minutes
-npx supabase db reset  # rebuild from migrations + seed.sql
-npx supabase stop      # snapshots on exit, so the next start is fast
-```
-
-`supabase db reset` **resets the local database**. `supabase db reset --linked`
-drops and rebuilds *production*. One flag apart; never type the second.
-
-`supabase/seed.sql` holds the country list — 257 ISO regions, minus entries
-that are not places (European Union, Eurozone, pseudo-locales) and minus
-withdrawn codes that CLDR still resolves to a successor, which would otherwise
-list a dozen countries twice and let someone file a rating from East Germany.
-It is reference data only; user data never belongs in this repo.
-
-### Migration state is honest now, so trust `migration list`
-Local and remote were once 58 files apart, which made `supabase db push`
-genuinely dangerous — it would have re-run 55 already-applied migrations, many
-of them bare `CREATE TABLE` and `DROP POLICY`. They now match exactly.
-
-```bash
-npx supabase migration list --linked   # what is pending, truthfully
-npx supabase db push                   # applies only what is genuinely new
-```
-
-That gap is also how barcode scanning shipped broken: `ScanFlow.tsx` called
-`get_product_by_barcode` for weeks while the function did not exist in
-production. The call failed softly, so nothing looked wrong. Check this after
-merging anything with a migration in it.
-
-### Backups, because the Free plan has none
-`scripts/backup-supabase.ps1` runs monthly through Task Scheduler, registered
-by `scripts/register-backup-task.ps1`. Two dumps, deliberately kept apart:
-
-- **community** — public schema only, no auth, no password hashes, no
-  addresses. Goes to OneDrive, so it survives the laptop.
-- **full** — everything including `auth`: bcrypt hashes and live refresh
-  tokens. Stays on the machine. Treat it as a credential store; never commit
-  it, never sync it, never paste it anywhere.
-
-The irreplaceable half is the community data. Accounts can be recreated; other
-people's ratings cannot.
-
-The task runs only while signed in — storing a Windows password with it is not
-a trade worth making — so `backup.log` beside the full dump is what tells you
-it is still firing.
-
-Retention is asymmetric, and deliberately so: `-KeepCommunity` holds twelve
-months, `-KeepFull` holds three. A year of ratings is the thing worth having a
-year of, while an old full dump is a year-old credential store carrying bcrypt
-hashes and refresh tokens that recover nothing the newest one cannot. Pruning
-runs only after a dump succeeds, so a failed month never deletes the copy it
-failed to replace.
-
-`check-backup-health.ps1` reads that log weekly and interrupts you when
-something is wrong. It asks Task Scheduler what the task actually did rather
-than inferring it from the age of a dump: "may not be running" used to be
-appended to every stale-backup warning, and on 23 Nov 2026 it was wrong —
-the task had fired on 1 Oct and 1 Nov exactly on time and failed both times.
-
-#### When the backup cannot start Docker
-The dumps shell `pg_dump` into a container, so the script needs Docker and
-starts Docker Desktop itself when it is down. Two separate things have broken
-that, and they look alike in `backup.log` until you read the timestamps.
-
-**A failure two seconds in, quoting docker's own connection error, is the
-script.** That was a `docker info *> $null` whose redirected stderr became a
-terminating error under `ErrorActionPreference = "Stop"`, so the check threw
-instead of returning false and the auto-start below it was unreachable. Fixed
-by `Test-DockerReady`; the trap is written out beside it, and in `Invoke-Dump`,
-which met the same thing first. A real Docker problem reads `Docker did not
-become ready within five minutes` instead, five minutes in.
-
-**Docker Desktop refusing to start at all is the socket trap.** It binds
-AF_UNIX sockets and removes the previous one first, and on this machine Windows
-cannot remove them: every API answers error 1920, "The file cannot be accessed
-by the system." So one unclean shutdown leaves a file no later start can clear,
-and Docker crashes on boot from then on. On 23 Nov 2026 the leftovers were
-dated 23 Aug and the backups had been failing since 1 Oct.
-
-Three things that cost an afternoon:
-
-- **There are two locations, and both must be clean at once.** Clearing
-  `%LOCALAPPDATA%\Docker\run` only moved the crash from the Ingest server to
-  the Secrets Engine in `%LOCALAPPDATA%\docker-secrets-engine`.
-- **Renaming the directory aside is the only removal that works**, because it
-  never opens the files inside. `Remove-Item`, `[System.IO.File]::Delete`,
-  `fsutil`, `cmd rd` and `rm -rf` from WSL all fail with the same 1920. The
-  renamed folders cannot be deleted afterwards either; they are inert, and
-  Docker ignores them.
-- **A clean `docker desktop stop` is not reliable cleanup.** It removed the
-  sockets once and left all five behind on the next stop an hour later.
-
-So the recipe, when the crash dialog appears or the log says Docker never
-became ready:
-
-```powershell
-# quit Docker first - Stop-Process on com.docker.* and "Docker Desktop" will do
-wsl --shutdown
-Rename-Item "$env:LOCALAPPDATA\Docker\run" "run.stale"
-Rename-Item "$env:LOCALAPPDATA\docker-secrets-engine" "docker-secrets-engine.stale"
-```
-
-Then start Docker Desktop. It recreates both directories and comes up in about
-thirty seconds from cold.
-
-**Do not click "Reset to factory defaults" on that dialog.** It sits right
-beside Quit, and it discards the local Supabase stack along with every other
-image and volume. Nothing above needs it.
+## Working rules
+
+- **Start every session with `EnterWorktree`.** Several agents work here at
+  once; a shared checkout has already lost branches and swept other sessions'
+  work into commits. Run `bun install` in a fresh worktree. Check a worktree is
+  live with `git rev-parse --git-dir` (a dead one silently falls through to the
+  main checkout's `.git`). Exception: tasks about the working copy itself.
+  Details: `docs/worktrees-and-branches.md`.
+- **Tidying branches:** `git branch --merged` is useless (PRs are
+  squash-merged); compare against `headRefOid` from `gh pr list --state merged`.
+  Never delete `chore/lockfile-refresh`, `lovable`, or `dependabot/*` with an
+  open PR. Run `git status --porcelain` in every worktree before removing it —
+  it may hold the only copy of something.
+- **`main` is protected.** Everything lands by pull request. Required checks:
+  `Lint & Type Check`, `Test`, `Build`, `CodeQL`, `Browser tests`. Auto-merge is
+  on for every non-draft PR; stop it with a draft or the `hold` label.
+- **`/supabase/`, `/.github/` and `/public/_headers` do not auto-merge** — they
+  wait for the `reviewed` label (`owned-paths.yml`, patterns from CODEOWNERS).
+
+## Traps
+
+- **`supabase db reset --linked` drops and rebuilds production.** One flag from
+  the safe local command. Never type it.
+- **Never hand-regenerate `package-lock.json`.** CI owns it (Node version in
+  `ci.yml`); a different npm writes a different file. See `docs/lockfile.md`.
+- **Never write the CI skip marker into a commit message** — GitHub scans the
+  whole message, so even discussing it skips the workflows. Write "skip-ci
+  marker" in prose. A squash-merge turns a PR body into a commit message too.
+- **Lovable edits go to the `lovable` branch, never `main`.** Do not delete that
+  branch or point Lovable back at `main`. Fast-forward after a merge:
+  `git fetch origin; git push origin origin/main:refs/heads/lovable`.
+- **A new table needs its own GRANT** (Supabase stopped auto-granting on
+  30 Oct 2026). A local `db reset` will NOT catch a missing one — only
+  production fails. Grant only the verbs the table needs:
+  ```sql
+  grant select on public.your_table to anon;
+  grant select, insert, update, delete on public.your_table to authenticated;
+  grant select, insert, update, delete on public.your_table to service_role;
+  ```
+- **RLS is the security control** — check it on every new table. The anon key
+  in `src/integrations/supabase/client.ts` is public on purpose; a
+  `service_role` key must never be committed.
+- **Do not edit** `src/integrations/supabase/types.ts` (generated) or
+  `supabase/migrations/00000000000000_baseline.sql` (generated; the two files
+  beside it are hand-written and must survive any regeneration).
+- **After merging a migration**, check `migration list --linked` — a function
+  missing in production fails softly. `db push` is a deliberate step, never a
+  reflex.
+- **Keep `@zxing/browser` and `@zxing/library`** — they are iPhone's only
+  barcode decoder. `@zxing/browser` must stay ≥ 0.2.1.
+- **Mapbox never renders in the Claude Code in-app browser.** Don't debug a
+  working map; check in a real browser.
+- **No form library.** Forms are `useState` + `validateMilkTestInput`; don't
+  revive `ui/form.tsx` from history.
+- **Dialogs use `StoryDialog`**, not `DialogContent`. Destructive confirms stay
+  `AlertDialog`. The palette has no red; destructive actions use amber.
+- **`index.html` must not get a canonical**, and its history patch must stay
+  *above* the Counterscale script. See `docs/seo-and-sitemap.md`,
+  `docs/analytics.md`.
+- **Use `?notrack=1`** before poking at analytics, or you pollute live data.
+- **`public/sitemap.xml` is generated and gitignored** — don't commit it.
+- **DNS:** mail still runs through IONOS; do not touch DNS records casually.
+- **Docker crash dialog:** never click "Reset to factory defaults" — it wipes
+  the local Supabase stack. Recipe in `docs/backups.md`.
+- **The full backup dump is a credential store** (password hashes, refresh
+  tokens): never commit, sync or paste it.
+- **The thumbnail backfill** (`scripts/backfill-image-thumbnails.ts`) takes the
+  service-role key for one run only — never put it in `.env` or `.env.example`.
+  Its `--replace-originals` flag overwrites other people's photos for good. See
+  `docs/feed-photos.md`.
+
+## Where things live
+
+- `src/pages/` routes (all lazy-loaded in `src/App.tsx`), `src/components/`
+  (`ui/` is shadcn), `src/hooks/`, `src/contexts/`, `src/lib/`,
+  `src/integrations/supabase/`, `src/types/`. Import with `@/*` → `src/*`.
+- Tailwind **v4**: no `tailwind.config.ts`; theme is the `@theme` block in
+  `src/index.css`.
+- Results-page filter hooks are in `src/hooks/useResultsState.ts`.
+- Unit tests sit beside the source (`src/**/*.test.ts[x]`, vitest + jsdom);
+  browser tests in `e2e/`, live smoke tests in `e2e-live/`.
+- Edge Functions in `supabase/functions/`, migrations in `supabase/migrations/`,
+  seed data in `supabase/seed.sql`.
+- Workflows in `.github/workflows/`; deploy is `deploy.yml` →
+  `bunx wrangler@4 deploy` on every push to `main`.
+- The only env var the app reads is `VITE_MAPBOX_PUBLIC_KEY`.
+
+## Read before changing
+
+| Read this | Before touching |
+|-----------|-----------------|
+| [docs/architecture.md](docs/architecture.md) | libraries, barcode scanning, dialogs, styling, test setup |
+| [docs/worktrees-and-branches.md](docs/worktrees-and-branches.md) | worktrees, branch cleanup |
+| [docs/world-map.md](docs/world-map.md) | `MapboxWorldMap.tsx` (zoom, atmosphere, popup names) |
+| [docs/feed-photos.md](docs/feed-photos.md) | photo upload, thumbnails, `FeedImage`, the backfill script |
+| [docs/browser-tests.md](docs/browser-tests.md) | `e2e/`, `e2e-live/`, the backend stub |
+| [docs/ci-workflows.md](docs/ci-workflows.md) | any file in `.github/workflows/` |
+| [docs/merging-and-protection.md](docs/merging-and-protection.md) | auto-merge, owned paths, rulesets |
+| [docs/lockfile.md](docs/lockfile.md) | the lockfile job or its GitHub App |
+| [docs/deployment.md](docs/deployment.md) | Cloudflare deploy, `version.json`, the update banner |
+| [docs/seo-and-sitemap.md](docs/seo-and-sitemap.md) | `routeHeads`, `STATIC_SEO`, the sitemap script |
+| [docs/analytics.md](docs/analytics.md) | Counterscale, the history patch in `index.html` |
+| [docs/error-handling.md](docs/error-handling.md) | `ErrorBoundary`, error reporting |
+| [docs/lovable.md](docs/lovable.md) | the Lovable sync |
+| [docs/supabase.md](docs/supabase.md) | migrations, grants, RLS, the local database |
+| [docs/backups.md](docs/backups.md) | the backup scripts, Docker start failures |
