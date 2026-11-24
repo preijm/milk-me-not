@@ -1023,6 +1023,13 @@ The task runs only while signed in — storing a Windows password with it is not
 a trade worth making — so `backup.log` beside the full dump is what tells you
 it is still firing.
 
+Retention is asymmetric, and deliberately so: `-KeepCommunity` holds twelve
+months, `-KeepFull` holds three. A year of ratings is the thing worth having a
+year of, while an old full dump is a year-old credential store carrying bcrypt
+hashes and refresh tokens that recover nothing the newest one cannot. Pruning
+runs only after a dump succeeds, so a failed month never deletes the copy it
+failed to replace.
+
 `check-backup-health.ps1` reads that log weekly and interrupts you when
 something is wrong. It asks Task Scheduler what the task actually did rather
 than inferring it from the age of a dump: "may not be running" used to be

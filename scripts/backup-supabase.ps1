@@ -32,8 +32,12 @@ param(
   [string]$CommunityDir = "$env:OneDrive\Projects\Milk Me Not\Backups",
   # Where the sensitive dump goes. Deliberately not a synced folder.
   [string]$FullDir      = "$env:USERPROFILE\Backups\milk-me-not",
-  # Monthly, so twelve is a year.
-  [int]$Keep            = 12,
+  # Monthly, so twelve is a year of the half worth keeping a year of.
+  [int]$KeepCommunity   = 12,
+  # The full dump is a credential store: bcrypt hashes and live refresh tokens.
+  # An old one carries no recovery value the newest does not, so it keeps a
+  # short tail rather than a year. Shrinking this deletes nothing you can miss.
+  [int]$KeepFull        = 3,
   # Skip the sensitive dump if you only want the community data.
   [switch]$CommunityOnly
 )
@@ -122,7 +126,9 @@ function Invoke-Dump {
 }
 
 function Remove-OldBackups {
-  param([string]$Dir, [string]$Pattern)
+  param([string]$Dir, [string]$Pattern, [int]$Keep)
+  # Ordered by write time, not by the date in the name: a run that happens late
+  # still sorts as the newest, which is the one that must survive.
   $old = Get-ChildItem -Path $Dir -Filter $Pattern -ErrorAction SilentlyContinue |
          Sort-Object LastWriteTime -Descending | Select-Object -Skip $Keep
   foreach ($f in $old) {
@@ -151,8 +157,8 @@ try {
                 -What "Full data (sensitive)"
   }
 
-  Remove-OldBackups -Dir $CommunityDir -Pattern "community-data-*.sql"
-  Remove-OldBackups -Dir $FullDir      -Pattern "full-data-*.sql"
+  Remove-OldBackups -Dir $CommunityDir -Pattern "community-data-*.sql" -Keep $KeepCommunity
+  Remove-OldBackups -Dir $FullDir      -Pattern "full-data-*.sql"      -Keep $KeepFull
 
   Write-Log "=== backup finished ==="
   exit 0
