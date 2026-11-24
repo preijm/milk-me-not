@@ -138,14 +138,17 @@ empty.
 - **UI:** shadcn/ui (Radix UI primitives) + Tailwind CSS **v4**. There is no
   `tailwind.config.ts`; v4 is configured in CSS, so the theme lives in an
   `@theme` block in `src/index.css`.
-- **Forms:** hand-rolled. `useMilkTestForm` is `useState` plus
-  `validateMilkTestInput` from `src/lib/security.ts`; Zod is used elsewhere, but
-  no form goes through it. `react-hook-form` survives only inside
-  `src/components/ui/form.tsx`, which nothing imports — there is no `useForm(`
-  call anywhere in `src/`. `@hookform/resolvers` was removed in November 2026,
-  one commit after #327 bumped it two majors for nothing. Delete
-  `ui/form.tsx` too if you want `react-hook-form` gone: `tsc --build` checks
-  every file under `src/`, imported or not.
+- **Forms:** hand-rolled, and there is no form library here at all.
+  `useMilkTestForm` is `useState` plus `validateMilkTestInput` from
+  `src/lib/security.ts`; Zod is used elsewhere, but no form goes through it.
+  The shadcn form stack was removed in November 2026 — `@hookform/resolvers`
+  first (#338), which nothing imported at all, then `react-hook-form` and the
+  `src/components/ui/form.tsx` that was its only importer, which in turn had no
+  importers of its own and no `useForm(` caller anywhere. They had to go in that
+  order: `tsc --build` checks every file under `src/` whether or not anything
+  imports it, so the package could not leave before the file did. If a real form
+  ever wants a library, add it back deliberately rather than reaching for
+  `ui/form.tsx` in git history — nothing in the app was ever built against it.
 - **Maps:** Mapbox GL JS (lazy-loaded due to 200KB+ size)
 - **Backend:** Supabase (PostgreSQL, Auth, Edge Functions, Storage)
 - **Mobile:** Capacitor with camera plugin for photo capture
