@@ -51,6 +51,26 @@ function Write-Log {
   try { Add-Content -Path $logFile -Value $line -Encoding utf8 } catch { }
 }
 
+function Test-DockerReady {
+  # Is the daemon up? Answered as a boolean rather than inline, because asking
+  # is the part that used to break the script.
+  #
+  # `docker info` writes to stderr when the daemon is down, and Windows
+  # PowerShell wraps a *redirected* native stderr in a NativeCommandError
+  # record. Under this script's ErrorActionPreference of "Stop" that record is
+  # a terminating error, so `docker info *> $null` threw instead of setting
+  # $LASTEXITCODE - on the one code path whose whole job is to handle a stopped
+  # daemon. The backups of 1 Oct and 1 Nov 2026 both died here two seconds in,
+  # reporting docker's own connection error, and the auto-start below was never
+  # reached. Sep 1 passed only because Docker happened to already be running.
+  #
+  # Same trap Invoke-Dump documents below; it was fixed there and missed here.
+  # The local assignment shadows the script-level preference for this call only.
+  $ErrorActionPreference = "Continue"
+  docker info *> $null
+  return ($LASTEXITCODE -eq 0)
+}
+
 function Assert-Docker {
   # Docker Desktop puts its CLI here but does not always put it on PATH for
   # non-interactive sessions, which is exactly how a scheduled task runs.
@@ -61,8 +81,7 @@ function Assert-Docker {
     throw "Docker CLI not found. Docker Desktop must be installed."
   }
 
-  docker info *> $null
-  if ($LASTEXITCODE -eq 0) { return }
+  if (Test-DockerReady) { return }
 
   Write-Log "Docker is not running; starting Docker Desktop." "WARN"
   $exe = "$env:LOCALAPPDATA\Programs\DockerDesktop\Docker Desktop.exe"
@@ -72,8 +91,7 @@ function Assert-Docker {
   # Cold start is slow, and a scheduled run has nobody watching it.
   foreach ($i in 1..60) {
     Start-Sleep -Seconds 5
-    docker info *> $null
-    if ($LASTEXITCODE -eq 0) { Write-Log "Docker ready after $($i * 5)s."; return }
+    if (Test-DockerReady) { Write-Log "Docker ready after $($i * 5)s."; return }
   }
   throw "Docker did not become ready within five minutes."
 }
