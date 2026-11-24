@@ -59,9 +59,14 @@ Three things that cost an afternoon:
   the Secrets Engine in `%LOCALAPPDATA%\docker-secrets-engine`.
 - **Renaming the directory aside is the only removal that works**, because it
   never opens the files inside. `Remove-Item`, `[System.IO.File]::Delete`,
-  `fsutil`, `cmd rd` and `rm -rf` from WSL all fail with the same 1920. The
-  renamed folders cannot be deleted afterwards either; they are inert, and
-  Docker ignores them.
+  `fsutil`, `cmd rd`, `rm -rf` from WSL and `robocopy /MIR` all fail with the
+  same 1920 — the last of those is worth knowing because a mirror from an empty
+  directory is the usual answer to a file Windows will not delete, and here it
+  reports the socket and leaves it. The renamed folders cannot be deleted
+  afterwards either, and **a reboot does not free them**: retried on 24 Nov 2026
+  on a machine fifteen minutes up, with the same error from every method. They
+  are inert and hold nothing — one 0-byte socket each — and Docker ignores them,
+  so leave them rather than spending the afternoon again.
 - **A clean `docker desktop stop` is not reliable cleanup.** It removed the
   sockets once and left all five behind on the next stop an hour later.
 
