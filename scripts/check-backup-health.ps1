@@ -31,6 +31,9 @@ param(
   # Monthly backups, StartWhenAvailable, a laptop that travels. Past forty days
   # something is actually wrong rather than merely late.
   [int]$MaxAgeDays      = 40,
+  # Same default as register-backup-task.ps1, so the two agree about what the
+  # task is called and a renamed task can still be pointed at.
+  [string]$TaskName     = "Milk Me Not - monthly Supabase backup",
   # Print the verdict instead of only complaining. For running it by hand.
   [switch]$Report,
   # Skip the dialog and report through the exit code alone. For a headless run,
@@ -48,6 +51,38 @@ function Get-Newest {
     Sort-Object LastWriteTime -Descending | Select-Object -First 1
 }
 
+function Get-TaskVerdict {
+  # The age of a dump says a backup did not happen. It never says why, and this
+  # script used to guess: every stale-backup warning carried "The monthly task
+  # may not be running." On 23 Nov 2026 that was flatly wrong. The task had
+  # fired on 1 Oct and 1 Nov at exactly 12:00 and failed both times, so the
+  # guess sent the reader to Task Scheduler while the answer sat in backup.log
+  # one line below. Ask Windows instead, and report what it answers.
+  param([string]$Name)
+
+  try {
+    $task = Get-ScheduledTask     -TaskName $Name -ErrorAction Stop
+    $info = Get-ScheduledTaskInfo -TaskName $Name -ErrorAction Stop
+  } catch {
+    return "No scheduled task named '$Name' is registered - run register-backup-task.ps1."
+  }
+
+  if ($task.State -eq "Disabled") { return "The task is registered but disabled." }
+
+  # Task Scheduler reports 30-12-1899 rather than null for a task that has
+  # never run, so the year is what distinguishes it.
+  if (-not $info.LastRunTime -or $info.LastRunTime.Year -lt 2000) {
+    return "The task is registered and enabled but has never run."
+  }
+
+  $last = $info.LastRunTime.ToString("yyyy-MM-dd")
+  if ($info.LastTaskResult -ne 0) {
+    return ("The task did run, on $last, and exited with 0x{0:X} - it is failing, not missing. The reason is in backup.log." -f $info.LastTaskResult)
+  }
+
+  return "The task last ran on $last and reported success, so the schedule is not the problem."
+}
+
 $community = Get-Newest -Dir $CommunityDir -Pattern "community-data-*.sql"
 $full      = Get-Newest -Dir $FullDir      -Pattern "full-data-*.sql"
 
@@ -56,7 +91,7 @@ if (-not $community) {
 } else {
   $age = [int]((Get-Date) - $community.LastWriteTime).TotalDays
   if ($age -gt $MaxAgeDays) {
-    $problems += "Community backup is $age days old ($($community.Name)). The monthly task may not be running."
+    $problems += "Community backup is $age days old ($($community.Name)). " + (Get-TaskVerdict -Name $TaskName)
   }
   # A dump that failed after creating the file leaves it tiny.
   if ($community.Length -lt 10KB) {
