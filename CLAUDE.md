@@ -141,7 +141,7 @@ npm run types:gen
 | [docs/architecture.md](docs/architecture.md) | libraries, barcode scanning, dialogs, styling, test setup |
 | [docs/worktrees-and-branches.md](docs/worktrees-and-branches.md) | worktrees, branch cleanup |
 | [docs/world-map.md](docs/world-map.md) | `MapboxWorldMap.tsx` (zoom, atmosphere, popup names) |
-| [docs/feed-photos.md](docs/feed-photos.md) | photo upload, thumbnails, `FeedImage`, the backfill script |
+| [docs/feed-photos.md](docs/feed-photos.md) | photo upload, thumbnails, `FeedImage`, the backfill and prune scripts |
 | [docs/browser-tests.md](docs/browser-tests.md) | `e2e/`, `e2e-live/`, the backend stub |
 | [docs/ci-workflows.md](docs/ci-workflows.md) | any file in `.github/workflows/` |
 | [docs/merging-and-protection.md](docs/merging-and-protection.md) | auto-merge, owned paths, rulesets |
