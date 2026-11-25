@@ -121,5 +121,4 @@ imports `thumbnailPath` rather than keeping its own copy the way the backfill
 does: drift there costs a redundant thumbnail, drift here deletes a live one.
 
 This reclaims storage and nothing else. Orphans generate no egress, because no
-page asks for them. `useMilkTestForm` has removed the thumbnail alongside the
-photo since then, so this is a backlog to clear once, not a recurring job.
+page asks for them.
