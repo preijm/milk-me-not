@@ -117,6 +117,10 @@
   color: "d93f0b"
   description: "The live site or the pipeline needs a look; opened automatically"
 
+- name: "database"
+  color: "1d76db"
+  description: "A merged migration or Edge Function is not applied in production yet; opened automatically"
+
 - name: "reviewed"
   color: "0e8a16"
   description: "Owned paths in this PR have been read; it may merge"
