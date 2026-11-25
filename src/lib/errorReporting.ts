@@ -54,11 +54,19 @@ const load = async () => {
           // Supabase ones carry user ids and filters in their query strings.
           // The stack trace and component stack are what a fix needs.
           maxBreadcrumbs: 0,
-          // Belt and braces with `urlQueryParams: false` below: whatever the
+          // Belt and braces with `dataCollection` below: whatever the
           // SDK decides, the page address leaves without its query or hash,
           // because /privacy promises exactly that.
+          // The same for headers and the user: whatever the SDK attaches by
+          // default (Referer can be another site's full address), only the
+          // User-Agent leaves, and no user object — so no IP either.
           beforeSend: (event) => {
             if (event.request?.url) event.request.url = event.request.url.split(/[?#]/)[0];
+            if (event.request?.headers) {
+              const ua = Object.entries(event.request.headers).find(([k]) => k.toLowerCase() === "user-agent");
+              event.request.headers = ua ? { [ua[0]]: ua[1] } : {};
+            }
+            delete event.user;
             return event;
           },
           // Errors only. Performance tracing on a site this size is a lot of
@@ -87,9 +95,10 @@ const load = async () => {
           },
           // No session replay and no tracing integration are added, and the
           // browser SDK adds neither by default. No IP address is sent:
-          // `userInfo: false` stops the SDK asking Sentry to infer one, and
-          // the project's "Prevent Storing of IP Addresses" setting drops it
-          // server-side as well.
+          // `userInfo: false` and the `delete event.user` above stop the SDK
+          // asking Sentry to infer one, and the project's "Prevent Storing
+          // of IP Addresses" setting (switched on in the Sentry dashboard)
+          // drops it server-side as well.
         });
         client = sentry;
         return sentry;
