@@ -88,4 +88,38 @@ original under `backup/` (gitignored — other people's photos) before touching
 it. The feed needs nothing from that flag; it only reclaims storage and speeds
 up the enlarge dialog. `--dry-run` and `--limit=N` are there to look first.
 
+## The uploads that never became a rating
+`scripts/prune-orphan-photos.ts` removes photos no `milk_tests` row points at.
+The file is written before the row is inserted, so an abandoned submit leaves a
+3MB photo nothing will ever request — eight of them from July 2025, two pairs
+byte-identical and ten seconds apart, which is a double-tap on a slow insert.
 
+```bash
+SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/prune-orphan-photos.ts
+```
+
+**A dry run is the default here, unlike the backfill.** The worst a missing
+thumbnail costs is a slow feed; the worst a wrong deletion costs is somebody
+else's photo. `--delete` is the second step, and each removal is downloaded to
+`backup/` first.
+
+Three refusals, each for a way the obvious version of this script deletes
+something it should not:
+
+- **Nothing younger than seven days** (`--min-age-days`). Between the upload
+  and the insert there is a real window where a photo being posted right now is
+  referenced by nothing.
+- **Nothing at all if the table read comes back empty**, which would otherwise
+  mark the whole bucket an orphan.
+- **Not more than a quarter of the bucket** without `--force`, which is what a
+  half-working read looks like when every other check still passes.
+
+It reads `milk_tests` directly rather than through `get_all_milk_tests`,
+because that function filters `is_hidden_from_feed = false` — a hidden rating's
+photo is not an orphan, and only the service role sees the row saying so. It
+imports `thumbnailPath` rather than keeping its own copy the way the backfill
+does: drift there costs a redundant thumbnail, drift here deletes a live one.
+
+This reclaims storage and nothing else. Orphans generate no egress, because no
+page asks for them. `useMilkTestForm` has removed the thumbnail alongside the
+photo since then, so this is a backlog to clear once, not a recurring job.
