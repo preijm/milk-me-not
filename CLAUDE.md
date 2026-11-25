@@ -144,6 +144,7 @@ npm run types:gen
 | [docs/feed-photos.md](docs/feed-photos.md) | photo upload, thumbnails, `FeedImage`, the backfill and prune scripts |
 | [docs/browser-tests.md](docs/browser-tests.md) | `e2e/`, `e2e-live/`, the backend stub |
 | [docs/ci-workflows.md](docs/ci-workflows.md) | any file in `.github/workflows/` |
+| [Pipeline overview](https://claude.ai/artifact/TfdN6vrUXVtTKSt5hBvhG1) (plain-language claude.ai artifact; update it too) | checks, owned paths, watchers, deploy, the manual database push |
 | [docs/merging-and-protection.md](docs/merging-and-protection.md) | auto-merge, owned paths, rulesets |
 | [docs/lockfile.md](docs/lockfile.md) | the lockfile job or its GitHub App |
 | [docs/deployment.md](docs/deployment.md) | Cloudflare deploy, `version.json`, the update banner |
