@@ -3,8 +3,9 @@
 _Moved out of CLAUDE.md on 2026-11-24 so it is read only when needed._
 
 ## Backups, because the Free plan has none
-`scripts/backup-supabase.ps1` runs monthly through Task Scheduler, registered
-by `scripts/register-backup-task.ps1`. Two dumps, deliberately kept apart:
+`scripts/backup-supabase.ps1` runs weekly (Mondays 12:00) through Task
+Scheduler, registered by `scripts/register-backup-task.ps1`. It was monthly
+until 25 Nov 2026; a week is now the most rating data that can be lost. Two dumps, deliberately kept apart:
 
 - **community** — public schema only, no auth, no password hashes, no
   addresses. Goes to OneDrive, so it survives the laptop.
@@ -16,18 +17,44 @@ The irreplaceable half is the community data. Accounts can be recreated; other
 people's ratings cannot.
 
 The task runs only while signed in — storing a Windows password with it is not
-a trade worth making — so `backup.log` beside the full dump is what tells you
-it is still firing.
+a trade worth making — so `backup.log` beside the full dump records each run.
+
+**Changing the schedule or the scripts' location needs a re-register.** Task
+Scheduler stores the command line, not the script, so after pulling a change to
+the schedule run `scripts/register-backup-task.ps1` once from the **main
+checkout** (never a worktree: the path it registers must outlive the session).
+It removes the old monthly task if it is still there.
+
+### The heartbeat, so a silent stop is noticed
+Everything above lives on the laptop, so a laptop that is off, signed out or
+gone stops the backup *and* the thing watching it, and nobody hears. So after
+the community dump succeeds the script sets the repository variable
+`LAST_BACKUP_AT` (UTC, ISO 8601) with `gh variable set` — `gh` is already
+signed in here, and the variable holds a timestamp and nothing else, so no
+database credential goes anywhere near CI.
+
+`.github/workflows/backup-heartbeat.yml` reads it daily and opens an issue
+labelled `backup` when it is missing or older than ten days, and closes it once
+a fresh one appears. See `ci-workflows.md`.
+
+Recording the heartbeat never fails the backup. If `gh` is missing or signed
+out, the log gets a `WARN  Heartbeat not recorded: ...` line and the run still
+finishes; the GitHub issue then fires even though the dump is fine, and that
+line is what tells the two apart. `gh auth status` fixes it.
+
+Check it by hand with `gh variable get LAST_BACKUP_AT`.
 
 Retention is asymmetric, and deliberately so: `-KeepCommunity` holds twelve
-months, `-KeepFull` holds three. A year of ratings is the thing worth having a
+months (52 weekly dumps), `-KeepFull` holds three (13). A year of ratings is the thing worth having a
 year of, while an old full dump is a year-old credential store carrying bcrypt
 hashes and refresh tokens that recover nothing the newest one cannot. Pruning
-runs only after a dump succeeds, so a failed month never deletes the copy it
-failed to replace.
+runs only after a dump succeeds, so a failed week never deletes the copy it
+failed to replace. The counts were 12 and 3 while the backup was monthly; a
+schedule change has to change them with it.
 
-`check-backup-health.ps1` reads that log weekly and interrupts you when
-something is wrong. It asks Task Scheduler what the task actually did rather
+`check-backup-health.ps1` reads that log weekly, half an hour after the
+backup, and interrupts you when something is wrong; past ten days without a
+dump counts as stale, the same threshold as the GitHub watcher. It asks Task Scheduler what the task actually did rather
 than inferring it from the age of a dump: "may not be running" used to be
 appended to every stale-backup warning, and on 23 Nov 2026 it was wrong —
 the task had fired on 1 Oct and 1 Nov exactly on time and failed both times.

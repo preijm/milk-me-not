@@ -22,6 +22,13 @@
   checked before anything is dumped, so a failure says why rather than leaving
   a zero-byte file behind.
 
+  Once the community dump is written, it records a heartbeat: the repository
+  variable LAST_BACKUP_AT, set with the gh CLI that is already signed in on
+  this laptop. backup-heartbeat.yml reads it daily and opens an issue when it
+  goes stale, which is what makes a backup that silently stopped running
+  visible from outside this machine. Failing to record it is logged as a
+  warning and never fails the backup.
+
 .NOTES
   Register it with scripts/register-backup-task.ps1. Run it by hand any time.
 #>
@@ -32,12 +39,13 @@ param(
   [string]$CommunityDir = "$env:OneDrive\Projects\Milk Me Not\Backups",
   # Where the sensitive dump goes. Deliberately not a synced folder.
   [string]$FullDir      = "$env:USERPROFILE\Backups\milk-me-not",
-  # Monthly, so twelve is a year of the half worth keeping a year of.
-  [int]$KeepCommunity   = 12,
+  # Weekly, so fifty-two is a year of the half worth keeping a year of.
+  [int]$KeepCommunity   = 52,
   # The full dump is a credential store: bcrypt hashes and live refresh tokens.
   # An old one carries no recovery value the newest does not, so it keeps a
-  # short tail rather than a year. Shrinking this deletes nothing you can miss.
-  [int]$KeepFull        = 3,
+  # short tail rather than a year: thirteen weeks is three months. Shrinking
+  # this deletes nothing you can miss.
+  [int]$KeepFull        = 13,
   # Skip the sensitive dump if you only want the community data.
   [switch]$CommunityOnly
 )
@@ -47,6 +55,9 @@ $repo    = Split-Path -Parent $PSScriptRoot
 $logFile = Join-Path $FullDir "backup.log"
 $stamp   = Get-Date -Format "yyyyMMdd"
 $cli     = "supabase@2.115.0"
+# Where the heartbeat goes. Named rather than inferred from the git remote, so
+# a checkout with an odd remote cannot quietly write it somewhere else.
+$heartbeatRepo = "preijm/milk-me-not"
 
 function Write-Log {
   param([string]$Message, [string]$Level = "INFO")
@@ -125,6 +136,44 @@ function Invoke-Dump {
   Write-Log ("{0}: {1} ({2:N0} KB)" -f $What, (Split-Path $Path -Leaf), ($size / 1KB))
 }
 
+function Set-Heartbeat {
+  # Tells GitHub a community dump just landed, so backup-heartbeat.yml can
+  # notice when they stop. A repository variable rather than a file or a
+  # commit: Actions reads it as ${{ vars.LAST_BACKUP_AT }} with no token and no
+  # new secret, and gh is already signed in here.
+  #
+  # Nothing in here may fail the backup. The dump is on disk whether or not
+  # GitHub heard about it, so every failure is a WARN in the log and the
+  # watcher's issue tells you to look for that line.
+  #
+  # ErrorActionPreference is shadowed for the same reason as Test-DockerReady:
+  # under "Stop", gh's stderr becomes a terminating error the moment anything
+  # redirects it. Nothing is redirected here, but the catch is the backstop.
+  $ErrorActionPreference = "Continue"
+  try {
+    $gh = (Get-Command gh -ErrorAction SilentlyContinue).Source
+    # A scheduled task does not always get the PATH an interactive shell has.
+    if (-not $gh -and (Test-Path "$env:ProgramFiles\GitHub CLI\gh.exe")) {
+      $gh = "$env:ProgramFiles\GitHub CLI\gh.exe"
+    }
+    if (-not $gh) {
+      Write-Log "Heartbeat not recorded: gh CLI not found. The backup itself succeeded." "WARN"
+      return
+    }
+
+    $now = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+    & $gh variable set LAST_BACKUP_AT --repo $heartbeatRepo --body $now | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      Write-Log "Heartbeat not recorded: gh exited $LASTEXITCODE (run 'gh auth status'). The backup itself succeeded." "WARN"
+      return
+    }
+    Write-Log "Heartbeat recorded: LAST_BACKUP_AT = $now."
+  }
+  catch {
+    Write-Log "Heartbeat not recorded: $($_.Exception.Message) The backup itself succeeded." "WARN"
+  }
+}
+
 function Remove-OldBackups {
   param([string]$Dir, [string]$Pattern, [int]$Keep)
   # Ordered by write time, not by the date in the name: a run that happens late
@@ -150,6 +199,11 @@ try {
   Invoke-Dump -Path (Join-Path $CommunityDir "community-data-$stamp.sql") `
               -ExtraArgs @("--data-only", "--schema", "public") `
               -What "Community data"
+
+  # Straight after the community dump, not at the end: that is the half worth
+  # watching from outside. A full dump failing after this still exits 1 and is
+  # caught by check-backup-health.ps1 reading this log.
+  Set-Heartbeat
 
   if (-not $CommunityOnly) {
     Invoke-Dump -Path (Join-Path $FullDir "full-data-$stamp.sql") `

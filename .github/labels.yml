@@ -121,6 +121,10 @@
   color: "1d76db"
   description: "A merged migration or Edge Function is not applied in production yet; opened automatically"
 
+- name: "backup"
+  color: "006b75"
+  description: "No database backup has reported in for too long; opened automatically"
+
 - name: "reviewed"
   color: "0e8a16"
   description: "Owned paths in this PR have been read; it may merge"

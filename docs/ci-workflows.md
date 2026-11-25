@@ -9,7 +9,7 @@ database push), update that page too: it is a claude.ai artifact, editable from
 any Claude session by passing its URL.
 
 ## Workflows (`.github/workflows/`)
-Ten, not one:
+Eleven, not one:
 
 - **`ci.yml`** — three sequential stages, **Lint + Type Check → Test → Build**, on
   every PR and push to main. Uses Bun. Cancels in-progress runs on new push.
@@ -44,7 +44,7 @@ Ten, not one:
   it later, and a push to main from `GITHUB_TOKEN` starts no workflows — so the
   built-in token could land a merge that never deploys.
 - **`alert-on-failure.yml`** — opens an issue when CI, Deploy, CodeQL,
-  Release, Health check or Database reminder fails **on main**. GitHub sends run notifications
+  Release, Health check, Database reminder or Backup heartbeat fails **on main**. GitHub sends run notifications
   to whoever triggered the run, and auto-merge lands pull requests through
   the app, so a
   failed deploy emails `milkmenot-lockfile[bot]` and nobody else. An issue
@@ -134,6 +134,29 @@ Ten, not one:
   The `database` label lives in `.github/labels.yml` like the others:
   `sync-labels` deletes any label not in that file, and `gh issue create`
   fails on a label that does not exist.
+- **`backup-heartbeat.yml`** — daily, a dead-man's switch for the database
+  backup. `scripts/backup-supabase.ps1` runs weekly from the laptop and, after
+  each community dump, sets the repository variable `LAST_BACKUP_AT` with
+  `gh variable set`. This reads `${{ vars.LAST_BACKUP_AT }}`; when it is
+  missing, unreadable or older than ten days (`MAX_AGE_DAYS`), it opens an
+  issue labelled `backup`, assigned to `preijm`, saying when the last backup
+  ran and how to run one by hand. The first run that finds a fresh heartbeat
+  closes it. See `backups.md`.
+
+  It exists because the laptop's own check (`check-backup-health.ps1`) dies
+  with the laptop: off, signed out or lost, the backup and its watcher stop
+  together and say nothing. A timestamp in a repository variable carries no
+  credential, and reading it needs no token, so no database secret enters CI.
+
+  One open issue, found by label and exact title (not search, as under
+  `health-check.yml`). While it stays stale it is left alone rather than
+  commented on daily. It does **not** exit 1 when stale — the issue is the
+  signal — so a red run means the watcher broke, and `alert-on-failure.yml`
+  reports that. A concurrency group stops a dispatch beside the schedule from
+  filing twice.
+
+  The variable is read when the run starts, so a backup made a minute after a
+  run began is seen by the next one.
 - **`owned-paths.yml`** — holds pull requests that touch `/supabase/`,
   `/.github/` or `/public/_headers` until they carry the `reviewed` label; see
   `merging-and-protection.md`.
