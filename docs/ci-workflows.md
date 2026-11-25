@@ -2,6 +2,12 @@
 
 _Moved out of CLAUDE.md on 2026-11-24 so it is read only when needed._
 
+Plain-language overview of how a change reaches the site (for non-technical
+readers): [Milk Me Not Pipeline](https://claude.ai/artifact/TfdN6vrUXVtTKSt5hBvhG1).
+When the pipeline changes (checks, owned paths, watchers, deploy, the manual
+database push), update that page too: it is a claude.ai artifact, editable from
+any Claude session by passing its URL.
+
 ## Workflows (`.github/workflows/`)
 Eight, not one:
 
