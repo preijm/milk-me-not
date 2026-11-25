@@ -9,7 +9,7 @@ database push), update that page too: it is a claude.ai artifact, editable from
 any Claude session by passing its URL.
 
 ## Workflows (`.github/workflows/`)
-Nine, not one:
+Ten, not one:
 
 - **`ci.yml`** — three sequential stages, **Lint + Type Check → Test → Build**, on
   every PR and push to main. Uses Bun. Cancels in-progress runs on new push.
@@ -134,6 +134,9 @@ Nine, not one:
   The `database` label lives in `.github/labels.yml` like the others:
   `sync-labels` deletes any label not in that file, and `gh issue create`
   fails on a label that does not exist.
+- **`owned-paths.yml`** — holds pull requests that touch `/supabase/`,
+  `/.github/` or `/public/_headers` until they carry the `reviewed` label; see
+  `merging-and-protection.md`.
 - **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
   main that touches that file, so editing it is what deploys it. It runs
   `delete-other-labels: true`: a label removed from the file is removed from
