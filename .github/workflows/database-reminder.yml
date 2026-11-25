@@ -1,0 +1,158 @@
+# Say so when a database change lands on main, because nothing applies it.
+#
+# `deploy.yml` ships the website on every push to main. It does not touch the
+# database or the Edge Functions: a migration or a function merges like any
+# other change and then sits there, unapplied, until somebody remembers to run
+# `supabase db push` or `supabase functions deploy` by hand.
+#
+# That is how barcode scanning shipped broken. `ScanFlow.tsx` called
+# `get_product_by_barcode` for weeks while the function did not exist in
+# production, and the call failed softly, so nothing looked wrong. The website
+# was current; the database behind it was not.
+#
+# This does not apply anything. Applying a migration is a deliberate step
+# against real data, and doing it from CI would need a production credential
+# here. It opens an issue instead, which persists until someone closes it and
+# says exactly what to run.
+#
+# One open issue at a time: a second database change before the first is
+# applied is a comment on the same issue, not a new one. It does not close
+# itself — nothing without a production credential can read what production
+# has applied — so it is closed by hand once `migration list --linked` shows
+# local and remote matching.
+
+name: Database reminder
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/functions/**"
+
+# Two pull requests with migrations merging minutes apart would otherwise each
+# find no open issue and each open one.
+concurrency:
+  group: database-reminder
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  remind:
+    name: Open or update the database issue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Say what needs applying
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+          HEAD_MESSAGE: ${{ github.event.head_commit.message }}
+          COMPARE_URL: ${{ github.event.compare }}
+        run: |
+          set -euo pipefail
+
+          # Every file the push changed, with its status. A squash-merge makes
+          # this one commit; the compare covers a push of several just as well.
+          # With no `before` (a branch created by the push) fall back to the
+          # head commit on its own.
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            CHANGED=$(gh api "repos/$REPO/commits/$AFTER" \
+              --jq '.files[] | "\(.status) \(.filename)"')
+          else
+            CHANGED=$(gh api "repos/$REPO/compare/$BEFORE...$AFTER" \
+              --jq '.files[] | "\(.status) \(.filename)"')
+          fi
+
+          MIGRATIONS=$(printf '%s\n' "$CHANGED" | awk '$2 ~ /^supabase\/migrations\// { print $2 " (" $1 ")" }')
+          FUNCTION_FILES=$(printf '%s\n' "$CHANGED" | awk '$2 ~ /^supabase\/functions\// { print $2 " (" $1 ")" }')
+
+          # Function names are the directory under supabase/functions/. One
+          # whose index.ts was removed is gone, and needs deleting rather than
+          # deploying. A directory starting with `_` is shared code, which
+          # every function bundles, so it means deploying all of them.
+          DEPLOY=""; DELETE=""; SHARED=false
+          while read -r STATUS FILE; do
+            [ -n "${FILE:-}" ] || continue
+            case "$FILE" in supabase/functions/*) ;; *) continue ;; esac
+            NAME=$(printf '%s' "$FILE" | cut -d/ -f3)
+            case "$NAME" in
+              _*) SHARED=true ;;
+              *)
+                if [ "$STATUS" = "removed" ] && [ "$FILE" = "supabase/functions/$NAME/index.ts" ]; then
+                  DELETE="$DELETE $NAME"
+                else
+                  DEPLOY="$DEPLOY $NAME"
+                fi
+                ;;
+            esac
+          done <<< "$CHANGED"
+          DEPLOY=$(printf '%s\n' $DEPLOY | sort -u | tr '\n' ' ')
+          DELETE=$(printf '%s\n' $DELETE | sort -u | tr '\n' ' ')
+
+          if [ -z "$MIGRATIONS" ] && [ -z "$FUNCTION_FILES" ]; then
+            echo "Nothing under supabase/migrations or supabase/functions changed."
+            exit 0
+          fi
+
+          SUBJECT=$(printf '%s' "$HEAD_MESSAGE" | head -n 1)
+          TICK='`'
+          FENCE='```'
+
+          BODY="**${SUBJECT}** landed on ${TICK}main${TICK} (${TICK}${AFTER:0:8}${TICK}, [diff](${COMPARE_URL})). The website is deployed; this part is not."$'\n'
+
+          if [ -n "$MIGRATIONS" ]; then
+            BODY="${BODY}"$'\n'"### Migrations"$'\n'
+            while IFS= read -r LINE; do
+              BODY="${BODY}- ${TICK}${LINE% (*}${TICK} (${LINE##* (}"$'\n'
+            done <<< "$MIGRATIONS"
+            BODY="${BODY}"$'\n'"See what production is missing, then apply it:"$'\n\n'
+            BODY="${BODY}${FENCE}bash"$'\n'"npx supabase migration list --linked"$'\n'"npx supabase db push"$'\n'"${FENCE}"$'\n'
+          fi
+
+          if [ -n "$FUNCTION_FILES" ]; then
+            BODY="${BODY}"$'\n'"### Edge Functions"$'\n'
+            while IFS= read -r LINE; do
+              BODY="${BODY}- ${TICK}${LINE% (*}${TICK} (${LINE##* (}"$'\n'
+            done <<< "$FUNCTION_FILES"
+            BODY="${BODY}"$'\n'"Deploy them (each reads its settings, such as ${TICK}verify_jwt${TICK}, from ${TICK}supabase/config.toml${TICK}):"$'\n\n'"${FENCE}bash"$'\n'
+            if [ "$SHARED" = "true" ]; then
+              BODY="${BODY}# shared code changed, so every function needs redeploying"$'\n'"npx supabase functions deploy"$'\n'
+            else
+              for NAME in $DEPLOY; do
+                BODY="${BODY}npx supabase functions deploy ${NAME}"$'\n'
+              done
+            fi
+            for NAME in $DELETE; do
+              BODY="${BODY}npx supabase functions delete ${NAME}"$'\n'
+            done
+            BODY="${BODY}${FENCE}"$'\n'
+          fi
+
+          BODY="${BODY}"$'\n'"On Windows PowerShell, use ${TICK}npx.cmd${TICK} or ${TICK}bunx${TICK} if ${TICK}npx${TICK} is blocked."
+          BODY="${BODY}"$'\n\n'"Nothing applies these automatically, and this issue does not close itself. Close it once ${TICK}migration list --linked${TICK} shows local and remote matching and the functions are deployed. Until then, further database changes are added here as comments."
+
+          TITLE="Database changes on main are waiting to be applied"
+
+          # Listed by label, not searched: the search API is indexed a moment
+          # behind, and two merges close together would both miss the issue.
+          EXISTING=$(gh issue list --repo "$REPO" --state open --label database \
+            --limit 50 --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")] | .[0].number // empty")
+
+          if [ -n "$EXISTING" ]; then
+            echo "Commenting on #$EXISTING"
+            gh issue comment "$EXISTING" --repo "$REPO" --body "$BODY"
+          else
+            echo "Opening a new issue"
+            gh issue create --repo "$REPO" \
+              --title "$TITLE" \
+              --body "$BODY" \
+              --label database \
+              --assignee preijm
+          fi

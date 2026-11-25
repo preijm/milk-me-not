@@ -24,7 +24,7 @@ name: Alert on failure
 
 on:
   workflow_run:
-    workflows: [CI, Deploy, CodeQL, Release, Health check]
+    workflows: [CI, Deploy, CodeQL, Release, Health check, Database reminder]
     types: [completed]
 
 permissions:

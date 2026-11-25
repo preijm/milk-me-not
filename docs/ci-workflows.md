@@ -9,7 +9,7 @@ database push), update that page too: it is a claude.ai artifact, editable from
 any Claude session by passing its URL.
 
 ## Workflows (`.github/workflows/`)
-Eight, not one:
+Ten, not one:
 
 - **`ci.yml`** — three sequential stages, **Lint + Type Check → Test → Build**, on
   every PR and push to main. Uses Bun. Cancels in-progress runs on new push.
@@ -44,7 +44,7 @@ Eight, not one:
   it later, and a push to main from `GITHUB_TOKEN` starts no workflows — so the
   built-in token could land a merge that never deploys.
 - **`alert-on-failure.yml`** — opens an issue when CI, Deploy, CodeQL,
-  Release or Health check fails **on main**. GitHub sends run notifications
+  Release, Health check or Database reminder fails **on main**. GitHub sends run notifications
   to whoever triggered the run, and auto-merge lands pull requests through
   the app, so a
   failed deploy emails `milkmenot-lockfile[bot]` and nobody else. An issue
@@ -104,6 +104,39 @@ Eight, not one:
   between scheduled runs hides it; the throwaway issue it was tested with did
   not. The same lag made a `gh issue list` immediately after a close report the
   issue as still open, so do not trust either to be fresh.
+- **`database-reminder.yml`** — on a push to main that touches
+  `supabase/migrations/**` or `supabase/functions/**`, opens an issue labelled
+  `database`, assigned to `preijm`, naming the files and giving the exact
+  commands to apply them (`migration list --linked` and `db push` for
+  migrations, `functions deploy <name>` per changed function). Nothing else
+  applies those: `deploy.yml` ships the website only, which is how
+  `ScanFlow.tsx` called a function that did not exist in production for weeks
+  (see `supabase.md`).
+
+  One open issue at a time; a second database change before the first is
+  applied becomes a comment on it. Found by label and exact title, not by
+  search, for the reason under `health-check.yml` below, and it runs in a
+  concurrency group so two merges close together cannot both open one.
+
+  **It does not close itself, and that is deliberate.** Nothing in CI can read
+  what production has applied without a production credential, and none is
+  stored here. Close it by hand once `migration list --linked` shows local and
+  remote matching. Giving CI a credential so a later check can close it is a
+  decision for the maintainer, not a default.
+
+  It derives function names from the directory under `supabase/functions/`. A
+  removed `index.ts` gets `functions delete` instead; a changed directory
+  starting with `_` (shared code) gets a bare `functions deploy`, which
+  deploys every function. `verify_jwt` and friends come from
+  `supabase/config.toml`, which `functions deploy` reads, so the commands carry
+  no flags.
+
+  The `database` label lives in `.github/labels.yml` like the others:
+  `sync-labels` deletes any label not in that file, and `gh issue create`
+  fails on a label that does not exist.
+- **`owned-paths.yml`** — holds pull requests that touch `/supabase/`,
+  `/.github/` or `/public/_headers` until they carry the `reviewed` label; see
+  `merging-and-protection.md`.
 - **`sync-labels.yml`** — applies `.github/labels.yml`. Only fires on a push to
   main that touches that file, so editing it is what deploys it. It runs
   `delete-other-labels: true`: a label removed from the file is removed from

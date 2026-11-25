@@ -126,4 +126,9 @@ That gap is also how barcode scanning shipped broken: `ScanFlow.tsx` called
 production. The call failed softly, so nothing looked wrong. Check this after
 merging anything with a migration in it.
 
+A merge that touches `supabase/migrations/` or `supabase/functions/` now opens
+a `database` issue with the exact commands to run
+(`.github/workflows/database-reminder.yml`). It does not apply anything and
+does not close itself: close it once `migration list --linked` matches.
+
 
