@@ -92,6 +92,11 @@ npm run types:gen
   publishable key (`sb_publishable_…`) in
   `src/integrations/supabase/client.ts` is public on purpose and grants only
   `anon`; a `service_role` or `sb_secret_…` key must never be committed.
+- **An Edge Function called while signed out needs `verify_jwt = false`.** The
+  publishable key goes in `apikey` only and is never sent as a Bearer token, so
+  a signed-out `functions.invoke` arrives with no JWT at all — the legacy anon
+  JWT used to satisfy the gate by accident. `check-rate-limit` is already
+  exempt; `mfa-recover` keeps the gate because it only runs with a session.
 - **Do not edit** `src/integrations/supabase/types.ts` (generated) or
   `supabase/migrations/00000000000000_baseline.sql` (generated; the two files
   beside it are hand-written and must survive any regeneration).
