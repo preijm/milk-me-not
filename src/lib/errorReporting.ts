@@ -20,9 +20,33 @@
  * has to sit above the react rule — `@sentry/react` contains "react".
  */
 
+import type { ErrorEvent as SentryEvent } from "@sentry/react";
 import { BUILD_ID } from "./deployedBuild";
 
 type Extra = Record<string, unknown>;
+
+/**
+ * The last word on what leaves the browser, applied to every event.
+ *
+ * Belt and braces with `dataCollection` below, because /privacy promises
+ * exactly this whatever the SDK decides by default:
+ * - the page address without its query or hash;
+ * - only the User-Agent header (Referer can be another site's full address);
+ * - a placeholder IP. With no IP on the event, Sentry falls back to the
+ *   address the report arrived from and looks up a city for it — even with
+ *   the SDK's `infer_ip: "never"` and the project's IP scrubbing on. That was
+ *   tested against Sentry on 26 November 2026: no user and `ip_address: null`
+ *   both came back located to the city; "0.0.0.0" came back with no location.
+ */
+export const scrubEvent = <E extends SentryEvent>(event: E): E => {
+  if (event.request?.url) event.request.url = event.request.url.split(/[?#]/)[0];
+  if (event.request?.headers) {
+    const ua = Object.entries(event.request.headers).find(([k]) => k.toLowerCase() === "user-agent");
+    event.request.headers = ua ? { [ua[0]]: ua[1] } : {};
+  }
+  event.user = { ip_address: "0.0.0.0" };
+  return event;
+};
 
 /** Resolved once, so a missing DSN costs one truthiness check per report. */
 const dsn = import.meta.env.VITE_SENTRY_DSN as string | undefined;
@@ -54,21 +78,7 @@ const load = async () => {
           // Supabase ones carry user ids and filters in their query strings.
           // The stack trace and component stack are what a fix needs.
           maxBreadcrumbs: 0,
-          // Belt and braces with `dataCollection` below: whatever the
-          // SDK decides, the page address leaves without its query or hash,
-          // because /privacy promises exactly that.
-          // The same for headers and the user: whatever the SDK attaches by
-          // default (Referer can be another site's full address), only the
-          // User-Agent leaves, and no user object — so no IP either.
-          beforeSend: (event) => {
-            if (event.request?.url) event.request.url = event.request.url.split(/[?#]/)[0];
-            if (event.request?.headers) {
-              const ua = Object.entries(event.request.headers).find(([k]) => k.toLowerCase() === "user-agent");
-              event.request.headers = ua ? { [ua[0]]: ua[1] } : {};
-            }
-            delete event.user;
-            return event;
-          },
+          beforeSend: scrubEvent,
           // Errors only. Performance tracing on a site this size is a lot of
           // requests to answer a question nobody is asking.
           tracesSampleRate: 0,
@@ -95,10 +105,10 @@ const load = async () => {
           },
           // No session replay and no tracing integration are added, and the
           // browser SDK adds neither by default. No IP address is sent:
-          // `userInfo: false` and the `delete event.user` above stop the SDK
-          // asking Sentry to infer one, and the project's "Prevent Storing
-          // of IP Addresses" setting (switched on in the Sentry dashboard)
-          // drops it server-side as well.
+          // `userInfo: false` and the placeholder in `scrubEvent` keep
+          // Sentry from using the connection's address, and the project's
+          // "Prevent Storing of IP Addresses" setting (switched on in the
+          // Sentry dashboard) drops the placeholder as well.
         });
         client = sentry;
         return sentry;

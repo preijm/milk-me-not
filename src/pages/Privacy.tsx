@@ -13,7 +13,7 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
   </section>
 );
 
-const LAST_UPDATED = "25 November 2026";
+const LAST_UPDATED = "26 November 2026";
 
 /**
  * The one legal-ish page on the site, and deliberately plain next to the rest
@@ -91,7 +91,7 @@ const Privacy = () => (
           <strong className="text-story-ink">When something breaks:</strong> if a page throws an error, a report
           is sent to our error-tracking tool, Sentry: the error message, a stack trace, the page address without
           anything after the question mark, and your browser and device type, so we can find and fix it. It is
-          configured to skip everything else it could collect: no IP address, no cookies, no session recording,
+          configured to skip everything else it could collect: no IP address or location, no cookies, no session recording,
           nothing you typed and nothing about who you are.
         </p>
         <p>
