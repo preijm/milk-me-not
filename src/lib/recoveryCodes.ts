@@ -34,13 +34,21 @@ export const clearRecoveryCodes = async (): Promise<void> => {
   await rpc("clear_mfa_recovery_codes");
 };
 
+export type RedeemResult = "ok" | "invalid" | "limited";
+
 /**
- * Uses a code to remove the authenticator from this account. On success the
+ * Uses a code to remove the authenticator from this account. On "ok" the
  * reader is still signed in with their password, and two-step sign-in is off.
+ * "limited" means too many wrong codes in the last hour (the function's 429);
+ * anything else that goes wrong reads as "invalid".
  */
-export const redeemRecoveryCode = async (code: string): Promise<boolean> => {
+export const redeemRecoveryCode = async (code: string): Promise<RedeemResult> => {
   const { error } = await supabase.functions.invoke("mfa-recover", { body: { code } });
-  if (error) return false;
+  if (error) {
+    // A non-2xx reply is a FunctionsHttpError whose context is the Response.
+    const status = (error as { context?: { status?: unknown } }).context?.status;
+    return status === 429 ? "limited" : "invalid";
+  }
   await supabase.auth.refreshSession();
-  return true;
+  return "ok";
 };

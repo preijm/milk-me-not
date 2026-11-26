@@ -154,3 +154,10 @@ from Supabase Vault, which its migration generates inside the database. Vault
 stays out of `db dump` and is ciphertext in a raw `pg_dump`, so a leaked
 `mfa_recovery_codes` table cannot be cracked offline. Never rotate or delete
 that secret casually: every recovery code dies with it.
+
+## Recovery attempts are limited
+`mfa-recover` calls `redeem_mfa_recovery_code`, which allows five wrong codes
+per account per rolling hour (`mfa_recovery_failures`) and answers 429 after
+that, even to a right code. The `check-rate-limit` Edge Function is a different
+thing and does nothing today: the `check_rate_limit` SQL function it calls was
+never created, so it fails open.

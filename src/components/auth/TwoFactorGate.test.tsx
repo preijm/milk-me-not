@@ -26,7 +26,7 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
-const redeem = vi.hoisted(() => vi.fn(async (_code: string) => true));
+const redeem = vi.hoisted(() => vi.fn(async (_code: string): Promise<"ok" | "invalid" | "limited"> => "ok"));
 const refreshAuth = vi.hoisted(() => vi.fn(async () => {}));
 
 vi.mock("@/lib/recoveryCodes", () => ({ redeemRecoveryCode: redeem }));
@@ -78,6 +78,27 @@ describe("TwoFactorGate", () => {
     fireEvent.click(screen.getByRole("button", { name: /continue/i }));
     await waitFor(() => expect(refreshAuth).toHaveBeenCalled());
     expect(redeem).toHaveBeenCalledWith("a1b2-c3d4-e5f6");
+  });
+
+  it("says so when a recovery code is wrong", async () => {
+    state.aal = { currentLevel: "aal1", nextLevel: "aal2" };
+    redeem.mockResolvedValueOnce("invalid");
+    renderGate();
+    fireEvent.click(await screen.findByRole("button", { name: /lost your phone/i }));
+    fireEvent.change(screen.getByLabelText(/recovery code/i), { target: { value: "ffff-ffff-ffff" } });
+    fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+    expect(await screen.findByText(/didn't work, or has already been used/i)).toBeInTheDocument();
+  });
+
+  it("tells a caller who hit the attempt limit to wait", async () => {
+    state.aal = { currentLevel: "aal1", nextLevel: "aal2" };
+    redeem.mockResolvedValueOnce("limited");
+    renderGate();
+    fireEvent.click(await screen.findByRole("button", { name: /lost your phone/i }));
+    fireEvent.change(screen.getByLabelText(/recovery code/i), { target: { value: "a1b2-c3d4-e5f6" } });
+    fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+    expect(await screen.findByText(/too many attempts/i)).toBeInTheDocument();
+    expect(screen.queryByText(/didn't work/i)).not.toBeInTheDocument();
   });
 
   it("lets through visitors who are not signed in", () => {
