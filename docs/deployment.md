@@ -56,3 +56,25 @@ On a native build this is a no-op by construction: Capacitor serves the bundled
 `version.json`, so it always matches and updates stay the APK's business.
 
 
+
+
+## The service worker exists only to make the site installable
+`public/sw.js` lets phones install milkmenot.com as an app (the banner is
+`src/components/install/InstallBanner.tsx`). It caches nothing and passes page
+loads straight to the network, so it cannot serve an old build or interfere with
+`version.json` above. It is registered only in production builds and never inside
+the Capacitor shell.
+
+### Removing the service worker
+Do **not** simply delete `public/sw.js`. Phones that already have it keep it:
+the browser checks `/sw.js` for updates, the assets Worker answers that missing
+path with `index.html`, the update fails on its MIME type, and the old worker
+stays installed. Instead, replace the file's contents with a worker that removes
+itself, and drop the `registerServiceWorker` call from `src/main.tsx`:
+
+```js
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", () => self.registration.unregister());
+```
+
+Keep that file deployed for a few months before deleting it.

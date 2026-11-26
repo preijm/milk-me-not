@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   DISMISS_KEY,
   installMode,
@@ -104,5 +104,17 @@ describe("dismissal storage", () => {
 
   it("does not throw when storage refuses the write", () => {
     expect(() => rememberDismissal(throwing)).not.toThrow();
+  });
+
+  it("survives a browser that blocks site data, where even reading localStorage throws", () => {
+    const spy = vi.spyOn(window, "localStorage", "get").mockImplementation(() => {
+      throw new DOMException("The operation is insecure.", "SecurityError");
+    });
+    try {
+      expect(isDismissed()).toBe(false);
+      expect(() => rememberDismissal()).not.toThrow();
+    } finally {
+      spy.mockRestore();
+    }
   });
 });

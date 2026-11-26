@@ -54,9 +54,12 @@ export function installMode(env: InstallEnv): InstallMode {
   return null;
 }
 
-export function isDismissed(storage: Storage = localStorage): boolean {
+// `storage` is resolved inside the try, never as a parameter default: with site
+// data blocked, merely reading `window.localStorage` throws, and a default
+// would throw before the try ever ran -- taking the whole page down on mount.
+export function isDismissed(storage?: Storage): boolean {
   try {
-    return storage.getItem(DISMISS_KEY) === "1";
+    return (storage ?? window.localStorage).getItem(DISMISS_KEY) === "1";
   } catch {
     // Private mode can refuse storage outright. Showing the banner again is
     // a far smaller harm than crashing the page over it.
@@ -64,9 +67,9 @@ export function isDismissed(storage: Storage = localStorage): boolean {
   }
 }
 
-export function rememberDismissal(storage: Storage = localStorage): void {
+export function rememberDismissal(storage?: Storage): void {
   try {
-    storage.setItem(DISMISS_KEY, "1");
+    (storage ?? window.localStorage).setItem(DISMISS_KEY, "1");
   } catch {
     // Nothing to do: the banner still hides for this page view.
   }
