@@ -204,6 +204,24 @@ export type Database = {
         }
         Relationships: []
       }
+      mfa_recovery_failures: {
+        Row: {
+          failed_at: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          failed_at?: string
+          id?: never
+          user_id: string
+        }
+        Update: {
+          failed_at?: string
+          id?: never
+          user_id?: string
+        }
+        Relationships: []
+      }
       milk_tests: {
         Row: {
           country_code: string | null
@@ -959,6 +977,10 @@ export type Database = {
         Returns: undefined
       }
       mfa_recovery_codes_remaining: { Args: never; Returns: number }
+      redeem_mfa_recovery_code: {
+        Args: { p_code: string; p_user_id: string }
+        Returns: string
+      }
       remember_product_barcode: {
         Args: { _barcode: string; _product_id: string }
         Returns: undefined

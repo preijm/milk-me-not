@@ -47,11 +47,37 @@ imports them.
 `@zxing/library@^0.22.0` against the pinned ^0.23.0, which npm refuses to
 resolve — that is what broke the first Cloudflare deploy.
 
-There is still no `barcode` column on `products`, so a scanned number cannot
-pinpoint a row. It is resolved through Open Food Facts
-(`src/lib/openFoodFacts.ts`) and then matched on brand, which is fuzzy by
-nature — retail names and board names rarely line up. `ScanFlow.tsx` documents
-that limitation where it bites.
+## How a scan finds its product
+A barcode the board has seen before is exact. `product_barcodes` maps it to a
+product — a table of its own rather than a column on `products`, because a
+barcode is a fact about a package — and `get_product_by_barcode` sends the
+reader straight there.
+
+A barcode it has not seen is the fuzzy case. The number goes to Open Food
+Facts (`src/lib/openFoodFacts.ts`), and the brand it returns searches the
+board. Retail names and board names rarely line up — OFF calls a carton
+"OAT-LY! iKAFFE BARISTA EDITION" where the board says "Oat" by "Oatly!" — so
+`suggestFromScan` reads the milk base, flavours and properties out of OFF's
+category tags instead, in the board's own keys, and `rankScanMatches` puts the
+rows that agree with them first. Only eight fit the dialog; an Alpro search
+returns 27.
+
+**The reader's tap is what teaches the board.** Every way out of the scan that
+ends on a product records the barcode against it: picking a row, the one-tap
+add (`createScannedProduct.ts`), and saving the full form at `/add-product`,
+which reads the scan from router state — including when that save turns out to
+be a duplicate of an existing product. A path that skips this is a scan the
+board learns nothing from; that is how the table held one row for three months.
+
+**First write wins, so the dialog always asks.** `remember_product_barcode`
+ignores a barcode it already knows, so a later scanner cannot quietly move one
+— and a wrong one stays wrong. That is why a brand search with a single result
+still shows it as a question with a "Not here?" way out, rather than going
+straight through: a brand with only its Oat on the board would otherwise take
+its Almond carton's barcode for good. Correcting one is an admin job, in the
+Barcodes section of the product edit dialog (`ProductBarcodes.tsx`), backed by
+the three `admin_*_product_barcode(s)` functions, which log every change to
+`security_log` with what it replaced.
 
 ## Source Layout
 ```

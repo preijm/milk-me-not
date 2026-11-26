@@ -66,8 +66,8 @@ The two migrations that create a table are both already fine, for different
 reasons. `countries` carries no grants of its own and needs none: the baseline
 created *and* granted it first, so that `CREATE TABLE IF NOT EXISTS` is a no-op
 on a rebuild. `product_barcodes` revokes them on purpose and is reached only
-through two `SECURITY DEFINER` functions, and function grants are not part of
-this change.
+through `SECURITY DEFINER` functions — two for scanning, three for admins —
+and function grants are not part of this change.
 
 What it costs is three lines in every migration from here that creates a table:
 
@@ -90,6 +90,24 @@ with no grant and the table answers `permission denied` — failing only in the
 one place nobody tested, which is exactly how barcode scanning shipped broken.
 Those four lines stay where they are: the baseline is generated, not
 hand-edited.
+
+## A new function is callable signed out unless you say otherwise
+Functions run the other way from tables. The baseline's `ALTER DEFAULT
+PRIVILEGES ... ON FUNCTIONS` grants EXECUTE on every new function in `public`
+to `anon` and `authenticated` **by name**, in production as much as locally.
+So the usual `REVOKE ALL ON FUNCTION ... FROM PUBLIC` does not shut anon out:
+a revoke from `PUBLIC` leaves a named grant standing.
+
+```sql
+revoke all on function public.your_function(...) from public, anon;
+grant execute on function public.your_function(...) to authenticated;
+```
+
+`remember_product_barcode` shipped with only the `PUBLIC` revoke and stayed
+callable signed out until `20261123120000` — harmless, because it returns
+early without `auth.uid()`, but its comment claimed otherwise for three
+months. Check with `has_function_privilege('anon', 'public.fn(args)',
+'execute')` rather than reading the migration.
 
 ## The local database is real, and worth using
 `supabase start` builds the whole schema from the baseline and seeds it, which
