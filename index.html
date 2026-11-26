@@ -252,15 +252,20 @@
         }
       })();
     </script>
-    <!-- Launch screen for the home-screen app. Android first draws its own
-         splash from the manifest (logo on #2144ff); this carries the same look
-         on, with a loading animation, until the first page has rendered —
-         instead of a pale page with a lone spinner. Only shown when launched
-         from the home screen; a browser tab never sees it. React removes it
+    <!-- Launch screen for the home-screen app: the "Quiet" splash from the
+         design handoff (design-handoff/project/direction-a.jsx, SplashQuiet).
+         Android first draws its own splash from the manifest (the logo on
+         #f6faf7, the same pale ground), then this takes over until the first
+         page has rendered. Only shown when launched from the home screen; a
+         browser tab never sees it. React removes it
          (src/components/install/LaunchScreenDone.tsx); the timeout below is the
          backstop if React never gets that far. -->
     <div id="launch-screen" aria-hidden="true" style="display: none">
-      <img src="/icons/icon-512.png" alt="" width="144" height="144" />
+      <div class="launch-mark">
+        <img src="/icons/icon-512.png" alt="" width="112" height="112" />
+        <div class="launch-name">Milk Me Not</div>
+        <div class="launch-tagline">plant milk, rated</div>
+      </div>
       <div class="launch-dots"><span></span><span></span><span></span></div>
       <style>
         #launch-screen {
@@ -270,36 +275,70 @@
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 40px;
-          background: #2144ff;
+          background: radial-gradient(ellipse at 50% 40%, #eafbf1 0%, #f6faf7 70%);
+          font-family: Manrope, system-ui, sans-serif;
           transition: opacity 0.3s ease;
         }
-        /* The logo's own blue edges would melt into the background and leave
-           the blob's cut-off edges floating; a white ring frames it as an icon. */
+        #launch-screen .launch-mark {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
         #launch-screen img {
-          width: 144px;
-          height: 144px;
-          border-radius: 50%;
-          border: 6px solid #fff;
-          box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.45);
+          width: 112px;
+          height: 112px;
+          border-radius: 25px;
+          box-shadow: 0 18px 40px -10px rgba(33, 68, 255, 0.3), 0 4px 12px rgba(27, 36, 33, 0.1);
+          animation: mmn-launch-float 2.4s ease-in-out infinite;
         }
-        #launch-screen .launch-dots { display: flex; gap: 8px; }
+        #launch-screen .launch-name {
+          margin-top: 26px;
+          font-family: Epilogue, Georgia, serif;
+          font-weight: 800;
+          font-size: 26px;
+          letter-spacing: -0.02em;
+          color: #1b2421;
+        }
+        #launch-screen .launch-tagline {
+          margin-top: 10px;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          white-space: nowrap;
+          color: #5d6b65;
+        }
+        #launch-screen .launch-dots {
+          position: absolute;
+          bottom: 78px;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+        }
         #launch-screen .launch-dots span {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: #fff;
+          width: 7px;
+          height: 7px;
+          border-radius: 4px;
+          background: #00bf63;
           opacity: 0.4;
-          animation: mmn-launch-dot 1s ease-in-out infinite;
+          animation: mmn-launch-dot 1.2s ease-in-out infinite;
         }
-        #launch-screen .launch-dots span:nth-child(2) { animation-delay: 0.15s; }
-        #launch-screen .launch-dots span:nth-child(3) { animation-delay: 0.3s; }
+        #launch-screen .launch-dots span:nth-child(2) { animation-delay: 0.18s; }
+        #launch-screen .launch-dots span:nth-child(3) { animation-delay: 0.36s; }
+        @keyframes mmn-launch-float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
         @keyframes mmn-launch-dot {
-          0%, 100% { opacity: 0.4; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.35); }
+          0%, 100% { opacity: 0.35; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.25); }
         }
         @media (prefers-reduced-motion: reduce) {
-          #launch-screen .launch-dots span { animation: none; opacity: 0.8; }
+          #launch-screen img,
+          #launch-screen .launch-dots span { animation: none; }
+          #launch-screen .launch-dots span { opacity: 0.8; }
         }
       </style>
     </div>
