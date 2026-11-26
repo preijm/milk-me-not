@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import { Seo } from "@/components/Seo";
 import { STATIC_SEO } from "@/lib/staticSeo";
 import {
@@ -13,11 +12,12 @@ import {
   StoryLayout,
   StoryLinkButton,
 } from "@/components/story";
-import { Download, Clock, ShieldCheck, FileCode, Smartphone } from "lucide-react";
+import { RefreshCw, Trash2, UserCheck } from "lucide-react";
 import { FaAndroid, FaApple } from "react-icons/fa";
 import { QRCodeSVG } from "qrcode.react";
 
-const ANDROID_DOWNLOAD_URL = "https://median.co/share/nmxqdbd#apk";
+/** Where the QR code sends a desktop visitor: the steps, on their phone. */
+const INSTALL_GUIDE_URL = "https://milkmenot.com/install-guide";
 
 /**
  * The moment this page sells: not "an app exists" but the specific relief of
@@ -28,7 +28,7 @@ const AISLE_STEPS = [
   {
     n: "01",
     title: "Point it at the barcode",
-    body: "The scanner opens straight to the camera. No search box, no keyboard — just aim it at the carton in your hand.",
+    body: "Tap the icon, open the scanner, aim it at the carton in your hand. No search box, no keyboard.",
   },
   {
     n: "02",
@@ -42,54 +42,32 @@ const AISLE_STEPS = [
   },
 ];
 
-const HONESTY_POINTS = [
+/**
+ * The home-screen app is the website in its own window, so these are the
+ * things worth knowing, and every one of them is simply true of it. There is
+ * no store, no APK and no unknown-source warning left to explain away.
+ */
+const PLAIN_FACTS = [
   {
-    icon: FileCode,
-    title: "It's the same app",
-    body: "The APK is built from the same code we ship, signed by us. Nothing is repackaged or reassembled along the way.",
+    icon: UserCheck,
+    title: "Same account, same ratings",
+    body: "It is milkmenot.com with its own icon. Sign in once and everything you have rated is already there.",
   },
   {
-    icon: ShieldCheck,
-    title: "One source, on purpose",
-    body: "It is not on the Play Store yet — that review takes time we have preferred to spend on the app. Download it only from this page.",
+    icon: RefreshCw,
+    title: "Always the latest version",
+    body: "Nothing to update. Whenever we ship something, the app on your home screen has it the next time you open it.",
   },
   {
-    icon: Smartphone,
-    title: "Android will ask first",
-    body: 'You will see an "unknown source" warning before install. That is Android being careful, not a sign something is wrong.',
+    icon: Trash2,
+    title: "Gone in one press",
+    body: "Long-press the icon and remove it, like any other app. Your ratings stay in your account.",
   },
 ];
 
-/** A download CTA has to be a real anchor (right-click, save-as, no JS
- * needed) — StoryLinkButton is bound to react-router's Link and can't target
- * an external file, so this repeats StoryButton's look on a plain `<a>`. */
-const DownloadApkButton = ({
-  tone = "green",
-  children,
-  className,
-}: {
-  tone?: "green" | "paper";
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <a
-    href={ANDROID_DOWNLOAD_URL}
-    download
-    className={cn(
-      "inline-flex items-center justify-center gap-2.5 rounded-full px-7 py-4 font-sans text-[1.0625rem] font-bold tracking-[-0.01em] no-underline transition-[transform,filter,background-color,color] duration-150 active:scale-[0.985] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-story-green",
-      tone === "green" && "bg-story-green text-white story-lift-green hover:brightness-[1.07]",
-      tone === "paper" && "bg-white text-story-ink shadow-[0_10px_26px_-14px_rgba(27,36,33,0.5)] hover:bg-story-cream",
-      className,
-    )}
-  >
-    <Download className="h-[18px] w-[18px]" strokeWidth={2.4} aria-hidden />
-    {children}
-  </a>
-);
-
 const MobileApp = () => {
   return (
-    <StoryLayout transparentHeader mobileCtaHint="Direct APK · installs in under a minute">
+    <StoryLayout transparentHeader mobileCtaHint="On your home screen in ten seconds">
       <Seo
         {...STATIC_SEO["/mobile-app"]}
         path="/mobile-app"
@@ -99,7 +77,7 @@ const MobileApp = () => {
       <Band ground="cream" size="hero" className="pt-6 sm:pt-10">
         <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
           <div>
-            <Kicker>Android · direct APK, not the Play Store</Kicker>
+            <Kicker>Android and iPhone · no app store needed</Kicker>
 
             <Display as="h1" size="hero" className="mt-5 text-story-ink">
               Rate it before
@@ -108,20 +86,19 @@ const MobileApp = () => {
             </Display>
 
             <Lede className="mt-6 max-w-136">
-              Scan the barcode, see the verdict, add your score — all without pulling up a browser or typing a
-              product name. That's the whole app.
+              Put Milk Me Not on your home screen. Scan the barcode, see the verdict, add your score — without
+              opening a browser or typing a product name.
             </Lede>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <DownloadApkButton className="w-full sm:w-auto">Download the APK</DownloadApkButton>
-              <StoryLinkButton to="/install-guide" tone="outline" className="w-full sm:w-auto">
-                How installing works
+              <StoryLinkButton to="/install-guide" tone="green" className="w-full sm:w-auto">
+                Add it to your phone
                 <ArrowRight />
               </StoryLinkButton>
             </div>
 
             <p className="mt-5 text-[0.8125rem] font-medium text-story-muted-2">
-              Not on Google Play yet — straight from us to your phone. We explain why below.
+              Free, nothing to download from a store, and it takes about ten seconds.
             </p>
           </div>
 
@@ -170,77 +147,72 @@ const MobileApp = () => {
       <Band ground="paper" size="lg">
         <Kicker>Get it</Kicker>
         <Display size="lg" className="mt-4 max-w-xl">
-          One platform live, one on the way
+          Works on both
         </Display>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-2">
-          {/* Android — the real, working tile. Full brand green, not a tint. */}
+          {/* Android: full brand green, not a tint. */}
           <StoryCard className="story-lift relative overflow-hidden bg-story-green p-7 sm:p-8">
             <div aria-hidden className="pointer-events-none absolute -right-10 -top-12 text-story-ink/[0.12]">
               <MilkDrop size={210} variant="solid" />
             </div>
-            <div className="relative flex items-start justify-between gap-4">
-              <div>
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-story-ink/12 text-story-ink">
-                  <FaAndroid className="h-7 w-7" />
-                </span>
-                <h3 className="story-serif mt-5 text-[1.5rem] font-bold text-story-ink">Android</h3>
-                <p className="mt-2 max-w-xs text-[0.9375rem] leading-relaxed text-story-ink">
-                  Direct APK download. Works on any Android phone, no Play Store account needed.
-                </p>
-              </div>
-              {/* QR code: pointless to scan on the phone reading this page,
-                  so it only shows where scanning-from-another-device makes sense. */}
-              <div className="hidden shrink-0 rounded-2xl bg-white p-3 lg:block">
-                <QRCodeSVG value={ANDROID_DOWNLOAD_URL} size={104} level="M" />
-                <p className="story-kicker mt-2 text-center text-[0.5625rem] text-story-muted-2">Scan on your phone</p>
-              </div>
-            </div>
-
-            <div className="relative mt-7 flex flex-col gap-3 sm:flex-row">
-              <DownloadApkButton tone="paper" className="w-full sm:w-auto">
-                Download APK
-              </DownloadApkButton>
-              <span className="inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-story-ink/30 px-6 py-4 text-[0.9375rem] font-bold text-story-ink sm:w-auto">
-                <Clock className="h-[18px] w-[18px]" strokeWidth={2.4} aria-hidden />
-                Google Play — coming soon
+            <div className="relative">
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-story-ink/12 text-story-ink">
+                <FaAndroid className="h-7 w-7" />
               </span>
+              <h3 className="story-serif mt-5 text-[1.5rem] font-bold text-story-ink">Android</h3>
+              <p className="mt-2 max-w-sm text-[0.9375rem] leading-relaxed text-story-ink">
+                Open milkmenot.com in Chrome and tap <strong>Install</strong> in the green bar at the top. No bar?
+                The ⋮ menu has <strong>Add to Home screen</strong>.
+              </p>
             </div>
+            <StoryLinkButton to="/install-guide#android" tone="ink" size="md" className="relative mt-7">
+              Show me the steps
+              <ArrowRight />
+            </StoryLinkButton>
           </StoryCard>
 
-          {/* iPhone — honest about the gap, points at the fallback that works today. */}
           <StoryCard className="relative overflow-hidden bg-story-ink p-7 sm:p-8">
             <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-white">
               <FaApple className="h-7 w-7" />
             </span>
-            <h3 className="story-serif mt-5 text-[1.5rem] font-bold text-white">iPhone</h3>
-            <p className="mt-2 max-w-xs text-[0.9375rem] leading-relaxed text-story-cream/80">
-              No iOS app yet. The website carries the whole rating flow on Safari — scanning included — so nothing
-              is missing but the app icon.
+            <h3 className="story-serif mt-5 text-[1.5rem] font-bold text-white">iPhone and iPad</h3>
+            <p className="mt-2 max-w-sm text-[0.9375rem] leading-relaxed text-story-cream/80">
+              Open milkmenot.com in Safari, tap <strong className="text-white">Share</strong>, then{" "}
+              <strong className="text-white">Add to Home Screen</strong>.
             </p>
-            <StoryLinkButton to="/results" tone="outline-light" size="md" className="relative mt-7">
-              Use it in Safari
+            <StoryLinkButton to="/install-guide#iphone" tone="outline-light" size="md" className="relative mt-7">
+              Show me the steps
               <ArrowRight />
             </StoryLinkButton>
           </StoryCard>
         </div>
+
+        {/* Pointless to scan on the phone reading this page, so desktop only. */}
+        <div className="mt-8 hidden items-center gap-5 lg:flex">
+          <div className="story-hairline shrink-0 rounded-2xl bg-white p-3">
+            <QRCodeSVG value={INSTALL_GUIDE_URL} size={96} level="M" />
+          </div>
+          <p className="max-w-sm text-[0.9375rem] leading-relaxed text-story-muted">
+            Reading this on a computer? Point your phone's camera at the code to open the steps there.
+          </p>
+        </div>
       </Band>
 
-      {/* ── Why the APK is safe ──────────────────────────────────────── */}
+      {/* ── Plain facts ──────────────────────────────────────────────── */}
       <Band ground="amber" size="lg">
         <div className="max-w-2xl">
-          <Kicker>Straight talk</Kicker>
+          <Kicker>Good to know</Kicker>
           <Display size="lg" className="mt-4 text-story-ink">
-            It's not sketchy. It's just not in a store yet.
+            It's the website, in its own window.
           </Display>
           <Lede className="mt-4">
-            An APK from outside the Play Store is exactly how Android expects you to feel a little cautious. Here
-            is why this one is fine.
+            It opens full-screen from its own icon, like any other app. Underneath, it is the same Milk Me Not.
           </Lede>
         </div>
 
         <ul className="mt-10 grid gap-4 sm:grid-cols-3">
-          {HONESTY_POINTS.map((p) => (
+          {PLAIN_FACTS.map((p) => (
             <StoryCard as="li" key={p.title} className="flex flex-col gap-3 p-6">
               <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-story-amber-light text-story-amber-dark">
                 <p.icon className="h-5 w-5" strokeWidth={2.2} aria-hidden />
@@ -252,7 +224,7 @@ const MobileApp = () => {
         </ul>
 
         <StoryLinkButton to="/install-guide" tone="ink" size="md" className="mt-9">
-          Walk me through installing it
+          Walk me through it
           <ArrowRight />
         </StoryLinkButton>
       </Band>

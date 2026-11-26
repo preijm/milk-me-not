@@ -13,8 +13,8 @@ Milk Me Not aggregates user-submitted taste tests of plant milks across brands a
 - [About](/about): Story, mission and how the community grew.
 - [Contact](/contact): Get in touch with the team.
 - [FAQ](/faq): Common questions about ratings, accounts and contributing reviews.
-- [Mobile app](/mobile-app): Information about the native Android app.
-- [Install guide](/install-guide): How to install the mobile app.
+- [Mobile app](/mobile-app): Putting Milk Me Not on an Android or iPhone home screen as an app.
+- [Install guide](/install-guide): Step-by-step home-screen install for Chrome on Android and Safari on iPhone.
 
 ## Optional
 

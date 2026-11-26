@@ -26,7 +26,7 @@ const COLUMNS: { title: string; links: { to: string; label: string }[] }[] = [
   {
     title: "Get the app",
     links: [
-      { to: "/mobile-app", label: "Android app" },
+      { to: "/mobile-app", label: "Android & iPhone" },
       { to: "/install-guide", label: "Install guide" },
     ],
   },

@@ -55,14 +55,14 @@ export const STATIC_SEO = {
       "Zero to ten, five named tiers, and a scale nobody can pay to move. How Milk Me Not's community scores are calculated, why price is tracked separately, and what happens if a brand ever pays us.",
   },
   "/mobile-app": {
-    title: "Android app — Milk Me Not",
+    title: "Get the app — Milk Me Not",
     description:
-      "Download the Milk Me Not Android app. Scan a barcode, see the community verdict, rate it in seconds — without typing a thing.",
+      "Put Milk Me Not on your Android or iPhone home screen, no app store needed. Scan a barcode, see the community verdict, rate it in seconds — without typing a thing.",
   },
   "/install-guide": {
     title: "Install guide — Milk Me Not",
     description:
-      "A step-by-step guide to installing the Milk Me Not Android APK, including the unknown-source warning Android shows and why it's expected.",
+      "How to add Milk Me Not to your home screen: three taps in Chrome on Android, or in Safari on iPhone and iPad.",
   },
   "/privacy": {
     title: "Privacy — Milk Me Not",

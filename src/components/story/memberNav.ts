@@ -28,7 +28,7 @@ export const SECONDARY_LINKS = [
   { to: "/faq", label: "How ratings work" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
-  { to: "/mobile-app", label: "Android app" },
+  { to: "/mobile-app", label: "Get the app" },
   { to: "/install-guide", label: "Install guide" },
   { to: "/privacy", label: "Privacy" },
 ];
