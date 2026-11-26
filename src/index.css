@@ -317,6 +317,9 @@
 
 @layer base {
   :root {
+    /* Light only, matching the color-scheme meta in index.html: form
+       controls and scrollbars stay light even on a phone set to dark. */
+    color-scheme: only light;
     --background: 50 18% 98%;        /* #fafaf8 - warm off-white */
     --foreground: 155 14% 13%;       /* #1a2420 */
     --card: 0 0% 100%;
