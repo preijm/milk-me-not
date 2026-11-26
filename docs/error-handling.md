@@ -57,6 +57,21 @@ How it is set up, and the traps:
   the DSN and silently sends nothing (that happened on the first deploy).
   Use `printf '%s' '<dsn>' | gh secret set VITE_SENTRY_DSN` from bash.
 
+- **Source maps go to Sentry, never to the edge.** Added 26 November 2026 so
+  production traces name real files and lines. `sentrySourceMaps()` in
+  `vite.config.ts` (`@sentry/vite-plugin`) runs only when
+  `SENTRY_AUTH_TOKEN` is set: an org auth token, scope `org:ci`, named
+  `milkmenot-github-actions` in `peter-co`, set as a secret on the deploy
+  build step only. With it the build makes `hidden` maps (no
+  `sourceMappingURL` in the bundle), uploads them, and deletes them from
+  `dist`; `deploy.yml` then deletes any `.map` left over before wrangler runs,
+  because a failed upload only warns and must not ship the maps. Without the
+  token: no maps, no plugin, and the build is as before — same rule as the
+  DSN. The upload's release is pinned to `BUILD_ID` (the 12-character sha the
+  SDK reports); the plugin's default is the full sha, which would never match.
+  To read a trace locally, do not rebuild with the token — every such build
+  creates a release in Sentry.
+
 To check it end to end: open the live site, and in the console run
 `setTimeout(() => { throw new Error("Sentry test " + Date.now()) })`. Within a
 minute it should appear as a new issue, and the alert email should follow.

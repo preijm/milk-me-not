@@ -4,6 +4,7 @@ import path from "path";
 import { readFileSync, writeFileSync } from "fs";
 import { STATIC_SEO, htmlForRoute } from "./src/lib/staticSeo";
 import { componentTagger } from "lovable-tagger";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 /**
  * What build this is, decided once and written in two places.
@@ -69,6 +70,40 @@ const routeHeads = () => ({
   },
 });
 
+/**
+ * Upload source maps to Sentry, so production stack traces name real files
+ * and lines instead of `index-3f2a.js:1:48213`.
+ *
+ * Only when `SENTRY_AUTH_TOKEN` is set, which is the deploy build and nothing
+ * else. Without it there are no maps and no plugin, and the build is the same
+ * as before — like the DSN, a missing token must never fail a deploy.
+ *
+ * - `release` is `BUILD_ID`, the same value `errorReporting.ts` hands the SDK.
+ *   The plugin's own default is the full commit sha; the SDK sends 12
+ *   characters, so the two would never meet. `inject: false` because the SDK
+ *   already sets the release, and injecting it rehashes every chunk per build.
+ * - The maps are `hidden` (no `sourceMappingURL` comment) and deleted from
+ *   `dist` after the upload, so the edge never serves them. `deploy.yml` also
+ *   deletes any left over, in case an upload fails before this cleanup runs.
+ * - A failed upload warns instead of throwing: unreadable traces are a nicety
+ *   lost, a failed deploy is the site going stale.
+ * - `telemetry: false`: the plugin otherwise reports on itself to Sentry.
+ */
+const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN || undefined;
+
+const sentrySourceMaps = () =>
+  sentryVitePlugin({
+    org: "peter-co",
+    project: "milkmenot-frontend",
+    authToken: SENTRY_AUTH_TOKEN,
+    release: { name: BUILD_ID, inject: false },
+    sourcemaps: { filesToDeleteAfterUpload: ["./dist/**/*.map"] },
+    telemetry: false,
+    errorHandler: (err: Error) => {
+      console.warn(`Sentry source map upload failed; deploying without it: ${err.message}`);
+    },
+  });
+
 // https://vitejs.dev/config/
 export default (defineConfig as any)(({ mode }: { mode: string }) => ({
   define: {
@@ -89,13 +124,15 @@ export default (defineConfig as any)(({ mode }: { mode: string }) => ({
     routeHeads(),
     mode === 'development' &&
     componentTagger(),
+    // Last, as Sentry requires: it reads the finished output.
+    SENTRY_AUTH_TOKEN && sentrySourceMaps(),
   ].filter(Boolean),
   build: {
-    // Nothing consumes these. The repo is public, so they guard no secret
-    // either — they were simply 12.6 MB of every 20 MB upload. If an error
-    // reporter is added later, switch to 'hidden' and ship the maps to that
-    // service instead of to the edge.
-    sourcemap: false,
+    // Only for Sentry, and only when there is a token to upload them with
+    // (see sentrySourceMaps above). 'hidden' leaves no sourceMappingURL in the
+    // bundle; the files themselves are deleted before wrangler uploads dist —
+    // they were 12.6 MB of every 20 MB upload when they used to ship.
+    sourcemap: SENTRY_AUTH_TOKEN ? 'hidden' : false,
     rolldownOptions: {
       output: {
         manualChunks(id: string) {

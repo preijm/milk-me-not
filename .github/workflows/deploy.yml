@@ -86,11 +86,23 @@ jobs:
       # Error reporting is inert without it, the boundary still catches crashes
       # and shows a page, and the site is unaffected. A build that refused to
       # run without it would take the whole deploy down over a nicety.
+      #
+      # SENTRY_AUTH_TOKEN works the same way: with it the build makes hidden
+      # source maps, uploads them to Sentry under this build's release and
+      # deletes them; without it, no maps and nothing uploaded. It lives on
+      # this step only — no other step needs to talk to Sentry.
       - name: Build project
         run: bun run build
         env:
           VITE_MAPBOX_PUBLIC_KEY: ${{ secrets.VITE_MAPBOX_PUBLIC_KEY }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      # The Sentry plugin deletes the maps after uploading them, but a failed
+      # upload only warns, and it is not documented whether the cleanup still
+      # runs then. Source maps must never reach the edge, so make sure here.
+      - name: Remove source maps from dist
+        run: find dist -name '*.map' -print -delete
 
       # Uploads ./dist per wrangler.toml. No build happens here; the step above
       # already produced the artifact this deploys.
