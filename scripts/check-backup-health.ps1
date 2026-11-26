@@ -7,18 +7,20 @@
   is wrong, which teaches you to dismiss it, and still depends on you actually
   looking. This looks instead, and only speaks when there is something to say.
 
-  Two ways the monthly backup can fail quietly:
+  Two ways the weekly backup can fail quietly:
 
     it never ran      the task only runs while signed in, so a laptop that was
-                      off or logged out around the 1st simply skips. Nothing
+                      off or logged out on a Monday simply skips. Nothing
                       errors; the newest dump just gets older.
 
     it ran and failed Docker was not up, the dump came back empty, the link
                       expired. backup-supabase.ps1 logs that, but a log nobody
                       reads is not a signal.
 
-  Checked weekly rather than monthly so a miss surfaces within days, and with a
-  generous age threshold so a backup that ran late does not cry wolf.
+  Checked weekly, half an hour after the backup is due, with an age threshold
+  that lets a backup run a few days late without crying wolf. This only works
+  while the laptop is on; backup-heartbeat.yml watches the same thing from
+  GitHub, with the same ten days.
 
 .NOTES
   Registered by register-backup-task.ps1 alongside the backup itself.
@@ -28,12 +30,13 @@
 param(
   [string]$CommunityDir = "$env:OneDrive\Projects\Milk Me Not\Backups",
   [string]$FullDir      = "$env:USERPROFILE\Backups\milk-me-not",
-  # Monthly backups, StartWhenAvailable, a laptop that travels. Past forty days
-  # something is actually wrong rather than merely late.
-  [int]$MaxAgeDays      = 40,
+  # Weekly backups, StartWhenAvailable, a laptop that travels. Past ten days
+  # something is actually wrong rather than merely late. Matches
+  # MAX_AGE_DAYS in backup-heartbeat.yml.
+  [int]$MaxAgeDays      = 10,
   # Same default as register-backup-task.ps1, so the two agree about what the
   # task is called and a renamed task can still be pointed at.
-  [string]$TaskName     = "Milk Me Not - monthly Supabase backup",
+  [string]$TaskName     = "Milk Me Not - weekly Supabase backup",
   # Print the verdict instead of only complaining. For running it by hand.
   [switch]$Report,
   # Skip the dialog and report through the exit code alone. For a headless run,

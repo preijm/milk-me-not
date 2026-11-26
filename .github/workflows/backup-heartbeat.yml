@@ -1,0 +1,170 @@
+# Notice when the database backup has stopped running.
+#
+# The backup runs weekly from Peter's laptop (scripts/backup-supabase.ps1), and
+# until this existed the only sign it worked was a log file on that laptop.
+# check-backup-health.ps1 reads the log, but it runs on the same laptop: a
+# machine that is off, signed out or gone stops the backup and the thing
+# watching it together, and nobody hears.
+#
+# So the backup leaves a heartbeat where GitHub can see it — the repository
+# variable LAST_BACKUP_AT, set by `gh variable set` after each community dump —
+# and this reads it once a day. A dead-man's switch: silence is the alarm.
+#
+# No database credential is involved, on purpose. The variable holds a
+# timestamp and nothing else; reading it needs no token at all.
+#
+# One open issue at a time, labelled `backup`. Filed when the heartbeat is
+# missing or older than MAX_AGE_DAYS, left alone (not commented daily) while it
+# stays stale, and closed by the first run that finds a fresh one. Filing and
+# closing read the same answer from `How old is the last backup`.
+#
+# It does not go red when the backup is stale. The issue is the signal, and a
+# red run would be reported a second time by alert-on-failure.yml. A red run
+# here therefore means the watcher itself broke, which is what that workflow is
+# for.
+
+name: Backup heartbeat
+
+on:
+  schedule:
+    # Daily. The backup is weekly, so this is plenty; it only has to notice
+    # within a day of the threshold passing.
+    - cron: "41 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+# Two runs close together (a dispatch beside the schedule) must not both find
+# nothing open and both file one.
+concurrency:
+  group: backup-heartbeat
+  cancel-in-progress: false
+
+env:
+  # Weekly backups that may run a few days late. Matches $MaxAgeDays in
+  # scripts/check-backup-health.ps1.
+  MAX_AGE_DAYS: "10"
+  TITLE: "The database backup has not run recently"
+
+jobs:
+  check:
+    name: Has a backup run recently
+    runs-on: ubuntu-latest
+
+    steps:
+      # Read from the vars context, fixed when the run starts. Empty when the
+      # variable has never been set, which counts as missing.
+      - name: How old is the last backup
+        id: age
+        env:
+          LAST: ${{ vars.LAST_BACKUP_AT }}
+        run: |
+          set -uo pipefail
+
+          if [ -z "$LAST" ]; then
+            echo "No heartbeat recorded."
+            echo "stale=true" >> $GITHUB_OUTPUT
+            echo "last=never recorded" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Anything date cannot read is treated as missing rather than fresh:
+          # a heartbeat that cannot be trusted is no heartbeat.
+          if ! THEN=$(date -u -d "$LAST" +%s 2>/dev/null); then
+            echo "Heartbeat '$LAST' is not a date."
+            echo "stale=true" >> $GITHUB_OUTPUT
+            echo "last=unreadable (\`$LAST\`)" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          NOW=$(date -u +%s)
+          DAYS=$(( (NOW - THEN) / 86400 ))
+          echo "Last backup: $LAST ($DAYS days ago; threshold $MAX_AGE_DAYS)."
+          echo "last=$LAST ($DAYS days ago)" >> $GITHUB_OUTPUT
+          if [ "$DAYS" -gt "$MAX_AGE_DAYS" ]; then
+            echo "stale=true" >> $GITHUB_OUTPUT
+          else
+            echo "stale=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Listed by label with an exact title match, not searched: the search
+      # API lags the issue table, so a dispatch straight after a filing would
+      # find nothing. Same reason as in health-check.yml.
+      - name: File an issue if it is stale
+        if: steps.age.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          LAST: ${{ steps.age.outputs.last }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          EXISTING=$(gh issue list --repo "$REPO" --state open --label backup \
+            --limit 50 --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")] | .[0].number // empty")
+
+          # Already said. A daily comment repeating it would be noise, and the
+          # issue staying open is the reminder.
+          if [ -n "$EXISTING" ]; then
+            echo "Issue #$EXISTING is already open; nothing new to say."
+            exit 0
+          fi
+
+          BODY=$(cat <<EOF
+          No database backup has reported in for more than ${MAX_AGE_DAYS} days.
+
+          **Last backup:** ${LAST}
+
+          The backup runs every Monday at 12:00 from the laptop's Task Scheduler, and only while Peter is signed in. Each successful community dump sets the repository variable \`LAST_BACKUP_AT\`; this checks that variable daily.
+
+          **Run one by hand**, from the main checkout (not a worktree), in PowerShell:
+
+          \`\`\`powershell
+          powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\backup-supabase.ps1
+          \`\`\`
+
+          **If it did run**, look in \`%USERPROFILE%\\Backups\\milk-me-not\\backup.log\`:
+
+          - \`=== backup FAILED ===\` — the backup itself failed. If Docker would not start, see "When the backup cannot start Docker" in \`docs/backups.md\`.
+          - \`Heartbeat not recorded\` — the dump is fine but GitHub was not told, usually because \`gh\` is signed out. Run \`gh auth status\`.
+
+          If it never ran, check the task with \`scripts\\check-backup-health.ps1 -Report\`, and re-register it with \`scripts\\register-backup-task.ps1\` if it is missing.
+
+          Checked by ${RUN_URL}. This closes itself once a fresh heartbeat appears.
+          EOF
+          )
+
+          gh issue create --repo "$REPO" \
+            --title "$TITLE" --body "$BODY" --label backup --assignee preijm
+
+      - name: Close it once a backup has run
+        if: steps.age.outputs.stale == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          LAST: ${{ steps.age.outputs.last }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          OPEN=$(gh issue list --repo "$REPO" --state open --label backup \
+            --limit 50 --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")] | .[].number")
+
+          if [ -z "$OPEN" ]; then
+            echo "Nothing open to close."
+            exit 0
+          fi
+
+          BODY=$(printf '%s\n\n%s' \
+            "A backup has run: last heartbeat ${LAST}." \
+            "Closed by ${RUN_URL}. A new issue opens if it goes quiet again.")
+
+          while IFS= read -r NUMBER; do
+            [ -n "$NUMBER" ] || continue
+            echo "Closing #${NUMBER}"
+            gh issue close "$NUMBER" --repo "$REPO" \
+              --reason completed --comment "$BODY"
+          done <<< "$OPEN"
