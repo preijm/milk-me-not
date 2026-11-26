@@ -11,14 +11,16 @@
  * storage, so there is no hurry, and every default here errs towards doing
  * nothing.
  *
- *   SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/prune-orphan-photos.ts
+ * Run it (PowerShell):
+ *
+ *   $env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/prune-orphan-photos.ts
  *
  * That reports and writes nothing. **A dry run is the default**, the opposite
  * of `backfill-image-thumbnails.ts`, because the worst a missing thumbnail
  * causes is a slow feed and the worst a wrong deletion causes is somebody
  * else's photo being gone. Read the list, then pass `--delete`.
  *
- * It needs the service role key for two separate reasons, and the first is the
+ * It needs a secret key for two separate reasons, and the first is the
  * one that matters: RLS on `milk_tests` only lets an authenticated user select,
  * and `get_all_milk_tests` — the only public way in — filters
  * `is_hidden_from_feed = false`. Read the table through anything less than the
@@ -82,12 +84,17 @@ if (!Number.isFinite(minAgeDays) || minAgeDays < 0) {
   process.exit(1);
 }
 
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// The legacy service-role key still works until Supabase retires it in early
+// 2027, so it stays as a fallback rather than a hard break for anyone with it
+// already in their shell.
+const serviceKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!serviceKey) {
   console.error(
-    "SUPABASE_SERVICE_ROLE_KEY is not set.\n" +
-      "Take it from Supabase, Project Settings, API, service_role, and pass it for\n" +
-      "this one run. Do not put it in .env — nothing else in this app needs it.",
+    "SUPABASE_SECRET_KEY is not set.\n" +
+      "Take it from Supabase, Project Settings, API Keys, Secret keys, and pass it\n" +
+      "for this one run:\n" +
+      '  $env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/prune-orphan-photos.ts\n' +
+      "Do not put it in .env — nothing else in this app needs it.",
   );
   process.exit(1);
 }

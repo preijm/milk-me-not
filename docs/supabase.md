@@ -186,6 +186,39 @@ stays out of `db dump` and is ciphertext in a raw `pg_dump`, so a leaked
 `mfa_recovery_codes` table cannot be cracked offline. Never rotate or delete
 that secret casually: every recovery code dies with it.
 
+## The Edge Functions run on a secret key
+Both functions need to bypass RLS, so both take a privileged key — and that key
+used to be the legacy `service_role` JWT. Legacy `anon` and `service_role` are
+one pair signed by the project's JWT secret, so they die together when Supabase
+retires legacy keys in early 2027. Swapping the browser's key was therefore only
+half the job.
+
+`supabase/functions/_shared/secretKey.ts` resolves it, and both functions call
+it once at cold start. Supabase injects `SUPABASE_SECRET_KEYS` — a JSON object
+keyed by key name, **not** a plain string — alongside the legacy variable:
+
+```ts
+const secretKey = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")!)["default"];
+```
+
+It prefers that and falls back to `SUPABASE_SERVICE_ROLE_KEY`, so the functions
+keep working either side of the switch. The fallback logs which *variable* it
+used — a name, never the value — because otherwise it would be silent: a
+project with no secret key created yet keeps running on the legacy key with no
+symptom at all. `supabase functions logs check-rate-limit` answers "is the new
+key live?".
+
+Both functions import that module, so **deploy them together**:
+
+```bash
+npx supabase functions deploy check-rate-limit mfa-recover
+```
+
+Before the legacy keys can be disabled, `mfa-recover` must be running on the new
+key — it is the one that genuinely breaks, and it breaks as a lockout for anyone
+who has lost their authenticator. `check-rate-limit` does nothing today either
+way (see below).
+
 ## Recovery attempts are limited
 `mfa-recover` calls `redeem_mfa_recovery_code`, which allows five wrong codes
 per account per rolling hour (`mfa_recovery_failures`) and answers 429 after

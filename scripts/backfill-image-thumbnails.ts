@@ -8,14 +8,18 @@
  * missing, so nothing breaks, it just stays slow for everything posted until
  * today.
  *
- * Run it once:
+ * Run it once (PowerShell):
  *
- *   SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/backfill-image-thumbnails.ts
+ *   $env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/backfill-image-thumbnails.ts
  *
- * It needs the service role key because it writes into every user's folder,
- * and the storage policies quite rightly only let a user write into their own.
- * That key is never committed and never belongs in `.env.example` — take it
- * from the Supabase dashboard, pass it for the one run, and let it go.
+ * It needs a secret key because it writes into every user's folder, and the
+ * storage policies quite rightly only let a user write into their own. Take it
+ * from the Supabase dashboard (Project Settings → API Keys → Secret keys),
+ * pass it for the one run, and let it go: it is never committed and never
+ * belongs in `.env.example`.
+ *
+ * `SUPABASE_SERVICE_ROLE_KEY` still works, but it is the legacy key that
+ * Supabase retires in early 2027. Prefer `SUPABASE_SECRET_KEY`.
  *
  * Flags:
  *   --dry-run             report what would change and write nothing
@@ -56,12 +60,17 @@ const replaceOriginals = args.includes("--replace-originals");
 const limitArg = args.find((a) => a.startsWith("--limit="));
 const limit = limitArg ? Number(limitArg.split("=")[1]) : Infinity;
 
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// The legacy service-role key still works until Supabase retires it in early
+// 2027, so it stays as a fallback rather than a hard break for anyone with it
+// already in their shell.
+const serviceKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!serviceKey) {
   console.error(
-    "SUPABASE_SERVICE_ROLE_KEY is not set.\n" +
-      "Take it from Supabase, Project Settings, API, service_role, and pass it for\n" +
-      "this one run. Do not put it in .env — nothing else in this app needs it.",
+    "SUPABASE_SECRET_KEY is not set.\n" +
+      "Take it from Supabase, Project Settings, API Keys, Secret keys, and pass it\n" +
+      "for this one run:\n" +
+      '  $env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/backfill-image-thumbnails.ts\n' +
+      "Do not put it in .env — nothing else in this app needs it.",
   );
   process.exit(1);
 }

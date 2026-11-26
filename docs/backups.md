@@ -315,8 +315,13 @@ npx supabase functions deploy check-rate-limit
 npx supabase functions deploy mfa-recover
 ```
 
-Both functions read only `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, which
-every project provides itself. `db push` also creates a fresh recovery code
+Both functions read only `SUPABASE_URL` and a secret key, which every project
+provides itself: `SUPABASE_SECRET_KEYS` by preference, falling back to the
+legacy `SUPABASE_SERVICE_ROLE_KEY` (see
+[The Edge Functions run on a secret key](supabase.md#the-edge-functions-run-on-a-secret-key)).
+A brand-new project needs its own secret key created before
+`SUPABASE_SECRET_KEYS` is populated, or both functions quietly run on the
+legacy key — their cold-start log line says which. `db push` also creates a fresh recovery code
 pepper in the new project's Vault, so **every MFA recovery code from the old
 project is dead** after this restore: the dump carries the hashes but not the
 key. That is intended. Members who use two-step sign-in keep their
@@ -398,13 +403,14 @@ Ratings store `picture_path`, not a URL, so they need nothing.
 
 **e. Photos**, from the mirror in OneDrive (see
 [The photo mirror](#the-photo-mirror)). They go back through the Storage API,
-with the service role key for that one run, not into `storage.objects`, so that
-the rows and the files agree. Every path is kept exactly as it was, `thumb_`
-copies included. Do it after step b, and fix the avatar URL from step d too.
+with a secret key for that one run, not into `storage.objects`, so that the
+rows and the files agree. Every path is kept exactly as it was, `thumb_` copies
+included. Do it after step b, and fix the avatar URL from step d too. Take the
+**new** project's secret key, not the old one's.
 
-```bash
-SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/restore-photos.ts --url=https://<new-ref>.supabase.co --dry-run
-SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/restore-photos.ts --url=https://<new-ref>.supabase.co
+```powershell
+$env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/restore-photos.ts --url=https://<new-ref>.supabase.co --dry-run
+$env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/restore-photos.ts --url=https://<new-ref>.supabase.co
 ```
 
 `--url` has no default, so it cannot land in a project by accident. A file
