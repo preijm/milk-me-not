@@ -14,14 +14,40 @@ a reload button instead of white. Built from raw markup rather than the story
 components — a boundary that imports half the app can be brought down by the
 module it is meant to catch.
 
-There is no error reporting service. Sentry was wired in but never given a DSN,
-so it never sent a report; it was removed in November 2026 rather than kept as
-a dependency to upgrade for nothing. If it comes back, git history has the
-setup, and three things in it are easy to get wrong: `@sentry/react` contains
-the substring "react", so its `manualChunks` rule must sit *above* the react
-one or the SDK lands in the eager `vendor-react`; the DSN is a build-step
-secret like the Mapbox key; and its ingest host belongs in `connect-src`, not
-`script-src`. Sentry 11 also collects more by default than 10 did, so
-`dataCollection` has to be spelled out to keep `/privacy` true.
+**Sentry reports what the boundary catches.** Removed in November 2026 because
+no DSN had ever been set, and brought back on 25 November 2026 with one. The
+code is `src/lib/errorReporting.ts`: `componentDidCatch` in the boundary calls
+`reportError`, and `startErrorReporting()` in `main.tsx` adds window listeners
+for what React never sees (rejected promises, throws in timers, failed dynamic
+imports). Sentry project: `peter-co/milkmenot-frontend`
+(https://peter-co.sentry.io). Its alert rule "Email on every new issue" mails
+Peter once per new issue, so a repeat of a known crash does not mail again.
+That rule was added by hand: a new project's default alert only fires for
+issues Sentry rates high priority.
 
+How it is set up, and the traps:
 
+- **The DSN is a build-step secret**, `VITE_SENTRY_DSN`, beside the Mapbox key
+  in `deploy.yml`. Vite inlines it at build time. Without it reporting is inert
+  and the build still succeeds; that is on purpose. Locally, leave it out of
+  `.env` unless you are testing reporting, or every dev crash goes to Sentry.
+- **The SDK loads only on the first error.** `vendor-sentry` must sit *above*
+  the react rule in `manualChunks`: `@sentry/react` contains "react", and the
+  generic rule would put ~460KB into the eager `vendor-react`.
+  `src/lib/sentryChunk.test.ts` fails if the order flips.
+- **The ingest host goes in `connect-src`**, not `script-src`, in
+  `public/_headers` — the SDK is our own bundle; only the reports leave. It
+  is the exact host from the DSN (`o4512496885497856.ingest.de.sentry.io`,
+  EU region). A new DSN from another org or region needs this line changed
+  too, or the browser blocks every report silently.
+- **Data collection is spelled out.** Sentry 11 collects more by default than
+  10 did, so `dataCollection` lists every field. On top of that: no
+  breadcrumbs (`maxBreadcrumbs: 0`, they would log Supabase URLs with user
+  ids in the query), `beforeSend` strips query and hash from the page URL,
+  only the `User-Agent` request header, no tracing, no replay. The Sentry
+  project also has "Prevent Storing of IP Addresses" on. `/privacy` describes
+  exactly this — change both together.
+
+To check it end to end: open the live site, and in the console run
+`setTimeout(() => { throw new Error("Sentry test " + Date.now()) })`. Within a
+minute it should appear as a new issue, and the alert email should follow.

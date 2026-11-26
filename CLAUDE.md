@@ -132,7 +132,8 @@ npm run types:gen
   seed data in `supabase/seed.sql`.
 - Workflows in `.github/workflows/`; deploy is `deploy.yml` →
   `bunx wrangler@4 deploy` on every push to `main`.
-- The only env var the app reads is `VITE_MAPBOX_PUBLIC_KEY`.
+- The app reads two env vars, both inlined at build time: `VITE_MAPBOX_PUBLIC_KEY`
+  and `VITE_SENTRY_DSN` (error reporting; inert when absent).
 
 ## Read before changing
 

@@ -55,6 +55,7 @@
     "@radix-ui/react-toggle": "^1.2.1",
     "@radix-ui/react-toggle-group": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.4.1",
+    "@sentry/react": "^11.18.0",
     "@supabase/supabase-js": "^2.119.2",
     "@tanstack/react-query": "^5.108.4",
     "@testing-library/dom": "^10.4.2",
