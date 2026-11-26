@@ -83,6 +83,19 @@ README differed only because later PRs had edited it.
 | `lovable` | The Lovable integration's branch. It reads as pure clutter — fully contained in `main`, a hundred commits behind — but it is not ours to delete, and removing it may break that sync. |
 | `dependabot/*` | Anything with an open PR. |
 
+**GitHub now does the routine half of this for you**, and one bite is still
+left. "Automatically delete head branches" was turned on on 26 November 2026:
+the sweep on 25 November took the remote from 18 branches to 6, and six merges
+the next morning put it back to 17, which is not a job worth doing by hand. A
+merged pull request's head branch now goes on its own, so a manual sweep is
+only for branches that were abandoned without ever merging — exactly the ones
+`headRefOid` cannot vouch for, so read the table above before removing any of
+them. The setting fires only on merge and never while a pull request is open,
+which leaves `chore/lockfile-refresh` and `dependabot/*` alone. It does not
+leave `lovable` alone: merge a pull request from that branch and GitHub deletes
+it. Recreate it immediately — `docs/lovable.md` has the command and the
+recovery if the push is refused.
+
 **A worktree branch may be holding the only copy of something.** The worktrees
 in `.claude/worktrees/` are gitignored, so uncommitted work in one is invisible
 from the main checkout and invisible to `git status`. On that same sweep, one

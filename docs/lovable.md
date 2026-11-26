@@ -26,6 +26,18 @@ If that push is refused, the branch has commits that never made it into `main` �
 usually an edit someone forgot to raise a pull request for. Look before forcing
 it.
 
+**Auto-delete takes this branch too.** "Automatically delete head branches" was
+turned on for this repository on 26 November 2026, because merged branches were
+piling up faster than anyone swept them — six in one morning — and GitHub's
+setting has no exceptions list. It fires only on merge, never while a pull
+request is open, so `chore/lockfile-refresh` (force-pushed fresh each round by
+the lockfile job) and `dependabot/*` are unaffected. `lovable` is the one branch
+it removes that has to come back: the fast-forward above recreates it, so run
+that immediately after the merge instead of waiting for Lovable to fail against
+a branch that is no longer there. If the fast-forward is refused, use "Restore
+branch" on the merged pull request instead — it brings back the commits that
+made the push refuse.
+
 Two things to know about the picker: Lovable syncs exactly one branch at a time,
 and a branch created from within Lovable forks from whatever branch is currently
 active rather than from `main`.
