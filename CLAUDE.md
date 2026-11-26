@@ -136,9 +136,11 @@ npm run types:gen
   secret key does not flip a running function** — an isolate that booted on the
   legacy key keeps it until a redeploy replaces it. Create the key first, then
   deploy, then read the cold-start line (`supabase logs --remote --service
-  functions`, *not* `functions logs`, which does not exist). The legacy `anon`
-  and `service_role` keys die together, so `mfa-recover` must be on the new key
-  before the legacy keys are disabled. See `docs/supabase.md`.
+  functions`, *not* `functions logs`, which does not exist). **The legacy
+  `anon` and `service_role` keys were disabled on 2026-11-26** and now answer
+  `401 Legacy API keys are disabled`, so the legacy fallback in that module can
+  no longer succeed — a function that logs the legacy line is broken, not
+  merely out of date. See `docs/supabase.md`.
 
 ## Where things live
 

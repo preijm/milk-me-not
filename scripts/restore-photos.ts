@@ -12,8 +12,8 @@
  * dashboard (Project Settings → API Keys → Secret keys), pass it for this one
  * run, and let it go: it never belongs in `.env` or `.env.example`.
  *
- * `SUPABASE_SERVICE_ROLE_KEY` still works, but it is the legacy key that
- * Supabase retires in early 2027. Prefer `SUPABASE_SECRET_KEY`. A restored
+ * `SUPABASE_SERVICE_ROLE_KEY` is read as a fallback but was disabled on
+ * 2026-11-26 and now answers 401. Use `SUPABASE_SECRET_KEY`. A restored
  * project is a *new* project, so it has its own secret key — take that one.
  *
  * `--url` has no default on purpose. Nothing here should land in a project
@@ -61,9 +61,10 @@ if (!url) {
   process.exit(1);
 }
 
-// The legacy service-role key still works until Supabase retires it in early
-// 2027, so it stays as a fallback rather than a hard break for anyone with it
-// already in their shell.
+// The legacy service-role key was disabled on 2026-11-26 and now answers 401,
+// so this fallback no longer gets anyone anything. It stays only so an old
+// shell fails on the API call with a clear "Legacy API keys are disabled"
+// rather than on a missing-variable check that hides the real reason.
 const serviceKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!serviceKey && !dryRun) {
   console.error(

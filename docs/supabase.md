@@ -19,9 +19,16 @@ grants the `anon` role, and nothing more.
 It replaced the legacy anon JWT on 2026-11-26, because Supabase retires legacy
 API keys in early 2027. That JWT still sits in older commits of `.env` and in
 this repository's history, which looks alarming and is not: it is the same
-value the website served for years, and it carried `"role":"anon"`. The legacy
-keys are also still enabled — the swap had to reach production before they
-could be retired — so retiring them in the dashboard is a separate later step.
+value the website served for years, and it carried `"role":"anon"`. It is also
+dead: the legacy `anon` and `service_role` keys were **disabled on 2026-11-26
+at 20:43 UTC**, so that JWT now answers
+
+```
+401 {"message":"Legacy API keys are disabled"}
+```
+
+Disabling is reversible from the dashboard, so if some consumer nobody knew
+about ever surfaces, re-enabling it is the fix — not a panic.
 
 Both keys resolve to the same Postgres `anon` role, so the swap left RLS and
 the per-table grants untouched. What actually protects the data is RLS — every

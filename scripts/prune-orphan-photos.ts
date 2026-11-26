@@ -84,9 +84,10 @@ if (!Number.isFinite(minAgeDays) || minAgeDays < 0) {
   process.exit(1);
 }
 
-// The legacy service-role key still works until Supabase retires it in early
-// 2027, so it stays as a fallback rather than a hard break for anyone with it
-// already in their shell.
+// The legacy service-role key was disabled on 2026-11-26 and now answers 401,
+// so this fallback no longer gets anyone anything. It stays only so an old
+// shell fails on the API call with a clear "Legacy API keys are disabled"
+// rather than on a missing-variable check that hides the real reason.
 const serviceKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!serviceKey) {
   console.error(

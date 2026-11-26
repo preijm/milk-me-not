@@ -76,9 +76,9 @@ $env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/backfill-image-thumbnails.ts
 It needs a secret key because it writes into every user's folder and the
 policies only let a user write into their own. Take it from Project Settings →
 API Keys → Secret keys, and pass it for the one run; it does not belong in
-`.env` or `.env.example`, and nothing else here wants it. The legacy
-`SUPABASE_SERVICE_ROLE_KEY` still works until Supabase retires it in early
-2027.
+`.env` or `.env.example`, and nothing else here wants it. The scripts still
+read `SUPABASE_SERVICE_ROLE_KEY` as a fallback, but **that key is disabled**
+(2026-11-26) and now answers 401 — a secret key is the only thing that works.
 
 It reads paths from `milk_tests` rather than listing the bucket, because a
 listing also returns the thumbnails it just wrote and the second run would

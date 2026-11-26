@@ -18,8 +18,8 @@
  * pass it for the one run, and let it go: it is never committed and never
  * belongs in `.env.example`.
  *
- * `SUPABASE_SERVICE_ROLE_KEY` still works, but it is the legacy key that
- * Supabase retires in early 2027. Prefer `SUPABASE_SECRET_KEY`.
+ * `SUPABASE_SERVICE_ROLE_KEY` is read as a fallback but was disabled on
+ * 2026-11-26 and now answers 401. Use `SUPABASE_SECRET_KEY`.
  *
  * Flags:
  *   --dry-run             report what would change and write nothing
@@ -60,9 +60,10 @@ const replaceOriginals = args.includes("--replace-originals");
 const limitArg = args.find((a) => a.startsWith("--limit="));
 const limit = limitArg ? Number(limitArg.split("=")[1]) : Infinity;
 
-// The legacy service-role key still works until Supabase retires it in early
-// 2027, so it stays as a fallback rather than a hard break for anyone with it
-// already in their shell.
+// The legacy service-role key was disabled on 2026-11-26 and now answers 401,
+// so this fallback no longer gets anyone anything. It stays only so an old
+// shell fails on the API call with a clear "Legacy API keys are disabled"
+// rather than on a missing-variable check that hides the real reason.
 const serviceKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!serviceKey) {
   console.error(
