@@ -24,6 +24,10 @@ export default defineConfig({
 
   use: {
     baseURL: process.env.SITE_URL || "https://milkmenot.com",
+    // public/sw.js makes the site installable. Once a service worker controls
+    // a page, requests that pass through it can slip past page.route(), which
+    // the backend stub depends on. Nothing tested here needs the worker.
+    serviceWorkers: "block",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },

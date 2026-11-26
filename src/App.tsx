@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/components/common/ProtectedRoute";
 import { TwoFactorGate } from "@/components/auth/TwoFactorGate";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { VersionCheck } from "@/components/version/VersionCheck";
+import { InstallBanner } from "@/components/install/InstallBanner";
 import { isNativeApp } from "@/lib/platformDetection";
 const NativeSplashScreen = lazy(() => import("./components/NativeSplashScreen"));
 const Home = lazy(() => import("./pages/Home"));
@@ -71,6 +72,7 @@ const App = () => {
               <BrowserRouter>
                 <ScrollToTop />
                 <VersionCheck />
+                <InstallBanner />
                 <TwoFactorGate>
                 <main>
                 <Suspense fallback={<PageFallback />}>

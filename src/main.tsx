@@ -3,6 +3,8 @@ import { HelmetProvider } from 'react-helmet-async'
 import App from './App.tsx'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
 import { startErrorReporting } from './lib/errorReporting'
+import { registerServiceWorker } from './lib/registerServiceWorker'
+import { isNativeApp } from './lib/platformDetection'
 import './index.css'
 
 // Reveal page once styles are loaded (prevents FOUC)
@@ -19,6 +21,9 @@ document.querySelector('link[rel="canonical"]')?.remove();
 // throw inside a timer, a dynamic import that fails. The boundary below never
 // sees those, and they are most of what goes wrong once a page is running.
 startErrorReporting();
+
+// Makes the site installable from a phone's browser. Caches nothing.
+registerServiceWorker(isNativeApp());
 
 createRoot(document.getElementById("root")!).render(
   // Outside every provider on purpose. The crash this exists for came from
