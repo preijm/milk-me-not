@@ -60,6 +60,9 @@ npm run types:gen
   Never delete `chore/lockfile-refresh`, `lovable`, or `dependabot/*` with an
   open PR. Run `git status --porcelain` in every worktree before removing it —
   it may hold the only copy of something.
+  GitHub deletes a merged PR's head branch by itself (on since 26 Nov 2026), so
+  a sweep is now only for abandoned branches — but it takes `lovable` too when a
+  Lovable PR merges; recreate it straight away, see `docs/lovable.md`.
 - **`main` is protected.** Everything lands by pull request. Required checks:
   `Lint & Type Check`, `Test`, `Build`, `CodeQL`, `Browser tests`. Auto-merge is
   on for every non-draft PR; stop it with a draft or the `hold` label.
