@@ -141,3 +141,16 @@ a `database` issue with the exact commands to run
 does not close itself: close it once `migration list --remote` matches.
 
 
+
+## Database tests
+`supabase/tests/*.test.sql` are pgTAP tests, each in a transaction that rolls
+back. Run them against the local stack with `npx supabase test db` after
+`npx supabase migration up` (or a `db reset`). CI has no database, so nothing
+runs them for you: run them when you touch the functions they cover.
+
+## MFA recovery codes are peppered
+`hash_mfa_recovery_code` is an HMAC keyed with `mfa_recovery_code_pepper`
+from Supabase Vault, which its migration generates inside the database. Vault
+stays out of `db dump` and is ciphertext in a raw `pg_dump`, so a leaked
+`mfa_recovery_codes` table cannot be cracked offline. Never rotate or delete
+that secret casually: every recovery code dies with it.
