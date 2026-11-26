@@ -196,9 +196,9 @@ that secret casually: every recovery code dies with it.
 ## The Edge Functions run on a secret key
 Both functions need to bypass RLS, so both take a privileged key — and that key
 used to be the legacy `service_role` JWT. Legacy `anon` and `service_role` are
-one pair signed by the project's JWT secret, so they die together when Supabase
-retires legacy keys in early 2027. Swapping the browser's key was therefore only
-half the job.
+one pair signed by the project's JWT secret, so they died together when they
+were disabled on 2026-11-26. Swapping the browser's key was therefore only half
+the job.
 
 `supabase/functions/_shared/secretKey.ts` resolves it, and both functions call
 it once at cold start. Supabase injects `SUPABASE_SECRET_KEYS` — a JSON object
@@ -208,11 +208,19 @@ keyed by key name, **not** a plain string — alongside the legacy variable:
 const secretKey = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")!)["default"];
 ```
 
-It prefers that and falls back to `SUPABASE_SERVICE_ROLE_KEY`, so the functions
-keep working either side of the switch. The fallback logs which *variable* it
-used — a name, never the value — because otherwise it would be silent: a
-project with no secret key created yet keeps running on the legacy key with no
-symptom at all. This answers "is the new key live?":
+**There is no fallback, on purpose.** `SUPABASE_SERVICE_ROLE_KEY` is still in
+the environment and is deliberately ignored: it answers 401 now, so reading it
+would only move the failure further from its cause — a 401 deep inside an admin
+call instead of a boot error naming the fix. With no usable key the resolver
+throws, the function fails to boot, and the log gets one legible line. That is
+the right outcome: both functions exist to bypass RLS, so neither can do
+anything useful without a key.
+
+Note that a keyless project has `SUPABASE_SECRET_KEYS` set to `{}`, not unset —
+it has to be checked by content, which is the bug this shape invites.
+
+On success it logs which *variable* it resolved — a name, never the value. This
+answers "is the new key live?":
 
 ```powershell
 npx supabase logs --remote=jtabjndnietpewvknjrm --service functions `
@@ -226,10 +234,9 @@ all. Without `--output-format text` it opens an interactive viewer, which hangs
 a non-interactive shell.
 
 The line only appears on a **cold start**, because `resolveSecretKey()` runs at
-module scope. An isolate that booted while `SUPABASE_SECRET_KEYS` was still
-`{}` keeps the legacy key for its whole life, so creating the secret key is not
-enough on its own — redeploy to force fresh isolates, and do not read a log
-line written before the key existed as proof that the new key is live.
+module scope. Creating or renaming a key therefore does not reach an isolate
+that is already running — redeploy to force fresh ones, and do not read a log
+line written before the change as proof of what is live now.
 
 Both functions import that module, so **deploy them together**:
 
@@ -237,10 +244,17 @@ Both functions import that module, so **deploy them together**:
 npx supabase functions deploy check-rate-limit mfa-recover
 ```
 
-Before the legacy keys can be disabled, `mfa-recover` must be running on the new
-key — it is the one that genuinely breaks, and it breaks as a lockout for anyone
-who has lost their authenticator. `check-rate-limit` does nothing today either
-way (see below).
+`mfa-recover` is the one that genuinely matters: it breaks as a *lockout* for
+anyone who has lost their authenticator, so it was proven on the new key by
+redeeming a real recovery code before the legacy keys were disabled.
+`check-rate-limit` does nothing today either way (see below).
+
+That test also settled the one thing the docs do not promise: a secret key is
+sent on `apikey` only, never as a Bearer token, and `mfa-recover` authorizes
+against **GoTrue's admin API** (`auth.admin.mfa.listFactors` / `deleteFactor`),
+not just PostgREST. The gateway translates the opaque key into an internal
+`service_role` credential for upstream services, so it works — but that was
+verified by redeeming a code, not assumed from the documentation.
 
 ## Recovery attempts are limited
 `mfa-recover` calls `redeem_mfa_recovery_code`, which allows five wrong codes
