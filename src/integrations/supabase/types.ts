@@ -785,6 +785,21 @@ export type Database = {
       }
     }
     Functions: {
+      admin_delete_product_barcode: {
+        Args: { _barcode: string }
+        Returns: boolean
+      }
+      admin_list_product_barcodes: {
+        Args: { _product_id: string }
+        Returns: {
+          barcode: string
+          created_at: string
+        }[]
+      }
+      admin_set_product_barcode: {
+        Args: { _barcode: string; _product_id: string }
+        Returns: string
+      }
       check_username_exists: {
         Args: { username_to_check: string }
         Returns: boolean
