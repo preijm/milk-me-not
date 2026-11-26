@@ -4,6 +4,7 @@ import { Seo } from "@/components/Seo";
 import { QuickRateSheet } from "@/components/story/QuickRateSheet";
 import { humanizeLabels } from "@/lib/labels";
 import { cn } from "@/lib/utils";
+import { productSeo } from "@/lib/productSeo";
 import { BrandMark } from "@/components/story/BrandMark";
 import { brandSlug } from "@/lib/brandLogo";
 import {
@@ -120,12 +121,8 @@ const ProductDetails = () => {
     );
   }
 
-  const productTitle = `${story.brandName} ${story.productName} — Reviews | Milk Me Not`;
-  const productDescription = story.count
-    ? `See ${story.count} community rating${story.count === 1 ? "" : "s"} of ${story.brandName} ${story.productName} on Milk Me Not — average score ${
-        story.avgScore?.toFixed(1) ?? "—"
-      }/10, rated ${story.tier.name}.`
-    : `Be the first to rate ${story.brandName} ${story.productName} on Milk Me Not.`;
+  // Shared with the build, which writes the same head into product/<id>.html.
+  const { title: productTitle, description: productDescription } = productSeo(story);
   const productJsonLd =
     story.count && story.avgScore
       ? {

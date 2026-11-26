@@ -16,6 +16,13 @@
  */
 export const SITE_URL = "https://milkmenot.com";
 
+/**
+ * Where the prebuild script leaves one head per rated product, for the build
+ * to turn into product/<id>.html. Under node_modules/.cache so it is already
+ * gitignored and never mistaken for source.
+ */
+export const PRODUCT_HEADS_FILE = "node_modules/.cache/milkmenot/product-heads.json";
+
 export const STATIC_SEO = {
   "/results": {
     title: "Results — Plant-milk ratings | Milk Me Not",
