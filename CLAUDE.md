@@ -88,9 +88,10 @@ npm run types:gen
   grant select, insert, update, delete on public.your_table to authenticated;
   grant select, insert, update, delete on public.your_table to service_role;
   ```
-- **RLS is the security control** — check it on every new table. The anon key
-  in `src/integrations/supabase/client.ts` is public on purpose; a
-  `service_role` key must never be committed.
+- **RLS is the security control** — check it on every new table. The
+  publishable key (`sb_publishable_…`) in
+  `src/integrations/supabase/client.ts` is public on purpose and grants only
+  `anon`; a `service_role` or `sb_secret_…` key must never be committed.
 - **Do not edit** `src/integrations/supabase/types.ts` (generated) or
   `supabase/migrations/00000000000000_baseline.sql` (generated; the two files
   beside it are hand-written and must survive any regeneration).

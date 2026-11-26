@@ -191,7 +191,7 @@ Adding a file for a brand with two ratings costs a download on every build and
 buys almost nothing; check the brand's rating count before hunting for its logo.
 
 The board is the place to check that, not this list, which goes stale. The
-site's own `get_aggregated_milk_tests` RPC is readable with the anon key, so
+site's own `get_aggregated_milk_tests` RPC is readable with the publishable key, so
 counting ratings per brand and running each name through `getBrandLogo` gives
 the real gap in a few seconds — and resolving through `getBrandLogo` rather
 than by eye is what catches the aliases.
