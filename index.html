@@ -247,6 +247,69 @@
         }
       })();
     </script>
+    <!-- Launch screen for the home-screen app. Android first draws its own
+         splash from the manifest (logo on #2144ff); this carries the same look
+         on, with a loading animation, until the first page has rendered —
+         instead of a pale page with a lone spinner. Only shown when launched
+         from the home screen; a browser tab never sees it. React removes it
+         (src/components/install/LaunchScreenDone.tsx); the timeout below is the
+         backstop if React never gets that far. -->
+    <div id="launch-screen" aria-hidden="true" style="display: none">
+      <img src="/icons/icon-512.png" alt="" width="144" height="144" />
+      <div class="launch-dots"><span></span><span></span><span></span></div>
+      <style>
+        #launch-screen {
+          position: fixed;
+          inset: 0;
+          z-index: 9998;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 40px;
+          background: #2144ff;
+          transition: opacity 0.3s ease;
+        }
+        /* The logo's own blue edges would melt into the background and leave
+           the blob's cut-off edges floating; a white ring frames it as an icon. */
+        #launch-screen img {
+          width: 144px;
+          height: 144px;
+          border-radius: 50%;
+          border: 6px solid #fff;
+          box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.45);
+        }
+        #launch-screen .launch-dots { display: flex; gap: 8px; }
+        #launch-screen .launch-dots span {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #fff;
+          opacity: 0.4;
+          animation: mmn-launch-dot 1s ease-in-out infinite;
+        }
+        #launch-screen .launch-dots span:nth-child(2) { animation-delay: 0.15s; }
+        #launch-screen .launch-dots span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes mmn-launch-dot {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.35); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          #launch-screen .launch-dots span { animation: none; opacity: 0.8; }
+        }
+      </style>
+    </div>
+    <script>
+      (function () {
+        var standalone =
+          (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+          window.navigator.standalone === true;
+        var isNative = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
+        var el = document.getElementById('launch-screen');
+        if (!standalone || isNative || !el) return;
+        el.style.display = 'flex';
+        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 10000);
+      })();
+    </script>
     <div id="root"></div>
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>

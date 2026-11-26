@@ -11,6 +11,7 @@ import { TwoFactorGate } from "@/components/auth/TwoFactorGate";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { VersionCheck } from "@/components/version/VersionCheck";
 import { InstallBanner } from "@/components/install/InstallBanner";
+import { LaunchScreenDone } from "@/components/install/LaunchScreenDone";
 import { isNativeApp } from "@/lib/platformDetection";
 const NativeSplashScreen = lazy(() => import("./components/NativeSplashScreen"));
 const Home = lazy(() => import("./pages/Home"));
@@ -76,6 +77,7 @@ const App = () => {
                 <TwoFactorGate>
                 <main>
                 <Suspense fallback={<PageFallback />}>
+                <LaunchScreenDone />
                 <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/feed" element={<Feed />} />
