@@ -19,8 +19,11 @@ no DSN had ever been set, and brought back on 25 November 2026 with one. The
 code is `src/lib/errorReporting.ts`: `componentDidCatch` in the boundary calls
 `reportError`, and `startErrorReporting()` in `main.tsx` adds window listeners
 for what React never sees (rejected promises, throws in timers, failed dynamic
-imports). Sentry emails Peter on every *new* issue — the default alert rule
-for a new project — so a repeat of a known crash does not mail again.
+imports). Sentry project: `peter-co/milkmenot-frontend`
+(https://peter-co.sentry.io). Its alert rule "Email on every new issue" mails
+Peter once per new issue, so a repeat of a known crash does not mail again.
+That rule was added by hand: a new project's default alert only fires for
+issues Sentry rates high priority.
 
 How it is set up, and the traps:
 
@@ -33,7 +36,10 @@ How it is set up, and the traps:
   generic rule would put ~460KB into the eager `vendor-react`.
   `src/lib/sentryChunk.test.ts` fails if the order flips.
 - **The ingest host goes in `connect-src`**, not `script-src`, in
-  `public/_headers` — the SDK is our own bundle; only the reports leave.
+  `public/_headers` — the SDK is our own bundle; only the reports leave. It
+  is the exact host from the DSN (`o4512496885497856.ingest.de.sentry.io`,
+  EU region). A new DSN from another org or region needs this line changed
+  too, or the browser blocks every report silently.
 - **Data collection is spelled out.** Sentry 11 collects more by default than
   10 did, so `dataCollection` lists every field. On top of that: no
   breadcrumbs (`maxBreadcrumbs: 0`, they would log Supabase URLs with user
