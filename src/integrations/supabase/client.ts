@@ -10,7 +10,8 @@ const SUPABASE_URL = "https://jtabjndnietpewvknjrm.supabase.co";
 // Postgres `anon` role, so RLS and the per-table grants are unchanged.
 //
 // If this ever reappears as an `eyJ…` JWT, that is a revert rather than an
-// update — the header above is Lovable's, and its sync regenerates this file.
+// update — the header above is Lovable's, and Lovable has rewritten this file
+// before (four `gpt-engineer-app[bot]` commits touch it).
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_7dHa2Xq8RT1FkDhHRMfIeQ_Gh69atkw";
 
 // Import the supabase client like this:
