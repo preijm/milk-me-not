@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { reportError, startErrorReporting, isErrorReportingConfigured } from "./errorReporting";
+import { reportError, startErrorReporting, isErrorReportingConfigured, scrubEvent } from "./errorReporting";
 
 /**
  * The reporter, and the promise it makes: never make things worse.
@@ -78,6 +78,32 @@ describe("errorReporting", () => {
       );
 
       expect(console.error).toHaveBeenCalled();
+    });
+  });
+
+  describe("what leaves the browser", () => {
+    // Each of these is a promise /privacy makes in plain words.
+    const event = () => ({
+      type: undefined,
+      request: {
+        url: "https://milkmenot.com/results?brand=oatly&user=abc#top",
+        headers: { "User-Agent": "phone", Referer: "https://elsewhere.example/?q=secret", Cookie: "a=b" },
+      },
+      user: { id: "someone", email: "a@b.c", ip_address: "{{auto}}" },
+    });
+
+    it("drops the query and hash from the page address", () => {
+      expect(scrubEvent(event()).request?.url).toBe("https://milkmenot.com/results");
+    });
+
+    it("keeps the User-Agent and no other header", () => {
+      expect(scrubEvent(event()).request?.headers).toEqual({ "User-Agent": "phone" });
+    });
+
+    it("sends a placeholder IP and nothing else about the user", () => {
+      // Without a placeholder, Sentry locates the report by the address it
+      // arrived from — down to the city — even with IP scrubbing on.
+      expect(scrubEvent(event()).user).toEqual({ ip_address: "0.0.0.0" });
     });
   });
 });

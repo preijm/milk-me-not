@@ -43,10 +43,19 @@ How it is set up, and the traps:
 - **Data collection is spelled out.** Sentry 11 collects more by default than
   10 did, so `dataCollection` lists every field. On top of that: no
   breadcrumbs (`maxBreadcrumbs: 0`, they would log Supabase URLs with user
-  ids in the query), `beforeSend` strips query and hash from the page URL,
-  only the `User-Agent` request header, no tracing, no replay. The Sentry
-  project also has "Prevent Storing of IP Addresses" on. `/privacy` describes
-  exactly this — change both together.
+  ids in the query), no tracing, no replay, and `scrubEvent` (the
+  `beforeSend`) strips query and hash from the page URL, keeps only the
+  `User-Agent` header, and sets the user to `{ ip_address: "0.0.0.0" }`.
+  That placeholder matters: an event with *no* IP gets located by Sentry
+  from the address it arrived from, down to the city, even with the SDK's
+  `infer_ip: "never"` and the project's "Prevent Storing of IP Addresses"
+  on (tested against Sentry on 26 November 2026). `/privacy` describes
+  exactly this — change both together, and `errorReporting.test.ts` holds
+  each promise.
+- **Set the secret without a byte-order mark.** Piping a string from
+  PowerShell into `gh secret set` prefixes a BOM; the SDK then cannot parse
+  the DSN and silently sends nothing (that happened on the first deploy).
+  Use `printf '%s' '<dsn>' | gh secret set VITE_SENTRY_DSN` from bash.
 
 To check it end to end: open the live site, and in the console run
 `setTimeout(() => { throw new Error("Sentry test " + Date.now()) })`. Within a
