@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { StoryButton } from "@/components/story/primitives";
 import { CodeInput } from "@/components/settings/TwoFactorSettings";
+import { LaunchScreenDone } from "@/components/install/LaunchScreenDone";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -80,6 +81,7 @@ export const TwoFactorGate = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-story-cream px-4">
+      <LaunchScreenDone />
       <form onSubmit={verify} className="story-hairline w-full max-w-sm rounded-2xl bg-white p-6">
         <p className="story-kicker text-story-green-dark">Two-step sign-in</p>
         <h1 className="story-serif mt-1 text-[1.5rem] font-bold text-story-ink">
