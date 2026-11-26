@@ -375,7 +375,7 @@ one of them has to change:
 
 | File | What breaks if missed |
 |---|---|
-| `src/integrations/supabase/client.ts` | URL **and** anon key: everything |
+| `src/integrations/supabase/client.ts` | URL **and** publishable key: everything. The new project has its own key — take it from its dashboard (API Keys → Publishable key). Unlike the old anon JWT, it does not encode the ref, so a ref grep will not flag it |
 | `src/components/feed/FeedImage.tsx` | every feed photo |
 | `public/_headers` (CSP) | the browser blocks every call to the new host. Owned path: waits for `reviewed` |
 | `index.html` | the preconnect only, so a slower first load |

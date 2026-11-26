@@ -10,19 +10,32 @@ _Moved out of CLAUDE.md on 2026-11-24 so it is read only when needed._
 - Edge Functions live under `supabase/functions/` (e.g., `check-rate-limit`)
 - Migrations in `supabase/migrations/`
 
-## The Supabase anon key is public on purpose
-`src/integrations/supabase/client.ts` has the project URL and anon key written
-into it, and they ship in the bundle to every visitor. The same key sits in
-older commits of `.env`, which looks alarming and is not: it is the same value
-the website already serves, and it carries `"role":"anon"`.
+## The Supabase publishable key is public on purpose
+`src/integrations/supabase/client.ts` has the project URL and the project's
+publishable key (`sb_publishable_…`) written into it, and they ship in the
+bundle to every visitor. That is by design: the key names the project and
+grants the `anon` role, and nothing more.
 
-Rotating it would sign every user out and buy nothing. What actually protects
-the data is RLS — every table has it enabled, and every write policy carries a
-real condition (`auth.uid() = user_id`, `is_admin()`, or `TO service_role`).
-Treat RLS as the control, and check it whenever a table is added.
+It replaced the legacy anon JWT on 2026-11-26, because Supabase retires legacy
+API keys in early 2027. That JWT still sits in older commits of `.env` and in
+this repository's history, which looks alarming and is not: it is the same
+value the website served for years, and it carried `"role":"anon"`. The legacy
+keys are also still enabled — the swap had to reach production before they
+could be retired — so retiring them in the dashboard is a separate later step.
 
-A `service_role` key would be a different matter entirely. None has ever been
-committed; keep it that way.
+Both keys resolve to the same Postgres `anon` role, so the swap left RLS and
+the per-table grants untouched. What actually protects the data is RLS — every
+table has it enabled, and every write policy carries a real condition
+(`auth.uid() = user_id`, `is_admin()`, or `TO service_role`). Treat RLS as the
+control, and check it whenever a table is added.
+
+Unlike the JWT it replaced, the publishable key can be rotated on its own: the
+old one shared the project's JWT secret, so rotating it would have signed every
+user out. Rotating it still buys nothing by itself, because the key is not what
+guards the data.
+
+A `service_role` or `sb_secret_…` key would be a different matter entirely.
+None has ever been committed; keep it that way.
 
 `.env` is gitignored and untracked. `.env.example` carries the names. The only
 variable the app actually reads is `VITE_MAPBOX_PUBLIC_KEY` — without it the
