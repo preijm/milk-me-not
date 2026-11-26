@@ -18,7 +18,9 @@ Three things that look like omissions and are not:
 
 - **`index.html` has no canonical and must not get one.** The Worker serves it
   for every address with no file of its own — `/product/:id`, `/brand/:slug` —
-  so a canonical in it would tell Google all of those are the home page. That
+  so a canonical in it would tell Google all of those are the home page.
+  Rated products now have files of their own (below); brands and products
+  added since the last deploy still fall through to it. That
   is also why `/` is not in `STATIC_SEO`.
 - **The body is still empty.** Markup placed in `#root` is torn down and
   redrawn by `createRoot` on every visit — content, spinner, content — unless
@@ -29,6 +31,33 @@ Three things that look like omissions and are not:
 
 They are `about.html`, not `about/index.html`: the Worker serves a file at the
 bare path and a folder index at the path with a trailing slash.
+
+## Every rated product gets its own HTML file too
+The nine fixed routes were fixed, but `/product/:id` still fell through to
+`index.html`: the home page's title, an `og:url` of the home page, and no
+canonical. In November 2026 Search Console filed 11 product URLs as "duplicate
+without user-selected canonical", and a validation run failed on 24 Nov. The
+www and http addresses in that list already 301 to `https://milkmenot.com`; the
+real cause was the identical raw HTML.
+
+`scripts/generate-sitemap.ts` already reads every rating, so it now also writes
+one head per rated product to `node_modules/.cache/milkmenot/product-heads.json`
+(`productHeads` in `src/lib/productSeo.ts`). `routeHeads` reads that file after
+the bundle is written and stamps each into `dist/product/<id>.html` with
+`htmlForRoute` — the same function the fixed routes use, so the canonical and
+`og:url` match the sitemap's `<loc>` exactly. The Worker serves
+`product/<id>.html` at `/product/<id>`; checked with `wrangler dev`.
+`ProductDetails` builds its `<Seo>` title and description with the same
+`productSeo`, so file and page say the same thing.
+
+- **A product rated since the last deploy has no file** and gets `index.html`,
+  as every product did before. Deploys follow every merge, so the gap is short.
+- **The JSON is always written**, `{}` when the fetch fails, so a stale file
+  from an earlier run can never ship old heads.
+- **The count in the file can be off by one or two** from what the loaded page
+  shows (the page counts with its own query). `<Seo>` replaces it on load; the
+  canonical, which is what this is for, never differs.
+- **Brand pages are not done yet.** `/brand/:slug` still gets `index.html`.
 
 ## The sitemap reads the database, and is not committed
 `public/sitemap.xml` was nine hand-written routes. Google still found product

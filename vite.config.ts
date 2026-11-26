@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { readFileSync, writeFileSync } from "fs";
-import { STATIC_SEO, htmlForRoute } from "./src/lib/staticSeo";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { PRODUCT_HEADS_FILE, STATIC_SEO, htmlForRoute } from "./src/lib/staticSeo";
 import { componentTagger } from "lovable-tagger";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 
@@ -67,6 +67,23 @@ const routeHeads = () => ({
     for (const [route, seo] of Object.entries(STATIC_SEO)) {
       writeFileSync(path.join(dir, `${route.slice(1)}.html`), htmlForRoute(shell, route, seo));
     }
+
+    // One file per rated product, from what the prebuild script fetched. The
+    // Worker serves product/<id>.html at /product/<id>, so the raw HTML Google
+    // reads first carries that product's title and its own canonical instead
+    // of the home page's. A product added since the last deploy has no file
+    // and gets index.html, as every product did before this.
+    const headsFile = path.resolve(PRODUCT_HEADS_FILE);
+    const heads: Record<string, { title: string; description: string }> = existsSync(headsFile)
+      ? JSON.parse(readFileSync(headsFile, "utf8"))
+      : {};
+    const ids = Object.keys(heads);
+    if (ids.length) mkdirSync(path.join(dir, "product"), { recursive: true });
+    for (const id of ids) {
+      const route = `/product/${id}`;
+      writeFileSync(path.join(dir, `${route.slice(1)}.html`), htmlForRoute(shell, route, heads[id]));
+    }
+    console.log(`route-heads: ${Object.keys(STATIC_SEO).length} fixed routes, ${ids.length} products`);
   },
 });
 
