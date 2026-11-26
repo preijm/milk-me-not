@@ -68,10 +68,10 @@ $cli     = "supabase@3.4.0"
 # a checkout with an odd remote cannot quietly write it somewhere else.
 $heartbeatRepo = "preijm/milk-me-not"
 # public tables kept out of the synced dump. They stay in the full dump.
-#   mfa_recovery_codes  unsalted sha256 of 48-bit codes: one GPU sweep of 2^48
-#                       cracks every row at once in hours, and a cracked code
-#                       strips someone's authenticator. In OneDrive from
-#                       6 Oct 2026 until 26 Nov 2026.
+#   mfa_recovery_codes  was unsalted sha256 of 48-bit codes, crackable in
+#                       hours; in OneDrive from 6 Oct 2026 until 26 Nov 2026.
+#                       Now HMAC'd with a Vault pepper the dump does not hold,
+#                       and the old rows were deleted. Kept out regardless.
 #   security_log        admin-only audit trail with ip_address and user_agent
 #                       columns. Empty when this was written; kept out before
 #                       it fills.

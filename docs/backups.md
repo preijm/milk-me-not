@@ -17,11 +17,18 @@ until 25 Nov 2026; a week is now the most rating data that can be lost. Two dump
 
 **A new `public` table goes into the synced dump by default.** That is how
 `mfa_recovery_codes` got there: from 6 Oct to 26 Nov 2026 the community dump
-carried its hashes. They are unsalted SHA-256 of 48-bit codes, so one GPU
+carried its hashes. They were unsalted SHA-256 of 48-bit codes, so one GPU
 sweep of 2^48 cracks every row at once in hours, and a cracked code (with the
 password) removes the authenticator. It and `security_log` (admin-only, has
 IP and user-agent columns) are now passed to `db dump` as `-x`. Any new table
 with secrets in it goes on that list in the same pull request.
+
+Since `20261126130000_pepper_mfa_recovery_codes.sql` the hashes are an HMAC
+keyed with a pepper in Supabase Vault, and every set hashed the old way was
+deleted. `db dump` leaves the `vault` schema out entirely, and even a raw
+`pg_dump` of `vault.secrets` is ciphertext whose key lives on the database
+server's filesystem, so neither dump can crack them any more. The table stays
+on the `-x` list anyway.
 
 The irreplaceable half is the community data. Accounts can be recreated; other
 people's ratings cannot.
@@ -306,7 +313,12 @@ npx supabase functions deploy mfa-recover
 ```
 
 Both functions read only `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, which
-every project provides itself. Relinking the main checkout also matters for the
+every project provides itself. `db push` also creates a fresh recovery code
+pepper in the new project's Vault, so **every MFA recovery code from the old
+project is dead** after this restore: the dump carries the hashes but not the
+key. That is intended. Members who use two-step sign-in keep their
+authenticator and see "Make recovery codes" in Settings; tell them to make a
+new set. Relinking the main checkout also matters for the
 backups: until it is done, the Monday job keeps dumping a project that no
 longer exists.
 

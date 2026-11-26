@@ -13,6 +13,8 @@
 -- Only hashes are stored. The codes are 48 random bits each, so a plain
 -- sha256 is enough; a slow hash earns its cost on passwords people choose,
 -- not on these.
+-- (Wrong, as it turned out: 2^48 is one GPU sweep. Replaced by a keyed HMAC
+-- in 20261126130000_pepper_mfa_recovery_codes.sql.)
 
 CREATE TABLE IF NOT EXISTS public.mfa_recovery_codes (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
