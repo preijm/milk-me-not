@@ -130,17 +130,16 @@ npm run types:gen
   `restore-photos.ts`. The backfill's `--replace-originals` flag overwrites
   other people's photos for good. See `docs/feed-photos.md`.
 - **Both Edge Functions share `_shared/secretKey.ts`, so deploy them together:**
-  `npx supabase functions deploy check-rate-limit mfa-recover`. It prefers
-  `SUPABASE_SECRET_KEYS` over the legacy `SUPABASE_SERVICE_ROLE_KEY` and logs
-  which variable it used. **It resolves the key at module scope, so creating a
-  secret key does not flip a running function** — an isolate that booted on the
-  legacy key keeps it until a redeploy replaces it. Create the key first, then
-  deploy, then read the cold-start line (`supabase logs --remote --service
-  functions`, *not* `functions logs`, which does not exist). **The legacy
-  `anon` and `service_role` keys were disabled on 2026-11-26** and now answer
-  `401 Legacy API keys are disabled`, so the legacy fallback in that module can
-  no longer succeed — a function that logs the legacy line is broken, not
-  merely out of date. See `docs/supabase.md`.
+  `npx supabase functions deploy check-rate-limit mfa-recover`. It reads
+  `SUPABASE_SECRET_KEYS["default"]` and **throws if that is missing** — there
+  is no fallback, because the legacy `anon` and `service_role` keys were
+  disabled on 2026-11-26 and answer `401 Legacy API keys are disabled`. A
+  keyless project has `SUPABASE_SECRET_KEYS` set to `{}`, not unset. **It
+  resolves the key at module scope, so changing a key does not flip a running
+  function** — redeploy, then read the cold-start line (`supabase logs --remote
+  --service functions`, *not* `functions logs`, which does not exist). Renaming
+  the key away from `default` breaks both functions at their next cold start.
+  See `docs/supabase.md`.
 
 ## Where things live
 
