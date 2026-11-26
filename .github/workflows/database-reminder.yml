@@ -18,7 +18,7 @@
 # One open issue at a time: a second database change before the first is
 # applied is a comment on the same issue, not a new one. It does not close
 # itself — nothing without a production credential can read what production
-# has applied — so it is closed by hand once `migration list --linked` shows
+# has applied — so it is closed by hand once `migration list --remote` shows
 # local and remote matching.
 
 name: Database reminder
@@ -112,7 +112,7 @@ jobs:
               BODY="${BODY}- ${TICK}${LINE% (*}${TICK} (${LINE##* (}"$'\n'
             done <<< "$MIGRATIONS"
             BODY="${BODY}"$'\n'"See what production is missing, then apply it:"$'\n\n'
-            BODY="${BODY}${FENCE}bash"$'\n'"npx supabase migration list --linked"$'\n'"npx supabase db push"$'\n'"${FENCE}"$'\n'
+            BODY="${BODY}${FENCE}bash"$'\n'"npx supabase migration list --remote"$'\n'"npx supabase db push --remote"$'\n'"${FENCE}"$'\n'
           fi
 
           if [ -n "$FUNCTION_FILES" ]; then
@@ -135,7 +135,7 @@ jobs:
           fi
 
           BODY="${BODY}"$'\n'"On Windows PowerShell, use ${TICK}npx.cmd${TICK} or ${TICK}bunx${TICK} if ${TICK}npx${TICK} is blocked."
-          BODY="${BODY}"$'\n\n'"Nothing applies these automatically, and this issue does not close itself. Close it once ${TICK}migration list --linked${TICK} shows local and remote matching and the functions are deployed. Until then, further database changes are added here as comments."
+          BODY="${BODY}"$'\n\n'"Nothing applies these automatically, and this issue does not close itself. Close it once ${TICK}migration list --remote${TICK} shows local and remote matching and the functions are deployed. Until then, further database changes are added here as comments."
 
           TITLE="Database changes on main are waiting to be applied"
 

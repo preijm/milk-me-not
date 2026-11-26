@@ -54,7 +54,10 @@ $ErrorActionPreference = "Stop"
 $repo    = Split-Path -Parent $PSScriptRoot
 $logFile = Join-Path $FullDir "backup.log"
 $stamp   = Get-Date -Format "yyyyMMdd"
-$cli     = "supabase@2.115.0"
+# Pinned so a CLI release cannot change the backup under a scheduled task that
+# nobody watches. v3 was checked against v2 on 26 Nov 2026: both dumps came
+# out the same size and line count to the byte. Bump it the same way.
+$cli     = "supabase@3.4.0"
 # Where the heartbeat goes. Named rather than inferred from the git remote, so
 # a checkout with an odd remote cannot quietly write it somewhere else.
 $heartbeatRepo = "preijm/milk-me-not"
@@ -115,7 +118,10 @@ function Invoke-Dump {
   param([string]$Path, [string[]]$ExtraArgs, [string]$What)
 
   # Not $args: that is an automatic variable inside a function.
-  $dumpArgs = @("--yes", $cli, "db", "dump", "--linked") + $ExtraArgs + @("-f", $Path)
+  # --remote is the linked project. Since CLI v3 every db command targets the
+  # LOCAL database unless told otherwise; --linked still works as an alias
+  # until v4, but this must never silently dump the local stack instead.
+  $dumpArgs = @("--yes", $cli, "db", "dump", "--remote") + $ExtraArgs + @("-f", $Path)
 
   # No 2>&1 here. Windows PowerShell turns a native command's stderr into
   # error records when you redirect it, and with ErrorActionPreference = Stop

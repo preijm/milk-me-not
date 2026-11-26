@@ -41,7 +41,7 @@ npm run test:live    # Playwright against milkmenot.com (read-only)
 npx supabase start
 npx supabase db reset  # LOCAL rebuild from migrations + seed.sql
 npx supabase stop
-npx supabase migration list --linked   # what is genuinely pending
+npx supabase migration list --remote   # what is genuinely pending
 
 # DB types (needs `supabase login`; on Windows use npx.cmd or bunx)
 npm run types:gen
@@ -68,8 +68,10 @@ npm run types:gen
 
 ## Traps
 
-- **`supabase db reset --linked` drops and rebuilds production.** One flag from
-  the safe local command. Never type it.
+- **`supabase db reset --remote` drops and rebuilds production** — and so does
+  `--linked`, its deprecated v2 spelling. One flag from the safe local command.
+  Never type either. Since CLI v3 every `db`/`migration`/`gen types` command
+  targets the LOCAL database unless given `--remote`.
 - **Never hand-regenerate `package-lock.json`.** CI owns it (Node version in
   `ci.yml`); a different npm writes a different file. See `docs/lockfile.md`.
 - **Never write the CI skip marker into a commit message** — GitHub scans the
@@ -92,7 +94,7 @@ npm run types:gen
 - **Do not edit** `src/integrations/supabase/types.ts` (generated) or
   `supabase/migrations/00000000000000_baseline.sql` (generated; the two files
   beside it are hand-written and must survive any regeneration).
-- **After merging a migration**, check `migration list --linked` — a function
+- **After merging a migration**, check `migration list --remote` — a function
   missing in production fails softly. `db push` is a deliberate step, never a
   reflex.
 - **Keep `@zxing/browser` and `@zxing/library`** — they are iPhone's only

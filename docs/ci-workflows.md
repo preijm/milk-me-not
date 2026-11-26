@@ -107,7 +107,7 @@ Eleven, not one:
 - **`database-reminder.yml`** — on a push to main that touches
   `supabase/migrations/**` or `supabase/functions/**`, opens an issue labelled
   `database`, assigned to `preijm`, naming the files and giving the exact
-  commands to apply them (`migration list --linked` and `db push` for
+  commands to apply them (`migration list --remote` and `db push --remote` for
   migrations, `functions deploy <name>` per changed function). Nothing else
   applies those: `deploy.yml` ships the website only, which is how
   `ScanFlow.tsx` called a function that did not exist in production for weeks
@@ -120,7 +120,7 @@ Eleven, not one:
 
   **It does not close itself, and that is deliberate.** Nothing in CI can read
   what production has applied without a production credential, and none is
-  stored here. Close it by hand once `migration list --linked` shows local and
+  stored here. Close it by hand once `migration list --remote` shows local and
   remote matching. Giving CI a credential so a later check can close it is a
   decision for the maintainer, not a default.
 

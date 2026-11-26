@@ -102,8 +102,17 @@ npx supabase db reset  # rebuild from migrations + seed.sql
 npx supabase stop      # snapshots on exit, so the next start is fast
 ```
 
-`supabase db reset` **resets the local database**. `supabase db reset --linked`
-drops and rebuilds *production*. One flag apart; never type the second.
+`supabase db reset` **resets the local database**. `supabase db reset --remote`
+drops and rebuilds *production*, and so does `--linked`, the spelling v2 used
+and v3 still accepts. One flag apart; never type either.
+
+Since Supabase CLI v3 every database command (`db dump`, `db push`, `db reset`,
+`migration list`, `gen types`) targets the **local** database unless it is
+given `--remote`. A bare `npx supabase db push` no longer reaches production: it
+fails without a local stack, and with one it "succeeds" against local while
+production never gets the migration. `functions deploy` and `delete` still go
+to the linked project. `npx supabase` is not pinned and fetches the latest CLI;
+only the backup script pins a version (`scripts/backup-supabase.ps1`).
 
 `supabase/seed.sql` holds the country list — 257 ISO regions, minus entries
 that are not places (European Union, Eurozone, pseudo-locales) and minus
@@ -117,8 +126,8 @@ genuinely dangerous — it would have re-run 55 already-applied migrations, many
 of them bare `CREATE TABLE` and `DROP POLICY`. They now match exactly.
 
 ```bash
-npx supabase migration list --linked   # what is pending, truthfully
-npx supabase db push                   # applies only what is genuinely new
+npx supabase migration list --remote   # what is pending, truthfully
+npx supabase db push --remote          # applies only what is genuinely new
 ```
 
 That gap is also how barcode scanning shipped broken: `ScanFlow.tsx` called
@@ -129,6 +138,6 @@ merging anything with a migration in it.
 A merge that touches `supabase/migrations/` or `supabase/functions/` now opens
 a `database` issue with the exact commands to run
 (`.github/workflows/database-reminder.yml`). It does not apply anything and
-does not close itself: close it once `migration list --linked` matches.
+does not close itself: close it once `migration list --remote` matches.
 
 
