@@ -121,10 +121,17 @@ npm run types:gen
   the local Supabase stack. Recipe in `docs/backups.md`.
 - **The full backup dump is a credential store** (password hashes, refresh
   tokens): never commit, sync or paste it.
-- **The thumbnail backfill** (`scripts/backfill-image-thumbnails.ts`) takes the
-  service-role key for one run only — never put it in `.env` or `.env.example`.
-  Its `--replace-originals` flag overwrites other people's photos for good. See
-  `docs/feed-photos.md`.
+- **The thumbnail backfill** (`scripts/backfill-image-thumbnails.ts`) takes a
+  secret key (`$env:SUPABASE_SECRET_KEY`) for one run only — never put it in
+  `.env` or `.env.example`. Same for `prune-orphan-photos.ts` and
+  `restore-photos.ts`. The backfill's `--replace-originals` flag overwrites
+  other people's photos for good. See `docs/feed-photos.md`.
+- **Both Edge Functions share `_shared/secretKey.ts`, so deploy them together:**
+  `npx supabase functions deploy check-rate-limit mfa-recover`. It prefers
+  `SUPABASE_SECRET_KEYS` over the legacy `SUPABASE_SERVICE_ROLE_KEY` and logs
+  which variable it used. The legacy `anon` and `service_role` keys die
+  together, so `mfa-recover` must be on the new key before the legacy keys are
+  disabled. See `docs/supabase.md`.
 
 ## Where things live
 

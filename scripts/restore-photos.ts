@@ -5,12 +5,16 @@
  * Only for a restore: a new project after the old one is gone (step 3e of
  * docs/backups.md), or the local stack to rehearse one. Run it once:
  *
- *   SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/restore-photos.ts --url=https://<new-ref>.supabase.co
+ *   $env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/restore-photos.ts --url=https://<new-ref>.supabase.co
  *
- * It needs the service role key because it writes into every user's folder,
- * and the storage policies only let a user write into their own. Take the key
- * from the dashboard, pass it for this one run, and let it go: it never
- * belongs in `.env` or `.env.example`.
+ * It needs a secret key because it writes into every user's folder, and the
+ * storage policies only let a user write into their own. Take the key from the
+ * dashboard (Project Settings → API Keys → Secret keys), pass it for this one
+ * run, and let it go: it never belongs in `.env` or `.env.example`.
+ *
+ * `SUPABASE_SERVICE_ROLE_KEY` still works, but it is the legacy key that
+ * Supabase retires in early 2027. Prefer `SUPABASE_SECRET_KEY`. A restored
+ * project is a *new* project, so it has its own secret key — take that one.
  *
  * `--url` has no default on purpose. Nothing here should land in a project
  * because it was the one the script happened to name.
@@ -57,10 +61,13 @@ if (!url) {
   process.exit(1);
 }
 
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// The legacy service-role key still works until Supabase retires it in early
+// 2027, so it stays as a fallback rather than a hard break for anyone with it
+// already in their shell.
+const serviceKey = process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!serviceKey && !dryRun) {
   console.error(
-    "Set SUPABASE_SERVICE_ROLE_KEY for this one run. Do not put it in .env: nothing else in this app needs it.",
+    "Set SUPABASE_SECRET_KEY for this one run. Do not put it in .env: nothing else in this app needs it.",
   );
   process.exit(1);
 }

@@ -1,4 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { resolveSecretKey } from "../_shared/secretKey.ts";
+
+// Resolved once per cold start, not per request, so the log line in
+// resolveSecretKey stays readable rather than repeating on every sign-in.
+const SECRET_KEY = resolveSecretKey();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,10 +44,10 @@ Deno.serve(async (req) => {
     // Sanitize identifier (email) - basic validation
     const sanitizedIdentifier = identifier.trim().toLowerCase().slice(0, 254);
 
-    // Use service role to bypass RLS
+    // A secret key to bypass RLS
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      SECRET_KEY
     );
 
     // Periodically cleanup old entries (1% chance per request to avoid overhead)

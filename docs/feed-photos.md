@@ -69,13 +69,16 @@ Two traps this replaced, both of which failed silently for about a year:
 ## Backfilling the photos that predate all that
 `scripts/backfill-image-thumbnails.ts`, run once:
 
-```bash
-SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/backfill-image-thumbnails.ts
+```powershell
+$env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/backfill-image-thumbnails.ts
 ```
 
-It needs the service role key because it writes into every user's folder and
-the policies only let a user write into their own. Pass it for the one run;
-it does not belong in `.env` or `.env.example`, and nothing else here wants it.
+It needs a secret key because it writes into every user's folder and the
+policies only let a user write into their own. Take it from Project Settings →
+API Keys → Secret keys, and pass it for the one run; it does not belong in
+`.env` or `.env.example`, and nothing else here wants it. The legacy
+`SUPABASE_SERVICE_ROLE_KEY` still works until Supabase retires it in early
+2027.
 
 It reads paths from `milk_tests` rather than listing the bucket, because a
 listing also returns the thumbnails it just wrote and the second run would
@@ -94,8 +97,8 @@ The file is written before the row is inserted, so an abandoned submit leaves a
 3MB photo nothing will ever request — eight of them from July 2025, two pairs
 byte-identical and ten seconds apart, which is a double-tap on a slow insert.
 
-```bash
-SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/prune-orphan-photos.ts
+```powershell
+$env:SUPABASE_SECRET_KEY="..."; bunx tsx scripts/prune-orphan-photos.ts
 ```
 
 **A dry run is the default here, unlike the backfill.** The worst a missing
