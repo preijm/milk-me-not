@@ -5,7 +5,8 @@ _Moved out of CLAUDE.md on 2026-11-24 so it is read only when needed._
 ## Backups, because the Free plan has none
 `scripts/backup-supabase.ps1` runs weekly (Mondays 12:00) through Task
 Scheduler, registered by `scripts/register-backup-task.ps1`. It was monthly
-until 25 Nov 2026; a week is now the most rating data that can be lost. Two dumps, deliberately kept apart:
+until 25 Nov 2026; a week is now the most rating data that can be lost. Two dumps, deliberately kept apart,
+and a mirror of the photos:
 
 - **community** — public schema only, minus the tables in `$CommunityExclude`.
   No auth, no credentials, no secrets, no addresses. It is not only what the
@@ -14,6 +15,8 @@ until 25 Nov 2026; a week is now the most rating data that can be lost. Two dump
 - **full** — everything including `auth`: bcrypt hashes, live refresh tokens
   and the MFA recovery code hashes. Stays on the machine. Treat it as a
   credential store; never commit it, never sync it, never paste it anywhere.
+- **photos** — every Storage file the community dump points at, mirrored into
+  OneDrive beside it. See [The photo mirror](#the-photo-mirror).
 
 **A new `public` table goes into the synced dump by default.** That is how
 `mfa_recovery_codes` got there: from 6 Oct to 26 Nov 2026 the community dump
@@ -367,6 +370,7 @@ one of them has to change:
 | `supabase/config.toml` | `project_id`. Owned path |
 | `package.json` (`types:gen`) | type generation reads the old project |
 | `scripts/backfill-image-thumbnails.ts`, `scripts/prune-orphan-photos.ts` | they write to the old project |
+| `scripts/backup-supabase.ps1` | nothing once the main checkout is relinked: the photo mirror reads the ref `supabase link` wrote. The ref in it is the fallback for an unlinked checkout |
 | `e2e/support/backend.ts` | the browser tests stub the wrong host |
 
 `git grep jtabjndnietpewvknjrm` finds them all. One URL also sits **in the
@@ -380,52 +384,87 @@ update public.profiles
 
 Ratings store `picture_path`, not a URL, so they need nothing.
 
-**e. Photos**, only if a copy of the buckets exists (see below). They have to
-go back through the Storage API, with the service role key for that one run,
-not into `storage.objects`, so that the rows and the files agree. Keep every
-path exactly as it was, `thumb_` copies included.
+**e. Photos**, from the mirror in OneDrive (see
+[The photo mirror](#the-photo-mirror)). They go back through the Storage API,
+with the service role key for that one run, not into `storage.objects`, so that
+the rows and the files agree. Every path is kept exactly as it was, `thumb_`
+copies included. Do it after step b, and fix the avatar URL from step d too.
 
-### Photos are not backed up
-**Nothing backs up the files in Storage.** The dumps hold the database only.
-`storage.objects` is a table of *pointers*; the bytes live outside Postgres.
-The Free plan has no backups of its own, and Supabase's paid backups do not
-include Storage files either. So today a lost project loses every photo for
-good, whichever dump survives.
+```bash
+SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/restore-photos.ts --url=https://<new-ref>.supabase.co --dry-run
+SUPABASE_SERVICE_ROLE_KEY=... bunx tsx scripts/restore-photos.ts --url=https://<new-ref>.supabase.co
+```
 
-On 26 Nov 2026 that was 220 files, about 43 MB:
+`--url` has no default, so it cannot land in a project by accident. A file
+already in the bucket is left alone, so a second run after a partial one only
+uploads what is missing, and never overwrites a photo posted since. It exits 1
+if any upload failed.
 
-| Bucket | Files | Size |
-|---|---|---|
-| `milk-pictures` | 218 (photos and their `thumb_` copies) | 41 MB |
-| `avatars` | 1 | 1.6 MB |
-| `logos` | 1 | 63 KB |
+Rehearsed on the **local** stack on 26 Nov 2026 (`--url=http://127.0.0.1:54321`
+and the local `SERVICE_ROLE_KEY` from `npx supabase status`): all 212 files
+went in with their paths, MIME types and the one-year cache header, a
+re-run uploaded nothing, and spot checks through the local public URLs were
+byte-identical to the mirror. The hosted half is not practised.
 
-The ratings still restore without them. `FeedImage` falls back and fails
-quietly, so a rating whose photo is lost shows without one.
+### The photo mirror
+**The dumps hold the database only.** `storage.objects` is a table of
+*pointers*; the bytes live outside Postgres. The Free plan has no backups of
+its own, and Supabase's paid backups do not include Storage files either. So
+until 26 Nov 2026 a lost project lost every photo for good, whichever dump
+survived. The backup now mirrors them.
 
-**Proposal, not built:** a third step in `backup-supabase.ps1`, after the
-community dump, that mirrors the buckets into
-`%OneDrive%\Projects\Milk Me Not\Backups\photos\<bucket>\<path>`.
+After the community dump (and the heartbeat), `backup-supabase.ps1` copies
+every photo that dump points at into
+`%OneDrive%\Projects\Milk Me Not\Backups\photos\<bucket>\<path>`:
 
-- **It needs no new credential.** All three buckets are public, so every file
-  downloads from `/storage/v1/object/public/<bucket>/<path>` with nothing but
-  a URL. The paths come from the community dump the same run just wrote
-  (`milk_tests.picture_path`, the same name with `thumb_` in front, and
-  `profiles.avatar_url`), so there is no listing API and no service role key.
-  Reading paths from the ratings also skips orphan uploads, which nobody needs
-  back.
-- **It is incremental by nature.** Paths carry a timestamp and are never
-  rewritten (see `feed-photos.md`), so a file already in the mirror never has
-  to be fetched again. The first run is about 43 MB; a normal week is a few
-  photos.
+- **It needs no credential.** All three buckets are public, so every file
+  downloads from `https://<ref>.supabase.co/storage/v1/object/public/<bucket>/<path>`
+  with nothing but a URL. The paths come from the community dump the same run
+  just wrote: `milk_tests.picture_path`, the same name with `thumb_` in front,
+  and `profiles.avatar_url`. No listing API, no service role key. The ref is
+  the one `supabase link` wrote, so after a relink the photos follow the dumps.
+- **It skips orphan uploads on purpose.** Reading paths from the ratings means
+  a photo no rating points at is never fetched. On 26 Nov 2026 the buckets held
+  220 objects (40.8 MB); the mirror holds 212 (18.0 MB). The other eight are
+  all `milk-pictures` originals from July 2025 that never became a rating
+  (22.8 MB, see "The uploads that never became a rating" in `feed-photos.md`).
+  Every one of the 212 matched its size in Storage to the byte.
+- **The logo is named in the script.** `logos/milk-me-not-logo.png` is
+  referenced from no table, so no dump can name it. A new file in `logos` needs
+  adding there.
+- **It is incremental.** `milk-pictures` paths carry a timestamp and are never
+  rewritten (see `feed-photos.md`), so a file already in the mirror is never
+  fetched again. The first run took a minute; the second took under one
+  second. **Avatars are the exception**: `ProfileEditDialog` upserts
+  `<uid>/avatar.<ext>` in place, so the same path can hold a newer picture, and
+  they are fetched every run. There is one.
+- **It never prunes.** A deleted rating is exactly when its photo is wanted
+  back, so nothing is ever removed from the mirror, and retention does not
+  touch it.
 - **It is safe to sync.** These are photos the site already shows to anyone,
-  the same standing as the community dump. Never prune the mirror against the
-  ratings: a deleted rating is exactly when the photo is wanted back.
-- **Restoring** is a small script beside the backfill that uploads the mirror
-  with the service role key for one run, keeping each path.
-- The `logos` file is not referenced from any table; copy it once by hand.
+  the same standing as the community dump.
+- **It never fails the backup.** Like the heartbeat, every problem is a `WARN`
+  line in `backup.log` and the run carries on. A download is written to
+  `<file>.part` and renamed only when complete, so an interrupted run is
+  retried next week instead of trusted. A missing thumbnail is an `INFO` line,
+  because `FeedImage` falls back to the full photo. It runs before the full
+  dump, so `-CommunityOnly` mirrors too.
 
-The alternative is Storage's S3 endpoint with `rclone sync`. It mirrors every
+The log line to look for:
+
+```
+Photos: 3 fetched (0.4 MB), 209 already mirrored; mirror holds 212 files, 18.0 MB.
+```
+
+To catch up by hand without dumping anything, from the main checkout:
+
+```powershell
+.\scripts\backup-supabase.ps1 -PhotosOnly
+```
+
+It reads the newest community dump already in OneDrive, needs no Docker, and
+does not touch the heartbeat. Restoring is step 3e above.
+
+The alternative was Storage's S3 endpoint with `rclone sync`. It mirrors every
 object without a path list, but needs S3 access keys stored on the laptop: a
 credential, for no gain over public URLs.
-

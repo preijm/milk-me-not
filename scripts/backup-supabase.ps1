@@ -35,6 +35,14 @@
   visible from outside this machine. Failing to record it is logged as a
   warning and never fails the backup.
 
+  Then it mirrors the photos, which no database dump contains: every file the
+  community dump points at, downloaded from the public Storage URLs into
+  <CommunityDir>\photos\<bucket>\<path>. No credential, because all three
+  buckets are public. A file already in the mirror is not fetched again (the
+  one exception is avatars, see Sync-Photos), and nothing is ever pruned from
+  it. Like the heartbeat, a failure here is a WARN and never fails the backup.
+  scripts/restore-photos.ts uploads the mirror back.
+
 .NOTES
   Register it with scripts/register-backup-task.ps1. Run it by hand any time.
 #>
@@ -53,7 +61,10 @@ param(
   # this deletes nothing you can miss.
   [int]$KeepFull        = 13,
   # Skip the sensitive dump if you only want the community data.
-  [switch]$CommunityOnly
+  [switch]$CommunityOnly,
+  # Only mirror the photos, from the newest community dump already on disk: no
+  # dump, no Docker, no heartbeat. For catching up by hand.
+  [switch]$PhotosOnly
 )
 
 $ErrorActionPreference = "Stop"
@@ -196,6 +207,151 @@ function Set-Heartbeat {
   }
 }
 
+function Get-ProjectRef {
+  # The project the dumps come from: `supabase link` writes it here, so after a
+  # relink to a new project the photos follow the dumps without an edit. The
+  # fallback is production's ref, for a checkout that was never linked.
+  $file = Join-Path $repo "supabase\.temp\project-ref"
+  if (Test-Path $file) {
+    $ref = (Get-Content $file -Raw).Trim()
+    if ($ref -match '^[a-z0-9]{20}$') { return $ref }
+  }
+  return "jtabjndnietpewvknjrm"
+}
+
+function Get-PhotoPaths {
+  # Every Storage object the community dump points at, as "<bucket>/<path>".
+  #
+  # Read from the dump rather than listed from the bucket: listing needs the
+  # service role key, and reading the ratings also skips orphan uploads, which
+  # nobody needs back. The dump is multi-row INSERTs, and `notes` is free text,
+  # so tuples are never split on commas; a picture path is the only value in a
+  # milk_tests row shaped like "<uuid>/<file>" (user_id has no slash).
+  param([string]$DumpPath)
+
+  $sql   = [System.IO.File]::ReadAllText($DumpPath)
+  $paths = New-Object System.Collections.Generic.List[string]
+
+  # One block per INSERT, up to the next statement or pg_dump comment header.
+  $block = '(?ms)^INSERT INTO "public"\."{0}" .*?(?=^INSERT INTO |^--|\z)'
+
+  foreach ($m in [regex]::Matches($sql, ($block -f 'milk_tests'))) {
+    foreach ($p in [regex]::Matches($m.Value, "'([0-9a-f]{8}-[0-9a-f-]{27}/[^'/]+)'")) {
+      $path = $p.Groups[1].Value
+      $paths.Add("milk-pictures/$path")
+      # thumbnailPath() in src/lib/imageCompression.ts: `thumb_` in front of the
+      # file name, inside the same folder (the bucket policy allows one level).
+      $slash = $path.LastIndexOf('/')
+      $paths.Add("milk-pictures/" + $path.Substring(0, $slash + 1) + "thumb_" + $path.Substring($slash + 1))
+    }
+  }
+
+  # profiles.avatar_url is a full public URL, not a path.
+  foreach ($m in [regex]::Matches($sql, ($block -f 'profiles'))) {
+    foreach ($u in [regex]::Matches($m.Value, "/storage/v1/object/public/([^'?#/]+/[^'?#]+)")) {
+      $paths.Add($u.Groups[1].Value)
+    }
+  }
+
+  # The site logo is referenced by no table, so no dump can name it.
+  $paths.Add("logos/milk-me-not-logo.png")
+
+  return $paths | Sort-Object -Unique
+}
+
+function Sync-Photos {
+  # Mirrors the photos the community dump points at into $CommunityDir\photos,
+  # straight from the public Storage URLs. All three buckets are public, so it
+  # needs no credential.
+  #
+  # Incremental: milk-pictures paths carry a timestamp and are never written
+  # twice (docs/feed-photos.md), so a file already in the mirror is skipped.
+  # Avatars are the exception - ProfileEditDialog upserts `<uid>/avatar.<ext>`
+  # in place, so the same path can hold a newer picture - and are fetched every
+  # run; there are a handful of them. Nothing is ever deleted from the mirror:
+  # a deleted rating is exactly when its photo is wanted back.
+  #
+  # Nothing in here may fail the backup, for the same reasons as Set-Heartbeat,
+  # and nothing may log the word the health check looks for: every problem is a
+  # WARN and the run carries on.
+  param([string]$DumpPath)
+
+  $ErrorActionPreference = "Continue"
+  # Windows PowerShell's progress bar slows Invoke-WebRequest by an order of
+  # magnitude.
+  $ProgressPreference = "SilentlyContinue"
+  try {
+    $root = Join-Path $CommunityDir "photos"
+    $base = "https://$(Get-ProjectRef).supabase.co/storage/v1/object/public"
+    $paths = @(Get-PhotoPaths -DumpPath $DumpPath)
+    if ($paths.Count -le 1) {
+      Write-Log "Photos not mirrored: no photo paths found in $(Split-Path $DumpPath -Leaf). The database backup itself succeeded." "WARN"
+      return
+    }
+
+    $fetched = 0; $skipped = 0; $bytes = 0L
+    $missingThumbs = 0
+    $missing = New-Object System.Collections.Generic.List[string]
+    $failed  = New-Object System.Collections.Generic.List[string]
+
+    foreach ($p in $paths) {
+      $segments = $p.Split('/')
+      # These names come from user uploads. Refuse anything that could step
+      # outside the mirror or that Windows cannot hold as a file name.
+      $bad = $segments | Where-Object { $_ -eq '' -or $_ -eq '.' -or $_ -eq '..' -or $_ -match '[<>:"\\|?*\x00-\x1f]' }
+      if ($bad) { $failed.Add("$p (unsafe name)"); continue }
+
+      $local = Join-Path $root ($segments -join '\')
+      $isAvatar = $segments[0] -eq 'avatars'
+      if ((Test-Path -LiteralPath $local) -and -not $isAvatar) { $skipped++; continue }
+
+      $url  = $base + '/' + (($segments | ForEach-Object { [Uri]::EscapeDataString($_) }) -join '/')
+      $part = "$local.part"
+      New-Item -ItemType Directory -Force -Path (Split-Path $local -Parent) | Out-Null
+      try {
+        Invoke-WebRequest -Uri $url -OutFile $part -UseBasicParsing -TimeoutSec 60 -ErrorAction Stop
+        # Written aside and renamed, so an interrupted download is never
+        # mistaken for a finished file on the next run.
+        Move-Item -LiteralPath $part -Destination $local -Force
+        $fetched++
+        $bytes += (Get-Item -LiteralPath $local).Length
+      }
+      catch {
+        Remove-Item -LiteralPath $part -Force -ErrorAction SilentlyContinue
+        $status = 0
+        if ($_.Exception.Response) { $status = [int]$_.Exception.Response.StatusCode }
+        # Storage answers a missing object with 400, not 404.
+        if ($status -eq 400 -or $status -eq 404) {
+          if ((Split-Path $p -Leaf) -like 'thumb_*') { $missingThumbs++ } else { $missing.Add($p) }
+        }
+        elseif ($status) { $failed.Add("$p (HTTP $status)") }
+        # check-backup-health.ps1 matches that word case-insensitively, and
+        # .NET puts it in most network messages ("returned an error").
+        else { $failed.Add("$p ($($_.Exception.Message -replace '(?i)error', 'failure'))") }
+      }
+    }
+
+    $total = @(Get-ChildItem -LiteralPath $root -Recurse -File -ErrorAction SilentlyContinue |
+               Where-Object { $_.Extension -ne '.part' })
+    $totalMB = ($total | Measure-Object Length -Sum).Sum / 1MB
+    Write-Log ("Photos: {0} fetched ({1:N1} MB), {2} already mirrored; mirror holds {3} files, {4:N1} MB." -f `
+               $fetched, ($bytes / 1MB), $skipped, $total.Count, $totalMB)
+
+    # A thumbnail can be missing by design (FeedImage falls back to the photo),
+    # so that is one INFO line, not a warning.
+    if ($missingThumbs) { Write-Log "Photos: $missingThumbs thumbnail(s) not in Storage; the feed falls back to the full photo for those." }
+    if ($missing.Count) {
+      Write-Log ("Photos: {0} referenced file(s) not in Storage: {1}" -f $missing.Count, (($missing | Select-Object -First 5) -join ', ')) "WARN"
+    }
+    if ($failed.Count) {
+      Write-Log ("Photos: {0} download(s) failed and will be retried next run: {1}" -f $failed.Count, (($failed | Select-Object -First 5) -join '; ')) "WARN"
+    }
+  }
+  catch {
+    Write-Log "Photos not mirrored: $($_.Exception.Message -replace '(?i)error', 'failure') The database backup itself succeeded." "WARN"
+  }
+}
+
 function Remove-OldBackups {
   param([string]$Dir, [string]$Pattern, [int]$Keep)
   # Ordered by write time, not by the date in the name: a run that happens late
@@ -210,6 +366,16 @@ function Remove-OldBackups {
 
 try {
   New-Item -ItemType Directory -Force -Path $CommunityDir, $FullDir | Out-Null
+
+  if ($PhotosOnly) {
+    $latest = Get-ChildItem -Path $CommunityDir -Filter "community-data-*.sql" -ErrorAction SilentlyContinue |
+              Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    if (-not $latest) { throw "No community dump in $CommunityDir to read photo paths from." }
+    Write-Log "Photo mirror only, from $($latest.Name)."
+    Sync-Photos -DumpPath $latest.FullName
+    exit 0
+  }
+
   Write-Log "=== backup starting ==="
 
   if (-not (Test-Path (Join-Path $repo "supabase\config.toml"))) {
@@ -218,7 +384,8 @@ try {
   Assert-Docker
   Push-Location $repo
 
-  Invoke-Dump -Path (Join-Path $CommunityDir "community-data-$stamp.sql") `
+  $communityPath = Join-Path $CommunityDir "community-data-$stamp.sql"
+  Invoke-Dump -Path $communityPath `
               -ExtraArgs (@("--data-only", "--schema", "public") +
                           ($CommunityExclude | ForEach-Object { "-x", $_ })) `
               -What "Community data"
@@ -227,6 +394,10 @@ try {
   # watching from outside. A full dump failing after this still exits 1 and is
   # caught by check-backup-health.ps1 reading this log.
   Set-Heartbeat
+
+  # Before the full dump, so -CommunityOnly mirrors too, and so a full dump
+  # that fails cannot cost the week's photos. It never throws.
+  Sync-Photos -DumpPath $communityPath
 
   if (-not $CommunityOnly) {
     Invoke-Dump -Path (Join-Path $FullDir "full-data-$stamp.sql") `
