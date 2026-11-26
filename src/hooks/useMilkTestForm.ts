@@ -21,8 +21,11 @@ import { MY_RATING_KEY } from "./useMyRatingForProduct";
  * redirected to /feed — but the quick-rate sheet leaves you standing on the
  * product page, where a stale "1 person has rated this" is the first thing
  * you see after rating it yourself.
+ *
+ * A product edit lands in the same views, since each one shows the product's
+ * name and properties, so saving a product calls this too.
  */
-const invalidateRatingViews = async (queryClient: QueryClient) => {
+export const invalidateRatingViews = async (queryClient: QueryClient) => {
   await Promise.all(
     [
       ['milk-tests-aggregated'],

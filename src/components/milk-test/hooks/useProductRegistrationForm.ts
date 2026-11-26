@@ -1,6 +1,8 @@
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { invalidateRatingViews } from "@/hooks/useMilkTestForm";
 import { useProductFlavors } from "./useProductFlavors";
 import { handleProductSubmit, resetFormState } from "./product-registration";
 import { UseProductRegistrationFormProps } from "./types";
@@ -20,6 +22,7 @@ export const useProductRegistrationForm = ({
   const [isBarista, setIsBarista] = useState(false);
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Fill the form as the dialog opens — with the existing product in edit mode,
   // or blank for a new one. Compared during render rather than in an effect, so
@@ -112,7 +115,11 @@ export const useProductRegistrationForm = ({
         onOpenChange: skipAutoSuccess ? () => {} : onOpenChange,
         editProductId
       });
-      
+
+      // Without this a page already showing the product keeps its old
+      // properties until a reload, though the save went through.
+      if (result?.productId) await invalidateRatingViews(queryClient);
+
       return result;
     } catch (error) {
       console.error('Error adding product:', error);
