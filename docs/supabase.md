@@ -205,8 +205,24 @@ It prefers that and falls back to `SUPABASE_SERVICE_ROLE_KEY`, so the functions
 keep working either side of the switch. The fallback logs which *variable* it
 used — a name, never the value — because otherwise it would be silent: a
 project with no secret key created yet keeps running on the legacy key with no
-symptom at all. `supabase functions logs check-rate-limit` answers "is the new
-key live?".
+symptom at all. This answers "is the new key live?":
+
+```powershell
+npx supabase logs --remote=jtabjndnietpewvknjrm --service functions `
+  --search "Supabase key in use" --since 24h --output-format text
+```
+
+There is **no `supabase functions logs` subcommand** — `functions` only has
+`list`, `delete`, `download`, `deploy`, `new` and `serve`. Logs are the
+top-level `supabase logs`, and it needs `--remote` to look at production at
+all. Without `--output-format text` it opens an interactive viewer, which hangs
+a non-interactive shell.
+
+The line only appears on a **cold start**, because `resolveSecretKey()` runs at
+module scope. An isolate that booted while `SUPABASE_SECRET_KEYS` was still
+`{}` keeps the legacy key for its whole life, so creating the secret key is not
+enough on its own — redeploy to force fresh isolates, and do not read a log
+line written before the key existed as proof that the new key is live.
 
 Both functions import that module, so **deploy them together**:
 

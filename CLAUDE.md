@@ -132,9 +132,13 @@ npm run types:gen
 - **Both Edge Functions share `_shared/secretKey.ts`, so deploy them together:**
   `npx supabase functions deploy check-rate-limit mfa-recover`. It prefers
   `SUPABASE_SECRET_KEYS` over the legacy `SUPABASE_SERVICE_ROLE_KEY` and logs
-  which variable it used. The legacy `anon` and `service_role` keys die
-  together, so `mfa-recover` must be on the new key before the legacy keys are
-  disabled. See `docs/supabase.md`.
+  which variable it used. **It resolves the key at module scope, so creating a
+  secret key does not flip a running function** — an isolate that booted on the
+  legacy key keeps it until a redeploy replaces it. Create the key first, then
+  deploy, then read the cold-start line (`supabase logs --remote --service
+  functions`, *not* `functions logs`, which does not exist). The legacy `anon`
+  and `service_role` keys die together, so `mfa-recover` must be on the new key
+  before the legacy keys are disabled. See `docs/supabase.md`.
 
 ## Where things live
 
