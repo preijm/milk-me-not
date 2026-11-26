@@ -4,9 +4,11 @@
  * Supabase injects `SUPABASE_SECRET_KEYS` — a JSON object keyed by key name,
  * not a plain string — alongside the legacy `SUPABASE_SERVICE_ROLE_KEY`. The
  * legacy variable holds one half of an `anon`/`service_role` JWT pair signed by
- * the project's JWT secret, and both halves die together when legacy API keys
- * are retired (early 2027). So this prefers the new-format secret key and keeps
- * the legacy one only as a bridge until the legacy keys are disabled.
+ * the project's JWT secret, and both halves die together. They were **disabled
+ * on 2026-11-26**, so the legacy branch below is no longer a working bridge: it
+ * survives only to turn "no key at all" into one clear log line, and because
+ * disabling is reversible from the dashboard. Reaching it means the function is
+ * broken, which is why it logs at error level.
  *
  * The fallback is deliberately noisy. It logs which *variable* it resolved — a
  * name, never the value — at cold start, so `supabase logs --remote --service
@@ -54,6 +56,9 @@ export const resolveSecretKey = (): string => {
       "No Supabase secret key available: set SUPABASE_SECRET_KEYS or SUPABASE_SERVICE_ROLE_KEY",
     );
   }
-  console.log("Supabase key in use: SUPABASE_SERVICE_ROLE_KEY (legacy — retires early 2027)");
+  console.error(
+    "Supabase key in use: SUPABASE_SERVICE_ROLE_KEY (legacy — DISABLED 2026-11-26, " +
+      "every call with it answers 401). Create a secret key named `default` and redeploy.",
+  );
   return legacy;
 };

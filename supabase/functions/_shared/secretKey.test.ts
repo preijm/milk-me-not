@@ -37,6 +37,19 @@ describe("resolveSecretKey", () => {
     expect(resolveSecretKey()).toBe(LEGACY_KEY);
   });
 
+  // The legacy keys were disabled on 2026-11-26, so reaching this branch means
+  // the function is broken rather than merely out of date. It has to be an
+  // error, and it has to say so: this line is the only signal anyone gets.
+  it("reports the legacy fallback as an error, naming it as disabled", () => {
+    withEnv({ SUPABASE_SERVICE_ROLE_KEY: LEGACY_KEY });
+    resolveSecretKey();
+
+    expect(console.error).toHaveBeenCalled();
+    const said = vi.mocked(console.error).mock.calls.flat().join(" ");
+    expect(said).toContain("SUPABASE_SERVICE_ROLE_KEY");
+    expect(said).toMatch(/disabled/i);
+  });
+
   it("falls back, loudly, when the bundle has no `default` entry", () => {
     withEnv({
       SUPABASE_SECRET_KEYS: JSON.stringify({ other: NEW_KEY }),
