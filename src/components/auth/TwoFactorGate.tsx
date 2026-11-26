@@ -45,9 +45,13 @@ export const TwoFactorGate = ({ children }: { children: ReactNode }) => {
     setBusy(true);
     setError("");
     if (recovering) {
-      const ok = await redeemRecoveryCode(code);
+      const result = await redeemRecoveryCode(code);
       setBusy(false);
-      if (!ok) {
+      if (result === "limited") {
+        setError("Too many attempts. Wait an hour, then try again.");
+        return;
+      }
+      if (result !== "ok") {
         setError("That recovery code didn't work, or has already been used.");
         return;
       }

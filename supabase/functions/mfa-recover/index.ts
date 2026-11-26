@@ -7,9 +7,13 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  * but no longer has the phone. Removing a factor needs the admin API, which is
  * why this is a function and not a database call from the browser.
  *
- * ponytail: no attempt limit. A code is 48 random bits and the caller already
- * needed the password, so guessing is not a practical attack. Add one through
- * check_rate_limit if that ever changes.
+ * Attempts are limited: five wrong codes per account per rolling hour, after
+ * which every attempt gets a 429 until the hour has passed, right code or not.
+ * The count, the code check and spending the set all happen in one database
+ * call, redeem_mfa_recovery_code (20261126150000_limit_mfa_recovery_attempts.sql),
+ * keyed by the user id from the verified session. It fails closed: a database
+ * error is a 500, never a pass. (The check-rate-limit function is not used:
+ * its SQL half never existed, and it counts every call, not failures.)
  */
 
 const corsHeaders = {
@@ -47,12 +51,15 @@ Deno.serve(async (req) => {
       return json({ error: "Not signed in" }, 401);
     }
 
-    const { data: valid, error: consumeError } = await admin.rpc("consume_mfa_recovery_code", {
+    const { data: outcome, error: redeemError } = await admin.rpc("redeem_mfa_recovery_code", {
       p_user_id: user.id,
       p_code: code,
     });
-    if (consumeError) throw consumeError;
-    if (!valid) {
+    if (redeemError) throw redeemError;
+    if (outcome === "limited") {
+      return json({ error: "Too many attempts. Try again in an hour." }, 429);
+    }
+    if (outcome !== "ok") {
       return json({ error: "That recovery code is not valid, or has been used" }, 400);
     }
 
