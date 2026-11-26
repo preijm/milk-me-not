@@ -5,14 +5,20 @@
 .DESCRIPTION
   Two dumps, because they belong in different places:
 
-    community-data-<date>.sql  public schema only. No auth, no password
-                               hashes, no email addresses - the same facts the
-                               website already shows. Goes to OneDrive, so it
-                               survives this laptop.
+    community-data-<date>.sql  public schema only, minus $CommunityExclude.
+                               No auth, no credentials, no secrets, no email
+                               addresses. It does hold some per-user data the
+                               site never shows: notification inboxes, the
+                               newsletter opt-in, a default country. Goes to
+                               OneDrive, so it survives this laptop.
 
     full-data-<date>.sql       everything, auth included: bcrypt hashes, live
-                               refresh tokens, addresses. Stays on this machine
-                               only. Treat it like a password store.
+                               refresh tokens, addresses, MFA recovery code
+                               hashes. Stays on this machine only. Treat it
+                               like a password store.
+
+  A new public table lands in the community dump automatically. If it holds
+  anything secret, add it to $CommunityExclude in the same pull request.
 
   The irreplaceable half is the community data: accounts can be recreated,
   a year of people's ratings cannot.
@@ -61,6 +67,16 @@ $cli     = "supabase@3.4.0"
 # Where the heartbeat goes. Named rather than inferred from the git remote, so
 # a checkout with an odd remote cannot quietly write it somewhere else.
 $heartbeatRepo = "preijm/milk-me-not"
+# public tables kept out of the synced dump. They stay in the full dump.
+#   mfa_recovery_codes  unsalted sha256 of 48-bit codes: one GPU sweep of 2^48
+#                       cracks every row at once in hours, and a cracked code
+#                       strips someone's authenticator. In OneDrive from
+#                       6 Oct 2026 until 26 Nov 2026.
+#   security_log        admin-only audit trail with ip_address and user_agent
+#                       columns. Empty when this was written; kept out before
+#                       it fills.
+# One -x per table: the CLI takes the flag repeatedly.
+$CommunityExclude = @("public.mfa_recovery_codes", "public.security_log")
 
 function Write-Log {
   param([string]$Message, [string]$Level = "INFO")
@@ -203,7 +219,8 @@ try {
   Push-Location $repo
 
   Invoke-Dump -Path (Join-Path $CommunityDir "community-data-$stamp.sql") `
-              -ExtraArgs @("--data-only", "--schema", "public") `
+              -ExtraArgs (@("--data-only", "--schema", "public") +
+                          ($CommunityExclude | ForEach-Object { "-x", $_ })) `
               -What "Community data"
 
   # Straight after the community dump, not at the end: that is the half worth

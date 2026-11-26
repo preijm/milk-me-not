@@ -7,11 +7,21 @@ _Moved out of CLAUDE.md on 2026-11-24 so it is read only when needed._
 Scheduler, registered by `scripts/register-backup-task.ps1`. It was monthly
 until 25 Nov 2026; a week is now the most rating data that can be lost. Two dumps, deliberately kept apart:
 
-- **community** — public schema only, no auth, no password hashes, no
-  addresses. Goes to OneDrive, so it survives the laptop.
-- **full** — everything including `auth`: bcrypt hashes and live refresh
-  tokens. Stays on the machine. Treat it as a credential store; never commit
-  it, never sync it, never paste it anywhere.
+- **community** — public schema only, minus the tables in `$CommunityExclude`.
+  No auth, no credentials, no secrets, no addresses. It is not only what the
+  site shows, though: it holds notification inboxes, the newsletter opt-in and
+  default countries. Goes to OneDrive, so it survives the laptop.
+- **full** — everything including `auth`: bcrypt hashes, live refresh tokens
+  and the MFA recovery code hashes. Stays on the machine. Treat it as a
+  credential store; never commit it, never sync it, never paste it anywhere.
+
+**A new `public` table goes into the synced dump by default.** That is how
+`mfa_recovery_codes` got there: from 6 Oct to 26 Nov 2026 the community dump
+carried its hashes. They are unsalted SHA-256 of 48-bit codes, so one GPU
+sweep of 2^48 cracks every row at once in hours, and a cracked code (with the
+password) removes the authenticator. It and `security_log` (admin-only, has
+IP and user-agent columns) are now passed to `db dump` as `-x`. Any new table
+with secrets in it goes on that list in the same pull request.
 
 The irreplaceable half is the community data. Accounts can be recreated; other
 people's ratings cannot.
