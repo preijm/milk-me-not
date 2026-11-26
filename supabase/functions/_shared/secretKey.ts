@@ -9,8 +9,13 @@
  * the legacy one only as a bridge until the legacy keys are disabled.
  *
  * The fallback is deliberately noisy. It logs which *variable* it resolved — a
- * name, never the value — at cold start, so `supabase functions logs` answers
- * "is the new key actually live?". Without that the fallback would be silent:
+ * name, never the value — at cold start, so `supabase logs --remote --service
+ * functions --search "Supabase key in use"` answers "is the new key actually
+ * live?" (there is no `functions logs` subcommand). Because this runs at module
+ * scope, the answer is per cold start: an isolate that booted while
+ * `SUPABASE_SECRET_KEYS` was still `{}` keeps the legacy key until it is
+ * replaced, so redeploy after creating the key rather than waiting for the
+ * environment to be picked up. Without the log the fallback would be silent:
  * a project with no secret key created yet keeps working on the legacy key, and
  * `check-rate-limit` fails open, so there would be no symptom to notice until
  * the legacy keys were disabled and rate limiting had quietly stopped.
