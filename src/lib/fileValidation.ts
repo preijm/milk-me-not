@@ -12,11 +12,17 @@ export interface FileValidationOptions {
   maxDimensions?: { width: number; height: number };
 }
 
+// These limits apply to the ORIGINAL photo, which is never uploaded:
+// `useCameraOperations` resizes every photo to 1600px before it reaches
+// storage. They used to be 10MB and 4096px, which turned away full-resolution
+// shots from 50MP phone cameras that would have been shrunk anyway. What is
+// left is a guard against files big enough to exhaust a phone's memory while
+// decoding, not a storage limit.
 const DEFAULT_OPTIONS: Required<FileValidationOptions> = {
-  maxSizeBytes: 10 * 1024 * 1024, // 10MB (compression will reduce this)
+  maxSizeBytes: 50 * 1024 * 1024,
   allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
   allowedExtensions: ['.jpg', '.jpeg', '.png', '.webp'],
-  maxDimensions: { width: 4096, height: 4096 }
+  maxDimensions: { width: 16384, height: 16384 }
 };
 
 export const validateFile = async (
